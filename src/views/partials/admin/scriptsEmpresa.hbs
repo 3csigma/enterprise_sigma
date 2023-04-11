@@ -1,0 +1,324 @@
+<script>
+    function agregarConclusion(etapa){
+        let conclusion = 0
+        if(etapa == 1) {conclusion = $("#conclusion_diagnostico").val()}
+        if(etapa == 2) {conclusion = $("#conclusion_analisis").val()}
+        if(etapa == 3) {conclusion = $("#conclusion_planEmpresarial").val()}
+        if(etapa == 4) {conclusion = $("#conclusion_planEstrategico").val()}
+
+        const id_empresa = $("#idEmpresa").val()
+        fetch('/conclusiones', {
+            method: 'POST',
+            body: JSON.stringify({id_empresa, etapa, conclusion}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => {
+                if (response){
+                    console.log("TODO TRUE")
+                    $(".btn-save").attr("disabled", true);
+                    $(".loading-icon").removeClass("mostrar");
+                    $(".text-btn").text("Guardando..");
+                    
+                    setTimeout(function () {
+                        $(".btn-save").attr("disabled", false);
+                        $(".loading-icon").addClass("mostrar");
+                        $(".text-btn").text("Guardar");
+                    }, 2000)
+
+                } else {
+                    console.log("TODO FALSE")
+                }
+            });
+    }
+
+    const mapaConsultores = new Map();
+    function addConsulEtapa() {
+        const idConsultor = $("#id_consultor option:selected").val();
+        let nomConsultor = $("#id_consultor option:selected").text();
+        nomConsultor = nomConsultor.split('-')[0]
+        const etapa = $('#etapaConsultor option:selected').val();
+        
+        if ($(".search-choice-close").length == 0) {
+            $("#txtNulo1").show();
+        } else if (etapa == 0) {
+            $("#txtNulo1").hide();
+            $("#txtNulo2").show();
+        } else {
+            $("#txtNulo1").hide();
+            $("#txtNulo2").hide();
+            const etapa_ = etapa.replace(/[$_]/g, ' ');
+            let consultor = { id: idConsultor, nombre: nomConsultor.trim() }
+            if (etapa_ == 'Diagnóstico') {
+                const sede = $('#sede option:selected').val();
+                consultor = { id: idConsultor, nombre: nomConsultor.trim(), sede }
+            }
+            mapaConsultores.set(etapa_, consultor)
+            console.log("MAPA CONSULTORES -->> ", mapaConsultores)
+            let filas = ``
+            let idFila = $(`#tblConsulAsignados>tbody>tr#${etapa}`)
+            
+            if (idFila.length > 0) {
+                idFila = idFila[0].id
+                const etapaTxt = idFila.replace(/[$_]/g, ' ')
+                $(`#tblConsulAsignados>tbody>tr#${idFila.trim()}`).empty().append(`
+                    <td>${etapaTxt}</td>
+                    <td>${nomConsultor.trim()}</td>
+                `)
+            } else {
+                for (const [key, value] of mapaConsultores) {
+                    const idFila = key.replace(/[$ ]/g, '_');
+                    $(`#tblConsulAsignados>tbody>tr#${idFila}`).remove();
+                    $('#tblConsulAsignados>tbody').append(`
+                        <tr id="${idFila}">
+                            <td>${key}</td>
+                            <td>${value.nombre}</td>
+                        </tr>`)
+                }
+            }
+
+            if ($('#divTablaConsul').css('display') == 'none') {
+                $('#divTablaConsul').show()
+            }
+
+            $('#etapaConsultor').prop('selectedIndex', 0).selectpicker('refresh');
+            $('#id_consultor').prop('selectedIndex', 0).trigger('chosen:updated');
+            $('.search-choice-close').trigger('click')
+            if ($('#divSede').css('display') == 'block') $('#divSede').hide()
+            
+        }
+
+    }
+
+    function guardarConsulEtapas () {
+        const estadoAdm = $('#estadoAdm option:selected').val()
+        const idEmpresa = $('#idEmpresa').val()
+        const codigo = $('#codigoEmpresa').val()
+        console.group("Datos de la empresa")
+        console.log("ID Empresa >> ", idEmpresa)
+        console.log("Estado Empresa >> ", estadoAdm)
+        console.log("Consultores Asignados >> ", mapaConsultores)
+        console.groupEnd()
+
+        const mapa = Object.fromEntries(mapaConsultores)
+
+        fetch('/actualizarEmpresa', {
+            method: 'POST',
+            body: JSON.stringify({idEmpresa, codigo, estadoAdm, mapa}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {
+            if (response){
+                location.reload();
+            } else {
+                Swal.fire(
+                    'Error!',
+                    'No sé pudo efectuar está acción, contactar a soporte..',
+                    'error'
+                )
+            }
+        });
+    }
+
+    function solicitarArchivo(tabla, i) {
+        const empresa = $('#idEmpresa').val()
+        const dimension = $(`#archivo-dimension${i} option:selected`).val()
+        const descripcion = $('#archivo-descripcion'+i).val()
+        if (dimension == 0) {
+            $("#txtDimension"+i).show();
+            $("#txtDescripcion"+i).hide();
+        } else if (descripcion == '') {
+            $("#txtDimension"+i).hide();
+            $("#txtDescripcion"+i).show();
+        } else {
+            $("#txtDimension"+i).hide();
+            $("#txtDescripcion"+i).hide();
+            window.location.hash = 'analisis_'
+            if (i == 3) window.location.hash = 'plan-empresarial';
+            else if (i == 4) window.location.hash = 'plan-estrategico';
+            fetch('/solicitar-archivos-empresa', {
+                method: 'POST',
+                body: JSON.stringify({empresa, dimension, descripcion, tabla}),
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    if (response) {
+                        window.location.hash = 'analisis_'
+                        if (i == 3) window.location.hash = 'plan-empresarial';
+                        else if (i == 4) window.location.hash = 'plan-estrategico';
+                        location.reload();
+                    } else {
+                        Swal.fire('Error!','No sé pudo efectuar está acción, contactar a soporte..','error')
+                    }
+                });
+        }
+    }
+    
+    function eliminarArchivo_(id, tab, tabla) {
+        Swal.fire({
+            title: '¿Deseas eliminar este archivo?',
+            text: "Esta acción no se puede revertir.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Eliminar'
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                fetch('/eliminar-archivos-empresa', {
+                    method: 'POST',
+                    body: JSON.stringify({id, tabla}),
+                    headers: {'Content-Type': 'application/json'}
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response) {
+                            window.location.hash = 'analisis_'
+                            if (tab == 3) window.location.hash = 'plan-empresarial';
+                            else if (tab == 4) window.location.hash = 'plan-estrategico';
+                            location.reload();
+                        } else {
+                            Swal.fire('Error!','No sé pudo efectuar está acción, contactar a soporte..','error')
+                        }
+                    });
+            }
+        })
+    }
+    // REGISTRAR PAGO MANUAL (DIAGNÓSTICO DE NEGOCIO)
+    function pagoManual(id, precio) {
+        Swal.fire({
+            title: '¿Deseas registrar el pago del diagnóstico de negocio?',
+            text: "Asegúrate de que esta empresa haya realizado el pago de forma externa, esta acción no puede revertirse.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Pago confirmado'
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                fetch('/pagoManual-Diagnostico', {
+                    method: 'POST',
+                    body: JSON.stringify({id, precio}),
+                    headers: {'Content-Type': 'application/json'}
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response){
+                            window.location.hash = 'diagnostico_'
+                            location.reload();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'No sé pudo efectuar está acción, contactar a soporte..',
+                                'error'
+                            )
+                        }
+                    });
+            }
+        })
+    }
+
+    // REGISTRAR PAGO MANUAL (ANÁLISIS Y PLAN EMPRESARIAL)
+    function pagoManualEmpresas(num, id, tipo, precio) {
+        let txt = 'pago único';
+        let etapa = 2;
+        if (tipo == 'plan estratégico') etapa = 3;
+        else if (tipo == 'plan empresarial') etapa = 4
+        num == 1 ? txt = 'primer pago' : txt = txt;
+        num == 2 ? txt = 'segundo pago' : txt = txt;
+        num == 3 ? txt = 'tercer pago' : txt = txt;
+        Swal.fire({
+            title: `¿Deseas registrar el ${txt} de ${tipo}?`,
+            text: "Asegúrate de que esta empresa haya realizado el pago de forma externa, esta acción no puede revertirse.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: 'Pago confirmado'
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                fetch('/pagoManual-Empresas', {
+                    method: 'POST',
+                    body: JSON.stringify({num, id, etapa, precio}),
+                    headers: {'Content-Type': 'application/json'}
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response){
+                            if (etapa == 2)
+                                window.location.hash = 'analisis_'
+                            else if (etapa == 3)
+                                window.location.hash = 'plan-estrategico'
+                            else
+                                window.location.hash = 'plan-empresarial'
+                            location.reload();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'No sé pudo efectuar está acción, contactar a soporte..',
+                                'error'
+                            )
+                        }
+                    });
+            }
+        })
+    }
+    
+    function cancelarSubscripcion(empresa, id_sub) {
+        console.log(id_sub)
+        Swal.fire({
+            title: `¿Deseas cancelar la subscripción de esta empresa?`,
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'No',
+            confirmButtonText: 'Si'
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                fetch('/cancelarSub', {
+                    method: 'POST',
+                    body: JSON.stringify({empresa, id_sub}),
+                    headers: {'Content-Type': 'application/json'}
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response){
+                            window.location.hash = 'plan-estrategico'
+                            location.reload();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'No sé pudo efectuar está acción, contactar a soporte..',
+                                'error'
+                            )
+                        }
+                    })
+            }
+        })
+    }
+
+    function validar_nivelConsultor() {
+        if ($('#id_consultor option:selected').attr("id") == 4)
+            $('#divSede').show();
+        else
+            $('#divSede').hide();
+    }
+    
+    function validar_nivelEtapa() {
+        if ($('#id_consultor option:selected').attr("id") == 4 && $('#etapaConsultor option:selected').val() == "Diagnóstico")
+            $('#divSede').show();
+        else
+            $('#divSede').hide();
+    }
+
+</script>

@@ -1,0 +1,174 @@
+<style>
+    label {
+        color: black;
+    }
+
+    .form-control {
+        height: 50px;
+    }
+
+    .form-control:disabled {
+        text-align: center;
+        background: #f9f9f9;
+        color: #7E7E7E;
+    }
+
+    .form-group {
+        text-align: center;
+    }
+
+    .bootstrap-select:not([class*=col-]):not([class*=form-control]):not(.input-group-btn) {
+        width: 100%;
+    }
+
+    .bootstrap-select .btn {
+        font-size: 0.875rem;
+        height: 50px;
+    }
+</style>
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">Datos del Consultor</h4>
+            </div>
+            <div class="card-body">
+                <div class="row">
+
+                    <div class="col-xl-4 mt-2">
+                        <div class="form-group text-center">
+                            <label>Nombres y Apellidos</label>
+                            <input type="text" value="{{consultor.nombres}} {{consultor.apellidos}}"
+                                class="form-control" disabled>
+                            <input type="hidden" id="codigo_consultor" value="{{consultor.codigo}}">
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label>Email</label>
+                            <input type="text" value="{{consultor.email}}" class="form-control" style="line-height:4"
+                                disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-4">
+                        <div class="form-group">
+                            <label>Teléfono</label>
+                            <input type="text" value="{{consultor.tel_consultor}}" class="form-control" disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label>Dirección</label>
+                            <textarea class="form-control" style="min-height: 45px; height: 45px; max-height: 108px"
+                                style="text-align: justify;" disabled>{{consultor.direccion_consultor}}</textarea>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label>Experiencia</label>
+                            <input type="text" value="{{consultor.experiencia_years}} años" class="form-control"
+                                disabled>
+                        </div>
+                    </div>
+
+                    <div class="col-xl-3">
+                        <div class="form-group">
+                            <label>Estado</label>
+                            <select id="estado_consul" class="mr-sm-2 default-select">
+                                {{#comparar consultor.estadoAdm '==' 0}}
+                                <option value="0" selected>Pendiente</option>
+                                <option value="1">Activo</option>
+                                <option value="2">Bloqueado</option>
+                                <option value="3">Rechazado</option>
+                                {{/comparar}}
+                                {{#comparar consultor.estadoAdm '==' 1}}
+                                <option value="0">Pendiente</option>
+                                <option value="1" selected>Activo</option>
+                                <option value="2">Bloqueado</option>
+                                <option value="3">Rechazado</option>
+                                {{/comparar}}
+                                {{#comparar consultor.estadoAdm '==' 2}}
+                                <option value="0">Pendiente</option>
+                                <option value="1">Activo</option>
+                                <option value="2" selected>Bloqueado</option>
+                                <option value="3">Rechazado</option>
+                                {{/comparar}}
+                                {{#comparar consultor.estadoAdm '==' 3}}
+                                <option value="0">Pendiente</option>
+                                <option value="1">Activo</option>
+                                <option value="2">Bloqueado</option>
+                                <option value="3" selected>Rechazado</option>
+                                {{/comparar}}
+                            </select>
+                        </div>
+                    </div>
+                     <div class="col-xl-3">
+                        <div class="form-group">
+                            <label>Nivel</label>
+                            <select id="nivel_consul" class="mr-sm-2 default-select">
+                                {{#comparar consultor.nivel '==' 1}}
+                                <option value="1" selected>1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                {{/comparar}}
+                                {{#comparar consultor.nivel '==' 2}}
+                                <option value="1">1</option>
+                                <option value="2" selected>2</option>
+                                <option value="3">3</option>
+                                <option value="4">4</option>
+                                {{/comparar}}
+                                {{#comparar consultor.nivel '==' 3}}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3" selected>3</option>
+                                <option value="4">4</option>
+                                {{/comparar}}
+                                {{#comparar consultor.nivel '==' 4}}
+                                <option value="1">1</option>
+                                <option value="2">2</option>
+                                <option value="3">3</option>
+                                <option value="4" selected>4</option>
+                                {{/comparar}}
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <!-- ./Fin Fila 1 -->
+
+                <div class="row mt-2 ">
+                    <div class="col-xl-6 m-auto">
+                        <div class="form-group">
+                            <label>Certificado de Consul Business School</label>
+                            <div class="input-group input-primary">
+                                <input type="text" class="form-control" readonly value="{{consultor.txtCertificado}}">
+                                <div class="input-group-append">
+                                    <a class="input-group-text" target="_blank" href="{{consultor.certificado}}">Ver documento</a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="row">
+                    <div class="col-xl-3 m-auto">
+                        <div class="form-group">
+                            <a type="button" class="add-menu-sidebar color_gradient text-white" id="btnActualizarConsultor"
+                                style="padding: 10px 15px;">
+                                <p class="font-w500 m-auto">Guardar cambios</p>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

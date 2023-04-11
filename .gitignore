@@ -1,0 +1,14 @@
+.vscode
+node_modules
+src/.env
+.env
+src/public/archivos_analisis_empresa/*.*
+src/public/archivos_empresarial_empresa/*.*
+src/pulblic/archivos_estrategico_empresa/*.*
+src/public/archivos_plan_empresarial/*.*
+src/public/propuestas_empresa/*.pdf
+src/public/certificados_consultores/*.pdf
+src/public/informes_empresas/*.pdf
+src/public/foto_profile/*.jpg
+src/public/foto_profile/*.jpeg
+src/public/foto_profile/*.png

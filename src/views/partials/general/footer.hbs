@@ -1,0 +1,289 @@
+{{!-- COMMON SCRIPTS --}}
+<script src="../js/jquery.js"></script>
+<script src="https://code.iconify.design/2/2.2.0/iconify.min.js"></script>
+<script src="../js/popper.min.js"></script>
+<script src="../js/loginMain.js"></script>
+<script src="../js/bootstrap.min.js"></script>
+<script src="../js/bootstrap.bundle.min.js"></script>
+<script src="../vendor/js/global.min.js"></script>
+<script src="../vendor/js/bootstrap-select.min.js"></script>
+<script src="../vendor/js/custom.min.js"></script>
+<script src="../vendor/js/deznav-init.js"></script>
+
+{{!-- SWEET ALERT 2 --}}
+<script src="//cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.js"></script>
+
+{{!-- SELECTOR CON BUSCADOR --}}
+<script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
+
+{{!-- SCRIPTS PARA CALENDARIO --}}
+<!-- DUET Picker -->
+<script type="module" src="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/duet.esm.js"></script>
+<script nomodule src="https://cdn.jsdelivr.net/npm/@duetds/date-picker@1.4.0/dist/duet/duet.js"></script>
+
+{{#if wizarx}}
+{{!-- Wizard Formularios Scripts --}}
+<script src="../js/common_scripts.min.js"></script>
+<script src="../js/velocity.min.js"></script>
+<script src="../js/common_functions.js"></script>
+<script src="../js/file-validator.js"></script>
+<script src="../js/func_1.js"></script>
+{{/if}}
+
+<script src="../vendor/js/toastr.min.js"></script>
+
+<!-- Chart plugin files -->
+<script src="../js/apexcharts.js"></script>
+<script src="../js/apexcharts.min.js"></script>
+<script src="../vendor/js/chartist.min.js"></script>
+<script src="../vendor/js/chartist-plugin-tooltip.min.js"></script>
+<script src="../js/chartist-init.js"></script> 
+{{#if jsonDim}}
+<script src="../js/chartjs.init.js"></script>
+{{/if}} 
+
+{{> general/sidebarConsultor}}
+
+{{!-- SCRIPTS - VALIDACIONES FICHA CLIENTE --}}
+<script>
+    // ==> Previsualizar foto de perfil == INICIO <==
+    let formData, fileInput;
+    function fileValidation() {
+        fileInput = document.getElementById('previewProfile')
+        const filePath = fileInput.value;
+        const allowedExtensions = /(.jpg|.jpeg|.png)$/i;
+        const archivo = fileInput.files[0];
+
+        if (!allowedExtensions.exec(filePath)) {
+            toastr.success("Solo los formatos jpg, jpeg, png son aceptados", "Atención", {
+                positionClass: "toast-top-full-width",
+                timeOut: 3e3,
+                closeButton: !0,
+                debug: !1,
+                newestOnTop: !0,
+                progressBar: !0,
+                preventDuplicates: !0,
+                onclick: null,
+                showDuration: "200",
+                hideDuration: "200",
+                extendedTimeOut: "200",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut",
+                tapToDismiss: !1
+            })
+            return false;
+        } else if (archivo.size > 5000000) {
+            toastr.warning("Tu foto supera 1MB", "Error", {
+                positionClass: "toast-top-full-width",
+                timeOut: 3e3,
+                closeButton: !0,
+                debug: !1,
+                newestOnTop: !0,
+                progressBar: !0,
+                preventDuplicates: !0,
+                onclick: null,
+                showDuration: "200",
+                hideDuration: "200",
+                extendedTimeOut: "200",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut",
+                tapToDismiss: !1
+            })
+            return false;
+        } else {
+            /** SI LA FOTO ES ACEPTADA **/
+            if (fileInput.files && fileInput.files[0]) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    $('#imagePre1').attr('src', e.target.result); // Renderizamos la imagen
+                }
+                reader.readAsDataURL(fileInput.files[0]);
+            }
+            const foto = fileInput.files[0]
+            formData = new FormData();
+            formData.append('foto', foto);
+            guardarFoto(formData);
+        }
+    }
+    $("#imgInp").change(function () {
+        // Código a ejecutar cuando se detecta un cambio de archivO
+        readImage(this);
+    });
+    // ==> Previsualizar foto de perfil == FIN <==
+
+    function guardarFoto(formData) {
+        fetch('/actualizarFotoPerfil', {
+            method: 'POST',
+            body: formData,
+        }).then(res => res.json())
+            .catch(error => console.error('Error: ', error))
+            .then(resultado => {
+                if (resultado) {
+                    $(".btn-save").attr("disabled", true);
+                    $(".loading-icon").removeClass("mostrar");
+                    $(".text-btn").text("Cargando..");
+
+                    setTimeout(function () {
+                        $(".btn-save").attr("disabled", false);
+                        $(".loading-icon").addClass("mostrar");
+                        $(".text-btn").text("Guardar cambios");
+                    }, 4000)
+                    console.log("Todo correcto")
+                } else {
+                    console.log("Sin datos")
+                }
+            })
+    }
+
+    (function () {
+        $(document).ready(function () {
+            
+            /*************************************************************************/    
+            // CAMPO DATE PICKER (DUET LIBRARY)
+            const elementos = document.querySelectorAll("duet-date-picker")
+            const DATE_FORMAT_US = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+            elementos.forEach(picker => {
+                picker.dateAdapter = {
+                    parse(value = "", createDate) {
+                        const matches = value.match(DATE_FORMAT_US)
+
+                        if (matches) {
+                            return createDate(matches[3], matches[1], matches[2])
+                        }
+                    },
+                    format(date) {
+                        return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
+                    },
+                }
+
+                picker.localization = {
+                    placeholder: "MM/DD/AAAA",
+                    selectedDateMessage: "La fecha seleccionada es",
+                    prevMonthLabel: "Mes anterior",
+                    nextMonthLabel: "Mes siguiente",
+                    monthSelectLabel: "Mes",
+                    yearSelectLabel: "Año",
+                    closeLabel: "Cerrar ventana",
+                    calendarHeading: "Selecciona una fecha",
+                    dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+                    //dayNamesShort: ["DO", "LU", "MA", "MI", "JU", "VI", "SA"],
+                    monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+                    monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+                    locale: "en-US",
+                }
+            })
+
+            // Formateando Celdas con precios de propuestas para las etapas
+            const precios = document.querySelectorAll(".precios_celdas")
+            precios.forEach(x => {
+                if (x.innerHTML != 'Sin consultor'){
+                    console.log(x.innerHTML)
+                    let precio = x.innerHTML
+                    precio = new Intl.NumberFormat('en-US', { style: 'currency', currency: 'USD' }).format(precio)
+                    x.innerHTML = precio;
+                }
+            })
+
+            // FUNCIONALIDAD PARA SELECTOR CON BUSCADOR
+            function selectBuscarPais(id) {
+                id.chosen({
+                    no_results_text: "Sin resultados para",
+                    allow_single_deselect: true,
+                    placeholder_text_single: "Selecciona tu País/Nacionalidad",
+                    width: '100%',
+                });
+            }
+            const claseCajaPais = $('#pais')
+            selectBuscarPais(claseCajaPais);
+
+            function selectBuscar(id) {
+                id.chosen({
+                    no_results_text: "Sin resultados para",
+                    allow_single_deselect: true,
+                    placeholder_text_single: "Selecciona una opción",
+                    width: '100%',
+                });
+            }
+            const claseCajaGeneral = $('.sltBuscar')
+            selectBuscar(claseCajaGeneral);
+
+            // CAMPOS SOLO LETRAS
+            $("input.campoLetras").bind('keypress', function (event) {
+                let regex = new RegExp("^[a-zA-ZÀ-ÿ.\u00f1\u00d1 ]+$");
+                let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            // CAMPOS SOLO NÚMEROS
+            $("input.campoNum").bind('keypress', function (event) {
+                let regex = new RegExp("^[0-9 .]+$");
+                let key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+                if (!regex.test(key)) {
+                    event.preventDefault();
+                    return false;
+                }
+            });
+
+            // CheckButton Tiene Socios - ficha Cliente
+            $("input.checkSocios").change(function () {
+                //const numS = $("#cantidad_socios")
+                const numS = document.getElementById("cantidad_socios")
+                if ($(this).val() == "Si") {
+                    numS.removeAttribute("disabled");
+                    numS.style.background = "white";
+                    numS.value = 1;
+                } else {
+                    numS.setAttribute("disabled", true);
+                    numS.style.background = "#f2f2f2";
+                    numS.value = 0;
+                    numS.removeAttribute("min");
+                }
+            });
+
+            // Actualizar Estado del Consultor
+            $("#btnActualizarConsultor").click(function () {
+                const estado = $("#estado_consul option:selected").val()
+                const nivel = $("#nivel_consul option:selected").val()
+                const codigo = $("#codigo_consultor").val()
+                fetch('/actualizarConsultor', {
+                    method: 'POST',
+                    body: JSON.stringify({ codigo, estado, nivel }),
+                    headers: { 'Content-Type': 'application/json' }
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response) {
+                            window.location.href = "/consultores";
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'Ocurrió un problema al guardar los cambios, comunicate con soporte',
+                                'error'
+                            )
+                        }
+                    });
+            })
+            {{#if confirmarLogin}}
+            Swal.fire({
+                icon: 'success',
+                title: 'Correo verificado',
+                text: 'Has confirmado satisfactoriamente tu cuenta, ahora puedes iniciar sesión',
+            })
+            {{/if}}
+            {{#if msgSuccessClave}}
+            Swal.fire({
+                icon: 'success',
+                title: 'Cambio exitoso',
+                text: 'Tu contraseña ha sido actualizada.',
+            })
+            {{/if}}
+        });
+    })();
+</script>

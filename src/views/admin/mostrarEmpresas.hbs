@@ -1,0 +1,106 @@
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h4 class="card-title">Datos de empresas</h4>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="empresasTabla" class="table table-striped text-center" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th>Empresa</th>
+                                        <th>Registro</th>
+                                        <th>Nombre</th>
+                                        <th>Correo</th>
+                                        <th>Teléfono</th>
+                                        <th>Estado</th>
+                                        <th>Etapa</th>
+                                        <th>Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each empresas}}
+                                    <tr>
+                                        <td>{{nombre_empresa}}</td>
+                                        <td>{{fecha_creacion}}</td>
+                                        <td>{{nombres}} {{apellidos}}</td>
+                                        <td>{{email}}</td>
+                                        <td>{{#if telefono}}{{telefono}}{{else}}N/A{{/if}}</td>
+                                        <td>
+                                            {{#comparar estadoAdm '==' 0}}
+                                            <span class="badge light badge-danger">Bloqueada</span>
+                                            {{/comparar}}
+                                            {{#comparar estadoAdm '!=' 0}}
+                                            <span class="badge light badge-success" >Activa</span>
+                                            {{/comparar}}
+                                        </td>
+                                        <td>{{etapa}}</td>
+                                        <td>
+                                            <div style="margin: 0 auto">
+                                                <a  href="/empresas/{{codigo}}" class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                    <i class="fa fa-pencil"></i>
+                                                </a>
+                                                <a onclick="bloquearEmpresa({{id_empresas}})" class="btn btn-warning shadow btn-xs sharp mr-1 text-white"><i class="fa fa-ban"></i></a>
+                                                <a onclick="eliminarEmpresa({{id_empresas}})" class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<!--**********************************
+            Scripts
+***********************************-->
+<script>
+    function bloquearEmpresa(id) {
+        Swal.fire({
+            title: '¿Deseas bloquear esta empresa?',
+            text: "Podrás activarla nuevamente más adelante.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: '¡Sí, bloquear!'
+        })
+        .then((result) => {
+            if (result.isConfirmed) {
+                fetch('/bloquearEmpresa', {
+                    method: 'POST',
+                    body: JSON.stringify({id}),
+                    headers: {'Content-Type': 'application/json'}
+                }).then(res => res.json())
+                    .catch(error => console.error('Error:', error))
+                    .then(response => {
+                        if (response){
+                            location.reload();
+                        } else {
+                            Swal.fire(
+                                'Error!',
+                                'La empresa ya está bloqueada/inactiva.',
+                                'error'
+                            )
+                        }
+                    });
+            }
+        })
+    }
+</script>

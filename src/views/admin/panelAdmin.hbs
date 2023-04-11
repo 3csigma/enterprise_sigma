@@ -1,0 +1,339 @@
+<style>
+.apexcharts-text tspan {
+    font-family: 'Oblivian Text' !important;
+}
+</style>
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+
+            {{!-- Nuevos consultores --}}
+            <div class="col-xl-4 col-lg-6">
+                <div class="card">
+                    <div class="card-header pb-0 border-0">
+                        <span class="p-3 mr-3 rounded color_primary">
+                            <svg width="26" height="26" viewBox="0 0 26 26" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M12.9875 0.5C6.08755 0.5 0.487549 6.1 0.487549 13C0.487549 19.9 6.08755 25.5 12.9875 25.5C19.8875 25.5 25.4875 19.9 25.4875 13C25.4875 6.1 19.8875 0.5 12.9875 0.5ZM17.5 8.425C18.8375 8.425 19.9125 9.5 19.9125 10.8375C19.9125 12.175 18.8375 13.25 17.5 13.25C16.1625 13.25 15.0875 12.175 15.0875 10.8375C15.075 9.5 16.1625 8.425 17.5 8.425ZM10 6.45C11.625 6.45 12.95 7.775 12.95 9.4C12.95 11.025 11.625 12.35 10 12.35C8.37505 12.35 7.05005 11.025 7.05005 9.4C7.05005 7.7625 8.36255 6.45 10 6.45ZM10 17.8625V22.55C7.00005 21.6125 4.62505 19.3 3.57505 16.35C4.88755 14.95 8.16255 14.2375 10 14.2375C10.6625 14.2375 11.5 14.3375 12.375 14.5125C10.325 15.6 10 17.0375 10 17.8625ZM12.9875 23C12.65 23 12.325 22.9875 12 22.95V17.8625C12 16.0875 15.675 15.2 17.5 15.2C18.8375 15.2 21.15 15.6875 22.3 16.6375C20.8375 20.35 17.225 23 12.9875 23Z"
+                                    fill="white" />
+                            </svg>
+                        </span>
+                        <div class="mr-auto pr-3">
+                            <h4 class="text-black fs-20">Nuevos consultores</h4>
+                            <p class="fs-13 mb-0 text-black">Registros recientes</p>
+                        </div>
+                    </div>
+                    {{#if datosJson_historialC_adm}}
+                    <input type="hidden" id="datosJson_historialC_adm" value="{{datosJson_historialC_adm }}">
+                    <div class="card-body pb-0">
+                        <div id="chartBar2"></div>
+                    </div>
+                    {{else}}
+                    <div class="card-body pb-0" style="text-align: center;">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div>
+                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px;height: 60px; padding-top: 10px;"></i>
+                            </center><br>
+                            <p>Aún no hay información para mostrar</p>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+            {{!-- Nuevas empresas --}}
+            <div class="col-xl-4 col-lg-6">
+                <div class="card">
+                    <div class="card-header pb-0 border-0">
+                        <span class="p-3 mr-3 rounded color_tertiary" >
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <rect width="30" height="30" fill="url(#pattern0)" />
+                                <defs>
+                                    <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                        <use xlink:href="#image0_234_6803" transform="scale(0.0104167)" />
+                                    </pattern>
+                                    <image id="image0_234_6803" width="96" height="96"
+                                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAABI0lEQVR4nO3bwYqDQBQAwbjk/3/ZPS8EhsFZW2PV3WBoHji+5PUCAACeZpu9YN/3/T9uZJVt26a/U+mnvoGnEyAmQEyAmAAxAWICxN6rP/Buz+E1ExATICZATICYADEBYgLElp8DRuwT/jIBMQFiAsQEiAkQEyAmQOz0c8DI0/YJJiAmQEyAmAAxAWICxASIXe4cMPJt+wQTEBMgJkBMgJgAMQFiAsRudw4YGT2Hj84RR6+fZQJiAsQEiAkQEyAmQEyA2PQ54Oq/2zn6nH72vsEExASICRATICZATICYADH7gMXXzzIBMQFiAsQEiAkQEyAmQOzS7/Y/8f8AlhIgJkBMgJgAMQFiAsQetw84yj7gywgQEyAmQEyAmAAxAQAAAE72C3l/LLO35qJwAAAAAElFTkSuQmCC" />
+                                </defs>
+                            </svg>
+                        </span>
+                        <div class="mr-auto pr-3">
+                            <h4 class="text-black fs-20">Nuevas empresas</h4>
+                            <p class="fs-13 mb-0 text-black">Registros recientes</p>
+                        </div>
+                    </div>
+                        {{#if datosJson_historialE_adm}}
+                    <input type="hidden" id="datosJson_historialE_adm" value="{{datosJson_historialE_adm }}">
+                    <div class="card-body pb-0">
+                        <div id="chartBar"></div>
+                    </div>
+                    {{else}}
+                    <div class="card-body pb-0" style="text-align: center;">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div>
+                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px;height: 60px; padding-top: 10px;"></i>
+                            </center><br>
+                            <p>Aún no hay información para mostrar</p>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            {{!-- Informes generados --}}
+            <div class="col-xl-4">
+                <div class="card">
+                    <div class="card-header pb-0 border-0">
+                        <span class="p-3 mr-3 rounded color_secondary">
+                            <svg width="24" height="30" viewBox="0 0 24 30" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M3 0C1.35 0 0.0150003 1.35 0.0150003 3L0 27C0 28.65 1.335 30 2.985 30H21C22.65 30 24 28.65 24 27V9L15 0H3ZM13.5 10.5V2.25L21.75 10.5H13.5Z"
+                                    fill="white" />
+                            </svg>
+                        </span>
+                        <div class="mr-auto pr-3">
+                            <h4 class="text-black fs-20">Informes generados</h4>
+                            <p class="fs-13 mb-0 text-black">Registros recientes</p>
+                        </div>
+                    </div>
+                     {{#if datosJson_historialI_adm}}
+                    <input type="hidden" id="datosJson_historialI_adm" value="{{datosJson_historialI_adm }}">
+                    <div class="card-body pb-0">
+                        <div id="chartBar3"></div>
+                    </div>
+                    {{else}}
+                    <div class="card-body pb-0" style="text-align: center;">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div>
+                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px;height: 60px; padding-top: 10px;"></i>
+                            </center><br>
+                            <p>Aún no hay información para mostrar</p>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            {{!-- TAREAS PROPIAS ADMIN --}}
+            <input type="hidden" id="idConsultor" value="{{ide_consultor}}">
+            <input type="hidden" id="datosUsuario" value="{{datosUsuario}}">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h4 class="card-title" style="margin:0 auto">Tareas Administrador</h4>
+                        </div>
+            
+                        <div class="row mt-3">
+                            <div class="form-group col-md-12">
+                                <label for="actividad">Título de actividad a realizar *</label>
+                                <input type="text" class="form-control" id="actividad-consultor" maxlength="47"
+                                    placeholder="Escriba un título..">
+                            </div>
+            
+                            <div class="form-group col-md-6">
+                                <label for="fecha_inicio">Fecha de inicio *</label>
+                                <duet-date-picker id="fecha_inicio-consultor" min="{{fechaActual}}"
+                                    first-day-of-week="0"></duet-date-picker>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fecha_entrega-consultor">Fecha de entrega *</label>
+                                <duet-date-picker id="fecha_entrega-consultor" min="{{fechaActual}}"
+                                    first-day-of-week="0"></duet-date-picker>
+                            </div>
+            
+                            <div class="col-md-3 mx-auto">
+                                <button onclick="agregarTarea_()" class="btn color_primary text-white"
+                                    style="margin-top: 1em; width: 100%;padding: 10px 15px;">
+                                    <p class="font-w500 m-auto">Agregar</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- LISTADO DE TAREAS --}}
+            <div class="col-xl-12">
+                <div class="card plan-list">
+                    <div class="card-header d-sm-flex flex-wrap d-block pb-0 border-0">
+                        <div class="mr-auto pr-3 mb-3">
+                            <h4 class="text-black fs-20">Lista de tareas</h4>
+                            <p class="fs-13 mb-0 text-black">Haz clic en una tarea para editarla</p>
+                        </div>
+                        <div class="card-action card-tabs mr-4 mt-3 mt-sm-0 mb-3">
+                        </div>
+                    </div>
+            
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered verticle-middle table-responsive-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 17em;">Nombre</th>
+                                        <th scope="col">Responsable</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Cronograma</th>
+                                        <th scope="col">Prioridad</th>
+                                        <th scope="col">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpoTareasConsultor">
+                                    {{#if tareas}}
+                                    {{#each tareas}}
+                                    <tr>
+                                        <td>{{actividad}}</td>
+                                        <td>{{responsable}}</td>
+                                        <td class="text-{{color}} font-w600" style="font-size: 14px;">{{estado}}</td>
+                                        <td>
+                                            <div
+                                                style="width:100% ; margin-left: -8px;font-size: 8px;height: 15px; text-align: center;color: white;background: #ada7a7;border-radius: 7px;">
+                                                {{fecha_inicio}} - {{fecha_entrega}}
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                    style="width:{{resultado}}%;height: 16px;margin-top: -13px;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="text-white" style="{{background}};{{fontSize}}; text-align:center">{{prioridad}}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <a onclick="editarTarea_({{id}})" title="Editar"
+                                                    class="btn color_primary shadow btn-xs sharp mr-1 text-white"><i
+                                                        style="color:white ;" class="fa fa-pencil"></i>
+                                                </a>
+                                                <a onclick="eliminarTarea_({{id}}, 1)" title="Eliminar"
+                                                    class="btn btn-danger shadow btn-xs sharp" style="background: #DC0000;"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="12px" viewBox="0 0 448 512">
+                                                        <path
+                                                            d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"
+                                                            fill="white" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                    {{/if}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- ÚLTIMAS EMPRESAS REGISTRADAS --}}
+            <div class="col-xl-6 col-xxl-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Últimas empresas registradas</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-responsive-md text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>FECHA</th>
+                                                <th>EMPRESA</th>
+                                                <th>NOMBRE</th>
+                                                <th>ACCIÓN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#unless empresas}}
+                                            <tr>
+                                                <td colspan="4">Aún no hay empresas registrados.</td>
+                                            </tr>
+                                            {{/unless}}
+                                            {{#each empresas}}
+                                            <tr>
+                                                <td>{{fecha_creacion}}</td>
+                                                <td>{{nombre_empresa}}</td>
+                                                <td>{{nombres}} {{apellidos}}</td>
+                                                <td>
+                                                    <div class="d-flex justify-content-center">
+                                                        <a href="/empresas/{{codigo}}" class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- ÚTIMOS CONSULTORES REGISTRADOS --}}
+            <div class="col-xl-6 col-xxl-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Últimos consultores registrados</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-responsive-md text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>NOMBRES</th>
+                                                <th>APELLIDOS</th>
+                                                <th>EMAIL</th>
+                                                <th>ACCIÓN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#unless consultores}}
+                                            <tr>
+                                                <td colspan="4">Aún no hay consultores registrados.</td>
+                                            </tr>
+                                            {{/unless}}
+                                            {{#each consultores}}
+                                            <tr>
+                                                <td>{{#if nombres}} {{nombres}} {{else}} N/A {{/if}}</td>
+                                                <td>{{#if apellidos}} {{apellidos}} {{else}} N/A {{/if}}</td>
+                                                <td>{{#if email}} {{email}} {{else}} N/A {{/if}}</td>
+                                                <td class="mx-auto">
+                                                    <div class="d-flex">
+                                                        <a href="/consultores/{{codigo}}" class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+
+        </div>
+    </div>
+</div>

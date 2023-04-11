@@ -1,0 +1,37 @@
+<div class="modal fade bd-example-modal-sm" id="modalNewRendimiento" tabindex="-1" role="dialog" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" style="max-width: 500px;">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Nuevo Rendimiento</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>×</span></button>
+            </div>
+            <form action="/nuevoRendimiento" method="post">
+                <div class="modal-body">
+                        <input type="hidden" name="codigo" value="{{datos.code}}">
+                        <div class="form-group col-md-12 pt-2">
+                            <label for="total-ventas">Total de Ventas</label>
+                            <input type="text" class="form-control inputTotales_ required" id="total-ventas" name="total_ventas">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="total-compras">Total de Compras</label>
+                            <input type="text" class="form-control inputTotales_ required" id="total-compras" name="total_compras">
+                        </div>
+                        <div class="form-group col-md-12">
+                            <label for="total-gastos">Total de Gastos</label>
+                            <input type="text" class="form-control inputTotales_ required" id="total-gastos" name="total_gastos">
+                        </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn color_gradient text-white" 
+                    style="display: inline-block;">Guardar</button>
+                    <button type="button" class="btn btn-danger light text-white" data-dismiss="modal"
+                    style="display: inline-block;">Cancelar</button>
+                    {{!-- <button type="submit" class="btn btn-primary">Guardar</button> --}}
+                    {{!-- <button type="button" class="btn btn-danger light" data-dismiss="modal">Cerrar</button> --}}
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+{{> general/inputsMoneda}}

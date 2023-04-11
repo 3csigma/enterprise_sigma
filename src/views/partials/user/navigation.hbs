@@ -1,0 +1,243 @@
+<link href="https://assets.calendly.com/assets/external/widget.css" rel="stylesheet">
+<script src="https://assets.calendly.com/assets/external/widget.js" type="text/javascript" async></script>
+
+<!--*******************
+        Preloader start
+    ********************-->
+<div id="preloader">
+  <div class="sk-three-bounce">
+    <div class="sk-child sk-bounce1"></div>
+    <div class="sk-child sk-bounce2"></div>
+    <div class="sk-child sk-bounce3"></div>
+  </div>
+</div>
+<!--*******************
+        Preloader end
+    ********************-->
+<!--**********************************
+        Main wrapper start
+    ***********************************-->
+
+<div id="main-wrapper">
+  <!--**********************************
+          START Nav header start
+    ***********************************-->
+
+  <div class="nav-header">
+    <a href="/" class="brand-logo">
+      <img class="logo-abbr" src="/img/Favicon.svg" alt="">
+      <img class="logo-compact" src="/img/navigation-logo.svg" alt="" style="padding-top: 1em !important;">
+      <img class="brand-title mx-auto" src="/img/navigation-logo.svg" alt="" style="padding-top: 1em !important;">
+    </a>
+
+    <div class="nav-control">
+      <div class="hamburger">
+        <span class="line"></span><span class="line"></span><span class="line"></span>
+      </div>
+    </div>
+  </div>
+  <!--**********************************
+                END Nav header end
+    ***********************************-->
+
+  <!--**********************************
+                Header start
+    ***********************************-->
+  <div class="header">
+    <div class="header-content">
+      <nav class="navbar navbar-expand">
+        <div class="collapse navbar-collapse justify-content-between">
+          <div class="header-left">
+            <div class="dashboard_bar">
+              {{#if itemDashboard}}Dashboard{{/if}}
+              {{#if itemDiagnostico}}Diagnóstico de negocio{{/if}}
+              {{#if itemAnalisis}}Análisis de negocio{{/if}}
+              {{#if itemEmpresarial}}Plan empresarial{{/if}}
+              {{#if itemEstrategico}}Plan estratégico de negocio{{/if}}
+              {{#if empresa.foto}}Perfil{{/if}}
+            </div>
+          </div>
+          <ul class="navbar-nav header-right">
+
+            <li class="nav-item dropdown header-profile">
+              <a class="nav-link" href="javascript:void(0)" role="button" data-toggle="dropdown">
+              {{#if user.foto}}
+                <img src="{{user.foto}}" width="20" alt="profile" style="object-fit: cover;" />
+              {{else}}
+                <img src="../img/profile_default/user.jpg" width="20" alt="profile" style="object-fit: cover;" />
+              {{/if}}
+                <div class="header-info">
+                  <span class="text-black"><strong>{{user.nombres}} {{user.apellidos}}</strong></span>
+                  <p class="fs-12 mb-0">Editar perfil</p>
+                </div>
+              </a>
+              <div class="dropdown-menu dropdown-menu-right">
+                <a href="/perfil/{{user.codigo}}"  class="dropdown-item ai-icon">
+                  <svg id="icon-user1" xmlns="http://www.w3.org/2000/svg" class="text-primary" width="18" height="18"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="12" cy="7" r="4"></circle>
+                  </svg>
+                  <span class="ml-2">Perfil </span>
+                </a>
+                <a href="/logout" class="dropdown-item ai-icon">
+                  <svg id="icon-logout" xmlns="http://www.w3.org/2000/svg" class="text-danger" width="18" height="18"
+                    viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                    stroke-linejoin="round">
+                    <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
+                    <polyline points="16 17 21 12 16 7"></polyline>
+                    <line x1="21" y1="12" x2="9" y2="12"></line>
+                  </svg>
+                  <span class="ml-2">Cerrar sesión </span>
+                </a>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </nav>
+    </div>
+  </div>
+  <!--**********************************
+                Header end ti-comment-alt
+    ***********************************-->
+
+  <!--**********************************
+    START MENÚ LATERAL IZQUIERDO - INICIO
+    ***********************************-->
+  <div class="deznav">
+    <div class="deznav-scroll">
+      <ul class="metismenu" id="menu">
+        {{!-- ITEM DASHBOARD --}}
+        {{#if itemDashboard}}
+        <li class="mm-active">
+        {{else}}
+        <li>
+        {{/if}}
+          <a href="/" aria-expanded="false">
+            <i class="zmdi zmdi-view-dashboard"></i>
+            <span class="nav-text">Dashboard</span>
+          </a>
+        </li>
+
+        {{!-- ITEM DIAGNÓSTICO --}}
+        {{#if itemDiagnostico}}
+        <li class="mm-active">
+        {{else}}
+        <li>
+        {{/if}}
+          {{#if consulAsignado.c1}}
+            {{#if modalAcuerdo}}
+            <a href="#" data-toggle="modal" data-target="#modal-acuerdo-confidencial">
+            {{else}}
+            <a href="/diagnostico-de-negocio" aria-expanded="false">
+            {{/if}}
+          {{else}}
+            <a style="cursor:pointer" onclick="msgSinConsultor()" aria-expanded="false">
+          {{/if}}
+
+          {{#if etapaCompleta.e1}}
+            <i class="fa-solid fa-check" style="color:#6EBB0B"></i>
+            <span class="nav-text" style="color: #6EBB0B">Diagnóstico de negocio</span>
+            {{else}}
+            <i class="fa-solid fa-gauge-high"></i>
+            <span class="nav-text">Diagnóstico de negocio</span>
+          {{/if}}
+          </a>
+        </li>
+
+        {{!-- ITEM ANÁLISIS --}}
+        {{#if etapaCompleta.verAnalisis}}
+        {{#if itemAnalisis}}
+        <li class="mm-active">
+        {{else}}
+        <li>
+        {{/if}}
+          {{#if consulAsignado.c2}}
+            <a href="/analisis-de-negocio" aria-expanded="false">
+          {{else}}
+          <a style="cursor:pointer" onclick="msgSinConsultor()" aria-expanded="false">
+          {{/if}}
+
+            {{#if etapaCompleta.e2}}
+            <i class="fa-solid fa-check" style="color:#6EBB0B"></i>
+            <span class="nav-text" style="color: #6EBB0B">Análisis de negocio</span>
+            {{else}}
+            <i class="fa-solid fa-magnifying-glass-dollar"></i>
+            <span class="nav-text">Análisis de negocio</span>
+            {{/if}}
+          </a>
+        </li>
+        {{/if}}
+
+        {{!-- ITEM PLAN EMPRESARIAL --}}
+        {{#if etapaCompleta.verEmpresarial}}
+        {{#if itemEmpresarial}}
+        <li class="mm-active">
+        {{else}}
+        <li>
+        {{/if}}
+          {{#if consulAsignado.c3}}
+            <a href="/plan-empresarial" aria-expanded="false">
+          {{else}}
+          <a style="cursor:pointer" onclick="msgSinConsultor()" aria-expanded="false">
+          {{/if}}
+
+            {{#if etapaCompleta.e3}}
+            <i class="fa-solid fa-check" style="color:#6EBB0B"></i>
+            <span class="nav-text" style="color: #6EBB0B">Plan empresarial</span>
+            {{else}}
+            <i class="fa-solid fa-laptop-file"></i>
+            <span class="nav-text">Plan empresarial</span>
+            {{/if}}
+          </a>
+        </li>
+        {{/if}}
+
+        {{!-- ITEM ESTRATÉGICO --}}
+        {{#if etapaCompleta.verEstrategico}}
+        {{#if itemEstrategico}}
+        <li class="mm-active">
+        {{else}}
+        <li>
+        {{/if}}
+          
+          {{#if consulAsignado.c4}}
+            <a href="/plan-estrategico" aria-expanded="false">
+          {{else}}
+          <a style="cursor:pointer" onclick="msgSinConsultor()" aria-expanded="false">
+          {{/if}}
+
+            {{#if etapaCompleta.e4}}
+            <i class="fa-solid fa-check" style="color:#6EBB0B"></i>
+            <span class="nav-text" style="color: #6EBB0B">Plan estratégico</span>
+            {{else}}
+            <i class="fa-solid fa-lightbulb"></i>
+            <span class="nav-text">Plan estratégico</span>
+            {{/if}}
+          </a>
+        </li>
+        {{/if}}
+
+      </ul>
+
+        <br>
+        <br>
+
+        <div class="text-center" style="margin-top: 20em;">
+          <div>
+            <li>
+              <a href="https://api.whatsapp.com/send/?phone=%2B17863548822&text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20para%20la%20plataforma%203C%20Sigma&app_absent=0" target="_blank" class="btn_1 rounded yellow my-auto" style="padding: 2px;" aria-expanded="false">
+                <i class="fab fa-whatsapp" style="font-size:19px"></i> ¿Tienes dudas?
+              </a>
+            </li>
+          </div>
+          <div class="copyright">
+            <p><strong>© 3C Sigma {{actualYear}}</strong></p>
+          </div>
+        </div>
+    </div>
+  </div>
+  <!--**********************************
+              END MENÚ LATERAL IZQUIERDO FIN
+  ***********************************-->

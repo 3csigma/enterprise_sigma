@@ -1,0 +1,381 @@
+<script>
+    (function () {
+
+        const dzChartlist = function () {
+
+            // NÚMERO DE EMPRESAS 👌 ============|
+            const chartBar = function () {
+                    let valoresE = []   // => Valores historial empresas
+                    const datosY = []  // => Datos para la barras de la grafica
+                    const datosX = [] // => Datos para el eje X (los meses)
+                    valoresE = $('#datosJson_historialE_adm').val();
+                    console.log(valoresE)
+                    if (valoresE) {
+                        valoresE = JSON.parse(valoresE);
+                        console.log(valoresE)
+                        valoresE.forEach(e => {
+                        datosY.push(e.num_empresas)
+                        datosX.push(e.mes)
+                        })
+                    }
+                var optionsArea = {
+                    series: [{
+                        name: "Nuevas Empresas",
+                        data: datosY
+                    }
+                    ],
+                    chart: {
+                        height: 400,
+                        type: 'area',
+                        group: 'social',
+                        toolbar: {
+                            show: false
+                        },
+                        zoom: {
+                            enabled: false
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        width: [4],
+                        colors: ['#FED061'],
+                        curve: 'smooth'
+                    },
+                    legend: {
+                        show: false,
+                        tooltipHoverFormatter: function (val, opts) {
+                            return val + ' - ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
+                        },
+                        markers: {
+                            fillColors: ['#FED061'],
+                            width: 19,
+                            height: 19,
+                            strokeWidth: 0,
+                            radius: 19
+                        }
+                    },
+                    markers: {
+                        strokeWidth: [4],
+                        strokeColors: ['#FED061'],
+                        border: 0,
+                        colors: ['#fff'],
+                        hover: {
+                            size: 6,
+                        }
+                    },
+                   xaxis: {
+                         categories: datosX,
+                          labels: {
+                            style: {
+                                colors: '#3E4954',
+                                fontSize: '14px',
+                                fontFamily: 'Poppins',
+                                fontWeight: 100,
+
+                            },
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            offsetX: -16,
+                            style: {
+                                colors: '#3E4954',
+                                fontSize: '14px',
+                                fontFamily: 'Poppins',
+                                fontWeight: 100,
+
+                            },
+                              formatter: function (y) {
+                         return y.toFixed(0) + "";
+                     },
+                        },
+                       
+                    },
+                    fill: {
+                        colors: ['#FED061'],
+                        type: 'solid',
+                        opacity: 0.7
+                    },
+                    colors: ['#FED061'],
+                    grid: {
+                        borderColor: '#f1f1f1',
+                        xaxis: {
+                            lines: {
+                                show: true
+                            }
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 575,
+                        options: {
+                            chart: {
+                                height: 250,
+                            }
+                        }
+                    }]
+                };
+                var chartArea = new ApexCharts(document.querySelector("#chartBar"), optionsArea);
+                chartArea.render();
+
+            }
+
+            // NÚMERO DE CONSULTORES 👌 ============|
+            const chartBar2 = function () {
+                    let valoresC = []   // => Valores historial consultores
+                    const datosY = []  // => Datos para la barras de la grafica
+                    const datosX = [] // => Datos para el eje X (los meses)
+                    valoresC = $('#datosJson_historialC_adm').val();
+                    if (valoresC) {
+                        valoresC = JSON.parse(valoresC);
+                        console.log(valoresC)
+                        valoresC.forEach(c => {
+                        datosY.push(c.num_consultores)
+                        datosX.push(c.mes)
+                        })
+                    }
+                var optionsArea = {
+                    series: [{
+                        name: "Nuevos Consultores",
+                        data: datosY
+                    }
+                    ],
+                    chart: {
+                        height: 400,
+                        type: 'area',
+                        group: 'social',
+                        toolbar: {
+                            show: false
+                        },
+                        zoom: {
+                            enabled: false
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        width: [4],
+                        colors: ['#812082'],
+                        curve: 'smooth'
+                    },
+                    legend: {
+                        show: false,
+                        tooltipHoverFormatter: function (val, opts) {
+                            return val + ' - ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
+                        },
+                        markers: {
+                            fillColors: ['#812082'],
+                            width: 19,
+                            height: 19,
+                            strokeWidth: 0,
+                            radius: 19
+                        }
+                    },
+                    markers: {
+                        strokeWidth: [4],
+                        strokeColors: ['#812082'],
+                        border: 0,
+                        colors: ['#fff'],
+                        hover: {
+                            size: 6,
+                        }
+                    },
+                    xaxis: {
+                         categories: datosX,
+                          labels: {
+                            style: {
+                                colors: '#3E4954',
+                                fontSize: '14px',
+                                fontFamily: 'Poppins',
+                                fontWeight: 100,
+
+                            },
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            offsetX: -16,
+                            style: {
+                                colors: '#3E4954',
+                                fontSize: '14px',
+                                fontFamily: 'Poppins',
+                                fontWeight: 100,
+
+                            },
+                              formatter: function (y) {
+                         return y.toFixed(0) + "";
+                     },
+                        },
+                       
+                    },
+                    fill: {
+                        colors: ['#812082'],
+                        type: 'solid',
+                        opacity: 0.7
+                    },
+                    colors: ['#812082'],
+                    grid: {
+                        borderColor: '#f1f1f1',
+                        xaxis: {
+                            lines: {
+                                show: true
+                            }
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 575,
+                        options: {
+                            chart: {
+                                height: 250,
+                            }
+                        }
+                    }]
+                };
+                var chartArea = new ApexCharts(document.querySelector("#chartBar2"), optionsArea);
+                chartArea.render();
+
+            }
+
+            // NÚMERO DE INFORMES 👌 ============|
+            const chartBar3 = function () {
+                    let valoresI = []   // => Valores historial informes
+                    const datosY = []  // => Datos para la barras de la grafica
+                    const datosX = [] // => Datos para el eje X (los meses)
+                    valoresI = $('#datosJson_historialI_adm').val();
+                    console.log(valoresI)
+                    if (valoresI) {
+                        valoresI = JSON.parse(valoresI);
+                        console.log(valoresI)
+                        valoresI.forEach(i => {
+                        datosY.push(i.num_informes)
+                        datosX.push(i.mes)
+                        })
+                    }
+
+                var optionsArea = {
+                    series: [{
+                        name: "Informes generados",
+                        data: datosY
+                    }
+                    ],
+                    chart: {
+                        height: 400,
+                        type: 'area',
+                        group: 'social',
+                        toolbar: {
+                            show: false
+                        },
+                        zoom: {
+                            enabled: false
+                        },
+                    },
+                    dataLabels: {
+                        enabled: false
+                    },
+                    stroke: {
+                        width: [4],
+                        colors: ['#50368C'],
+                        curve: 'smooth'
+                    },
+                    legend: {
+                        show: false,
+                        tooltipHoverFormatter: function (val, opts) {
+                            return val + ' - ' + opts.w.globals.series[opts.seriesIndex][opts.dataPointIndex] + ''
+                        },
+                        markers: {
+                            fillColors: ['#50368C'],
+                            width: 19,
+                            height: 19,
+                            strokeWidth: 0,
+                            radius: 19
+                        }
+                    },
+                    markers: {
+                        strokeWidth: [4],
+                        strokeColors: ['#50368C'],
+                        border: 0,
+                        colors: ['#fff'],
+                        hover: {
+                            size: 12,
+                        }
+                    },
+                     xaxis: {
+                         categories: datosX,
+                          labels: {
+                            style: {
+                                colors: '#3E4954',
+                                fontSize: '14px',
+                                fontFamily: 'Poppins',
+                                fontWeight: 100,
+                            },
+                        },
+                    },
+                    yaxis: {
+                        labels: {
+                            offsetX: -16,
+                            style: {
+                                colors: '#3E4954',
+                                fontSize: '14px',
+                                fontFamily: 'Poppins',
+                                fontWeight: 100,
+
+                            },
+                            formatter: function (y) {
+                                return y.toFixed(0) + "";
+                            },
+                        },
+                    },
+                    fill: {
+                        colors: ['#50368C'],
+                        type: 'solid',
+                        opacity: 0.7
+                    },
+                    colors: ['#50368C'],
+                    grid: {
+                        borderColor: '#f1f1f1',
+                        xaxis: {
+                            lines: {
+                                show: true
+                            }
+                        }
+                    },
+                    responsive: [{
+                        breakpoint: 575,
+                        options: {
+                            chart: {
+                                height: 250,
+                            }
+                        }
+                    }]
+                };
+                var chartArea = new ApexCharts(document.querySelector("#chartBar3"), optionsArea);
+                chartArea.render();
+
+            }
+
+            /* Function ============ */
+            return {
+                load: function () {
+                    {{#if graficas1}}
+                    chartBar();
+                    chartBar2();
+                    chartBar3();
+                    {{/if}}
+                },
+            }
+
+        } ();
+
+        jQuery(window).on('load', function () {
+			setTimeout(function () {
+				dzChartlist.load();
+			}, 1000);
+		});
+
+		$(document).ready(function () {
+		});
+
+	})();
+</script>

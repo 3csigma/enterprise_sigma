@@ -1,0 +1,304 @@
+<style>
+.apexcharts-text tspan {
+    font-family: 'Oblivian Text' !important;
+}
+</style>
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+
+            {{!-- Empresas Asignadas --}}
+            <div class="col-xl-6 col-lg-6">
+                <div class="card">
+                    <div class="card-header pb-0 border-0">
+                        <span class="p-3 mr-3 rounded color_tertiary">
+                            <svg width="30" height="30" viewBox="0 0 30 30" fill="none"
+                                xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+                                <rect width="30" height="30" fill="url(#pattern0)" />
+                                <defs>
+                                    <pattern id="pattern0" patternContentUnits="objectBoundingBox" width="1" height="1">
+                                        <use xlink:href="#image0_234_6803" transform="scale(0.0104167)" />
+                                    </pattern>
+                                    <image id="image0_234_6803" width="96" height="96"
+                                        xlink:href="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAGAAAABgCAYAAADimHc4AAAABmJLR0QA/wD/AP+gvaeTAAABI0lEQVR4nO3bwYqDQBQAwbjk/3/ZPS8EhsFZW2PV3WBoHji+5PUCAACeZpu9YN/3/T9uZJVt26a/U+mnvoGnEyAmQEyAmAAxAWICxN6rP/Buz+E1ExATICZATICYADEBYgLElp8DRuwT/jIBMQFiAsQEiAkQEyAmQOz0c8DI0/YJJiAmQEyAmAAxAWICxASIXe4cMPJt+wQTEBMgJkBMgJgAMQFiAsRudw4YGT2Hj84RR6+fZQJiAsQEiAkQEyAmQEyA2PQ54Oq/2zn6nH72vsEExASICRATICZATICYADH7gMXXzzIBMQFiAsQEiAkQEyAmQOzS7/Y/8f8AlhIgJkBMgJgAMQFiAsQetw84yj7gywgQEyAmQEyAmAAxAQAAAE72C3l/LLO35qJwAAAAAElFTkSuQmCC" />
+                                </defs>
+                            </svg>
+                        </span>
+                        <div class="mr-auto pr-3">
+                            <h4 class="text-black fs-20">Empresas registradas por mes</h4>
+                            <p class="fs-13 mb-0 text-black">Asignadas a ti</p>
+                        </div>
+                    </div>
+                    {{#if datosJson_empresas_asignadass}}
+                    <input type="hidden" id="datosJson_empresas_asignadas" value="{{datosJson_empresas_asignadas}}">
+                    <div class="card-body pb-0">
+                        <div id="chartBar"></div>
+                    </div>
+                    {{else}}
+                    <div class="card-body pb-0" style="text-align: center;">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div>
+                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px;height: 60px; padding-top: 10px;"></i>
+                            </center><br>
+                            <p>Aún no hay información para mostrar</p>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            {{!-- Informes generados --}}
+            <div class="col-xl-6 col-lg-6">
+                <div class="card">
+                    <div class="card-header pb-0 border-0">
+                        <span class="p-3 mr-3 rounded color_secondary">
+                            <svg width="24" height="30" viewBox="0 0 24 30" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <path
+                                    d="M3 0C1.35 0 0.0150003 1.35 0.0150003 3L0 27C0 28.65 1.335 30 2.985 30H21C22.65 30 24 28.65 24 27V9L15 0H3ZM13.5 10.5V2.25L21.75 10.5H13.5Z"
+                                    fill="white" />
+                            </svg>
+                        </span>
+                        <div class="mr-auto pr-3">
+                            <h4 class="text-black fs-20">Informes generados</h4>
+                            <p class="fs-13 mb-0 text-black">Subidos por mes</p>
+                        </div>
+                    </div>
+                    {{#if datosJson_historialI_consultor}}
+                    <input type="hidden" id="datosJson_historialI_consultor" value="{{datosJson_historialI_consultor }}">
+                    <div class="card-body pb-0">
+                        <div id="chartBar3"></div>
+                    </div>
+                    {{else}}
+                    <div class="card-body pb-0" style="text-align: center;">
+                        <br>
+                        <br>
+                        <br>
+                        <br>
+                        <div>
+                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px;height: 60px; padding-top: 10px;"></i>
+                            </center><br>
+                            <p>Aún no hay información para mostrar</p>
+                        </div>
+                    </div>
+                    {{/if}}
+                </div>
+            </div>
+
+            {{!-- TAREAS PROPIAS ADMIN --}}
+            <input type="hidden" id="idConsultor" value="{{ide_consultor}}">
+            <input type="hidden" id="datosUsuario" value="{{datosUsuario}}">
+            <div class="col-xl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h4 class="card-title" style="margin:0 auto">Tareas Consultor</h4>
+                        </div>
+            
+                        <div class="row mt-3">
+                            <div class="form-group col-md-12">
+                                <label for="actividad">Título de actividad a realizar *</label>
+                                <input type="text" class="form-control" id="actividad-consultor" maxlength="47"
+                                    placeholder="Escriba un título..">
+                            </div>
+            
+                            <div class="form-group col-md-6">
+                                <label for="fecha_inicio">Fecha de inicio *</label>
+                                <duet-date-picker id="fecha_inicio-consultor" min="{{fechaActual}}"
+                                    first-day-of-week="0"></duet-date-picker>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fecha_entrega-consultor">Fecha de entrega *</label>
+                                <duet-date-picker id="fecha_entrega-consultor" min="{{fechaActual}}"
+                                    first-day-of-week="0"></duet-date-picker>
+                            </div>
+            
+                            <div class="col-md-3 mx-auto">
+                                <button onclick="agregarTarea_()" class="btn color_primary text-white"
+                                    style="margin-top: 1em; width: 100%;padding: 10px 15px;">
+                                    <p class="font-w500 m-auto">Agregar</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- LISTADO DE TAREAS --}}
+            <div class="col-xl-12">
+                <div class="card plan-list">
+                    <div class="card-header d-sm-flex flex-wrap d-block pb-0 border-0">
+                        <div class="mr-auto pr-3 mb-3">
+                            <h4 class="text-black fs-20">Lista de tareas</h4>
+                            <p class="fs-13 mb-0 text-black">Haz clic en una tarea para editarla</p>
+                        </div>
+                        <div class="card-action card-tabs mr-4 mt-3 mt-sm-0 mb-3">
+                        </div>
+                    </div>
+            
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table class="table table-bordered verticle-middle table-responsive-sm">
+                                <thead>
+                                    <tr>
+                                        <th scope="col" style="width: 17em;">Nombre</th>
+                                        <th scope="col">Responsable</th>
+                                        <th scope="col">Estado</th>
+                                        <th scope="col">Cronograma</th>
+                                        <th scope="col">Prioridad</th>
+                                        <th scope="col">Acción</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="cuerpoTareasConsultor">
+                                    {{#if tareas}}
+                                    {{#each tareas}}
+                                    <tr>
+                                        <td>{{actividad}}</td>
+                                        <td>{{responsable}}</td>
+                                        <td class="text-{{color}} font-w600" style="font-size: 14px;">{{estado}}</td>
+                                        <td>
+                                            <div
+                                                style="width:100% ; margin-left: -8px;font-size: 8px;height: 15px; text-align: center;color: white;background: #ada7a7;border-radius: 7px;">
+                                                {{fecha_inicio}} - {{fecha_entrega}}
+                                                <div class="progress-bar progress-bar-striped progress-bar-animated"
+                                                    style="width:{{resultado}}%;height: 16px;margin-top: -13px;"></div>
+                                            </div>
+                                        </td>
+                                        <td class="text-white" style="{{background}};{{fontSize}}; text-align:center">{{prioridad}}
+                                        </td>
+                                        <td>
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <a onclick="editarTarea_({{id}})" title="Editar"
+                                                    class="btn color_primary shadow btn-xs sharp mr-1 text-white"><i
+                                                        style="color:white ;" class="fa fa-pencil"></i>
+                                                </a>
+                                                <a onclick="eliminarTarea_({{id}}, 1)" title="Eliminar"
+                                                    class="btn btn-danger shadow btn-xs sharp" style="background: #DC0000;"><svg
+                                                        xmlns="http://www.w3.org/2000/svg" width="12px" viewBox="0 0 448 512">
+                                                        <path
+                                                            d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z"
+                                                            fill="white" />
+                                                    </svg>
+                                                </a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                    {{/if}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- ÚLTIMAS EMPRESAS ASIGNADAS --}}
+            <div class="col-xl-6 col-xxl-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Últimas empresas asignadas</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-responsive-md text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>FECHA</th>
+                                                <th>EMPRESA</th>
+                                                <th>NOMBRE</th>
+                                                <th>ACCIÓN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#unless empresas}}
+                                            <tr>
+                                                <td colspan="4">Aún no hay empresas registrados.</td>
+                                            </tr>
+                                            {{/unless}}
+                                            {{#each empresas}}
+                                            <tr>
+                                                <td>{{fecha_creacion}}</td>
+                                                <td>{{nombre_empresa}}</td>
+                                                <td>{{nombres}} {{apellidos}}</td>
+                                                <td>
+                                                    <div style="margin: 0 auto">
+                                                        <a href="/empresas-asignadas/{{codigo}}" class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                            <i class="fa fa-pencil"></i>
+                                                        </a>
+                                                    </div>
+                                                </td>
+                                            </tr>
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            {{!-- ÚTIMOS INFORMES CARGADOS --}}
+            <div class="col-xl-6 col-xxl-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Últimos informes cargados</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-responsive-md text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>NOMBRE</th>
+                                                <th>TIPO</th>
+                                                <th>EMPRESA</th>
+                                                <th>ACCIÓN</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#unless ultimosInformes}}
+                                            <tr>
+                                                <td colspan="4">Aún no hay informes generados.</td>
+                                            </tr>
+                                            {{/unless}}
+                                            {{#each ultimosInformes}}
+                                            <tr>
+                                                <td>{{fecha}}</td>
+                                                <td>{{etapa}} de negocio</td>
+                                                <td>{{nombre}}</td>
+                                                <td>
+                                                    <a href="{{url}}"
+                                                        style="margin: 0 auto; margin-top: -8px; border-color: #FED061"
+                                                        target="_blank" class="btn color_tertiary shadow btn-xs sharp text-white">
+                                                        <i class="fa fa-search"></i></a>
+                                                </td>
+                                            </tr>
+                                            {{/each}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <br>
+        </div>
+    </div>
+</div>
+
+<!--**********************************
+        Fin Content body end
+***********************************-->
