@@ -66,6 +66,4 @@ router.post('/eliminar-archivos-empresa', checkLogin, consultorController.elimin
 router.post('/agregarTarea-consultores', checkLogin, consultorController.agregarTareaConsultores)
 /********************************************************************************/
 
-
-
 module.exports = router

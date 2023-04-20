@@ -68,7 +68,6 @@ app.use((req, res, next) => {
   res.locals.registro = req.flash('registro');
   res.locals.user = req.user; //Variable local para Empresas
   res.locals.session = req.session;
-  res.locals.pagoDiag = req.pagoDiag;
   global.urlPropuestaNegocio = '';
   global.urlProfile = ''
   if(!req.session.initialised) {

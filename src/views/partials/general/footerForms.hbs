@@ -1,7 +1,25 @@
-{{!-- <a href="/empresas/{{codigo}}#analisis_" class="close"></a> --}}
 <script>
     // Capturando Zona Horaria Local
     const tzLocalActual = Intl.DateTimeFormat().resolvedOptions().timeZone;
     console.log(tzLocalActual);
     document.getElementById("zhActualAdm").value = tzLocalActual;
+
+    function empresaOfrece(ofrece, i) {
+        if (ofrece == 'Vendo productos') {
+            $('#fila1-ofrecer'+i).show()
+            $('#fila2-ofrecer'+i).hide()
+            $('#producto_ofrece'+i).addClass('required')
+            $('#servicio_ofrece'+i).removeClass('required')
+        } else if (ofrece == 'Ofrezco servicios') {
+            $('#fila2-ofrecer'+i).show()
+            $('#fila1-ofrecer'+i).hide()
+            $('#producto_ofrece'+i).removeClass('required')
+            $('#servicio_ofrece'+i).addClass('required')
+        } else {
+            $('#fila1-ofrecer'+i).hide()
+            $('#fila2-ofrecer'+i).hide()
+            $('#producto_ofrece'+i).removeClass('required')
+            $('#servicio_ofrece'+i).removeClass('required')
+        }
+    }
 </script>

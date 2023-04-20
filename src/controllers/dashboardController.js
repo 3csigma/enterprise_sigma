@@ -6,6 +6,7 @@ const path = require('path');
 const { consultarInformes, consultarDatos, tareasGenerales, consultarTareasEmpresarial, insertarDatos, eliminarDatos, consultarTareasConsultores } = require('../lib/helpers')
 const { sendEmail, consultorAsignadoHTML, consultorAprobadoHTML, informesHTML, etapaFinalizadaHTML, consultor_AsignadoEtapa, archivosPlanEmpresarialHTML } = require('../lib/mail.config');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
+const { getResponseChatGPT } = require('../lib/openai');
 
 let aprobarConsultor = false;
 
@@ -1287,42 +1288,48 @@ dashboardController.pagoManualEmpresas = async (req, res) => {
 // CUESTIONARIO DIAGNÓSTICO DE NEGOCIO EXCEL (EMPRESA ESTABLECIDA)
 dashboardController.cuestionario = async (req, res) => {
     const { codigo } = req.params;
-    res.render('consultor/cuestionario', { wizarx: true, user_dash: false, adminDash: false, codigo })
+    let linkCerrar = '/diagnostico-de-negocio'
+    if (req.user.rol != 'Empresa') {
+        linkCerrar = `/empresas/${codigo}#diagnostico_`
+    }
+    res.render('consultor/cuestionario', { wizarx: true, user_dash: false, adminDash: false, codigo, rolUser: req.user.rol, linkCerrar })
 }
 dashboardController.enviarCuestionario = async (req, res) => {
-    const { codigoEmpresa, zhActualAdm } = req.body;
+    const { codigoEmpresa, zhActualAdm, rolUser } = req.body;
     // Capturar Fecha de guardado
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
     let infoEmp = await consultarDatos('empresas')
     infoEmp = infoEmp.find(x => x.codigo == codigoEmpresa)
-    // const infoEmp = await pool.query('SELECT * FROM empresas WHERE codigo = ? LIMIT 1', [codigoEmpresa])
     // Capturar ID Empresa
     const id_empresa = infoEmp.id_empresas;
 
     // Productos o Servicios
-    const { necesidad_producto, precio_producto, productos_coherentes, calidad_producto, presentacion_producto, calificacion_global_producto } = req.body
+    const { rubro, e_ofrece, producto_ofrece, servicio_ofrece, problema_resolver, diferencia_otros, nivel_precio, investigacion_precios, conexion_tematica, perciben_coherencia, calidad_producto, presentacion_producto, calificacion_global_producto } = req.body
+    let empresa_ofrece = { e_ofrece }
+    producto_ofrece != '' ? empresa_ofrece.producto_ofrece = producto_ofrece : empresa_ofrece.servicio_ofrece = servicio_ofrece;
+    empresa_ofrece = JSON.stringify(empresa_ofrece)
     let productos_servicios = JSON.stringify({
-        necesidad_producto, precio_producto, productos_coherentes, calidad_producto, presentacion_producto, calificacion_global_producto
+        problema_resolver, diferencia_otros, nivel_precio, investigacion_precios, conexion_tematica, perciben_coherencia, calidad_producto, presentacion_producto, calificacion_global_producto
     })
 
     // Administración
-    const { planeacion_estrategica, analisis_foda, estructura_organizativa, sistema_administrativo, facturacion_automatizada, calificacion_administracion } = req.body
+    const { planeacion_estrategica, analisis_foda, estructura_organizativa, sistema_administrativo_contable, software_empresarial, calificacion_administracion } = req.body
     let administracion = JSON.stringify({
-        planeacion_estrategica, analisis_foda, estructura_organizativa, sistema_administrativo, facturacion_automatizada, calificacion_administracion
+        planeacion_estrategica, analisis_foda, estructura_organizativa, sistema_administrativo_contable, software_empresarial, calificacion_administracion
     })
 
     // Talento Humano
-    const { principales_funciones_personal, programa_formacion_colab, habilidades_colab, medicion__personal, personal_capacitado, proceso_contratacion, calificacion_personal_laboral } = req.body
+    const { principales_funciones_personal, plan_capacitacion, cuadro_habilidades, medicion_personal, plan_remuneracion, proceso_reclutamiento, calificacion_personal_laboral } = req.body
     let talento_humano = JSON.stringify({
-        principales_funciones_personal, programa_formacion_colab, habilidades_colab, medicion__personal, personal_capacitado, proceso_contratacion, calificacion_personal_laboral
+        principales_funciones_personal, plan_capacitacion, cuadro_habilidades, medicion_personal, plan_remuneracion, proceso_reclutamiento, calificacion_personal_laboral
     })
 
     // RENDIMIENTO EMPRESA
     let { total_ventas, total_compras, total_gastos } = req.body
     // Finanzas
-    const { proyeccion_ventas, estructura_costos, cuentas_pagar_cobrar, costos_fijos_variables, analisis_finanzas_anual, utilidad_neta, empresa_rentable, punto_equilibrio, recuperar_inversion, mejorar_rentabilidad, calificacion_finanzas } = req.body
+    const { proyeccion_ventas, estructura_costos, cuentas_pagar_cobrar, costos_fijos_variables, analisis_finanzas_anual, punto_equilibrio, utilidad_neta, empresa_rentable, proyeccion_flujo_efectivo, mejorar_rentabilidad, calificacion_finanzas } = req.body
     let finanzas = JSON.stringify({
-        proyeccion_ventas, estructura_costos, cuentas_pagar_cobrar, costos_fijos_variables, analisis_finanzas_anual, utilidad_neta, empresa_rentable, punto_equilibrio, recuperar_inversion, mejorar_rentabilidad, calificacion_finanzas
+        proyeccion_ventas, estructura_costos, cuentas_pagar_cobrar, costos_fijos_variables, analisis_finanzas_anual, utilidad_neta, empresa_rentable, punto_equilibrio, proyeccion_flujo_efectivo, mejorar_rentabilidad, calificacion_finanzas
     })
 
     // Servicio al Cliente
@@ -1332,15 +1339,15 @@ dashboardController.enviarCuestionario = async (req, res) => {
     })
 
     // Operaciones
-    const { instalaciones_adecuadas, permisos_requeridos, plan_detrabajo, tiempos_entrega_productos, estandarizacion_procesos_op, calificacion_operaciones_procesos } = req.body
+    const { instalaciones_adecuadas, permisos_requeridos, plan_detrabajo_diario, documentos_actividades, manuales_operaciones, calificacion_operaciones_procesos } = req.body
     let operaciones = JSON.stringify({
-        instalaciones_adecuadas, permisos_requeridos, plan_detrabajo, tiempos_entrega_productos, estandarizacion_procesos_op, calificacion_operaciones_procesos
+        instalaciones_adecuadas, permisos_requeridos, plan_detrabajo_diario, documentos_actividades, manuales_operaciones, calificacion_operaciones_procesos
     })
 
     // Ambiente Laboral
-    const { ambienteLab_positivo, medicion_ambienteLab, agrado_empleados, comunicacion_efectiva, comunicar_buen_trabajo, calificacion_ambiente } = req.body
+    const { ambiente_positivo, medicion_ambiente_laboral, satisfaccion_empleados, comunicacion_efectiva, comunicar_buen_trabajo, calificacion_ambiente } = req.body
     let ambiente_laboral = JSON.stringify({
-        ambienteLab_positivo, medicion_ambienteLab, agrado_empleados, comunicacion_efectiva, comunicar_buen_trabajo, calificacion_ambiente
+        ambiente_positivo, medicion_ambiente_laboral, satisfaccion_empleados, comunicacion_efectiva, comunicar_buen_trabajo, calificacion_ambiente
     })
 
     // Innovación
@@ -1350,15 +1357,15 @@ dashboardController.enviarCuestionario = async (req, res) => {
     })
 
     // Marketing
-    const { estudio_mercado, segmento_mercado, posicionamiento_mercado, estrategias_marketing, plan_marketing, pagina_web_promover, redes_sociales_promover, manual_identidad, tiene_eslogan, brochure_empresa, calificacion_marketing } = req.body
+    const { estudio_mercado, segmento_mercado, posicionamiento_mercado, estrategias_marketing, plan_marketing, landing_page, redes_sociales, manual_identidad, tiene_eslogan, brochure_empresa, calificacion_marketing } = req.body
     let marketing = JSON.stringify({
-        estudio_mercado, segmento_mercado, posicionamiento_mercado, estrategias_marketing, plan_marketing, pagina_web_promover, redes_sociales_promover, manual_identidad, tiene_eslogan, brochure_empresa, calificacion_marketing
+        estudio_mercado, segmento_mercado, posicionamiento_mercado, estrategias_marketing, plan_marketing, landing_page, redes_sociales, manual_identidad, tiene_eslogan, brochure_empresa, calificacion_marketing
     })
 
     // Ventas
-    const { ventas_conFacilidad, calificacion_productos_meses, plan_ventas, estrategia_ventas, canales_ventas, calificacion_ventas } = req.body
+    const { facilidad_ventas, calificacion_ventas_meses, objetivo_ventas, estrategia_ventas, canales_ventas, calificacion_ventas } = req.body
     let ventas = JSON.stringify({
-        ventas_conFacilidad, calificacion_productos_meses, plan_ventas, estrategia_ventas, canales_ventas, calificacion_ventas
+        facilidad_ventas, calificacion_ventas_meses, objetivo_ventas, estrategia_ventas, canales_ventas, calificacion_ventas
     })
 
     // Fortalezas
@@ -1374,7 +1381,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     let metas_corto_plazo = JSON.stringify({ m1, m2, m3, m4, m5 })
 
     // Creando Objetos para guardar en la base de datos
-    const nuevoDiagnostico = { id_empresa, fecha, productos_servicios, administracion, talento_humano, finanzas, servicio_alcliente, operaciones, ambiente_laboral, innovacion, marketing, ventas, fortalezas, oportunidades_mejoras, metas_corto_plazo }
+    const nuevoDiagnostico = { id_empresa, fecha, rubro, empresa_ofrece, productos_servicios, administracion, talento_humano, finanzas, servicio_alcliente, operaciones, ambiente_laboral, innovacion, marketing, ventas, fortalezas, oportunidades_mejoras, metas_corto_plazo }
 
     const areasVitales = {
         id_empresa,
@@ -1402,7 +1409,6 @@ dashboardController.enviarCuestionario = async (req, res) => {
     }
 
     // Guardando en la Base de datos
-    // const cuestionario = await pool.query('INSERT INTO dg_empresa_establecida SET ?', [nuevoDiagnostico])
     const cuestionario = await insertarDatos('dg_empresa_establecida', nuevoDiagnostico)
     if (cuestionario.affectedRows > 0) {
         /************************************************************************************************* */
@@ -1417,16 +1423,45 @@ dashboardController.enviarCuestionario = async (req, res) => {
         const nuevoRendimiento = {
             empresa: id_empresa, total_ventas, total_compras, total_gastos, utilidad, fecha: new Date().toLocaleDateString("en-US")
         }
-        // const rendimiento = await pool.query('INSERT INTO rendimiento_empresa SET ?', [nuevoRendimiento])
-        const rendimiento = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
+        
         /************************************************************************************************* */
-        // const aVitales = await pool.query('INSERT INTO indicadores_areasvitales SET ?', [areasVitales])
+        const rendimiento = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
         const aVitales = await insertarDatos('indicadores_areasvitales', areasVitales)
-        // const aDimensiones = await pool.query('INSERT INTO indicadores_dimensiones SET ?', [areasDimensiones])
         const aDimensiones = await insertarDatos('indicadores_dimensiones', areasDimensiones)
         if ((aVitales.affectedRows > 0) && (aDimensiones.affectedRows > 0) && (rendimiento.affectedRows > 0)) {
             console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n")
-            res.redirect('/empresas/' + codigoEmpresa + '#diagnostico_')
+            /**
+             * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+            */
+            const obj_respuestas = {
+                '¿En que nicho, rubro, sector o área está tu negocio?': rubro,
+                '¿Qué ofrece tu empresa?': empresa_ofrece,
+                '¿Sabe qué problema específico resuelve su producto/servicio a sus clientes potenciales?': problema_resolver, '¿Sabe en qué se diferencia su producto/servicio de otros similares en el mercado?': diferencia_otros, '¿Sabe cuál es el nivel del precio de su producto/servicio con otros similares en el mercado?': nivel_precio, '¿Ha realizado una investigación de precios para determinar si su producto/servicio es competitivo?': investigacion_precios, '¿Hay alguna conexión temática o conceptual entre los diferentes productos/servicios que ofrece su empresa?': conexion_tematica, '¿Cree que sus clientes perciben una coherencia entre los productos/servicios de su empresa?': perciben_coherencia, 'La calidad de su producto es:': calidad_producto, 'La presentación de su producto es:': presentacion_producto, 'En una escala del 1 al 10 ¿Cómo calificaría de forma global a sus productos/servicios con respecto al mercado? Siendo uno el nivel más bajo, y diez el más alto.': calificacion_global_producto,
+                '¿Cuenta con una planeación estratégica para la empresa?': planeacion_estrategica, '¿Ha realizado un análisis FODA de su empresa?': analisis_foda, '¿Tiene definida la estructura organizativa?': estructura_organizativa, '¿Dispone de un sistema administrativo y/o contable?': sistema_administrativo_contable, '¿Dispone de software empresarial que le ayude a mejorar la eficiencia y rentabilidad de su empresa?': software_empresarial, 'Del 1 al 10 ¿Cómo calificaría la gestión de Administración de su empresa? Siendo uno el nivel más bajo y diez el más alto': calificacion_administracion,
+                '¿Tiene definidas las principales funciones del personal según su puesto de trabajo?': principales_funciones_personal, '¿Cuenta con un plan de capacitación para sus colaboradores?': plan_capacitacion, '¿Tienen algún cuadro de habilidades requeridas para sus colaboradores?': cuadro_habilidades, '¿Realiza alguna medición de desempeño del personal?': medicion_personal, '¿Dispone de un plan de remuneración para sus colaboradores?': plan_remuneracion, '¿Dispone de algún proceso para el reclutamiento y selección?': proceso_reclutamiento, 'En una escala del 1 al 10 ¿Cómo calificaría al personal que labora para la empresa? Siendo uno el nivel más bajo y diez el más alto.': calificacion_personal_laboral,
+                '¿Dispone de una proyección de ventas?': proyeccion_ventas, '¿Tienen una estructura de Costos implementada?': estructura_costos, '¿Se tienen establecidas claramente las cuentas por pagar y cobrar del Negocio?': cuentas_pagar_cobrar, '¿Conoce cuáles son los costos fijos y variables de su empresa?': costos_fijos_variables, '¿Ha realizado un análisis y evaluación básica de las finanzas de los últimos 12 meses?': analisis_finanzas_anual, '¿Conoce cuál es su punto de equilibrio?': punto_equilibrio, '¿Conoce cuál es su utilidad neta?': utilidad_neta, '¿La empresa ya ha conseguido ser rentable?': empresa_rentable, '¿Ha realizado alguna proyección del flujo de efectivo para el próximo año?': proyeccion_flujo_efectivo, '¿Cree usted que la manera en que se está administrando las finanzas en su empresa, pueda contribuir mantener o mejorar la rentabilidad en el tiempo?': mejorar_rentabilidad, '¿Cómo calificaría la gestión de Finanzas de la empresa? Siendo uno el nivel más bajo y diez el más alto': calificacion_finanzas,
+                '¿Pueden sus clientes tener información rápida y efectiva de sus Productos?': clientes_info_productos, '¿Mide la Satisfacción de sus clientes con respecto a sus productos?': satisfaccion_clientes_productos, '¿Conoce las necesidades de potenciales clientes con respecto a sus productos?': necesidades_clientes_productos, '¿Dispone de algún mecanismo para quejas y reclamaciones?': mecanismo_quejas_reclamos, '¿Maneja estrategias para mantener la fidelidad de sus clientes?': estrategias_fidelidad_clientes, 'En una escala del 1 al 10 ¿Cómo calificaría la gestión de Servicio al Cliente de la empresa? Siendo uno el nivel más bajo y diez el más alto.': calificacion_servicio_alcliente,
+                '¿Cuenta con las instalaciones adecuadas para realizar sus operaciones?': instalaciones_adecuadas, '¿Cuenta con todos los permisos requeridos por su localidad para realizar sus operaciones?': permisos_requeridos, '¿Tiene un plan de trabajo diario, semanal o mensual para las operaciones de su empresa?': plan_detrabajo_diario, '¿Tiene documentadas todas las actividades que se desarrollan en la empresa?': documentos_actividades, '¿Cuenta con manuales de operaciones que describan los procedimientos y actividades dentro de la empresa?': manuales_operaciones, '¿Cómo calificaría las operaciones y procesos de su empresa en una escala del 1 al 10? Siendo uno el nivel más bajo y diez el más alto.': calificacion_operaciones_procesos,
+                '¿Considera positivo el ambiente laboral dentro de su empresa?': ambiente_positivo, '¿Realiza alguna medición del ambiente laboral de la empresa?': medicion_ambiente_laboral, '¿Conoce el grado de satisfacción de sus empleados?': satisfaccion_empleados, '¿La comunicación dentro de su empresa es efectiva?': comunicacion_efectiva, '¿Le comunica a su personal que ha estado o está realizando un buen trabajo?': comunicar_buen_trabajo, 'Del 1 al 10 ¿Cómo podría calificar el ambiente laboral de la empresa? Siendo uno el nivel más bajo y diez el más alto.': calificacion_ambiente,
+                '¿Sus trabajadores aportan ideas para la mejora dentro de la empresa?': aportan_ideas, '¿Considera que a través de la innovación de sus productos/servicios puede incrementar sus ventas?': incrementar_ventas, '¿Considera que los procesos operativos relacionados con sus productos/servicios son Innovadores?': procesos_innovadores, '¿Calificaría su modelo de negocio como Innovador?': modelo_innovador, '¿Calificaría la gestión de su empresa como Innovadora?': empresa_innovadora, 'Del 1 al 10 ¿Cómo se calificaría la gestión de Innovación de los productos y/o servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto.': calificacion_innovacion,
+                '¿Ha realizado estudios de mercado sobre las características y precios de sus productos/servicios?': estudio_mercado, '¿Conoce el segmento al que se dirigen sus productos/servicios?': segmento_mercado, '¿Sus productos/servicios están posicionados dentro de su mercado?': posicionamiento_mercado, '¿Cuenta con estrategias de Marketing para impulsar sus productos/servicios en su mercado?': estrategias_marketing, '¿Cuenta con un Plan de Marketing?': plan_marketing, '¿Cuenta con página web para promover los productos/servicios de su empresa?': landing_page, '¿Utiliza redes sociales para promover los productos/servicios de su empresa?': redes_sociales, '¿Cuenta con un Manual de Identidad Corporativa?': manual_identidad, '¿Su negocio cuenta con un eslogan que los identifique con facilidad?': tiene_eslogan, '¿Cuenta con un Brochure de presentación de su empresa?': brochure_empresa, '¿Cómo calificaría la gestión de Marketing de la empresa? Siendo uno el nivel más bajo y diez el más alto.': calificacion_marketing,
+                '¿Cree que los productos/servicios de la empresa se venden con facilidad?': facilidad_ventas, '¿Cómo calificaría las ventas de los productos/servicios de la empresa en los últimos 6 meses?': calificacion_ventas_meses, '¿Su empresa tiene definido objetivos de ventas claros?': objetivo_ventas, '¿Cuenta con estrategias de ventas para los productos/servicios de su empresa?': estrategia_ventas, '¿Tiene definido sus canales de venta para comercializar sus productos/servicios?': canales_ventas, '¿Cómo calificaría la gestión de ventas de los productos/servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto': calificacion_ventas,
+                'Fortalezas': { f1, f2, f3, f4, f5 },
+                'Oportunidades de mejoras': { o1, o2, o3, o4, o5 },
+                'Metas a corto plazo': { m1, m2, m3, m4, m5 }
+            }
+
+            const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores genera un informe detallado de diagnostico del estado general de la empresa.")
+            const resultAI = await getResponseChatGPT(prompt)
+            console.log("\n<<<< RESULT AI >>>> ");
+            console.log(resultAI);
+            console.log("<<<< RESULT AI >>>>\n");
+            const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resultAI, fecha: new Date().toLocaleDateString("en-US") }
+            const insertResult = await insertarDatos('informes_ia', informeAI)
+            if (insertResult.affectedRows > 0) {
+                rolUser == 'Empresa' ? res.redirect('/diagnostico-de-negocio')
+                : res.redirect('/empresas/' + codigoEmpresa + '#diagnostico_')
+            }
         }
     }
 
@@ -1435,11 +1470,14 @@ dashboardController.enviarCuestionario = async (req, res) => {
 // CUESTIONARIO DIAGNÓSTICO (EMPRESAS NUEVAS)
 dashboardController.dgNuevosProyectos = async (req, res) => {
     const { codigo } = req.params;
-    res.render('consultor/nuevos_proyectos', { wizarx: true, user_dash: false, adminDash: false, codigo })
+    let linkCerrar = '/diagnostico-de-negocio'
+    if (req.user.rol != 'Empresa') {
+        linkCerrar = `/empresas/${codigo}#diagnostico_`
+    }
+    res.render('consultor/nuevos_proyectos', { wizarx: true, user_dash: false, adminDash: false, codigo, rolUser: req.user.rol, linkCerrar })
 }
 dashboardController.guardarRespuestas = async (req, res) => {
-
-    const { codigoEmpresa, zhActualAdm } = req.body;
+    const { codigoEmpresa, zhActualAdm, rolUser } = req.body;
     // Capturar Fecha de guardado con base a su Zona Horaria
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
     // Consultando info de la empresa
@@ -1448,7 +1486,10 @@ dashboardController.guardarRespuestas = async (req, res) => {
     const id_empresa = infoEmp[0].id_empresas;
 
     // EXPERIENCIA EN EL RUBRO
-    const { rubro, exp_previa, foda, unidades_rubro, actividades, vision } = req.body
+    const { rubro, e_ofrece, producto_ofrece, servicio_ofrece, exp_previa, foda, unidades_rubro, actividades, vision } = req.body
+    let empresa_ofrece = { e_ofrece }
+    producto_ofrece != '' ? empresa_ofrece.producto_ofrece = producto_ofrece : empresa_ofrece.servicio_ofrece = servicio_ofrece;
+    empresa_ofrece = JSON.stringify(empresa_ofrece)
     let exp_rubro = JSON.stringify({ exp_previa, foda, unidades_rubro, actividades, vision })
 
     // MENTALIDAD EMPRESARIAL
@@ -1472,8 +1513,8 @@ dashboardController.guardarRespuestas = async (req, res) => {
     let talento_humano = JSON.stringify({ funciones_principales, formacion_inicial, tiempo_colaboradores, experiencia_liderando, importancia_equipo })
 
     // FINANZAS
-    const { estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, recuperar_inversion } = req.body
-    let finanzas = JSON.stringify({ estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, recuperar_inversion })
+    const { estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, proyeccion_flujo_efectivo } = req.body
+    let finanzas = JSON.stringify({ estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, proyeccion_flujo_efectivo })
 
     // SERVICIO AL CLIENTE
     const { canales_atencion, estrategia_fidelizar, exp_brindar, medir_satisfaccion, calidad_producto } = req.body
@@ -1503,7 +1544,7 @@ dashboardController.guardarRespuestas = async (req, res) => {
     const { m1, m2, m3, m4, m5 } = req.body
     let metas = JSON.stringify({ m1, m2, m3, m4, m5 })
 
-    const nuevoDiagnostico = { id_empresa, fecha, rubro, exp_rubro, mentalidad_empresarial, viabilidad, productos_servicios, administracion, talento_humano, finanzas, servicio_cliente, operaciones, ambiente_laboral, innovacion, marketing, ventas, metas }
+    const nuevoDiagnostico = { id_empresa, fecha, empresa_ofrece, rubro, exp_rubro, mentalidad_empresarial, viabilidad, productos_servicios, administracion, talento_humano, finanzas, servicio_cliente, operaciones, ambiente_laboral, innovacion, marketing, ventas, metas }
 
     /* ========================== Calculos del Diagnóstico ========================== */
     // Categorías
@@ -1610,13 +1651,24 @@ dashboardController.guardarRespuestas = async (req, res) => {
     const cuestionario = await insertarDatos('dg_empresa_nueva', nuevoDiagnostico)
     if (cuestionario.affectedRows > 0) {
 
-        // const aVitales = await pool.query('INSERT INTO indicadores_areasvitales SET ?', [areasVitales])
         const aVitales = await insertarDatos('indicadores_areasvitales', areasVitales)
-        // const resultado_categorias = await pool.query('INSERT INTO resultado_categorias SET ?', [resulCategorias])
         const resultado_categorias = await insertarDatos('resultado_categorias', resulCategorias)
         if ((aVitales.affectedRows > 0) && (resultado_categorias.affectedRows > 0)) {
             console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n")
-            res.redirect('/empresas/' + codigoEmpresa + '#diagnostico_')
+            /**
+             * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+            */
+            const prompt = ('Crea un informe de diagnóstico de negocio con base a las siguientes preguntas: '+nuevoDiagnostico)
+            const resultAI = await getResponseChatGPT(prompt)
+            console.log("\n<<<< RESULT AI >>>> ");
+            console.log(resultAI);
+            console.log("<<<< RESULT AI >>>>\n");
+            const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico de negocio', informe: resultAI }
+            const insertResult = await insertarDatos('informes_ia', informeAI)
+            if (insertResult.affectedRows > 0) {
+                rolUser == 'Empresa' ? res.redirect('/diagnostico-de-negocio')
+                : res.redirect('/empresas/' + codigoEmpresa + '#diagnostico_')
+            }
         }
     }
 }

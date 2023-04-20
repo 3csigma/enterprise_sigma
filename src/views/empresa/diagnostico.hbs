@@ -1,8 +1,4 @@
-<!--**********************************
-          Content body start
-***********************************-->
 <div class="content-body">
-  <!-- row -->
   <div class="container-fluid">
     <div class="row">
       <div class="col">
@@ -10,10 +6,10 @@
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Queremos conocerte un poco más</h2>
-            {{#if existencia}}
-            <p style="text-align: justify;margin-top: 2em;color: #000">Ahora que tu consultor ha sido asignado puedes realizar el pago del diagnóstico de negocio, y podremos comenzar juntos el proceso de llevar tu empresa al siguiente nivel.</p>
-            {{else}}
+            {{#if estadoPago.fecha}}
             <p style="text-align: justify;margin-top: 2em;color: #000">Por favor completa el formulario a continuación para tener información mas detallada sobre tu empresa, estos datos son vitales para realizar un diagnóstico preciso. Si deseas modificar, agregar datos o rehacer el formulario puedes hacerlo.</p>
+            {{else}}
+            <p style="text-align: justify;margin-top: 2em;color: #000">Ahora que tu consultor ha sido asignado puedes realizar el pago del diagnóstico de negocio, y podremos comenzar juntos el proceso de llevar tu empresa al siguiente nivel.</p>
             {{/if}}
           </div>
         </div>
@@ -21,7 +17,7 @@
       <div class="col">
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
-          {{#if formDiag.estado}}
+          {{#if cuestionario.fichaCliente.estado}}
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Hemos recibido la información de tu empresa</h2>
             <p style="text-align: justify;margin-top: 2em;color: #000">Con base en tus respuestas tu consultor realizará un diagnóstico preciso acerca de tu empresa, y agendará una reunión contigo para continuar el proceso, recibiriás una notificación de esto en tu correo electrónico <strong>{{user.email}}</strong>.</p>
@@ -53,20 +49,20 @@
                   </thead>
                   <tbody>
                     <tr>
-                      <td>{{estadoPago.fecha}}</td>
+                      <td>{{#if estadoPago.fecha}}{{estadoPago.fecha}}{{else}}N/A{{/if}}</td>
                       <td class="precios_celdas">{{costo}}</td>
                       <td><span class="badge light {{estadoPago.color}}"
-                          style="background: {{formDiag.estilo}}">{{estadoPago.texto}}</span></td>
+                          style="background: {{cuestionario.fichaCliente.estilo}}">{{estadoPago.texto}}</span></td>
                       <td>
-                        {{#if existencia}}
+                        {{#if estadoPago.fecha}}
+                        <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}" style="{{estadoPago.btn}}">
+                          <i class="fa fa-usd"></i>
+                        {{else}}
                         <form action="/pagar-diagnostico" method="POST">
                             <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}" style="{{estadoPago.btn}}">
                               <i class="fa fa-usd"></i>
                             </button>
                         </form>
-                        {{else}}
-                        <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}" style="{{estadoPago.btn}}">
-                          <i class="fa fa-usd"></i>
                         </button>
                         {{/if}}
                       </td>
@@ -79,8 +75,22 @@
         </div>
       </div>
     </div>
-    {{#unless existencia}}
-    {{!-- TARJETAS FORMULARIOS E INFORMES --}}
+
+    {{#unless tutoriales.etapa}}
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">SECCIÓN PARA TUTORIALES</h4>
+          </div>
+          <div class="card-body"></div>
+        </div>
+      </div>
+    </div>
+    {{/unless}}
+
+    {{#if estadoPago.fecha}}
+    {{!-- TARJETAS FORMULARIOS e INFORMES --}}
     <div class="row">
       {{!-- FORMULARIOS --}}
       <div class="col-xl-6 col-xxl-6">
@@ -88,36 +98,64 @@
           <div class="col-xl-12">
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title">Formulario</h4>
+                <h4 class="card-title">Formularios</h4>
               </div>
               <div class="card-body">
                 <div class="table-responsive">
                   <table class="table table-responsive-md text-center">
                     <thead>
                       <tr>
-                        <th>FECHA MODIFICACIÓN</th>
+                        <th>FECHA</th>
                         <th>NOMBRE</th>
                         <th>ESTADO</th>
                         <th>ACCIÓN</th>
                       </tr>
                     </thead>
                     <tbody>
+                      {{!-- FICHA CLIENTE --}}
                       <tr>
-                        <td id="fActual">{{formDiag.fecha}}</td>
+                        <td id="fActual">{{cuestionario.fichaCliente.fecha}}</td>
                         <td>Ficha de cliente</td>
-                        <td><span class="badge light {{formDiag.color}}"
-                            style="background: {{formDiag.estilo}}">{{formDiag.texto}}</span></td>
+                        <td><span class="badge light {{cuestionario.fichaCliente.color}}"
+                            style="background: {{cuestionario.fichaCliente.estilo}}">{{cuestionario.fichaCliente.texto}}</span></td>
                         <td>
                           <div class="d-flex">
-                            <a href="/ficha-cliente/{{formDiag.usuario}}"
+                            <a href="/ficha-cliente/{{cuestionario.fichaCliente.usuario}}"
                               class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
                               <i class="fa fa-pencil"></i></a>
-                            <a onclick="eliminarFichaCliente({{formDiag.id}})"
+                            <a onclick="eliminarFichaCliente({{cuestionario.fichaCliente.id}})"
                               class="btn btn-danger shadow btn-xs sharp text-white"><i
                                 class="fa fa-trash"></i></a>
                           </div>
                         </td>
                       </tr>
+
+                      <!-- CUESTIONARIO EMPRESA ESTABLECIDA o NUEVA -->
+                      {{#if cuestionario.diagnostico}}
+                      <tr>
+                          <td>{{#if cuestionario.diagnostico.fecha}}{{cuestionario.diagnostico.fecha}}{{else}}N/A{{/if}}</td>
+                          <td>Cuestionario diagnóstico</td>
+                          <td><span class="badge light {{cuestionario.diagnostico.color}}">{{cuestionario.diagnostico.texto}}</span>
+                          </td>
+                          <td>
+                              {{#if cuestionario.diagnostico.btnEdit}}
+                              <a href="{{cuestionario.diagnostico.link}}"
+                                  class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                                  style="border-color: #812082;">
+                                  <i class="fa fa-pencil"></i></a>
+                              {{else}}
+                              {{!-- <div class="d-flex">
+                                <button class="btn btn-primary shadow btn-xs sharp mr-1"
+                                  style="filter: grayscale(1);">
+                                  <i class="fa fa-pencil"></i></button>
+                              </div> --}}
+                              <a href="/generar-informe/diagnostico" target="_blank" class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                                <i class="fa fa-eye"></i>
+                              </a>
+                              {{/if}}
+                          </td>
+                      </tr>
+                      {{/if}}
                     </tbody>
                   </table>
                 </div>
@@ -173,7 +211,7 @@
         </div>
       </div>
     </div>
-    {{/unless}}
+    {{/if}}
   </div>
 </div>
 
@@ -181,7 +219,7 @@
             Scripts
 ***********************************-->
 <script>
-  {{#if formDiag.fechaLocal}}
+  {{#if cuestionario.fichaCliente.fechaLocal}}
   const tzLocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
   console.log(tzLocal);
   const fechaCliente = new Date().toLocaleString("en-US", {timeZone: tzLocal})
@@ -221,4 +259,5 @@
       }
     })
   }
+
 </script>

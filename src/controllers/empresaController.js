@@ -1,6 +1,6 @@
 const pool = require('../database')
 const empresaController = exports;
-const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarInformes, consultarDatos, tareasGenerales, eliminarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers')
+const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarInformes, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers')
 const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
@@ -27,7 +27,7 @@ empresaController.index = async (req, res) => {
     if (cAsignado.length > 0) {
         const c1 = cAsignado.find(x => x.empresa == idEmpresaActual && x.orden == 1)
         c1 ? consulAsignado.c1 = c1 : consulAsignado.c1 = false;
-        
+
         const c2 = cAsignado.find(x => x.empresa == idEmpresaActual && x.orden == 2)
         c2 ? consulAsignado.c2 = c2 : consulAsignado.c2 = false;
 
@@ -43,33 +43,33 @@ empresaController.index = async (req, res) => {
     let pago_empresa = pagos.find(i => i.id_empresa == id_empresa);
     if (!pago_empresa) {
         diagnosticoPagado = false;
-        const estado = JSON.stringify({estado:0})
-        const nuevoPago = { 
+        const estado = JSON.stringify({ estado: 0 })
+        const nuevoPago = {
             id_empresa,
             diagnostico_negocio: estado,
             analisis_negocio: estado,
-            analisis_negocio1: JSON.stringify({estado:1}),
+            analisis_negocio1: JSON.stringify({ estado: 1 }),
             analisis_negocio2: estado,
             analisis_negocio3: estado,
             estrategico: estado,
             empresarial0: estado,
-            empresarial1: JSON.stringify({estado:1}),
+            empresarial1: JSON.stringify({ estado: 1 }),
             empresarial2: estado,
             empresarial3: estado,
         }
         await insertarDatos('pagos', nuevoPago)
     } else {
         const objDiagnostico = JSON.parse(pago_empresa.diagnostico_negocio)
-            if (objDiagnostico.estado == 1) {
-                // PAGÓ EL DIAGNOSTICO
-                diagnosticoPagado = objDiagnostico;
-                /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
-                let acuerdo = await consultarDatos('acuerdo_confidencial')
-                acuerdo = acuerdo.find(x => x.id_empresa == id_empresa);
-                if (!acuerdo) {
-                    modalAcuerdo = true;
-                }
+        if (objDiagnostico.estado == 1) {
+            // PAGÓ EL DIAGNOSTICO
+            diagnosticoPagado = objDiagnostico;
+            /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
+            let acuerdo = await consultarDatos('acuerdo_confidencial')
+            acuerdo = acuerdo.find(x => x.id_empresa == id_empresa);
+            if (!acuerdo) {
+                modalAcuerdo = true;
             }
+        }
 
     }
 
@@ -77,7 +77,7 @@ empresaController.index = async (req, res) => {
     const dataEmpresa = await pool.query('SELECT e.*, u.codigo, u.estadoAdm, f.telefono, f.id_empresa, p.*, a.id_empresa, a.estadoAcuerdo FROM empresas e LEFT OUTER JOIN ficha_cliente f ON f.id_empresa = ? LEFT OUTER JOIN pagos p ON p.id_empresa = ? LEFT OUTER JOIN acuerdo_confidencial a ON a.id_empresa = ? INNER JOIN users u ON u.codigo = ? AND rol = "Empresa" LIMIT 1', [id_empresa, id_empresa, id_empresa, empresa.codigo])
     const diagEmpresa = await pool.query('SELECT * FROM dg_empresa_establecida WHERE id_empresa = ? LIMIT 1', [id_empresa])
     const diagEmpresa2 = await pool.query('SELECT * FROM dg_empresa_nueva WHERE id_empresa = ? LIMIT 1', [id_empresa])
-    
+
     /**
      * diagEmpresa -> EMPRESA ESTABLECIDA
      * diagEmpresa2 -> EMPRESA NUEVA
@@ -88,39 +88,39 @@ empresaController.index = async (req, res) => {
 
     /**************************************************************************** */
     // PORCENTAJE ETAPA 1
-    let porcentaje = 100/6, porcentajeEtapa1 = 0;
+    let porcentaje = 100 / 6, porcentajeEtapa1 = 0;
     porcentaje = Math.round(porcentaje)
-    const diagPorcentaje = { num : 0 }
+    const diagPorcentaje = { num: 0 }
 
     const e = dataEmpresa[0];
     const diagnosticoPago = JSON.parse(e.diagnostico_negocio)
-        if (diagnosticoPago.estado == 1){
-            diagPorcentaje.txt = 'Diagnóstico pagado'
-            porcentajeEtapa1 = porcentaje
-        }
-    if (e.estadoAcuerdo == 1){
-        diagPorcentaje.txt = 'Acuerdo enviado'
-        porcentajeEtapa1 = porcentaje*2
+    if (diagnosticoPago.estado == 1) {
+        diagPorcentaje.txt = 'Diagnóstico pagado'
+        porcentajeEtapa1 = porcentaje
     }
-    if (e.estadoAcuerdo == 2){
+    if (e.estadoAcuerdo == 1) {
+        diagPorcentaje.txt = 'Acuerdo enviado'
+        porcentajeEtapa1 = porcentaje * 2
+    }
+    if (e.estadoAcuerdo == 2) {
         diagPorcentaje.txt = 'Acuerdo firmado'
-        porcentajeEtapa1 = porcentaje*3
-    } 
-    if (e.telefono){
+        porcentajeEtapa1 = porcentaje * 3
+    }
+    if (e.telefono) {
         diagPorcentaje.txt = 'Ficha Cliente'
-        porcentajeEtapa1 = porcentaje*4
+        porcentajeEtapa1 = porcentaje * 4
     }
 
-    if (diagEmpresa.length > 0 || diagEmpresa2.length > 0){
+    if (diagEmpresa.length > 0 || diagEmpresa2.length > 0) {
         diagPorcentaje.txt = 'Cuestionario diagnóstico'
-        porcentajeEtapa1 = porcentaje*5
+        porcentajeEtapa1 = porcentaje * 5
     }
 
     // VERIFICACIÓN DE ETAPAS FINALIZADAS (Estapa 1)
     const informeEtapa1 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe diagnóstico')
     if (informeEtapa1) {
         porcentajeEtapa1 = 100;
-        etapaCompleta.e1 =  true
+        etapaCompleta.e1 = true
 
         /*****************************************************
          * VALIDANDO EL TIPO DE EMPRESA (NUEVA O ESTABLECIDA) - PARA HABILITAR EL MENÚ
@@ -129,7 +129,7 @@ empresaController.index = async (req, res) => {
         if (diagEmpresa.length > 0) {
             etapaCompleta.verAnalisis = true;
             etapaCompleta.verEmpresarial = true;
-        // Empresa Nueva
+            // Empresa Nueva
         } else if (diagEmpresa2.length > 0) {
             etapaCompleta.verAnalisis = false;
             etapaCompleta.verEmpresarial = true;
@@ -157,10 +157,10 @@ empresaController.index = async (req, res) => {
     analisisEmpresa = analisisEmpresa.find(i => i.id_empresa == id_empresa)
     let porcentajeEtapa2 = 0;
     if (analisisEmpresa) {
-        if (analisisEmpresa.producto){ porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
-        if (analisisEmpresa.administracion){ porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
-        if (analisisEmpresa.operacion){ porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
-        if (analisisEmpresa.marketing){ porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
+        if (analisisEmpresa.producto) { porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
+        if (analisisEmpresa.administracion) { porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
+        if (analisisEmpresa.operacion) { porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
+        if (analisisEmpresa.marketing) { porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
     }
 
     const informeProducto = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión producto')
@@ -188,7 +188,7 @@ empresaController.index = async (req, res) => {
     let tareasCompletadas_empresarial = tareas_plan_empresarial.filter(x => x.estado == 2)
     tareasCompletadas_empresarial = tareasCompletadas_empresarial.length
     if (totalTareas_empresarial > 0) {
-        porcentajeEtapa3 = ((tareasCompletadas_empresarial/totalTareas_empresarial)*100)*0.75
+        porcentajeEtapa3 = ((tareasCompletadas_empresarial / totalTareas_empresarial) * 100) * 0.75
         porcentajeEtapa3 = Math.round(porcentajeEtapa3)
     }
     if (empresa.etapa_empresarial == 1) {
@@ -209,7 +209,7 @@ empresaController.index = async (req, res) => {
     tareasCompletadas = tareasCompletadas.length
     let verGraficasCircular = false;
     if (totalTareas > 0) {
-        porcentajeEtapa4 = ((tareasCompletadas/totalTareas)*100)*0.75
+        porcentajeEtapa4 = ((tareasCompletadas / totalTareas) * 100) * 0.75
         porcentajeEtapa4 = Math.round(porcentajeEtapa4)
         verGraficasCircular = true;
     }
@@ -220,29 +220,27 @@ empresaController.index = async (req, res) => {
     }
 
     /************************************************************************** */
-
-
     /**************************************
      * PORCENTAJE GENERAL DE LA EMPRESA
     */
     // Empresa Establecida
-    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa3 + porcentajeEtapa4)/4)
+    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa3 + porcentajeEtapa4) / 4)
     // Empresa Nueva
     if (diagEmpresa2.length > 0) {
-        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa3 + porcentajeEtapa4)/3)
+        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa3 + porcentajeEtapa4) / 3)
     }
-    
+
 
     /************** DATOS PARA LAS GRÁFICAS AREAS VITALES & POR DIMENSIONES ****************/
     let jsonDimensiones1, jsonDimensiones2, nuevosProyectos = 0, rendimiento = {};
     let jsonAnalisis1, jsonAnalisis2;
-    
+
     let areasVitales = await pool.query('SELECT * FROM indicadores_areasvitales WHERE id_empresa = ? ORDER BY id_ LIMIT 2', [empresa.id_empresas])
 
     if (areasVitales.length > 0) {
         jsonAnalisis1 = JSON.stringify(areasVitales[0]);
         jsonAnalisis2 = JSON.stringify(areasVitales[1]);
-        if (areasVitales[0].rendimiento_op >= 1){
+        if (areasVitales[0].rendimiento_op >= 1) {
             rendimiento.op = areasVitales[0].rendimiento_op
         } else {
             rendimiento.op = false;
@@ -264,7 +262,7 @@ empresaController.index = async (req, res) => {
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
         rendimiento.num = resCategorias[0].rendimiento
-        if (rendimiento.num < 50){
+        if (rendimiento.num < 50) {
             rendimiento.txt = "Mejorable"
             rendimiento.color = "badge-danger"
         } else if (rendimiento.num > 51 && rendimiento.num < 74) {
@@ -291,15 +289,28 @@ empresaController.index = async (req, res) => {
     if (dimObj.tareas.todas.length > 0) {
         const listo = dimObj.listo
         jsonDim_empresa = JSON.stringify([
-            { ok: (listo[0]), pendiente: (100-listo[0]) },
-            { ok: (listo[1]), pendiente: (100-listo[1]) },
-            { ok: (listo[2]), pendiente: (100-listo[2]) },
-            { ok: (listo[3]), pendiente: (100-listo[3]) }
+            { ok: (listo[0]), pendiente: (100 - listo[0]) },
+            { ok: (listo[1]), pendiente: (100 - listo[1]) },
+            { ok: (listo[2]), pendiente: (100 - listo[2]) },
+            { ok: (listo[3]), pendiente: (100 - listo[3]) }
         ])
     }
 
     req.session.etapaCompleta = etapaCompleta;
     req.session.consulAsignado = consulAsignado;
+
+    /**
+     * VIDEOS TURIALES ACTIVAR o DESACTIVAR
+    */
+    const tutoriales = {};
+    let registros = await consultarDatos('registro_tutoriales')
+    registros = registros.find(x => x.empresa == id_empresa)
+    if (registros) {
+        if (registros.etapa0 == 1) tutoriales.etapa = true;
+    } else {
+        const data = { empresa: id_empresa }
+        await insertarDatos('registro_tutoriales', data)
+    }
 
     res.render('empresa/dashboard', {
         user_dash: true,
@@ -311,7 +322,8 @@ empresaController.index = async (req, res) => {
         porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa3, porcentajeEtapa4, porcentajeTotal,
         jsonAnalisis1, jsonAnalisis2, jsonDimensiones1, jsonDimensiones2,
         tareas, ultimosInformes, verGraficasCircular,
-        nuevosProyectos, rendimiento, jsonDim_empresa, etapaCompleta, modalAcuerdo
+        nuevosProyectos, rendimiento, jsonDim_empresa, etapaCompleta, modalAcuerdo,
+        tutoriales
     })
 }
 
@@ -389,12 +401,11 @@ empresaController.diagnostico = async (req, res) => {
     // ID Empresa Global => id_empresa
     // Pago Diagnóstico => diagnosticoPagado
     // Consultor Asignado => consulAsignado
-    let existencia = true;
     const estadoPago = {
         color : 'badge-warning',
         texto : 'Pendiente',
         btn : 'background: #85bb65; color: white',
-        fecha : 'N/A'
+        fecha : false
     }
 
     let infoConsul = await consultarDatos('consultores')
@@ -415,7 +426,6 @@ empresaController.diagnostico = async (req, res) => {
 
     // Validando Diagnóstico de negocio ha sido pagado
     if (diagnosticoPagado.estado == 1) {
-        existencia = false;
         estadoPago.color = 'badge-success'
         estadoPago.texto = 'Pagado'
         estadoPago.btn = 'background: #656c73; color: white; disabled= "true" '
@@ -432,48 +442,94 @@ empresaController.diagnostico = async (req, res) => {
         }
     }
 
-    const formDiag = {}
-    formDiag.id = id_empresa;
-    formDiag.usuario = encriptarTxt('' + id_empresa)
-    formDiag.estado = false;
+    const cuestionario = {fichaCliente: {}, diagnostico: {}}, resDiag = {};
+    cuestionario.fichaCliente.id = id_empresa;
+    cuestionario.fichaCliente.usuario = encriptarTxt('' + id_empresa)
+    cuestionario.fichaCliente.estado = false;
     const fichaCliente = await consultarDatos('ficha_cliente', `WHERE id_empresa = ${id_empresa}`)
-    const ficha = fichaCliente[0]
 
     if (fichaCliente.length == 0) {
-        formDiag.color = 'badge-danger'
-        formDiag.texto = 'Pendiente'
-        formDiag.fechaLocal = true;
+        cuestionario.fichaCliente.color = 'badge-danger'
+        cuestionario.fichaCliente.texto = 'Pendiente'
+        cuestionario.fichaCliente.fechaLocal = true;
+        cuestionario.diagnostico = false;
     } else {
-        const datos = {}
-        datos.redes_sociales = JSON.parse(ficha.redes_sociales)
-        datos.objetivos = JSON.parse(ficha.objetivos)
-        datos.fortalezas = JSON.parse(ficha.fortalezas)
-        datos.problemas = JSON.parse(ficha.problemas)
-        formDiag.fecha = ficha.fecha_modificacion
+        const ficha = fichaCliente[0]
+        const redes_sociales = JSON.parse(ficha.redes_sociales)
+        cuestionario.fichaCliente.fecha = ficha.fecha_modificacion
 
-        if (ficha.page_web == '' || datos.redes_sociales.twitter == '' || datos.redes_sociales.facebook == '' || datos.redes_sociales.instagram == '') {
-            formDiag.color = 'badge-warning'
-            formDiag.texto = 'Incompleto'
-            formDiag.estado = true;
+        if (fichaCliente.page_web == '' || redes_sociales.twitter == '' || redes_sociales.facebook == '' || redes_sociales.instagram == '') {
+            cuestionario.fichaCliente.color = 'badge-warning'
+            cuestionario.fichaCliente.texto = 'Incompleto'
+            cuestionario.fichaCliente.estado = true;
         } else {
-            formDiag.color = 'badge-success'
-            formDiag.estilo = 'linear-gradient(189.55deg, #FED061 -131.52%, #812082 -11.9%, #50368C 129.46%); color: #FFFF'
-            formDiag.texto = 'Completado'
-            formDiag.estado = true;
+            cuestionario.fichaCliente.color = 'badge-success'
+            cuestionario.fichaCliente.estilo = 'linear-gradient(189.55deg, #FED061 -131.52%, #812082 -11.9%, #50368C 129.46%); color: #FFFF'
+            cuestionario.fichaCliente.texto = 'Completado'
+            cuestionario.fichaCliente.estado = true;
         }
+
+        if (ficha.tipo_empresa == 1) {
+            cuestionario.diagnostico.uno = true;
+            cuestionario.diagnostico.color = 'badge-danger'
+            cuestionario.diagnostico.texto = 'Pendiente'
+            cuestionario.diagnostico.btnEdit = true;
+            cuestionario.diagnostico.link = '/diagnostico-proyecto/'+req.user.codigo
+            let datos = await consultarDatos('dg_empresa_nueva')
+            datos = datos.find(x => x.id_empresa == id_empresa)
+            if (datos) {
+                cuestionario.diagnostico.fecha = datos.fecha;
+                cuestionario.diagnostico.btnEdit = false;
+                cuestionario.diagnostico.color = 'badge-success'
+                cuestionario.diagnostico.texto = 'Completado'
+                cuestionario.diagnostico.modal = '#modalNuevosProyectos';
+            }
+        } else {
+            cuestionario.diagnostico.dos = true;
+            cuestionario.diagnostico.color = 'badge-danger'
+            cuestionario.diagnostico.texto = 'Pendiente'
+            cuestionario.diagnostico.btnEdit = true;
+            cuestionario.diagnostico.link = '/cuestionario-diagnostico/'+req.user.codigo
+            let datos = await consultarDatos('dg_empresa_establecida')
+            datos = datos.find(x => x.id_empresa == id_empresa)
+            if (datos) {
+                cuestionario.diagnostico.fecha = datos.fecha;
+                cuestionario.diagnostico.btnEdit = false;
+                cuestionario.diagnostico.color = 'badge-success'
+                cuestionario.diagnostico.texto = 'Completado'
+                cuestionario.diagnostico.modal = '#modalEmpresasEstablecidas';
+            }
+        }
+
     }
 
     // Informe de la empresa subido
     let informeEmpresa = await consultarDatos('informes', `WHERE id_empresa = "${id_empresa}" LIMIT 1`)
 
+    /**
+     * VIDEOS TURIALES ACTIVAR o DESACTIVAR
+    */
+    const tutoriales = {};
+    let registros = await consultarDatos('registro_tutoriales')
+    registros = registros.find(x => x.empresa == id_empresa)
+    if (registros) {
+        if (registros.etapa1 == 1) {
+            tutoriales.etapa = true;
+        } else {
+            const data = { etapa1: 1 }
+            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${id_empresa}`)
+        }
+    }
+
     res.render('empresa/diagnostico', {
-        user_dash: true, pagoDiag: true, formDiag,
-        existencia, costo, estadoPago,
+        user_dash: true, cuestionario,
+        costo, estadoPago,
         actualYear: req.actualYear,
         etapa1, informe: informeEmpresa[0],
         itemDiagnostico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta, modalAcuerdo,
+        tutoriales, id_empresa
     })
 }
 
@@ -537,7 +593,7 @@ empresaController.fichaCliente = async (req, res) => {
 }
 
 empresaController.addFichaCliente = async (req, res) => {
-    let { nombres, apellidos, email, countryCode, telFicha, fecha_nacimiento, pais, twitter, facebook, instagram, otra, es_propietario, socios, nombre_empresa, cantidad_socios, porcentaje_accionario, tiempo_fundacion, tiempo_experiencia, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivo1, objetivo2, objetivo3, fortaleza1, fortaleza2, fortaleza3, problema1, problema2, problema3, motivo_consultoria, fecha_zh } = req.body
+    let { nombres, apellidos, email, countryCode, telFicha, fecha_nacimiento, pais, twitter, facebook, instagram, otra, es_propietario, socios, nombre_empresa, cantidad_socios, porcentaje_accionario, tiempo_fundacion, tipo_empresa, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivo1, objetivo2, objetivo3, fortaleza1, fortaleza2, fortaleza3, problema1, problema2, problema3, motivo_consultoria, fecha_zh } = req.body
     let redes_sociales = JSON.stringify({ twitter, facebook, instagram, otra })
     let objetivos = JSON.stringify({ objetivo1, objetivo2, objetivo3 })
     let fortalezas = JSON.stringify({ fortaleza1, fortaleza2, fortaleza3 })
@@ -555,7 +611,7 @@ empresaController.addFichaCliente = async (req, res) => {
     page_web = page_web.replace(/[$ ]/g, '');
 
     const nuevaFichaCliente = {
-        telefono, fecha_nacimiento, pais, redes_sociales, es_propietario, socios, cantidad_socios, porcentaje_accionario, tiempo_fundacion, tiempo_experiencia, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivos, fortalezas, problemas, motivo_consultoria, id_empresa, fecha_modificacion
+        telefono, fecha_nacimiento, pais, redes_sociales, es_propietario, socios, cantidad_socios, porcentaje_accionario, tiempo_fundacion, tipo_empresa, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivos, fortalezas, problemas, motivo_consultoria, id_empresa, fecha_modificacion
     }
 
     const userUpdate = { nombres, apellidos, nombre_empresa, email }
@@ -748,8 +804,23 @@ empresaController.analisis = async (req, res) => {
     info3Analisis ? informesAnalisis.push(info3Analisis) : false;
     info4Analisis ? informesAnalisis.push(info4Analisis) : false;
 
+    /**
+     * VIDEOS TURIALES ACTIVAR o DESACTIVAR
+    */
+    const tutoriales = {};
+    let registros = await consultarDatos('registro_tutoriales')
+    registros = registros.find(x => x.empresa == id_empresa)
+    if (registros) {
+        if (registros.etapa2 == 1) {
+            tutoriales.etapa = true;
+        } else {
+            const data = { etapa2: 1 }
+            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${id_empresa}`)
+        }
+    }
+
     res.render('empresa/analisis', {
-        user_dash: true, pagoDiag: true,
+        user_dash: true,
         actualYear: req.actualYear,
         informe: false, propuesta, btnPagar,
         etapa1, archivos,
@@ -761,7 +832,8 @@ empresaController.analisis = async (req, res) => {
         btnActivo, btnDesactivo, tienePropuesta,
         itemAnalisis: true,
         consulAsignado: req.session.consulAsignado,
-        etapaCompleta: req.session.etapaCompleta, modalAcuerdo, id_empresa
+        etapaCompleta: req.session.etapaCompleta, modalAcuerdo, id_empresa,
+        tutoriales
     })
 }
 
@@ -974,16 +1046,31 @@ empresaController.planEmpresarial = async (req, res) => {
         archivos = false;
     }
     /************************************************************************************* */
+    /**
+     * VIDEOS TURIALES ACTIVAR o DESACTIVAR
+    */
+    const tutoriales = {};
+    let registros = await consultarDatos('registro_tutoriales')
+    registros = registros.find(x => x.empresa == id_empresa)
+    if (registros) {
+        if (registros.etapa3 == 1) {
+            tutoriales.etapa = true;
+        } else {
+            const data = { etapa3: 1 }
+            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${id_empresa}`)
+        }
+    }
     
     res.render('empresa/planEmpresarial', {
-        user_dash: true, pagoDiag: true,
+        user_dash: true,
         actualYear: req.actualYear,
         propuesta, btnPagar, etapa2, archivos,        
         escena1, escena2, escena3, escena4, escena5, escena6, 
         msgActivo, msgDesactivo, msgDesactivo2, msgDesactivo3, activarPagoUnico, btnActivo, btnDesactivo, tienePropuesta,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta,
-        itemEmpresarial: true, tareas, modalAcuerdo, id_empresa
+        itemEmpresarial: true, tareas, modalAcuerdo, id_empresa,
+        tutoriales
     })
 }
 
@@ -1079,15 +1166,58 @@ empresaController.planEstrategico = async (req, res) => {
         archivos = false;
     }
     /************************************************************************************* */
+    /**
+     * VIDEOS TURIALES ACTIVAR o DESACTIVAR
+    */
+    const tutoriales = {};
+    let registros = await consultarDatos('registro_tutoriales')
+    registros = registros.find(x => x.empresa == id_empresa)
+    if (registros) {
+        if (registros.etapa4 == 1) {
+            tutoriales.etapa = true;
+        } else {
+            const data = { etapa4: 1 }
+            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${id_empresa}`)
+        }
+    }
 
     res.render('empresa/planEstrategico', {
-        user_dash: true, pagoDiag: true,
-        actualYear: req.actualYear, botones,
+        user_dash: true, actualYear: req.actualYear, botones,
         tareas, informePlan, propuesta,
         dimObj, jsonRendimiento, tienePropuesta,
         itemEstrategico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta,
-        subCancelada, modalAcuerdo, portalClientes, archivos, empresa
+        subCancelada, modalAcuerdo, portalClientes, archivos, empresa,
+        tutoriales
     })
+}
+
+/****************************************************************** */
+/**
+ * INFORME AUTOGENERADO
+*/
+empresaController.informeAutoGenerado = async (req, res) => {
+    const { tipo } = req.params;
+    let tituloInforme = tipo, tipoInforme = 'de negocio';
+    if (tipo == 'dimension producto') {
+        tituloInforme = 'dimensión';
+        tipoInforme = 'producto'
+    } else if (tipo == 'dimension administracion') {
+        tituloInforme = 'dimensión';
+        tipoInforme = 'administración'
+    } else if (tipo == 'dimension operacion') {
+        tituloInforme = 'dimensión';
+        tipoInforme = 'operación'
+    } else if (tipo == 'dimension marketing') {
+        tituloInforme = 'dimensión';
+        tipoInforme = 'marketing'
+    }
+    let empresa = await consultarDatos('empresas')
+    empresa = empresa.find(e => e.id_empresas == id)
+    empresa = empresa.nombre_empresa;
+    let data = await consultarDatos('informes_ia')
+    data = data.find(x => x.empresa == id)
+    const textoGPT = data.informe;
+    res.render('pages/informeAutoGenerado', { empresa, tituloInforme, tipoInforme, textoGPT })
 }

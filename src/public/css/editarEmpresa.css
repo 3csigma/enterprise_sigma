@@ -207,3 +207,13 @@ a.nav-link.btnIndicadoresAll.active {
 @media (max-width: 480px) {
 
 }
+
+.chosen-container-single .chosen-single span {
+    font-size: 14px;
+}
+.mostrar{
+    display: none;
+}
+.table td{
+    padding: 12px 15px;
+}

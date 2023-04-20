@@ -253,6 +253,12 @@
                 </div>
             </div>
 
+            {{#unless tutoriales.etapa}}
+            <div class="col-xl-12">
+                <h2>SECCIÓN PARA TUTORIALES</h2>
+            </div>
+            {{/unless}}
+
             <div class="col-xl-12 col-xxl-12">
                 {{#if verGraficasCircular}}
                 {{> user/graficasCircular}}

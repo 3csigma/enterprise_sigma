@@ -2,7 +2,6 @@
                     Content body start
 ***********************************-->
 <div class="content-body">
-    <!-- row -->
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-12 col-xl-7 col-xxl-7">
@@ -467,6 +466,20 @@
 
         </div>
         {{/if}}
+
+        {{#unless tutoriales.etapa}}
+        <div class="row">
+        <div class="col-xl-12">
+            <div class="card">
+            <div class="card-header">
+                <h4 class="card-title">SECCIÓN PARA TUTORIALES</h4>
+            </div>
+            <div class="card-body"></div>
+            </div>
+        </div>
+        </div>
+        {{/unless}}
+
     </div>
 </div>
 

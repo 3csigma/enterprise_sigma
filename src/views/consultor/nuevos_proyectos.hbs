@@ -114,8 +114,26 @@
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 mt-2">
-                                    <label for="rubro">Rubro del Negocio</label>
+                                    <label for="rubro">¿En qué nicho, rubro, sector o área está tu negocio?</label>
                                     <input type="text" name="rubro" id="rubro"class="form-control mt-2 required">
+                                </div>
+
+                                 <div class="form-group col-md-12">
+									<select name="e_ofrece" class="form-control default-select selectpicker required" required onchange="empresaOfrece(this.value, '1')">
+										<option value="">¿Que ofrece tu empresa?</option>
+										<option value="Vendo productos">Vendo productos</option>
+										<option value="Ofrezco servicios">Ofrezco servicios</option>
+									</select>
+								</div>
+
+                                <div class="form-group col-md-12" style="display:none;" id="fila1-ofrecer1">
+                                    <label for="producto_ofrece1">¿Que producto vendes?</label>
+                                    <input type="text" name="producto_ofrece" id="producto_ofrece1" class="form-control">
+                                </div>
+
+                                <div class="form-group col-md-12" style="display:none;" id="fila2-ofrecer1">
+                                    <label for="servicio_ofrece1">¿Que servicio ofreces?</label>
+                                    <input type="text" name="servicio_ofrece" id="servicio_ofrece1" class="form-control">
                                 </div>
 
                                 <div class="form-group col-md-12">
@@ -1178,6 +1196,7 @@
                         {{!-- FECHA DE EDICIÓN --}}
                         <input type="hidden" id="zhActualAdm" name="zhActualAdm">
                         <input type="hidden" id="codigoEmpresa" name="codigoEmpresa" value="{{codigo}}">
+                        <input type="hidden" name="rolUser" value="{{rolUser}}">
 
                     </div>
                     <!-- /middle-wizard -->
@@ -1197,5 +1216,5 @@
     <!-- /row-->
 </div>
 <!-- /container-fluid -->
-<a href="/empresas/{{codigo}}#diagnostico_" class="close"></a>
+<a href="{{linkCerrar}}" class="close"></a>
 {{> general/footerForms}}

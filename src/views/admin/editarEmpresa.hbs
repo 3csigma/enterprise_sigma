@@ -1,15 +1,4 @@
 <link rel="stylesheet" href="../css/editarEmpresa.css">
-<style>
-    .chosen-container-single .chosen-single span {
-        font-size: 14px;
-    }
-    .mostrar{
-        display: none;
-    }
-    .table td{
-        padding: 12px 15px;
-    }
-</style>
 <!--**********************************
         Content body start
 ***********************************-->
@@ -63,8 +52,7 @@
                             <div class="text-center">
                                 <div class="row">
                                     <div class="col">
-                                        <h3 class="m-b-0">{{#if
-                                            empresa.cantidad_socios}}{{empresa.cantidad_socios}}{{else}}N/A{{/if}}</h3>
+                                        <h3 class="m-b-0">{{#if empresa.cantidad_socios}}{{empresa.cantidad_socios}}{{else}}N/A{{/if}}</h3>
                                         <span>Cantidad de Socios</span>
                                     </div>
                                     <div class="col">
@@ -831,7 +819,7 @@
                                                             <td>
                                                                 <!-- BOTÓN PARA MODAL RESULTADOS CUESTIONARIO -->
                                                                 <a class="btn color_tertiary shadow btn-xs sharp text-white"
-                                                                    data-toggle="modal" data-target=".bd-example-modal-lg"
+                                                                    data-toggle="modal" data-target="#modalEmpresasEstablecidas"
                                                                     style="color: white;border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
                                                             </td>
@@ -1560,8 +1548,8 @@
                                         </div>
                                     </div>
                                     <!-- ========================================================================== -->
-                                    <!-- ======================== INFORMES DE ANÁLISIS COMPLETO ======================== -->
-                                    {{#if filaInforme.completo}}
+                                    <!-- ======================== INFORMES DE ANÁLISIS GENERAL ======================== -->
+                                    {{!-- {{#if filaInforme.completo}}
                                     <div class="card">
                                         <div class="card-body">
                                             <div class="card-header">
@@ -1627,7 +1615,7 @@
                                             </div>
                                         </div>
                                     </div>
-                                    {{/if}}
+                                    {{/if}} --}}
                                     <!-- ========================================================================== -->
                                     {{/if}}
 

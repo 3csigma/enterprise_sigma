@@ -745,7 +745,7 @@ helpers.consultarTareasConsultores = async (consultor, fechaActual) => {
 
 helpers.consultarDatos = async (tabla, extra = null) => {
     let data = await pool.query('SELECT * FROM '+ tabla)
-    if (extra){
+    if (extra) {
         data = await pool.query('SELECT * FROM '+ tabla + ' ' + extra)
     }
     return data;
@@ -756,7 +756,9 @@ helpers.insertarDatos = async (tabla, datos) => {
 }
 
 helpers.actualizarDatos = async (tabla, datos, extra) => {
-    return await pool.query(`UPDATE ${tabla} SET ${datos} ${extra}`);
+    // await pool.query('UPDATE propuestas SET ? WHERE empresa = ? AND tipo_propuesta = ?', [actualizarPropuesta, idEmpresa, tipo_propuesta]);
+    return await pool.query(`UPDATE ${tabla} SET ? ${extra}`, [datos]);
+    // return await pool.query(`UPDATE ${tabla} SET ${datos} ${extra}`);
 }
 
 helpers.eliminarDatos = async (tabla, extra) => {
