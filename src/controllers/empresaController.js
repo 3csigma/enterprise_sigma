@@ -536,7 +536,6 @@ empresaController.diagnostico = async (req, res) => {
 /** Mostrar vista del formulario Ficha Cliente */
 empresaController.validarFichaCliente = async (req, res) => {
     const { id } = req.params;
-    // let row = await pool.query('SELECT * FROM empresas WHERE email = ? LIMIT 1', [req.user.email])
     let row = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
     row = row[0]
     const id_empresa = desencriptarTxt(id)
@@ -1199,25 +1198,24 @@ empresaController.planEstrategico = async (req, res) => {
 */
 empresaController.informeAutoGenerado = async (req, res) => {
     const { tipo } = req.params;
-    let tituloInforme = tipo, tipoInforme = 'de negocio';
-    if (tipo == 'dimension producto') {
+    let tituloInforme = tipo, tipoInforme = 'negocio';
+    if (tipo == 'dimensión producto') {
         tituloInforme = 'dimensión';
         tipoInforme = 'producto'
-    } else if (tipo == 'dimension administracion') {
+    } else if (tipo == 'dimensión administración') {
         tituloInforme = 'dimensión';
         tipoInforme = 'administración'
-    } else if (tipo == 'dimension operacion') {
+    } else if (tipo == 'dimensión operación') {
         tituloInforme = 'dimensión';
         tipoInforme = 'operación'
-    } else if (tipo == 'dimension marketing') {
+    } else if (tipo == 'dimensión marketing') {
         tituloInforme = 'dimensión';
         tipoInforme = 'marketing'
     }
     let empresa = await consultarDatos('empresas')
-    empresa = empresa.find(e => e.id_empresas == id)
-    empresa = empresa.nombre_empresa;
+    empresa = empresa.find(e => e.codigo == req.user.codigo)
     let data = await consultarDatos('informes_ia')
-    data = data.find(x => x.empresa == id)
-    const textoGPT = data.informe;
-    res.render('pages/informeAutoGenerado', { empresa, tituloInforme, tipoInforme, textoGPT })
+    data = data.find(x => x.empresa == empresa.id_empresas)
+    const textoGPT = data.informe
+    res.render('pages/informeAutoGenerado', { empresa: empresa.nombre_empresa, tituloInforme, tipoInforme, textoGPT })
 }

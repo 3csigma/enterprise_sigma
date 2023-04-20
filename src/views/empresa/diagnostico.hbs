@@ -28,70 +28,58 @@
     </div>
     {{!-- Fin de la 1era fila --}}
 
-    {{!-- TARJETA DE PAGO DIAGNÓSTICO --}}
-    <div class="col-xl-6 col-xxl-6">
-      <div class="row">
-        <div class="col-xl-12">
-          <div class="card">
-            <div class="card-header">
-              <h4 class="card-title">Pago</h4>
-            </div>
-            <div class="card-body">
-              <div class="table-responsive">
-                <table class="table table-responsive-md text-center">
-                  <thead>
-                    <tr>
-                      <th>FECHA PAGO</th>
-                      <th>VALOR</th>
-                      <th>ESTADO DE PAGO</th>
-                      <th>PAGAR</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td>{{#if estadoPago.fecha}}{{estadoPago.fecha}}{{else}}N/A{{/if}}</td>
-                      <td class="precios_celdas">{{costo}}</td>
-                      <td><span class="badge light {{estadoPago.color}}"
-                          style="background: {{cuestionario.fichaCliente.estilo}}">{{estadoPago.texto}}</span></td>
-                      <td>
-                        {{#if estadoPago.fecha}}
-                        <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}" style="{{estadoPago.btn}}">
-                          <i class="fa fa-usd"></i>
-                        {{else}}
-                        <form action="/pagar-diagnostico" method="POST">
-                            <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}" style="{{estadoPago.btn}}">
-                              <i class="fa fa-usd"></i>
-                            </button>
-                        </form>
-                        </button>
-                        {{/if}}
-                      </td>
-                    </tr>
-                  </tbody>
-                </table>
+    <div class="row">
+      {{!-- TARJETA DE PAGO DIAGNÓSTICO --}}
+      <div class="col-xl-6 col-xxl-6">
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Pago</h4>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-responsive-md text-center">
+                    <thead>
+                      <tr>
+                        <th>FECHA PAGO</th>
+                        <th>VALOR</th>
+                        <th>ESTADO DE PAGO</th>
+                        <th>PAGAR</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{{#if estadoPago.fecha}}{{estadoPago.fecha}}{{else}}N/A{{/if}}</td>
+                        <td class="precios_celdas">{{costo}}</td>
+                        <td><span class="badge light {{estadoPago.color}}"
+                            style="background: {{cuestionario.fichaCliente.estilo}}">{{estadoPago.texto}}</span></td>
+                        <td>
+                          {{#if estadoPago.fecha}}
+                          <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}"
+                            style="{{estadoPago.btn}}">
+                            <i class="fa fa-usd"></i>
+                            {{else}}
+                            <form action="/pagar-diagnostico" method="POST">
+                              <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}"
+                                style="{{estadoPago.btn}}">
+                                <i class="fa fa-usd"></i>
+                              </button>
+                            </form>
+                          </button>
+                          {{/if}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>
         </div>
       </div>
-    </div>
-
-    {{#unless tutoriales.etapa}}
-    <div class="row">
-      <div class="col-xl-12">
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">SECCIÓN PARA TUTORIALES</h4>
-          </div>
-          <div class="card-body"></div>
-        </div>
-      </div>
-    </div>
-    {{/unless}}
-
-    {{#if estadoPago.fecha}}
-    {{!-- TARJETAS FORMULARIOS e INFORMES --}}
-    <div class="row">
+    
+      {{#if estadoPago.fecha}}
       {{!-- FORMULARIOS --}}
       <div class="col-xl-6 col-xxl-6">
         <div class="row">
@@ -117,43 +105,43 @@
                         <td id="fActual">{{cuestionario.fichaCliente.fecha}}</td>
                         <td>Ficha de cliente</td>
                         <td><span class="badge light {{cuestionario.fichaCliente.color}}"
-                            style="background: {{cuestionario.fichaCliente.estilo}}">{{cuestionario.fichaCliente.texto}}</span></td>
+                            style="background: {{cuestionario.fichaCliente.estilo}}">{{cuestionario.fichaCliente.texto}}</span>
+                        </td>
                         <td>
                           <div class="d-flex">
                             <a href="/ficha-cliente/{{cuestionario.fichaCliente.usuario}}"
                               class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
                               <i class="fa fa-pencil"></i></a>
                             <a onclick="eliminarFichaCliente({{cuestionario.fichaCliente.id}})"
-                              class="btn btn-danger shadow btn-xs sharp text-white"><i
-                                class="fa fa-trash"></i></a>
+                              class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
                           </div>
                         </td>
                       </tr>
-
+    
                       <!-- CUESTIONARIO EMPRESA ESTABLECIDA o NUEVA -->
                       {{#if cuestionario.diagnostico}}
                       <tr>
-                          <td>{{#if cuestionario.diagnostico.fecha}}{{cuestionario.diagnostico.fecha}}{{else}}N/A{{/if}}</td>
-                          <td>Cuestionario diagnóstico</td>
-                          <td><span class="badge light {{cuestionario.diagnostico.color}}">{{cuestionario.diagnostico.texto}}</span>
-                          </td>
-                          <td>
-                              {{#if cuestionario.diagnostico.btnEdit}}
-                              <a href="{{cuestionario.diagnostico.link}}"
-                                  class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                                  style="border-color: #812082;">
-                                  <i class="fa fa-pencil"></i></a>
-                              {{else}}
-                              {{!-- <div class="d-flex">
-                                <button class="btn btn-primary shadow btn-xs sharp mr-1"
-                                  style="filter: grayscale(1);">
-                                  <i class="fa fa-pencil"></i></button>
-                              </div> --}}
-                              <a href="/generar-informe/diagnostico" target="_blank" class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                <i class="fa fa-eye"></i>
-                              </a>
-                              {{/if}}
-                          </td>
+                        <td>{{#if cuestionario.diagnostico.fecha}}{{cuestionario.diagnostico.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>Cuestionario diagnóstico</td>
+                        <td><span
+                            class="badge light {{cuestionario.diagnostico.color}}">{{cuestionario.diagnostico.texto}}</span>
+                        </td>
+                        <td>
+                          {{#if cuestionario.diagnostico.btnEdit}}
+                          <a href="{{cuestionario.diagnostico.link}}"
+                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white" style="border-color: #812082;">
+                            <i class="fa fa-pencil"></i></a>
+                          {{else}}
+                          {{!-- <div class="d-flex">
+                            <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter: grayscale(1);">
+                              <i class="fa fa-pencil"></i></button>
+                          </div> --}}
+                          <a href="/generar-informe/diagnóstico" target="_blank"
+                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                            <i class="fa fa-eye"></i>
+                          </a>
+                          {{/if}}
+                        </td>
                       </tr>
                       {{/if}}
                     </tbody>
@@ -164,54 +152,21 @@
           </div>
         </div>
       </div>
+      {{/if}}
+    </div>
 
-      {{!-- Informes generados --}}
-      <div class="col-xl-6 col-xxl-6">
-        <div class="row">
-          <div class="col-xl-12">
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title">Informes generados</h4>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-responsive-md text-center">
-                    <thead>
-                      <tr>
-                        <th>FECHA</th>
-                        <th>ETAPA</th>
-                        <th>NOMBRE</th>
-                        <th>ACCIÓN</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {{#if informe.fecha}}
-                      <tr>
-                        <td>{{informe.fecha}}</td>
-                        <td>Diagnóstico de negocio</td>
-                        <td>{{informe.nombre}}</td>
-                        <td>
-                          <a href="{{informe.url}}"
-                            style="margin: 0 auto; margin-top: -8px; border-color: #FED061"
-                            target="_blank" class="btn color_tertiary shadow btn-xs sharp text-white">
-                            <i class="fa fa-search"></i></a>
-                        </td>
-                      </tr>
-                      {{else}}
-                      <tr>
-                        <td colspan="4">Aún no hay informes generados.</td>
-                      </tr>
-                      {{/if}}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
+    {{#unless tutoriales.etapa}}
+    <div class="row">
+      <div class="col-xl-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">SECCIÓN PARA TUTORIALES</h4>
           </div>
+          <div class="card-body"></div>
         </div>
       </div>
     </div>
-    {{/if}}
+    {{/unless}}
   </div>
 </div>
 

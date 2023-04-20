@@ -1451,12 +1451,13 @@ dashboardController.enviarCuestionario = async (req, res) => {
                 'Metas a corto plazo': { m1, m2, m3, m4, m5 }
             }
 
-            const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores genera un informe detallado de diagnostico del estado general de la empresa.")
-            const resultAI = await getResponseChatGPT(prompt)
+            const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de diagnóstico del estado general de la empresa.")
+            let resultAI = await getResponseChatGPT(prompt)
             console.log("\n<<<< RESULT AI >>>> ");
-            console.log(resultAI);
+            const resp = resultAI.content.replaceAll('\n', '<br>');
+            console.log(resp);
             console.log("<<<< RESULT AI >>>>\n");
-            const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resultAI, fecha: new Date().toLocaleDateString("en-US") }
+            const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
             const insertResult = await insertarDatos('informes_ia', informeAI)
             if (insertResult.affectedRows > 0) {
                 rolUser == 'Empresa' ? res.redirect('/diagnostico-de-negocio')

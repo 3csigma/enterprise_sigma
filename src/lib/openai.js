@@ -13,14 +13,9 @@ module.exports = {
         }]
 
         const completion = await openai.createChatCompletion({ model, messages })
-        console.log("\n-+-+-+-+-+-+-+-+-+-+-+-+-+++-+-+-+-+- 0000000000000000");
-        console.log(completion)
-        console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+++-+-+-+-+- 1111111111111111");
-        console.log(completion.data)
-        console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+++-+-+-+-+- 222222222222222");
         console.log(completion.data.choices[0])
-        console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+++-+-+-+-+- 3333333333333333");
-        return completion.data.choices[0].message.content;
+        console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+++-+-+-+-+-");
+        return completion.data.choices[0].message;
     }
 
 }
