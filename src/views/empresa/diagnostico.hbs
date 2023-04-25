@@ -6,11 +6,7 @@
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Queremos conocerte un poco más</h2>
-            {{#if estadoPago.fecha}}
             <p style="text-align: justify;margin-top: 2em;color: #000">Por favor completa el formulario a continuación para tener información mas detallada sobre tu empresa, estos datos son vitales para realizar un diagnóstico preciso. Si deseas modificar, agregar datos o rehacer el formulario puedes hacerlo.</p>
-            {{else}}
-            <p style="text-align: justify;margin-top: 2em;color: #000">Ahora que tu consultor ha sido asignado puedes realizar el pago del diagnóstico de negocio, y podremos comenzar juntos el proceso de llevar tu empresa al siguiente nivel.</p>
-            {{/if}}
           </div>
         </div>
       </div>
@@ -20,7 +16,7 @@
           {{#if cuestionario.fichaCliente.estado}}
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Hemos recibido la información de tu empresa</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">Con base en tus respuestas tu consultor realizará un diagnóstico preciso acerca de tu empresa, y agendará una reunión contigo para continuar el proceso, recibiriás una notificación de esto en tu correo electrónico <strong>{{user.email}}</strong>.</p>
+            <p style="text-align: justify;margin-top: 2em;color: #000">Con base en tus respuestas se te generó un informe detallado de diagnóstico del estado general de tu empresa tu empresa, el cuál puedes revisar en el icono del ojito, en el apartado de <strong>Formularios</strong>.</p>
           </div>
           {{/if}}
         </div>
@@ -29,58 +25,7 @@
     {{!-- Fin de la 1era fila --}}
 
     <div class="row">
-      {{!-- TARJETA DE PAGO DIAGNÓSTICO --}}
-      <div class="col-xl-6 col-xxl-6">
-        <div class="row">
-          <div class="col-xl-12">
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title">Pago</h4>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-responsive-md text-center">
-                    <thead>
-                      <tr>
-                        <th>FECHA PAGO</th>
-                        <th>VALOR</th>
-                        <th>ESTADO DE PAGO</th>
-                        <th>PAGAR</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <tr>
-                        <td>{{#if estadoPago.fecha}}{{estadoPago.fecha}}{{else}}N/A{{/if}}</td>
-                        <td class="precios_celdas">{{costo}}</td>
-                        <td><span class="badge light {{estadoPago.color}}"
-                            style="background: {{cuestionario.fichaCliente.estilo}}">{{estadoPago.texto}}</span></td>
-                        <td>
-                          {{#if estadoPago.fecha}}
-                          <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}"
-                            style="{{estadoPago.btn}}">
-                            <i class="fa fa-usd"></i>
-                            {{else}}
-                            <form action="/pagar-diagnostico" method="POST">
-                              <button type="submit" class="btn btn-xs sharp" title="{{estadoPago.texto}}"
-                                style="{{estadoPago.btn}}">
-                                <i class="fa fa-usd"></i>
-                              </button>
-                            </form>
-                          </button>
-                          {{/if}}
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    
-      {{#if estadoPago.fecha}}
-      {{!-- FORMULARIOS --}}
+      {{!-- FORMULARIOS  (Ficha de Cliente & Cuestionario de Diagnóstico) --}}
       <div class="col-xl-6 col-xxl-6">
         <div class="row">
           <div class="col-xl-12">
@@ -152,21 +97,8 @@
           </div>
         </div>
       </div>
-      {{/if}}
     </div>
 
-    {{#unless tutoriales.etapa}}
-    <div class="row">
-      <div class="col-xl-12">
-        <div class="card">
-          <div class="card-header">
-            <h4 class="card-title">SECCIÓN PARA TUTORIALES</h4>
-          </div>
-          <div class="card-body"></div>
-        </div>
-      </div>
-    </div>
-    {{/unless}}
   </div>
 </div>
 
@@ -174,6 +106,26 @@
             Scripts
 ***********************************-->
 <script>
+  {{#unless tutoriales.etapa}}
+  // POPUP CON TUTORIAL
+  document.addEventListener("DOMContentLoaded", () => {
+    Swal.fire({
+      title: '<strong>HTML <u>example</u></strong>',
+      icon: 'info',
+      html: 'You can use <b>bold text</b>, ' +
+          '<a href="//sweetalert2.github.io">links</a> ' +
+          'and other HTML tags',
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+      cancelButtonAriaLabel: 'Thumbs down'
+    })
+  });
+  {{/unless}}
+  
   {{#if cuestionario.fichaCliente.fechaLocal}}
   const tzLocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
   console.log(tzLocal);

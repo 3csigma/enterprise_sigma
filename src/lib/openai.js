@@ -13,8 +13,6 @@ module.exports = {
         }]
 
         const completion = await openai.createChatCompletion({ model, messages })
-        console.log(completion.data.choices[0])
-        console.log("-+-+-+-+-+-+-+-+-+-+-+-+-+++-+-+-+-+-");
         return completion.data.choices[0].message;
     }
 

@@ -549,22 +549,27 @@ consultorController.eliminarArchivo = async (req, res) => {
 // AGREGAR NUEVO RENDIMIENTO DE LA EMPRESA (VENTAS, COMPRAS, GASTOS)
 consultorController.nuevoRendimiento = async (req, res) => {
     let { total_ventas, total_compras, total_gastos, codigo } = req.body
+    let result = false;
+    console.log("Código", codigo);
     let datosTabla = await consultarDatos('empresas')
     datosTabla = datosTabla.find(item => item.codigo == codigo)
-    const empresa = datosTabla.id_empresas
-    const fecha = new Date().toLocaleDateString('en-US')
-    // RENDIMIENTO DE LA EMPRESA
-    total_ventas = total_ventas.replace(/[$ ]/g, '');
-    total_ventas = total_ventas.replace(/[,]/g, '.');
-    total_compras = total_compras.replace(/[$ ]/g, '');
-    total_compras = total_compras.replace(/[,]/g, '.');
-    total_gastos = total_gastos.replace(/[$ ]/g, '');
-    total_gastos = total_gastos.replace(/[,]/g, '.');
-    const utilidad = parseFloat(total_ventas) - parseFloat(total_compras) - parseFloat(total_gastos)
-    const nuevoRendimiento = { empresa, total_ventas, total_compras, total_gastos, utilidad, fecha }
-    // await pool.query('INSERT INTO rendimiento_empresa SET ?', [nuevoRendimiento])
-    await insertarDatos('rendimiento_empresa', nuevoRendimiento)
-    res.redirect('/empresas/' + codigo)
+    if (datosTabla) {
+        const empresa = datosTabla.id_empresas
+        const fecha = new Date().toLocaleDateString('en-US')
+        // RENDIMIENTO DE LA EMPRESA
+        total_ventas = total_ventas.replace(/[$ ]/g, '');
+        total_ventas = total_ventas.replace(/[,]/g, '.');
+        total_compras = total_compras.replace(/[$ ]/g, '');
+        total_compras = total_compras.replace(/[,]/g, '.');
+        total_gastos = total_gastos.replace(/[$ ]/g, '');
+        total_gastos = total_gastos.replace(/[,]/g, '.');
+        const utilidad = parseFloat(total_ventas) - parseFloat(total_compras) - parseFloat(total_gastos)
+        const nuevoRendimiento = { empresa, total_ventas, total_compras, total_gastos, utilidad, fecha }
+        // await pool.query('INSERT INTO rendimiento_empresa SET ?', [nuevoRendimiento])
+        result = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
+        if (result.affectedRows > 0) result = true;
+    }
+    res.redirect(req.headers.referer)
 }
 
 /************************************************************************************** */

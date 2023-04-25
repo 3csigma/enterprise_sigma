@@ -99,7 +99,7 @@
                     {{/if}}
                     
                     {{!-- Plan estratégico de negocio --}}
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="card avtivity-card">
                             <div class="card-body">
                                 <div class="media align-items-center">
@@ -129,7 +129,7 @@
                     </div>
 
                     {{!-- PLAN EMPRESARIAL --}}
-                    <div class="col-sm">
+                    {{!-- <div class="col-sm">
                         <div class="card avtivity-card">
                             <div class="card-body">
                                 <div class="media align-items-center">
@@ -150,7 +150,7 @@
                             </div>
                             <div class="effect bg-empresarial"></div>
                         </div>
-                    </div>
+                    </div> --}}
 
                 </div>
 
@@ -201,13 +201,14 @@
                     <!-- PESTAÑAS DE LAS GRÁFICAS -->
                     <div class="profile-tab mb-2">
                         <div class="custom-tab-1">
-                            <ul class="nav nav-pills justify-content-center mb-4">
-                                <li class="nav-item"><a href="#vitales" data-toggle="tab"
-                                        class="nav-link active show btnIndicadoresAll" style="width: 168.83px;">Áreas
-                                        Vitales</a>
+                            <ul class="nav nav-pills d-flex justify-content-center items-align-center mb-4">
+                                <li class="nav-item"><a href="#vitales" data-toggle="tab" class="nav-link active show btnIndicadoresAll" 
+                                    style="width: 168.83px;">Áreas Vitales</a>
                                 </li>
-                                <li class="nav-item"><a href="#dimensiones" data-toggle="tab" style="margin: 0" class="nav-link btnIndicadoresAll">Por
-                                        dimensiones</a>
+                                <li class="nav-item"><a href="#dimensiones" data-toggle="tab" 
+                                    class="nav-link btnIndicadoresAll">Por dimensiones</a>
+                                </li>
+                                <li class="nav-item"><a href="#pe_empresa" data-toggle="tab" class="nav-link ml-2 btnIndicadoresAll">Percepción Estadística</a>
                                 </li>
                             </ul>
                         </div>
@@ -243,21 +244,18 @@
                             {{/if}}
                         </div>
 
+                        <div id="pe_empresa" class="tab-pane fade">
+                            <div class="card-body">
+                                <canvas id="chartEmpresa3"></canvas>
+                            </div>
+                        </div>
+
                     </div>
 
-                    <input type="hidden" id="jsonAnalisis1" value="{{jsonAnalisis1}}" />
-                    <input type="hidden" id="jsonAnalisis2" value="{{jsonAnalisis2}}" />
-                    <input type="hidden" id="jsonDimensiones1" value="{{jsonDimensiones1}}" />
-                    <input type="hidden" id="jsonDimensiones2" value="{{jsonDimensiones2}}" />
+                    <input type="hidden" id="jsonIndicadores" value="{{jsonIndicadores}}" />
                     <input type="hidden" id="nuevosProyectos" value="{{nuevosProyectos}}" />
                 </div>
             </div>
-
-            {{#unless tutoriales.etapa}}
-            <div class="col-xl-12">
-                <h2>SECCIÓN PARA TUTORIALES</h2>
-            </div>
-            {{/unless}}
 
             <div class="col-xl-12 col-xxl-12">
                 {{#if verGraficasCircular}}
@@ -306,9 +304,55 @@
                 </div>
             </div>
 
-            {{!-- Últimos informes generados --}}
+            {{!-- NUEVO RENIDMIENTO y Últimos informes generados --}}
+            {{#unless datos.nueva}}
             <div class="col-xl-6 col-xxl-6">
                 <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Rendimiento de la Empresa</h4>
+                            </div>
+                            <div class="card-body">
+                                {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
+                                <div class="row mt-2">
+                                    {{#if jsonRendimiento}}
+                                    <input type="hidden" id="jsonRendimiento" value="{{jsonRendimiento}}">
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
+                                    </div>
+                                    <br>
+                                    <div class="card-body" style="margin-left: -50px;">
+                                        <div id="multi-line-chart" class="ct-chart ct-golden-section chartlist-chart"></div>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-top: -48px;">
+                                        <!-- BOTÓN PARA MODAL NUEVO RENDIMIENTO -->
+                                        <button type="button" class="btn color_gradient text-white" data-toggle="modal"
+                                            data-target="#modalNewRendimiento">Nuevo Rendimiento</button>
+                                    </div>
+                                    {{else}}
+                                    <div class="card-body px-0 d-flex justify-content-center align-items-center">
+                                        <div>
+                                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px; height: 60px; background-color: #f4f4f4;
+                                            padding-top: 14px; border-radius: 35px;"></i></center><br>
+                                            <label style="font-size:16px;color:#000;font-weight:500;margin-bottom: 20px;">Aún no hay información para mostrar</label>
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {{/unless}}
+
+                {{!-- <div class="row">
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header">
@@ -351,7 +395,7 @@
                             </div>
                         </div>
                     </div>
-                </div>
+                </div> --}}
             </div>
             <br>
         </div>
@@ -361,6 +405,10 @@
 <!--**********************************
         Content body end
 ***********************************-->
+
+{{#if jsonRendimiento}}
+{{> modals/nuevoRendimiento}}
+{{/if}}
 
 </div> <!-- Fin del Main Wrapper - Inicia en el Partial Navigation -->
 <!--**********************************
@@ -372,16 +420,6 @@
 <input type="hidden" id="tokenForm" value="{{csrfToken}}">
 {{/if}}
 
-
-
-
-<!-- ****************** Required JS - DASHBOARD ****************** -->
-<script src="../vendor/js/Chart.bundle.min.js"></script>
-<script src="../vendor/js/owl.carousel.js"></script>
-<!-- Chart piety plugin files -->
-<script src="../vendor/js/jquery.peity.min.js"></script>
-<script src="../js/jquery.js"></script>
-
 {{#if jsonDim_empresa}}
 <input type="hidden" id="jsonDim_empresa" value="{{jsonDim_empresa}}">
 {{> user/pieCharts}}
@@ -392,3 +430,25 @@
 <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
 <script src="https://js.stripe.com/v3/"></script>
 {{/if}}
+
+{{!-- POPUP CON TUTORIAL --}}
+{{#unless tutoriales.etapa}}
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        Swal.fire({
+            title: '<strong>HTML <u>example</u></strong>',
+            icon: 'info',
+            html: 'You can use <b>bold text</b>, ' +
+                '<a href="//sweetalert2.github.io">links</a> ' +
+                'and other HTML tags',
+            showCloseButton: true,
+            showCancelButton: true,
+            focusConfirm: false,
+            confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
+            confirmButtonAriaLabel: 'Thumbs up, great!',
+            cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+            cancelButtonAriaLabel: 'Thumbs down'
+        })
+    });
+</script>
+{{/unless}}

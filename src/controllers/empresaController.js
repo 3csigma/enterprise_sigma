@@ -136,6 +136,26 @@ empresaController.index = async (req, res) => {
         }
     }
 
+    const informesIA = await consultarDatos('informes_ia')
+    const informe1_IA = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Diagnóstico')
+    if (informe1_IA) {
+        porcentajeEtapa1 = 100;
+        etapaCompleta.e1 = true
+
+        /*****************************************************
+         * VALIDANDO EL TIPO DE EMPRESA (NUEVA O ESTABLECIDA) - PARA HABILITAR EL MENÚ
+        */
+        // Empresa Establecida
+        if (diagEmpresa.length > 0) {
+            etapaCompleta.verAnalisis = true;
+            etapaCompleta.verEmpresarial = true;
+            // Empresa Nueva
+        } else if (diagEmpresa2.length > 0) {
+            etapaCompleta.verAnalisis = false;
+            etapaCompleta.verEmpresarial = true;
+        }
+    }
+
     // Informe de diagnóstico de empresa subido
     let ultimosInformes = await consultarDatos('informes', 'ORDER BY id_informes DESC LIMIT 2')
     ultimosInformes = ultimosInformes.filter(x => x.id_empresa == id_empresa)
@@ -231,37 +251,38 @@ empresaController.index = async (req, res) => {
     }
 
 
-    /************** DATOS PARA LAS GRÁFICAS AREAS VITALES & POR DIMENSIONES ****************/
-    let jsonDimensiones1, jsonDimensiones2, nuevosProyectos = 0, rendimiento = {};
-    let jsonAnalisis1, jsonAnalisis2;
-
-    let areasVitales = await pool.query('SELECT * FROM indicadores_areasvitales WHERE id_empresa = ? ORDER BY id_ LIMIT 2', [empresa.id_empresas])
-
-    if (areasVitales.length > 0) {
-        jsonAnalisis1 = JSON.stringify(areasVitales[0]);
-        jsonAnalisis2 = JSON.stringify(areasVitales[1]);
-        if (areasVitales[0].rendimiento_op >= 1) {
-            rendimiento.op = areasVitales[0].rendimiento_op
+    /************** DATOS PARA LAS GRÁFICAS AREAS VITALES & POR DIMENSIONES & PERCEPCIÓN ESTADÍSTICA ****************/
+    /**
+     * PC => Percepción Cliente
+     * PE => Percepción Estadística
+     */
+    let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
+    let areasVitales = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ ASC')
+    areasVitales = areasVitales.find(x => x.id_empresa == id_empresa)
+    let areasVitales2 = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ DESC')
+    areasVitales2 = areasVitales2.find(x => x.id_empresa == id_empresa)
+    if (areasVitales) {
+        jsonIndicadores.areasVitales1 = areasVitales;
+        jsonIndicadores.areasVitales2 = areasVitales2;
+        if (areasVitales.rendimiento_op >= 1) {
+            rendimiento.op = areasVitales.rendimiento_op
         } else {
             rendimiento.op = false;
         }
     }
 
-    // Si la empresa está Establecida
-    let xDimensiones = await pool.query('SELECT * FROM indicadores_dimensiones WHERE id_empresa = ? ORDER BY id ASC LIMIT 1', [id_empresa])
-    let xDimensiones2 = await pool.query('SELECT * FROM indicadores_dimensiones WHERE id_empresa = ? ORDER BY id DESC LIMIT 1', [id_empresa])
-    if (xDimensiones.length > 0) {
-        jsonDimensiones1 = JSON.stringify(xDimensiones[0]);
-        jsonDimensiones2 = JSON.stringify(xDimensiones2[0]);
-    }
+    console.log("<<<<<<<<<<<< indi >>>>>>>>>>>>>>>>");
+    console.log(jsonIndicadores.areasVitales1);
+    console.log("---------------------");
 
-    // Si la empresa es Nueva
-    let resCategorias = await pool.query('SELECT * FROM resultado_categorias WHERE id_empresa = ? LIMIT 1', [id_empresa])
-    if (resCategorias.length > 0) {
-        jsonDimensiones1 = JSON.stringify(resCategorias[0]);
+    // Empresas Nuevas
+    let resulCateg = await consultarDatos('resultado_categorias')
+    resulCateg = resulCateg.find(x => x.id_empresa == id_empresa)
+    if (resulCateg) {
+        jsonIndicadores.dimensiones1 = resulCateg
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
-        rendimiento.num = resCategorias[0].rendimiento
+        rendimiento.num = resulCateg.rendimiento
         if (rendimiento.num < 50) {
             rendimiento.txt = "Mejorable"
             rendimiento.color = "badge-danger"
@@ -272,6 +293,31 @@ empresaController.index = async (req, res) => {
             rendimiento.txt = "Óptimo"
             rendimiento.color = "badge-success"
         }
+    }
+
+    /*************************************************************************************** */
+    // Empresas Establecidas
+    let xDimensiones = await consultarDatos('indicadores_dimensiones', 'ORDER BY id ASC')
+    xDimensiones = xDimensiones.find(x => x.id_empresa == id_empresa)
+    let xDimensiones2 = await consultarDatos('indicadores_dimensiones', 'ORDER BY id DESC')
+    xDimensiones2 = xDimensiones2.find(x => x.id_empresa == id_empresa)
+    if (xDimensiones) {
+        jsonIndicadores.dimensiones1 = xDimensiones
+        jsonIndicadores.dimensiones2 = xDimensiones2
+        nuevosProyectos = 0;
+    }
+
+    // Percepción Estadística
+    let pe_dimensiones1 = await consultarDatos('percepcion_estadistica', 'ORDER BY id ASC')
+    pe_dimensiones1 = pe_dimensiones1.find(x => x.empresa == id_empresa)
+    console.log("PE DIMENSIONES");
+    console.log(pe_dimensiones1);
+    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica', 'ORDER BY id DESC')
+    // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
+    if (pe_dimensiones1) {
+        jsonIndicadores.pe1 = pe_dimensiones1
+        // jsonIndicadores.pe2 = pe_dimensiones2
+        nuevosProyectos = 0;
     }
 
     /************************************************************************************* */
@@ -312,6 +358,14 @@ empresaController.index = async (req, res) => {
         await insertarDatos('registro_tutoriales', data)
     }
 
+    // RENDIMIENTO DE LA EMRPESA
+    let datosTabla = await consultarDatos('rendimiento_empresa')
+    datosTabla = datosTabla.filter(x => x.empresa == id_empresa)
+    let jsonRendimiento = false;
+    if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
+
+    const datos = {code: empresa.codigo}
+
     res.render('empresa/dashboard', {
         user_dash: true,
         pagoPendiente,
@@ -320,10 +374,9 @@ empresaController.index = async (req, res) => {
         consulAsignado,
         etapa1,
         porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa3, porcentajeEtapa4, porcentajeTotal,
-        jsonAnalisis1, jsonAnalisis2, jsonDimensiones1, jsonDimensiones2,
         tareas, ultimosInformes, verGraficasCircular,
         nuevosProyectos, rendimiento, jsonDim_empresa, etapaCompleta, modalAcuerdo,
-        tutoriales
+        tutoriales, jsonRendimiento, jsonIndicadores: JSON.stringify(jsonIndicadores)
     })
 }
 
@@ -408,21 +461,21 @@ empresaController.diagnostico = async (req, res) => {
         fecha : false
     }
 
-    let infoConsul = await consultarDatos('consultores')
-    infoConsul = infoConsul.find(x => x.id_consultores == consulAsignado.c1.consultor)
-    let costo = process.env.PRECIO_NIVEL1;
-    if (infoConsul.nivel == '2'){
-        costo = process.env.PRECIO_NIVEL2;
-    } else if (infoConsul.nivel == '3') {
-        costo = process.env.PRECIO_NIVEL3;
-    } else if (infoConsul.nivel == '4') {
-        if (consulAsignado.c1.sede == 1)
-            costo = process.env.PRECIO_NIVEL4_SEDE1
-        else if (consulAsignado.c1.sede == 2)
-            costo = process.env.PRECIO_NIVEL4_SEDE2
-        else if (consulAsignado.c1.sede == 3)
-            costo = process.env.PRECIO_NIVEL4_SEDE3
-    }
+    // let infoConsul = await consultarDatos('consultores')
+    // infoConsul = infoConsul.find(x => x.id_consultores == consulAsignado.c1.consultor)
+    // let costo = process.env.PRECIO_NIVEL1;
+    // if (infoConsul.nivel == '2'){
+    //     costo = process.env.PRECIO_NIVEL2;
+    // } else if (infoConsul.nivel == '3') {
+    //     costo = process.env.PRECIO_NIVEL3;
+    // } else if (infoConsul.nivel == '4') {
+    //     if (consulAsignado.c1.sede == 1)
+    //         costo = process.env.PRECIO_NIVEL4_SEDE1
+    //     else if (consulAsignado.c1.sede == 2)
+    //         costo = process.env.PRECIO_NIVEL4_SEDE2
+    //     else if (consulAsignado.c1.sede == 3)
+    //         costo = process.env.PRECIO_NIVEL4_SEDE3
+    // }
 
     // Validando Diagnóstico de negocio ha sido pagado
     if (diagnosticoPagado.estado == 1) {

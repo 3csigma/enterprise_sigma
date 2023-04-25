@@ -641,14 +641,18 @@ dashboardController.editarEmpresa = async (req, res) => {
     }
 
     /************** DATOS PARA LAS GRÁFICAS DE DIAGNÓSTICO - ÁREAS VITALES & POR DIMENSIONES ****************/
-    let jsonDimensiones1 = null, jsonDimensiones2 = null, nuevosProyectos = 0, rendimiento = {}, jsonAnalisis1 = null, jsonAnalisis2 = null;
+    /**
+     * PC => Percepción Cliente
+     * PE => Percepción Estadística
+     */
+    let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
     let areasVitales = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ ASC')
     areasVitales = areasVitales.find(x => x.id_empresa == idEmpresa)
     let areasVitales2 = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ DESC')
     areasVitales2 = areasVitales2.find(x => x.id_empresa == idEmpresa)
     if (areasVitales) {
-        jsonAnalisis1 = JSON.stringify(areasVitales);
-        jsonAnalisis2 = JSON.stringify(areasVitales2);
+        jsonIndicadores.areasVitales1 = JSON.stringify(areasVitales);
+        jsonIndicadores.areasVitales2 = JSON.stringify(areasVitales2);
         if (areasVitales.rendimiento_op >= 1) {
             rendimiento.op = areasVitales.rendimiento_op
         } else {
@@ -656,10 +660,11 @@ dashboardController.editarEmpresa = async (req, res) => {
         }
     }
 
+    // Empresas Nuevas
     let resulCateg = await consultarDatos('resultado_categorias')
     resulCateg = resulCateg.find(x => x.id_empresa == idEmpresa)
     if (resulCateg) {
-        jsonDimensiones1 = JSON.stringify(resulCateg);
+        jsonIndicadores.dimensiones1 = JSON.stringify(resulCateg);
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
         rendimiento.num = resulCateg.rendimiento
@@ -675,13 +680,28 @@ dashboardController.editarEmpresa = async (req, res) => {
         }
     }
 
+    /*************************************************************************************** */
+    // Empresas Establecidas
     let xDimensiones = await consultarDatos('indicadores_dimensiones', 'ORDER BY id ASC')
     xDimensiones = xDimensiones.find(x => x.id_empresa == idEmpresa)
     let xDimensiones2 = await consultarDatos('indicadores_dimensiones', 'ORDER BY id DESC')
     xDimensiones2 = xDimensiones2.find(x => x.id_empresa == idEmpresa)
     if (xDimensiones) {
-        jsonDimensiones1 = JSON.stringify(xDimensiones);
-        jsonDimensiones2 = JSON.stringify(xDimensiones2);
+        jsonIndicadores.dimensiones1 = JSON.stringify(xDimensiones);
+        jsonIndicadores.dimensiones2 = JSON.stringify(xDimensiones2);
+        nuevosProyectos = 0;
+    }
+
+    // Percepción Estadística
+    let pe_dimensiones1 = await consultarDatos('percepcion_estadistica', 'ORDER BY id ASC')
+    pe_dimensiones1 = pe_dimensiones1.find(x => x.empresa == idEmpresa)
+    console.log("PE DIMENSIONES");
+    console.log(pe_dimensiones1);
+    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica', 'ORDER BY id DESC')
+    // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
+    if (pe_dimensiones1) {
+        jsonIndicadores.pe1 = JSON.stringify(pe_dimensiones1);
+        // jsonIndicadores.pe2 = JSON.stringify(pe_dimensiones2);
         nuevosProyectos = 0;
     }
 
@@ -1098,7 +1118,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     res.render('admin/editarEmpresa', {
         adminDash, consultorDash, itemActivo, empresa, formEdit: true, datos, consultores,
         aprobarConsultor, frmDiag, frmInfo, consultores_asignados, divConsultores,
-        jsonAnalisis1, jsonAnalisis2, jsonDimensiones1, jsonDimensiones2, resDiag, nuevosProyectos, rendimiento,
+        jsonIndicadores: JSON.stringify(jsonIndicadores), resDiag, nuevosProyectos, rendimiento,
         graficas2: true, propuesta, pagos_analisis, divInformes, filaInforme,
         pagoEstrategico, info, dimProducto, dimAdmin, dimOperacion, dimMarketing,
         tareas, jsonDim, jsonRendimiento, fechaActual, pagoDg_Realizado,
@@ -1383,30 +1403,134 @@ dashboardController.enviarCuestionario = async (req, res) => {
     // Creando Objetos para guardar en la base de datos
     const nuevoDiagnostico = { id_empresa, fecha, rubro, empresa_ofrece, productos_servicios, administracion, talento_humano, finanzas, servicio_alcliente, operaciones, ambiente_laboral, innovacion, marketing, ventas, fortalezas, oportunidades_mejoras, metas_corto_plazo }
 
-    const areasVitales = {
-        id_empresa,
-        producto: calificacion_global_producto,
-        administracion: calificacion_administracion,
-        talento_humano: calificacion_personal_laboral,
-        finanzas: calificacion_finanzas,
-        servicio_cliente: calificacion_servicio_alcliente,
-        operaciones: calificacion_operaciones_procesos,
-        ambiente_laboral: calificacion_ambiente,
-        innovacion: calificacion_innovacion,
-        marketing: calificacion_marketing,
-        ventas: calificacion_ventas,
-        rendimiento_op: parseInt(calificacion_global_producto) + parseInt(calificacion_administracion) + parseInt(calificacion_personal_laboral) + parseInt(calificacion_finanzas) + parseInt(calificacion_servicio_alcliente) + parseInt(calificacion_operaciones_procesos) + parseInt(calificacion_ambiente) + parseInt(calificacion_innovacion) + parseInt(calificacion_marketing) + parseInt(calificacion_ventas)
+    /************************************************************************************************************
+     * CÁLCULANDO LA PERCEPCIÓN ESTADÍSTICA
+    */
+    let pe_producto = 0, pe_administracion = 0, pe_operaciones = 0, pe_marketing = 0;
+    // PRODUCTO
+    let objPE1 = {si:0, excelente:0, buena:0}
+    let data_pe = { problema_resolver, diferencia_otros, nivel_precio, investigacion_precios, conexion_tematica, perciben_coherencia, calidad_producto, presentacion_producto };
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE1.si = objPE1.si+1;
+        }
+        if (data_pe[key] === 'Excelente') {
+            objPE1.excelente = objPE1.excelente+1
+        }
+        if (data_pe[key] === 'Buena') {
+            objPE1.buena = objPE1.buena+1
+        }
+    }
+    objPE1.excelente = objPE1.excelente*2;
+
+    // SUMATORIA para PE PRODUCTO
+    for (let key in objPE1) {
+        pe_producto += objPE1[key];
+    }
+    console.log(`\nPRODUCTO PE => ${pe_producto}`);
+
+    /**
+     * ADMINISTRACIÓN
+    */
+    let objPE2 = {temp1:0, temp2:0, temp3:0, temp4:0}
+    data_pe = { planeacion_estrategica, analisis_foda, estructura_organizativa, sistema_administrativo_contable, software_empresarial };
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE2.temp1 = objPE2.temp1+1
+        }
+    }
+    objPE2.temp1 = objPE2.temp1*2;
+    // TALENTO HUMANO
+    data_pe = { principales_funciones_personal, plan_capacitacion, cuadro_habilidades, medicion_personal }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE2.temp2 = objPE2.temp2+1
+        }
+    }
+    objPE2.temp2 = objPE2.temp2*2
+    // FINANZAS
+    data_pe = { plan_remuneracion, proceso_reclutamiento }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE2.temp3 = objPE2.temp3+1
+        }
     }
 
-    const sumaR = calificacion_global_producto + calificacion_administracion + calificacion_personal_laboral + calificacion_finanzas + calificacion_servicio_alcliente + calificacion_operaciones_procesos + calificacion_ambiente + calificacion_innovacion + calificacion_marketing + calificacion_ventas;
-
-    const areasDimensiones = {
-        id_empresa,
-        producto: parseInt(calificacion_global_producto),
-        administracion: (parseInt(calificacion_administracion) + parseInt(calificacion_personal_laboral) + parseInt(calificacion_finanzas)) / 3,
-        operaciones: (parseInt(calificacion_servicio_alcliente) + parseInt(calificacion_operaciones_procesos) + parseInt(calificacion_ambiente) + parseInt(calificacion_innovacion)) / 4,
-        marketing: (parseInt(calificacion_marketing) + parseInt(calificacion_ventas)) / 2
+    // SUMATORIA para PE ADMINISTRACIÓN
+    for (let key in objPE2) {
+        pe_administracion += objPE2[key];
     }
+    console.log(`ADMINISTRACIÓN PE => ${pe_administracion}`);
+
+    /**
+     * OPERACIONES
+    */
+    let objPE3 = {temp1:0, temp2:0, temp3:0, temp4:0}
+    // SERVICIO AL CLIENTE
+    data_pe = { clientes_info_productos, satisfaccion_clientes_productos, necesidades_clientes_productos, mecanismo_quejas_reclamos, estrategias_fidelidad_clientes };
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE3.temp1 = objPE3.temp1+1
+        }
+    }
+    objPE3.temp1 = objPE3.temp1*2;
+    // OPERACIONES
+    data_pe = { instalaciones_adecuadas, permisos_requeridos, plan_detrabajo_diario, documentos_actividades, manuales_operaciones }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE3.temp2 = objPE3.temp2+1
+        }
+    }
+    objPE3.temp2 = objPE3.temp2*2;
+    // AMBIENTE LABOLRAL
+    data_pe = { ambiente_positivo, medicion_ambiente_laboral, satisfaccion_empleados, comunicacion_efectiva, comunicar_buen_trabajo }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE3.temp3 = objPE3.temp3+1
+        }
+    }
+    objPE3.temp3 = objPE3.temp3*2;
+    // INNOVACIÓN
+    data_pe = { aportan_ideas, incrementar_ventas, procesos_innovadores, modelo_innovador, empresa_innovadora }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE3.temp4 = objPE3.temp4+1
+        }
+    }
+    objPE3.temp4 = objPE3.temp4*2;
+
+    // SUMATORIA para PE OPERACIONES
+    for (let key in objPE3) {
+        pe_operaciones += objPE3[key];
+    }
+    console.log(`OPERACIONES PE => ${pe_operaciones}`);
+
+    /**
+     * MARKETING 
+    */
+   let objPE4 = {temp1:0, temp2:0}
+    data_pe = { estudio_mercado, segmento_mercado, posicionamiento_mercado, estrategias_marketing, plan_marketing, landing_page, redes_sociales, manual_identidad, tiene_eslogan, brochure_empresa }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE4.temp1 = objPE4.temp1+1
+        }
+    }
+    // VENTAS
+    data_pe = { facilidad_ventas, calificacion_ventas_meses, objetivo_ventas, estrategia_ventas, canales_ventas }
+    for (let key in data_pe) {
+        if (data_pe[key] === 'Si') {
+            objPE4.temp2 = objPE4.temp2+1
+        }
+    }
+    objPE4.temp2 = objPE4.temp2*2
+
+    // SUMATORIA para PE MARKETING
+    for (let key in objPE4) {
+        pe_marketing += objPE4[key];
+    }
+    console.log(`MARKETING PE => ${pe_marketing} \n`);
+
+    /************************************************************************************************* */
 
     // Guardando en la Base de datos
     const cuestionario = await insertarDatos('dg_empresa_establecida', nuevoDiagnostico)
@@ -1423,12 +1547,38 @@ dashboardController.enviarCuestionario = async (req, res) => {
         const nuevoRendimiento = {
             empresa: id_empresa, total_ventas, total_compras, total_gastos, utilidad, fecha: new Date().toLocaleDateString("en-US")
         }
+        const rendimiento = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
         
         /************************************************************************************************* */
-        const rendimiento = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
+        const areasVitales = {
+            id_empresa,
+            producto: calificacion_global_producto,
+            administracion: calificacion_administracion,
+            talento_humano: calificacion_personal_laboral,
+            finanzas: calificacion_finanzas,
+            servicio_cliente: calificacion_servicio_alcliente,
+            operaciones: calificacion_operaciones_procesos,
+            ambiente_laboral: calificacion_ambiente,
+            innovacion: calificacion_innovacion,
+            marketing: calificacion_marketing,
+            ventas: calificacion_ventas,
+            rendimiento_op: parseInt(calificacion_global_producto) + parseInt(calificacion_administracion) + parseInt(calificacion_personal_laboral) + parseInt(calificacion_finanzas) + parseInt(calificacion_servicio_alcliente) + parseInt(calificacion_operaciones_procesos) + parseInt(calificacion_ambiente) + parseInt(calificacion_innovacion) + parseInt(calificacion_marketing) + parseInt(calificacion_ventas)
+        }
+    
+        const areasDimensiones = {
+            id_empresa,
+            producto: parseInt(calificacion_global_producto),
+            administracion: (parseInt(calificacion_administracion) + parseInt(calificacion_personal_laboral) + parseInt(calificacion_finanzas)) / 3,
+            operaciones: (parseInt(calificacion_servicio_alcliente) + parseInt(calificacion_operaciones_procesos) + parseInt(calificacion_ambiente) + parseInt(calificacion_innovacion)) / 4,
+            marketing: (parseInt(calificacion_marketing) + parseInt(calificacion_ventas)) / 2
+        }
+        
+        const datos_pe = { empresa: id_empresa, producto: pe_producto, administracion: pe_administracion, operaciones: pe_operaciones, marketing: pe_marketing }
+
         const aVitales = await insertarDatos('indicadores_areasvitales', areasVitales)
         const aDimensiones = await insertarDatos('indicadores_dimensiones', areasDimensiones)
-        if ((aVitales.affectedRows > 0) && (aDimensiones.affectedRows > 0) && (rendimiento.affectedRows > 0)) {
+        const percepcion_estadistica = await insertarDatos('percepcion_estadistica', datos_pe)
+        if ((aVitales.affectedRows > 0) && (aDimensiones.affectedRows > 0) && (rendimiento.affectedRows > 0) && (percepcion_estadistica.affectedRows > 0)) {
             console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n")
             /**
              * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
@@ -1452,11 +1602,9 @@ dashboardController.enviarCuestionario = async (req, res) => {
             }
 
             const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de diagnóstico del estado general de la empresa.")
+            console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`);
             let resultAI = await getResponseChatGPT(prompt)
-            console.log("\n<<<< RESULT AI >>>> ");
             const resp = resultAI.content.replaceAll('\n', '<br>');
-            console.log(resp);
-            console.log("<<<< RESULT AI >>>>\n");
             const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
             const insertResult = await insertarDatos('informes_ia', informeAI)
             if (insertResult.affectedRows > 0) {
