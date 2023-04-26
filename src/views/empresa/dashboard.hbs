@@ -68,7 +68,7 @@
                         </div>
                     </div>
                     {{!-- Análisis de negocio --}}
-                    {{#if etapaCompleta.verAnalisis}}
+                    {{!-- {{#if etapaCompleta.verAnalisis}} --}}
                     <div class="col-sm-6">
                         <div class="card avtivity-card">
                             <div class="card-body">
@@ -96,7 +96,7 @@
                             <div class="effect bg-secondary"></div>
                         </div>
                     </div>
-                    {{/if}}
+                    {{!-- {{/if}} --}}
                     
                     {{!-- Plan estratégico de negocio --}}
                     <div class="col-sm-12">
@@ -197,6 +197,8 @@
                         <h4 class="card-title" id="titu-indicador">Indicadores</h4>
                     </div>
                     {{!-- Grafíco de indicadores --}}
+
+                    {{#if rendimiento.ok}}
                 
                     <!-- PESTAÑAS DE LAS GRÁFICAS -->
                     <div class="profile-tab mb-2">
@@ -208,8 +210,10 @@
                                 <li class="nav-item"><a href="#dimensiones" data-toggle="tab" 
                                     class="nav-link btnIndicadoresAll">Por dimensiones</a>
                                 </li>
+                                {{#if rendimiento.pe}}
                                 <li class="nav-item"><a href="#pe_empresa" data-toggle="tab" class="nav-link ml-2 btnIndicadoresAll">Percepción Estadística</a>
                                 </li>
+                                {{/if}}
                             </ul>
                         </div>
                     </div>
@@ -244,16 +248,31 @@
                             {{/if}}
                         </div>
 
+                        {{#if rendimiento.pe}}
                         <div id="pe_empresa" class="tab-pane fade">
                             <div class="card-body">
                                 <canvas id="chartEmpresa3"></canvas>
                             </div>
                         </div>
+                        {{/if}}
 
                     </div>
 
                     <input type="hidden" id="jsonIndicadores" value="{{jsonIndicadores}}" />
                     <input type="hidden" id="nuevosProyectos" value="{{nuevosProyectos}}" />
+
+                    {{else}}
+
+                    <div class="card-body px-0 d-flex justify-content-center align-items-center">
+                        <div>
+                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px; height: 60px; background-color: #f4f4f4;
+                            padding-top: 14px; border-radius: 35px;"></i></center><br>
+                            <label style="font-size:16px;color:#000;font-weight:500;margin-bottom: 20px;">Aún no hay información para mostrar</label>
+                        </div>
+                    </div>
+                    
+                    {{/if}}
+
                 </div>
             </div>
 
@@ -352,50 +371,6 @@
                 </div>
                 {{/unless}}
 
-                {{!-- <div class="row">
-                    <div class="col-xl-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">Últimas informes generados</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-responsive-md text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>FECHA</th>
-                                                <th>ETAPA</th>
-                                                <th>NOMBRE</th>
-                                                <th>ACCIÓN</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {{#if ultimosInformes}}
-                                            {{#each ultimosInformes}}
-                                            <tr>
-                                                <td>{{fecha}}</td>
-                                                <td>{{etapa}} de negocio</td>
-                                                <td>{{nombre}}</td>
-                                                <td>
-                                                    <a href="{{url}}"
-                                                        style="margin: 0 auto; margin-top: -8px;color: white; background: #FED061; border-color: #FED061"
-                                                        target="_blank" class="btn btn-info shadow btn-xs sharp">
-                                                        <i class="fa fa-search"></i></a>
-                                                </td>
-                                            </tr>
-                                            {{/each}}
-                                            {{else}}
-                                            <tr>
-                                                <td colspan="4">Aún no hay informes generados.</td>
-                                            </tr>
-                                            {{/if}}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div> --}}
             </div>
             <br>
         </div>

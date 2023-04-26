@@ -262,6 +262,7 @@ empresaController.index = async (req, res) => {
     let areasVitales2 = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ DESC')
     areasVitales2 = areasVitales2.find(x => x.id_empresa == id_empresa)
     if (areasVitales) {
+        rendimiento.ok = true;
         jsonIndicadores.areasVitales1 = areasVitales;
         jsonIndicadores.areasVitales2 = areasVitales2;
         if (areasVitales.rendimiento_op >= 1) {
@@ -271,14 +272,11 @@ empresaController.index = async (req, res) => {
         }
     }
 
-    console.log("<<<<<<<<<<<< indi >>>>>>>>>>>>>>>>");
-    console.log(jsonIndicadores.areasVitales1);
-    console.log("---------------------");
-
     // Empresas Nuevas
     let resulCateg = await consultarDatos('resultado_categorias')
     resulCateg = resulCateg.find(x => x.id_empresa == id_empresa)
     if (resulCateg) {
+        rendimiento.ok = true;
         jsonIndicadores.dimensiones1 = resulCateg
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
@@ -302,6 +300,7 @@ empresaController.index = async (req, res) => {
     let xDimensiones2 = await consultarDatos('indicadores_dimensiones', 'ORDER BY id DESC')
     xDimensiones2 = xDimensiones2.find(x => x.id_empresa == id_empresa)
     if (xDimensiones) {
+        jsonIndicadores.ok = true;
         jsonIndicadores.dimensiones1 = xDimensiones
         jsonIndicadores.dimensiones2 = xDimensiones2
         nuevosProyectos = 0;
@@ -315,6 +314,7 @@ empresaController.index = async (req, res) => {
     // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica', 'ORDER BY id DESC')
     // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
     if (pe_dimensiones1) {
+        rendimiento.pe = true;
         jsonIndicadores.pe1 = pe_dimensiones1
         // jsonIndicadores.pe2 = pe_dimensiones2
         nuevosProyectos = 0;

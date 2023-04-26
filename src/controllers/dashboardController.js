@@ -1662,8 +1662,8 @@ dashboardController.guardarRespuestas = async (req, res) => {
     let talento_humano = JSON.stringify({ funciones_principales, formacion_inicial, tiempo_colaboradores, experiencia_liderando, importancia_equipo })
 
     // FINANZAS
-    const { estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, proyeccion_flujo_efectivo } = req.body
-    let finanzas = JSON.stringify({ estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, proyeccion_flujo_efectivo })
+    const { estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, recuperar_inversion } = req.body
+    let finanzas = JSON.stringify({ estructura_costos, gastos_fijos_variables, control_financiero, punto_equilibrio, recuperar_inversion })
 
     // SERVICIO AL CLIENTE
     const { canales_atencion, estrategia_fidelizar, exp_brindar, medir_satisfaccion, calidad_producto } = req.body
@@ -1807,12 +1807,75 @@ dashboardController.guardarRespuestas = async (req, res) => {
             /**
              * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
             */
-            const prompt = ('Crea un informe de diagnóstico de negocio con base a las siguientes preguntas: '+nuevoDiagnostico)
-            const resultAI = await getResponseChatGPT(prompt)
-            console.log("\n<<<< RESULT AI >>>> ");
-            console.log(resultAI);
-            console.log("<<<< RESULT AI >>>>\n");
-            const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico de negocio', informe: resultAI }
+            const obj_respuestas = {
+                '¿Tienes experiencia previa en el rubro?': exp_previa,
+                '¿Has realizado un análisis FODA al negocio que deseas desarrollar?': foda,
+                '¿Has pensando las diferentes unidades de negocio que se podrían implementar en este rubro?': unidades_rubro,
+                '¿Conoces las actividades claves que se requieren en tu negocio?': actividades,
+                '¿Conoces tu visión con este proyecto?': vision,
+                '¿Tu propósito personal está alineado al propósito del negocio?': proposito_alineado,
+                '¿Tienes claro los objetivos a nivel personal y empresarial?': objetivos_claros,
+                '¿Tienes definido tus valores?': valores,
+                '¿Te has realizado un FODA personal para que identifiques las herramientas necesarias a implementar en tu negocio?': foda_personal,
+                '¿Dedicarías el 100% de tu tiempo a este negocio?': tiempo_completo,
+                '¿Cuentas con algún socio para desarrollar tu negocio?': socios,
+                '¿Dispones de algún fondo financiero personal?': fondo_financiero,
+                '¿El negocio requiere ubicación física?': ubicacion_fisica, 
+                '¿Has realizado algún estudio de mercado con respecto a tu producto o tu servicio?': estudio_mercado,
+                '¿Conoces los recursos claves para el funcionamiento de tu negocio?': recursos_claves,
+                '¿Tienes identificado los posibles proveedores del negocio?': posibles_proveedores,
+                '¿Tienes identificado el problema que resolverá tu producto o servicio?': problema_resolver,
+                '¿Sabes cuál es será el producto principal del negocio?': producto_principal,
+                '¿Tienes definido el precio de venta de tu producto o servicio?': precio_venta,
+                '¿Conoces cuál es el factor diferenciador del producto o servicio?': factor_diferenciador,
+                '¿Tienes definido el modelo de negocio?': modelo_negocio,
+                '¿Tienes una planeación estratégica de tu negocio?': planeacion_estrategica,
+                '¿Se requiere de algún sistema de inventario para tu negocio?': sistema_inventario,
+                '¿Tienes definido una estructura organizacional para el negocio?': estructura_organizacional,
+                '¿Tienes definidas las funciones principales, la de tus socios y colaboradores en caso de tenerlas?': funciones_principales,
+                '¿Cuentas con algún programa de formación inicial para operar tu negocio?': formacion_inicial,
+                '¿Tienes definido en cuánto tiempo vas a necesitar colaboradores?': tiempo_colaboradores,
+                '¿Tienes experiencia liderando equipos de trabajo?': experiencia_liderando,
+                '¿Consideras importante la creación de un equipo de trabajo para el desarrollo y sostenibilidad de la empresa en el tiempo?': importancia_equipo,
+                '¿Has realizado alguna estructura de costos para tu producto o servicio?': estructura_costos,
+                '¿Sabes cuáles serán los gastos fijos y variables de tu negocio?': gastos_fijos_variables,
+                '¿Tienes definidas las herramientas a utilizar para tu control administrativo y financiero?': control_financiero,
+                '¿Conoce cuál es su punto de equilibrio?': punto_equilibrio,
+                '¿Conoces cuál será tu inversión inicial y en cuánto tiempo la recuperarás?': recuperar_inversion,
+                '¿Has pensado cuáles serán tus principales canales de atención al cliente?': canales_atencion,
+                '¿Tienes definida una estrategia para fidelizar a tus futuros clientes?': estrategia_fidelizar,
+                '¿Conoces qué experiencias quieres darles a tus clientes?': exp_brindar,
+                '¿Has considerado tener alguna herramienta para la medición de la satisfacción del cliente?': medir_satisfaccion,
+                '¿Crees que un buen servicio se basa solo en la calidad de tu producto?': calidad_producto,
+                '¿Conoces los permisos que necesitas para comenzar a operar el negocio?': permisos,
+                '¿Tienes idea de cómo planificar las actividades de tu negocio?': planificar_actividades,
+                '¿Conoces al 100% los procesos de este negocio?': conocer_procesos,
+                '¿Has definido cuáles son los canales de comercialización de tus productos?': canales_comercial,
+                '¿Has considerado cómo sería el proceso de devoluciones y reclamaciones en tu negocio?': proceso_devoluciones,
+                '¿Consideras que tu ambiente actual contribuye a tu crecimiento?': crecimiento,
+                '¿Crees que tu comunicación es efectiva?': comunicacion_efectiva,
+                '¿Se te hace sencillo resaltar las habilidades de las personas?': resaltar_habilidades,
+                '¿Estarías dispuesto a capacitarte en crecimiento personal para el desarrollo de tu negocio?': capacitar_crecimiento,
+                '¿Crees que tienes las herramientas necesarias para crear un buen ambiente laboral?': buen_ambiente,
+                '¿Crees que tienes un modelo de negocio innovador?': modelo_innovador,
+                '¿Sabes la importancia de utilizar metodologías de innovación a la hora de crear nuevos productos?': importancia_innovacion,
+                '¿Conoces el proceso para la gestión correcta de los datos de los clientes?': gestion_datos,
+                '¿Cuentas con una estrategia de Marketing definida?': estrategia_marketing,
+                '¿Tienes un dominio de sitio web reservado?': dominio_web,
+                '¿Sabes a qué segmento de cliente te quieres dirigir?': segmento_cliente,
+                '¿Cuentas con un logo y branding de tu negocio?': tiene_logo,
+                '¿Has identificado qué mercado quieres abarcar inicialmente?': mercado_inicial,
+                '¿Conoces cuáles son tus canales de captación de tus clientes potenciales?': captacion_clientes,
+                '¿Tienes definido los medios de pago disponibles para tus clientes?': medios_pago,
+                '¿Tienes alguna proyección de ventas?': proyeccion,
+                'Metas': metas
+            }
+
+            const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de diagnóstico del estado general de la empresa.")
+            console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`);
+            let resultAI = await getResponseChatGPT(prompt)
+            const resp = resultAI.content.replaceAll('\n', '<br>');
+            const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
             const insertResult = await insertarDatos('informes_ia', informeAI)
             if (insertResult.affectedRows > 0) {
                 rolUser == 'Empresa' ? res.redirect('/diagnostico-de-negocio')

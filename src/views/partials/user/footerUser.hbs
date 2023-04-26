@@ -137,11 +137,13 @@
                 const areasVitales = indicadores.areasVitales1
                 dataAreasVitales1 = [areasVitales.producto, areasVitales.administracion, areasVitales.talento_humano, areasVitales.finanzas, areasVitales.servicio_cliente, areasVitales.operaciones, areasVitales.ambiente_laboral, areasVitales.innovacion, areasVitales.marketing, areasVitales.ventas]
 
-                const areasVitales2 = indicadores.areasVitales2
+                /*
+				const areasVitales2 = indicadores.areasVitales2
 				if (areasVitales2) {
 					label1 = 'Análisis anterior'
                 	dataAreasVitales2 = [areasVitales2.producto, areasVitales2.administracion, areasVitales2.talento_humano, areasVitales2.finanzas, areasVitales2.servicio_cliente, areasVitales2.operaciones, areasVitales2.ambiente_laboral, areasVitales2.innovacion, areasVitales2.marketing, areasVitales2.ventas]
 				}
+				*/
 
                 let valorMax = 10;
                 if (nuevosProyectos == 1) {
@@ -157,20 +159,24 @@
 						data: {
 							defaultFontFamily: 'Oblivian',
 							labels: ["Producto", "Admin", "Talento Humano", "Finanzas", "S. Al cliente", "Operaciones", "A. Laboral", "Innovación", "Marketing", "Ventas"],
-							datasets: [{
-								label: label1,
-								backgroundColor: "#50368C",
-								borderColor: "#50368C",
-								data: dataAreasVitales1,
-								fill: false,
-							}, 
-							{
-								label: "Último análisis",
-							 	fill: false,
-							 	backgroundColor: "#FED061",
-							 	borderColor: "#FED061",
-							 	data: dataAreasVitales2,
-							}]
+							datasets: [
+								{
+									label: label1,
+									backgroundColor: "#50368C",
+									borderColor: "#50368C",
+									data: dataAreasVitales1,
+									fill: false,
+								},
+								/*	
+								{
+									label: "Último análisis",
+									fill: false,
+									backgroundColor: "#FED061",
+									borderColor: "#FED061",
+									data: dataAreasVitales2,
+								}
+								*/
+							]
 						},
 						options: {
 							legend: false,
@@ -223,11 +229,12 @@
                         chartDimensiones1 = [valDimensiones1.experiencia_rubro, valDimensiones1.mentalidad, valDimensiones1.viabilidad_, valDimensiones1.estructura]
                     }
                 }
-
+				/*
                 if (valDimensiones2) {
 					label1 = 'Análisis anterior'
                     chartDimensiones2 = [valDimensiones2.producto, valDimensiones2.administracion, valDimensiones2.operaciones, valDimensiones2.marketing]
                 }
+				*/
 
 				if ($('#chartEmpresa2').length > 0) {
 					const chartEmpresaAdm2 = document.getElementById("chartEmpresa2").getContext('2d')
@@ -246,6 +253,7 @@
 									data: chartDimensiones1,
 									fill: false,
 								}, 
+								/*
 								{
 									label: "Último análisis",
 									fill: false,
@@ -253,6 +261,7 @@
 									borderColor: "#FED061",
 									data: chartDimensiones2,
 								}
+								*/
 							]
 						},
 						options: {

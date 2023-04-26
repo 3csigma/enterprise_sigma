@@ -1,18 +1,13 @@
-<link rel="stylesheet" href="../css/estilosAnalisis.css">
-<!--**********************************
-                    Content body start
-***********************************-->
 <div class="content-body">
-  <!-- row -->
   <div class="container-fluid">
-    {{!-- MENSAJES INFORMATIVOS DE LA 1ERA FILA --}}
     <div class="row">
-      <div class="col-md-12 col-xl-6 col-xxl-6">
+      <div class="col">
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Analicemos tu empresa en 4 dimensiones</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios que servirán para impulsar el desarrollo corporativo de tu empresa, a través de las dimensiones:</p>
+            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios
+              que servirán para impulsar el desarrollo corporativo de tu empresa, a través de las dimensiones:</p>
             <p style="color: #000; font-weight: bold;">
               <i class="fa-solid fa-box"></i> Producto</li></br>
               <i class="fa-solid fa-user-tie"></i> Administración</br>
@@ -22,85 +17,218 @@
           </div>
         </div>
       </div>
-      <div class="col-md-12 col-xl-6 col-xxl-6">
+      <div class="col">
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
-          {{!-- <div class="card-body">
-            <h2 style="color: #000; font-weight: bold;">Lorem ipsum dolor</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">Lorem ipsum dolor, sit amet consectetur adipisicing elit. Nesciunt harum totam assumenda, enim voluptate architecto sit ad quos exercitationem voluptatem similique voluptas iste praesentium.</p>
-          </div>
-        </div> --}}
+        </div>
       </div>
     </div>
     {{!-- Fin de la 1era fila --}}
+
     <div class="row">
-      {{!-- TARJETAS IZQUIERDA (PROPUESTAS - PAGOS - INFORMES) --}}
+
+      {{!-- TARJETA IZQUIERDA --}}
       <div class="col-xl-6 col-xxl-6">
-        <h2>columna vacía</h2>
+
+        <div class="row">
+          <div class="col-xl-12">
+            <div class="card">
+              <div class="card-header">
+                <h4 class="card-title">Cuestionarios</h4>
+              </div>
+              <div class="card-body">
+                <div class="table-responsive">
+                  <table class="table table-responsive-md text-center">
+                    <thead>
+                      <tr>
+                        <th>FECHA</th>
+                        <th>NOMBRE</th>
+                        <th>ESTADO</th>
+                        <th>ACCIÓN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <tr>
+                        <td>{{#if dimProducto}}{{dimProducto.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>Cuestionario dimensión producto</td>
+                        <td>
+                          {{#if dimProducto}}
+                          <span class="badge light badge-success">Completo</span>
+                          {{else}}
+                          <span class="badge light badge-warning">Pendiente</span>
+                          {{/if}}
+                        </td>
+                        <td>
+                          {{#if dimProducto}}
+                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimProducto" style="border-color: #FED061">
+                            <i class="fa fa-search"></i></a>
+                          {{else}}
+                          {{#if botonesEtapas.dos}}
+                          <a href="/analisis-dimension-producto/{{datos.code}}"
+                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="border-color: #812082;">
+                            <i class="fa fa-pencil"></i></a>
+                          {{else}}
+                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
+                              class="fa fa-search"></i></button>
+                          {{/if}}
+                          {{/if}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>{{#if dimAdmin}}{{dimAdmin.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>Cuestionario dimensión administración</td>
+                        <td>
+                          {{#if dimAdmin}}
+                          <span class="badge light badge-success">Completo</span>
+                          {{else}}
+                          <span class="badge light badge-warning">Pendiente</span>
+                          {{/if}}
+                        </td>
+                        <td>
+                          {{#if dimAdmin}}
+                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimAdministracion" style="border-color: #FED061">
+                            <i class="fa fa-search"></i></a>
+                          {{else}}
+                          {{#if botonesEtapas.dos}}
+                          <a href="/analisis-dimension-administracion/{{datos.code}}"
+                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="border-color: #812082;">
+                            <i class="fa fa-pencil"></i></a>
+                          {{else}}
+                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
+                              class="fa fa-search"></i></button>
+                          {{/if}}
+                          {{/if}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>{{#if dimOperacion}}{{dimOperacion.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>Cuestionario dimensión operación</td>
+                        <td>
+                          {{#if dimOperacion}}
+                          <span class="badge light badge-success">Completo</span>
+                          {{else}}
+                          <span class="badge light badge-warning">Pendiente</span>
+                          {{/if}}
+                        </td>
+                        <td>
+                          {{#if dimOperacion}}
+                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
+                            <i class="fa fa-search"></i></a>
+                          {{else}}
+                          {{#if botonesEtapas.dos}}
+                          <a href="/analisis-dimension-operaciones/{{datos.code}}"
+                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="border-color: #812082;">
+                            <i class="fa fa-pencil"></i></a>
+                          {{else}}
+                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
+                              class="fa fa-search"></i></button>
+                          {{/if}}
+                          {{/if}}
+                        </td>
+                      </tr>
+                      <tr>
+                        <td>{{#if dimMarketing}}{{dimMarketing.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>Cuestionario dimensión marketing</td>
+                        <td>
+                          {{#if dimMarketing}}
+                          <span class="badge light badge-success">Completo</span>
+                          {{else}}
+                          <span class="badge light badge-warning">Pendiente</span>
+                          {{/if}}
+                        </td>
+                        <td>
+                          {{#if dimMarketing}}
+                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimMarketing" style="border-color: #FED061">
+                            <i class="fa fa-search"></i></a>
+                          {{else}}
+                          {{#if botonesEtapas.dos}}
+                          <a href="/analisis-dimension-marketing/{{datos.code}}"
+                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="border-color: #812082;">
+                            <i class="fa fa-pencil"></i></a>
+                          {{else}}
+                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
+                              class="fa fa-search"></i></button>
+                          {{/if}}
+                          {{/if}}
+                        </td>
+                      </tr>
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
 
-      {{!-- CARGA DE ARCHIVOS --}}
+      {{!-- TARJETA DERECHA --}}
       {{#if archivos}}
-      <input type="hidden" id="idEmpresa" value="{{id_empresa}}">
       <div class="col-xl-6 col-xxl-6">
         <div class="row">
           <div class="col-xl-12">
             <div class="card">
               <div class="card-header">
-                <h4 class="card-title">Carga de archivos</h4>
+                <h4 class="card-title">Carga de Archivos</h4>
               </div>
-
               <div class="card-body">
-                <div class="row">
-                  <div class="table-responsive">
-                    <table class="table table-responsive-md text-center">
-                      <thead>
-                        <tr>
-                          <th>DIMENSIÓN</th>
-                          <th>DESCRIPCIÓN</th>
-                          <th>ESTADO</th>
-                          <th>ACCIÓN</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {{#each archivos}}
-                        <tr>
-                          <td>{{dimension}}</td>
-                          <td>{{descripcion}}</td>
-                          <td><span id="spanEstado{{id}}" class="badge light badge-{{color}}">{{estado}}</span></td>
-                          <td>
-                            <table border="0" cellspacing="0" style="margin: 0 auto;">
-                              <tr>
-                                <td style="border-color: transparent; padding:3px">
-                                  <label for="inputArchivo{{id}}" onclick="cargarArchivos_Empresa('archivos_analisis', '{{id}}')">
-                                    <div class="btn color_primary shadow btn-xs sharp mr-1 text-white" style="border-color: white;">
-                                      <i class="fa fa-upload"></i>
-                                    </div>
-                                  </label>
-                                  <input id="inputArchivo{{id}}" type="file" style="display:none"/>
-                                </td>
-                                <td style="border-color: transparent; padding:3px">
-                                  <a id="btnVer{{id}}" href="{{link}}"
-                                    style="display: {{display}}; margin: 0 auto; margin-top: -8px; border-color: #FED061"
-                                    target="_blank" class="btn color_tertiary shadow btn-xs sharp text-white">
-                                    <i class="fa fa-search"></i></a>
-                                </td>
-                              </tr>
-                            </table>
-                          </td>
-                        </tr>
-                        {{/each}}
-                      </tbody>
-                    </table>
-                  </div>
+                <div class="table-responsive">
+                  <table class="table table-responsive-md text-center">
+                    <thead>
+                      <tr>
+                        <th>DIMENSIÓN</th>
+                        <th>DESCRIPCIÓN</th>
+                        <th>ESTADO</th>
+                        <th>ACCIÓN</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {{#each archivos}}
+                      <tr>
+                        <td>{{dimension}}</td>
+                        <td>{{descripcion}}</td>
+                        <td><span id="spanEstado{{id}}" class="badge light badge-{{color}}">{{estado}}</span></td>
+                        <td>
+                          <table border="0" cellspacing="0" style="margin: 0 auto;">
+                            <tr>
+                              <td style="border-color: transparent; padding:3px">
+                                <label for="inputArchivo{{id}}"
+                                  onclick="cargarArchivos_Empresa('archivos_analisis', '{{id}}')">
+                                  <div class="btn color_primary shadow btn-xs sharp mr-1 text-white"
+                                    style="border-color: white;">
+                                    <i class="fa fa-upload"></i>
+                                  </div>
+                                </label>
+                                <input id="inputArchivo{{id}}" type="file" style="display:none" />
+                              </td>
+                              <td style="border-color: transparent; padding:3px">
+                                <a id="btnVer{{id}}" href="{{link}}"
+                                  style="display: {{display}}; margin: 0 auto; margin-top: -8px; border-color: #FED061"
+                                  target="_blank" class="btn color_tertiary shadow btn-xs sharp text-white">
+                                  <i class="fa fa-search"></i></a>
+                              </td>
+                            </tr>
+                          </table>
+                        </td>
+                      </tr>
+                      {{/each}}
+                    </tbody>
+                  </table>
                 </div>
-
               </div>
             </div>
           </div>
         </div>
       </div>
       {{/if}}
+
     </div>
 
   </div>
@@ -109,21 +237,21 @@
 {{!-- POPUP CON TUTORIAL --}}
 {{#unless tutoriales.etapa}}
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        Swal.fire({
-            title: '<strong>HTML <u>example</u></strong>',
-            icon: 'info',
-            html: 'You can use <b>bold text</b>, ' +
-                '<a href="//sweetalert2.github.io">links</a> ' +
-                'and other HTML tags',
-            showCloseButton: true,
-            showCancelButton: true,
-            focusConfirm: false,
-            confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
-            confirmButtonAriaLabel: 'Thumbs up, great!',
-            cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
-            cancelButtonAriaLabel: 'Thumbs down'
-        })
-    });
+  document.addEventListener("DOMContentLoaded", () => {
+    Swal.fire({
+      title: '<strong>HTML <u>example</u></strong>',
+      icon: 'info',
+      html: 'You can use <b>bold text</b>, ' +
+        '<a href="//sweetalert2.github.io">links</a> ' +
+        'and other HTML tags',
+      showCloseButton: true,
+      showCancelButton: true,
+      focusConfirm: false,
+      confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+      cancelButtonAriaLabel: 'Thumbs down'
+    })
+  });
 </script>
 {{/unless}}
