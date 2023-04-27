@@ -2,6 +2,7 @@ const consultorController = exports;
 const pool = require('../database')
 const { sendEmail, propuestaCargadaHTML, tareaCompletadaHTML, tareaNuevaHTML, solicitarArchivoHTML } = require('../lib/mail.config')
 const { consultarDatos, insertarDatos, eliminarDatos, consultarTareasConsultores } = require('../lib/helpers')
+const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
 
 // Dashboard Administrativo
 consultorController.index = async (req, res) => {
@@ -144,7 +145,11 @@ consultorController.enviarPropuesta = async (req, res) => {
 // ANÁLISIS DIMENSIÓN PRODUCTO
 consultorController.analisisProducto = async (req, res) => {
     const { codigo } = req.params;
-    res.render('consultor/analisisProducto', { wizarx: true, user_dash: false, adminDash: false, codigo })
+    let linkCerrar = '/analisis-de-negocio'
+    if (req.user.rol != 'Empresa') {
+        linkCerrar = `/empresas/${codigo}#analisis_`
+    }
+    res.render('consultor/analisisProducto', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar})
 }
 consultorController.guardarAnalisisProducto = async (req, res) => {
     const { codigoEmpresa, zhActualAdm } = req.body;
@@ -179,14 +184,45 @@ consultorController.guardarAnalisisProducto = async (req, res) => {
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
-        res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        /**
+         * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+        */
+        const obj_respuestas = {
+            '¿A cuál segmento del mercado va dirigido su producto: hombres, mujeres, pequeñas empresas, etc.?': publico_objetivo,
+            '¿Qué Beneficios aporta su producto? Y ¿Qué necesidad de este público satisface?': beneficios,
+            '¿Cuál es su tipo de producto específicamente?': tipo_producto,
+            'Explique ¿Cómo es el precio de su producto en relación al sector de mercado en el que se encuentra?': nivel_precio,
+            '¿Cuáles son los Productos y/o Servicios que más vende?': mas_vendidos, 
+            '¿Cuál es la razón por la que considera que estos Productos que describió anteriormente se venden más?': razon_venta,
+            '¿Cómo se utiliza o consume su producto? ¿En qué ocasiones? ¿Por quién? ¿En dónde?': utilizacion,
+            'Explique ¿Qué coherencia tienen sus productos dentro de la empresa?': integracion_gama,
+            '¿Cómo es la calidad de su producto? Y ¿Qué tiene su producto para disponer de la calidad a que hace referencia?': calidad,
+            '¿Qué aceptación tiene su producto?': aceptacion
+        }
+
+        const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de análisis de negocio en la dimensión producto para la empresa.")
+        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        let resultAI = await getResponseChatGPT(prompt)
+        const resp = resultAI.content.replaceAll('\n', '<br>');
+        const informeAI = { empresa: id_empresa, tipo: 'Análisis producto', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
+        const insertResult = await insertarDatos('informes_ia', informeAI)
+        if (insertResult.affectedRows > 0) {
+            req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
+            : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        }
+
+
     }
 }
 
 // ANÁLISIS DIMENSIÓN ADMINISTRACIÓN
 consultorController.analisisAdministracion = async (req, res) => {
     const { codigo } = req.params;
-    res.render('consultor/analisisAdministracion', { wizarx: true, user_dash: false, adminDash: false, codigo })
+    let linkCerrar = '/analisis-de-negocio'
+    if (req.user.rol != 'Empresa') {
+        linkCerrar = `/empresas/${codigo}#analisis_`
+    }
+    res.render('consultor/analisisAdministracion', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar })
 }
 consultorController.guardarAnalisisAdministracion = async (req, res) => {
     const { codigoEmpresa, zhActualAdm } = req.body;
@@ -235,7 +271,11 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
 // ANÁLISIS DIMENSIÓN OPERACION
 consultorController.analisisOperacion = async (req, res) => {
     const { codigo } = req.params;
-    res.render('consultor/analisisOperacion', { wizarx: true, user_dash: false, adminDash: false, codigo })
+    let linkCerrar = '/analisis-de-negocio'
+    if (req.user.rol != 'Empresa') {
+        linkCerrar = `/empresas/${codigo}#analisis_`
+    }
+    res.render('consultor/analisisOperacion', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar })
 }
 consultorController.guardarAnalisisOperacion = async (req, res) => {
     const { codigoEmpresa, zhActualAdm } = req.body;
@@ -282,7 +322,11 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
 // ANÁLISIS DIMENSIÓN MARKETING
 consultorController.analisisMarketing = async (req, res) => {
     const { codigo } = req.params;
-    res.render('consultor/analisisMarketing', { wizarx: true, user_dash: false, adminDash: false, codigo })
+    let linkCerrar = '/analisis-de-negocio'
+    if (req.user.rol != 'Empresa') {
+        linkCerrar = `/empresas/${codigo}#analisis_`
+    }
+    res.render('consultor/analisisMarketing', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar })
 }
 consultorController.guardarAnalisisMarketing = async (req, res) => {
     const { codigoEmpresa, zhActualAdm } = req.body;

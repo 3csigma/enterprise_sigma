@@ -5,6 +5,7 @@ const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
 const portalClientes = process.env.PORTAL_CLIENTES;
+const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
 
 let pagoPendiente = true, diagnosticoPagado = false, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
 let modalAcuerdo = false;
@@ -495,7 +496,7 @@ empresaController.diagnostico = async (req, res) => {
         }
     }
 
-    const cuestionario = {fichaCliente: {}, diagnostico: {}}, resDiag = {};
+    const cuestionario = {fichaCliente: {}, diagnostico: {}};
     cuestionario.fichaCliente.id = id_empresa;
     cuestionario.fichaCliente.usuario = encriptarTxt('' + id_empresa)
     cuestionario.fichaCliente.estado = false;
@@ -520,6 +521,10 @@ empresaController.diagnostico = async (req, res) => {
             cuestionario.fichaCliente.estilo = 'linear-gradient(189.55deg, #FED061 -131.52%, #812082 -11.9%, #50368C 129.46%); color: #FFFF'
             cuestionario.fichaCliente.texto = 'Completado'
             cuestionario.fichaCliente.estado = true;
+        }
+
+        if (!checkGPT3Connectivity()) {
+            cuestionario.diagnostico.btnDisabled = true;
         }
 
         if (ficha.tipo_empresa == 1) {
@@ -551,6 +556,7 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico.color = 'badge-success'
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalEmpresasEstablecidas';
+                etapaCompleta.verAnalisis = true;
             }
         }
 
@@ -700,127 +706,57 @@ empresaController.eliminarFicha = async (req, res) => {
 
 /** Mostrar vista del Panel Análisis de Negocio */
 empresaController.analisis = async (req, res) => {
-    const btnPagar = {};
-    const row = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
-    const id_empresa = row[0].id_empresas;
-    const propuestas = await consultarDatos('propuestas')
-    const propuesta = propuestas.find(i => i.empresa == id_empresa && i.tipo_propuesta == 'Análisis de negocio')
-    const pagos = await consultarDatos('pagos')
-    const pago_empresa = pagos.find(i => i.id_empresa == id_empresa)
+    let empresa = await consultarDatos('empresas')
+    empresa = empresa.find(e => e.email == req.user.email)
+    const id_empresa = empresa.id_empresas;
     const etapa1 = { lista: true }
-    let tienePropuesta = false
-
-    let escena1 = false, escena2 = false, escena3 = false, escena4 = false, escena5 = false, escena6 = false, activarPagoUnico = true,
-        msgActivo, msgDesactivo, msgDesactivo2 = true, msgDesactivo3 = true,
-        btnActivo = "background: #85bb65;margin: 0 auto;border-color: #85bb65;",
-        btnDesactivo = "background: #656c73;margin: 0 auto;border-color: #656c73;"
+    const cuestionario = {producto: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'},
+    administracion: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'},
+    operacion: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'}, 
+    marketing: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'}};
     /************************************************************************************* */
-    // PROPUESTA DE ANÁLISIS DE NEGOCIO -- VALIDANDO PAGOS DE ANÁLISIS DE NEGOCIO
-    if (propuesta) {
-        tienePropuesta = true
-        btnPagar.etapa1 = false;
-        btnPagar.activar1 = false;
-        btnPagar.etapa2 = true;
-        btnPagar.activar2 = true;
-        propuesta.porcentaje = "0%";
+    // Verificando conexión estable a la API de OPEN AI
+    if (!checkGPT3Connectivity()) {
+        cuestionario.producto.btnDisabled = true;
+        cuestionario.administracion.btnDisabled = true;
+        cuestionario.operacion.btnDisabled = true;
+        cuestionario.marketing.btnDisabled = true;
+    }
 
-        /************************************************************************************* */
-        const objAnalisis = JSON.parse(pago_empresa.analisis_negocio)
-        const objAnalisis1 = JSON.parse(pago_empresa.analisis_negocio1)
-        const objAnalisis2 = JSON.parse(pago_empresa.analisis_negocio2)
-        const objAnalisis3 = JSON.parse(pago_empresa.analisis_negocio3)
-
-        // PAGÓ EL ANÁLISIS
-        if (objAnalisis.estado == 1) {
-            btnPagar.etapa1 = false;
-            btnPagar.activar1 = false;
-            btnPagar.etapa2 = true;
-            btnPagar.activar2 = false;
-            propuesta.porcentaje = "100%";
-            btnPagar.analisisPer = true
-            propuesta.precio_total = objAnalisis.precio;
+    let analisis_empresa = await consultarDatos('analisis_empresa')
+    analisis_empresa = analisis_empresa.find(a => a.id_empresa == id_empresa)
+    if (analisis_empresa) {
+        // DIMENSIÓN PRODUCTO
+        if (analisis_empresa.producto) {
+            const a = JSON.parse(analisis_empresa.producto)
+            cuestionario.producto.fecha = a.fecha
+            cuestionario.producto.color = 'badge-success'
+            cuestionario.producto.texto = 'Completado'
+            cuestionario.producto.btnEdit = false;
         }
-
-        btnPagar.obj1 = parseInt(objAnalisis1.estado)
-        btnPagar.obj2 = parseInt(objAnalisis2.estado)
-        btnPagar.obj3 = parseInt(objAnalisis3.estado)
-
-        if (objAnalisis1.estado == 2) {
-            btnPagar.etapa1 = false;
-            btnPagar.activar1 = false;
-            btnPagar.etapa2 = true;
-            btnPagar.activar2 = true;
-            btnPagar.analisisPer = true;
-            propuesta.porcentaje = "60%";
+        // DIMENSIÓN ADMINISTRACIÓN
+        if (analisis_empresa.administracion) {
+            const a = JSON.parse(analisis_empresa.administracion)
+            cuestionario.administracion.fecha = a.fecha
+            cuestionario.administracion.color = 'badge-success'
+            cuestionario.administracion.texto = 'Completado'
+            cuestionario.administracion.btnEdit = false;
         }
-        if (objAnalisis2.estado == 2) { propuesta.porcentaje = "80%"; }
-        if (objAnalisis3.estado == 2) { propuesta.porcentaje = "100%"; }
-
-        let fechaDB = new Date(objAnalisis1.fecha)
-        let fechaDB2 = new Date(objAnalisis1.fecha)
-
-        if (msgDesactivo2) {
-            fechaDB.setDate(fechaDB2.getDate() + 30);
-            fechaDB = fechaDB.toLocaleDateString("en-US")
-            msgDesactivo2 = "Pago disponible apartir de: " + fechaDB + ""
+        // DIMENSIÓN OPERACIÓN
+        if (analisis_empresa.operacion) {
+            const a = JSON.parse(analisis_empresa.operacion)
+            cuestionario.operacion.fecha = a.fecha
+            cuestionario.operacion.color = 'badge-success'
+            cuestionario.operacion.texto = 'Completado'
+            cuestionario.operacion.btnEdit = false;
         }
-
-        if (msgDesactivo3) {
-            fechaDB2.setDate(fechaDB2.getDate() + 60);
-            fechaDB2 = fechaDB2.toLocaleDateString("en-US")
-            msgDesactivo3 = "Pago disponible apartir de: " + fechaDB2 + ""
-        }
-
-        if (objAnalisis.estado == 1) {
-            escena6 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Análisis de negocio pagado"
-            msgDesactivo2 = "Análisis de negocio pagado"
-            msgDesactivo3 = "Análisis de negocio pagado"
-        } else if (btnPagar.obj1 == 1 && btnPagar.obj2 == 0 && btnPagar.obj3 == 0) {
-            escena1 = true
-            msgActivo = "Primera cuota lista para pagarse"
-            btnActivo
-            msgDesactivo = "Pago no disponible aun"
-            btnDesactivo
-        } else if (btnPagar.obj1 != 1 && btnPagar.obj2 == 0 && btnPagar.obj3 == 0) {
-            escena2 = true
-            activarPagoUnico = false
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2
-            msgDesactivo3
-            btnDesactivo
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 1 && btnPagar.obj3 == 0) {
-            escena3 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgActivo = "Segunda cuota lista para pagarse"
-            btnActivo
-            msgDesactivo3
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 2 && btnPagar.obj3 == 0) {
-            escena4 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2 = "Segunda cuota pagada"
-            msgDesactivo3
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 2 && btnPagar.obj3 == 1) {
-            escena5 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2 = "Segunda cuota pagada"
-            msgActivo = "Tercera cuota lista para pagarse"
-            btnActivo
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 2 && btnPagar.obj3 == 2) {
-            escena6 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2 = "Segunda cuota pagada"
-            msgDesactivo3 = "Tercera cuota pagada"
+        // DIMENSIÓN MARKETING
+        if (analisis_empresa.marketing) {
+            const a = JSON.parse(analisis_empresa.marketing)
+            cuestionario.marketing.fecha = a.fecha
+            cuestionario.marketing.color = 'badge-success'
+            cuestionario.marketing.texto = 'Completado'
+            cuestionario.marketing.btnEdit = false;
         }
     }
 
@@ -842,20 +778,8 @@ empresaController.analisis = async (req, res) => {
     } else {
         archivos = false;
     }
+
     /************************************************************************************* */
-
-    const informesAnalisis = []
-    const info0Analisis = await consultarInformes(id_empresa, "Informe de análisis")
-    const info1Analisis = await consultarInformes(id_empresa, "Informe de dimensión producto")
-    const info2Analisis = await consultarInformes(id_empresa, "Informe de dimensión administración")
-    const info3Analisis = await consultarInformes(id_empresa, "Informe de dimensión operaciones")
-    const info4Analisis = await consultarInformes(id_empresa, "Informe de dimensión marketing")
-    info0Analisis ? informesAnalisis.push(info0Analisis) : false;
-    info1Analisis ? informesAnalisis.push(info1Analisis) : false;
-    info2Analisis ? informesAnalisis.push(info2Analisis) : false;
-    info3Analisis ? informesAnalisis.push(info3Analisis) : false;
-    info4Analisis ? informesAnalisis.push(info4Analisis) : false;
-
     /**
      * VIDEOS TURIALES ACTIVAR o DESACTIVAR
     */
@@ -874,18 +798,12 @@ empresaController.analisis = async (req, res) => {
     res.render('empresa/analisis', {
         user_dash: true,
         actualYear: req.actualYear,
-        informe: false, propuesta, btnPagar,
-        etapa1, archivos,
-        informesAnalisis,
-        escena1, escena2,
-        escena3, escena4,
-        escena5, escena6,
-        msgActivo, msgDesactivo, msgDesactivo2, msgDesactivo3, activarPagoUnico,
-        btnActivo, btnDesactivo, tienePropuesta,
+        id_empresa,
+        codigo: empresa.codigo,
         itemAnalisis: true,
-        consulAsignado: req.session.consulAsignado,
-        etapaCompleta: req.session.etapaCompleta, modalAcuerdo, id_empresa,
-        tutoriales
+        etapa1, archivos,
+        etapaCompleta: req.session.etapaCompleta,
+        tutoriales, cuestionario
     })
 }
 
@@ -1252,23 +1170,29 @@ empresaController.planEstrategico = async (req, res) => {
 empresaController.informeAutoGenerado = async (req, res) => {
     const { tipo } = req.params;
     let tituloInforme = tipo, tipoInforme = 'negocio';
-    if (tipo == 'dimensión producto') {
+    let tipoDB = tipo;
+    if (tipo == 'dimensión_producto') {
         tituloInforme = 'dimensión';
-        tipoInforme = 'producto'
-    } else if (tipo == 'dimensión administración') {
+        tipoInforme = 'producto';
+        tipoDB = 'Análisis producto'
+    } else if (tipo == 'dimensión_administración') {
         tituloInforme = 'dimensión';
         tipoInforme = 'administración'
-    } else if (tipo == 'dimensión operación') {
+        tipoDB = 'Análisis administración'
+    } else if (tipo == 'dimensión_operación') {
         tituloInforme = 'dimensión';
         tipoInforme = 'operación'
-    } else if (tipo == 'dimensión marketing') {
+        tipoDB = 'Análisis operación'
+    } else if (tipo == 'dimensión_marketing') {
         tituloInforme = 'dimensión';
         tipoInforme = 'marketing'
+        tipoDB = 'Análisis marketing'
     }
+
     let empresa = await consultarDatos('empresas')
     empresa = empresa.find(e => e.codigo == req.user.codigo)
     let data = await consultarDatos('informes_ia')
-    data = data.find(x => x.empresa == empresa.id_empresas)
+    data = data.find(x => x.empresa == empresa.id_empresas && x.tipo == tipoDB)
     const textoGPT = data.informe
     res.render('pages/informeAutoGenerado', { empresa: empresa.nombre_empresa, tituloInforme, tipoInforme, textoGPT })
 }

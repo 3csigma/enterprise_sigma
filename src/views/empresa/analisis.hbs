@@ -48,118 +48,131 @@
                       </tr>
                     </thead>
                     <tbody>
+                      {{!-- DIMENSIÓN PRODUCTO --}}
                       <tr>
-                        <td>{{#if dimProducto}}{{dimProducto.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if cuestionario.producto.fecha}}{{cuestionario.producto.fecha}}{{else}}N/A{{/if}}</td>
                         <td>Cuestionario dimensión producto</td>
                         <td>
-                          {{#if dimProducto}}
-                          <span class="badge light badge-success">Completo</span>
-                          {{else}}
-                          <span class="badge light badge-warning">Pendiente</span>
-                          {{/if}}
+                          <span class="badge light {{cuestionario.producto.color}}">{{cuestionario.producto.texto}}</span>
                         </td>
                         <td>
-                          {{#if dimProducto}}
-                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimProducto" style="border-color: #FED061">
-                            <i class="fa fa-search"></i></a>
-                          {{else}}
-                          {{#if botonesEtapas.dos}}
-                          <a href="/analisis-dimension-producto/{{datos.code}}"
-                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="border-color: #812082;">
+                          {{#if cuestionario.producto.btnEdit}}
+                            {{#if cuestionario.producto.btnDisabled}}
+                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="filter: grayscale(1);">
                             <i class="fa fa-pencil"></i></a>
+                            {{else}}
+                            <a href="/analisis-dimension-producto/{{codigo}}"
+                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                              style="border-color: #812082;">
+                              <i class="fa fa-pencil"></i>
+                            </a>
+                            {{/if}}
                           {{else}}
-                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
-                              class="fa fa-search"></i></button>
-                          {{/if}}
+                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimProducto" style="border-color: #FED061">
+                            <i class="fa fa-search"></i></a> --}}
+                          <a href="/generar-informe/dimensión_producto" target="_blank"
+                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                            <i class="fa fa-eye"></i>
+                          </a>
                           {{/if}}
                         </td>
                       </tr>
+
+                      {{!-- DIMENSIÓN ADMINISTRACIÓN --}}
                       <tr>
-                        <td>{{#if dimAdmin}}{{dimAdmin.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if cuestionario.administracion.fecha}}{{cuestionario.administracion.fecha}}{{else}}N/A{{/if}}</td>
                         <td>Cuestionario dimensión administración</td>
                         <td>
-                          {{#if dimAdmin}}
-                          <span class="badge light badge-success">Completo</span>
-                          {{else}}
-                          <span class="badge light badge-warning">Pendiente</span>
-                          {{/if}}
+                          <span class="badge light {{cuestionario.administracion.color}}">{{cuestionario.administracion.texto}}</span>
                         </td>
                         <td>
-                          {{#if dimAdmin}}
-                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimAdministracion" style="border-color: #FED061">
-                            <i class="fa fa-search"></i></a>
-                          {{else}}
-                          {{#if botonesEtapas.dos}}
-                          <a href="/analisis-dimension-administracion/{{datos.code}}"
-                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="border-color: #812082;">
+                          {{#if cuestionario.administracion.btnEdit}}
+                            {{#if cuestionario.administracion.btnDisabled}}
+                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="filter: grayscale(1);">
                             <i class="fa fa-pencil"></i></a>
+                            {{else}}
+                            <a href="/analisis-dimension-administracion/{{codigo}}"
+                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                              style="border-color: #812082;">
+                              <i class="fa fa-pencil"></i></a>
+                            {{/if}}
                           {{else}}
-                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
-                              class="fa fa-search"></i></button>
-                          {{/if}}
+                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimAdministracion" style="border-color: #FED061">
+                            <i class="fa fa-search"></i></a> --}}
+                          <a href="/generar-informe/dimensión_administración" target="_blank"
+                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                            <i class="fa fa-eye"></i>
+                          </a>
                           {{/if}}
                         </td>
                       </tr>
+
+                      {{!-- DIMENSIÓN OPERACIÓN --}}
                       <tr>
-                        <td>{{#if dimOperacion}}{{dimOperacion.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if cuestionario.operacion.fecha}}{{cuestionario.operacion.fecha}}{{else}}N/A{{/if}}</td>
                         <td>Cuestionario dimensión operación</td>
                         <td>
-                          {{#if dimOperacion}}
-                          <span class="badge light badge-success">Completo</span>
-                          {{else}}
-                          <span class="badge light badge-warning">Pendiente</span>
-                          {{/if}}
+                          <span class="badge light {{cuestionario.operacion.color}}">{{cuestionario.operacion.texto}}</span>
                         </td>
                         <td>
-                          {{#if dimOperacion}}
-                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
-                            <i class="fa fa-search"></i></a>
-                          {{else}}
-                          {{#if botonesEtapas.dos}}
-                          <a href="/analisis-dimension-operaciones/{{datos.code}}"
-                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="border-color: #812082;">
+                          {{#if cuestionario.operacion.btnEdit}}
+                            {{#if cuestionario.operacion.btnDisabled}}
+                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="filter: grayscale(1);">
                             <i class="fa fa-pencil"></i></a>
+                            {{else}}
+                            <a href="/analisis-dimension-operaciones/{{codigo}}"
+                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                              style="border-color: #812082;">
+                              <i class="fa fa-pencil"></i></a>
+                            {{/if}}
                           {{else}}
-                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
-                              class="fa fa-search"></i></button>
-                          {{/if}}
+                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
+                            <i class="fa fa-search"></i></a> --}}
+                          <a href="/generar-informe/dimensión_operación" target="_blank"
+                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                            <i class="fa fa-eye"></i>
+                          </a>
                           {{/if}}
                         </td>
                       </tr>
+
+                      {{!-- DIMENSIÓN MARKETING --}}
                       <tr>
-                        <td>{{#if dimMarketing}}{{dimMarketing.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>{{#if cuestionario.marketing.fecha}}{{cuestionario.marketing.fecha}}{{else}}N/A{{/if}}</td>
                         <td>Cuestionario dimensión marketing</td>
                         <td>
-                          {{#if dimMarketing}}
-                          <span class="badge light badge-success">Completo</span>
-                          {{else}}
-                          <span class="badge light badge-warning">Pendiente</span>
-                          {{/if}}
+                          <span class="badge light {{cuestionario.marketing.color}}">{{cuestionario.marketing.texto}}</span>
                         </td>
                         <td>
-                          {{#if dimMarketing}}
-                          <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimMarketing" style="border-color: #FED061">
-                            <i class="fa fa-search"></i></a>
-                          {{else}}
-                          {{#if botonesEtapas.dos}}
-                          <a href="/analisis-dimension-marketing/{{datos.code}}"
+                          {{#if cuestionario.marketing.btnEdit}}
+                            {{#if cuestionario.marketing.btnDisabled}}
+                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="filter: grayscale(1);">
+                            <i class="fa fa-pencil"></i></a>
+                            {{else}}
+                            <a href="/analisis-dimension-marketing/{{codigo}}"
                             class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
                             style="border-color: #812082;">
                             <i class="fa fa-pencil"></i></a>
+                            {{/if}}
                           {{else}}
-                          <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter:grayscale(1)"><i
-                              class="fa fa-search"></i></button>
-                          {{/if}}
+                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                            data-target="#modalDimMarketing" style="border-color: #FED061">
+                            <i class="fa fa-search"></i></a> --}}
+                          <a href="/generar-informe/dimensión_marketing" target="_blank"
+                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                            <i class="fa fa-eye"></i>
+                          </a>
                           {{/if}}
                         </td>
                       </tr>
+
                     </tbody>
                   </table>
                 </div>

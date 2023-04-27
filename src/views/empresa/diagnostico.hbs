@@ -73,15 +73,21 @@
                         </td>
                         <td>
                           {{#if cuestionario.diagnostico.btnEdit}}
-                          <a href="{{cuestionario.diagnostico.link}}"
-                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white" style="border-color: #812082;">
+                          {{#if cuestionario.operacion.btnDisabled}}
+                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="filter: grayscale(1);">
                             <i class="fa fa-pencil"></i></a>
+                            {{else}}
+                            <a href="{{cuestionario.diagnostico.link}}"
+                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white" style="border-color: #812082;">
+                              <i class="fa fa-pencil"></i></a>
+                            {{/if}}
                           {{else}}
                           {{!-- <div class="d-flex">
                             <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter: grayscale(1);">
                               <i class="fa fa-pencil"></i></button>
                           </div> --}}
-                          <a href="/generar-informe/diagnóstico" target="_blank"
+                          <a href="/generar-informe/Diagnóstico" target="_blank"
                             class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
                             <i class="fa fa-eye"></i>
                           </a>

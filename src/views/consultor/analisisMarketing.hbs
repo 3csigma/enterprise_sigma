@@ -379,10 +379,9 @@
                     </div>
                     <!-- /middle-wizard -->
                     <div id="bottom-wizard">
-                        {{!-- <a class="btn btn-danger" href="#">Limpiar campos</a> --}}
                         <button type="button" name="backward" class="backward">Anterior</button>
                         <button type="button" name="forward" class="forward">Siguiente</button>
-                        <button type="submit" name="enviarCuestionario" class="submit">Guardar Datos</button>
+                        <button type="submit" onclick="cargandoDatos()" class="submit">Guardar Datos</button>
                     </div>
                     <!-- /bottom-wizard -->
                 </form>
@@ -394,5 +393,5 @@
     <!-- /row-->
 </div>
 <!-- /container-fluid -->
-<a href="/empresas/{{codigo}}#analisis_" class="close"></a>
+<a href="{{linkCerrar}}" class="close"></a>
 {{> general/footerForms}}

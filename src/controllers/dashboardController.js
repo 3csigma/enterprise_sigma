@@ -6,7 +6,7 @@ const path = require('path');
 const { consultarInformes, consultarDatos, tareasGenerales, consultarTareasEmpresarial, insertarDatos, eliminarDatos, consultarTareasConsultores } = require('../lib/helpers')
 const { sendEmail, consultorAsignadoHTML, consultorAprobadoHTML, informesHTML, etapaFinalizadaHTML, consultor_AsignadoEtapa, archivosPlanEmpresarialHTML } = require('../lib/mail.config');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
-const { getResponseChatGPT } = require('../lib/openai');
+const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
 
 let aprobarConsultor = false;
 
