@@ -267,13 +267,13 @@
 										onchange="getVals(this, 'tiempo_fundacion_field');">
 								</div>
 
-								<div class="form-group col-md-6 ">
+								{{!-- <div class="form-group col-md-6 ">
 									<select name="tipo_empresa" class="form-control default-select selectpicker required" required>
 										<option value="">Tipo de empresa</option>
 										<option value="1">Nuevo proyecto (aun sin ejecutar)</option>
 										<option value="2">Empresa establecida (actualmente facturando)</option>
 									</select>
-								</div>
+								</div> --}}
 								
 								<div class="form-group col-md-6">
 									<label for="promedio_ingreso_anual">Promedio de ingreso anual*</label>
@@ -315,11 +315,11 @@
 									<label>¿En qué etapa se encuentra tu negocio?</label>
 									<div class="form-group mb-3 radio_input">
 										<label class="container_radio mr-3">En Proyecto
-											<input type="radio" name="etapa_actual" value="En Proyecto" class="required"
+											<input type="radio" name="etapa_actual" value="En proyecto" class="required"
 												{{datos.etapa1}}>
 											<span class="checkmark"></span>
 										</label>
-										<label class="container_radio">Operativo
+										<label class="container_radio mr-3">Operativo
 											<input type="radio" name="etapa_actual" value="Operativo" class="required"
 												{{datos.etapa2}}>
 											<span class="checkmark"></span>
@@ -327,11 +327,6 @@
 										<label class="container_radio">En expansión
 											<input type="radio" name="etapa_actual" value="En expansión"
 												class="required" {{datos.etapa3}}>
-											<span class="checkmark"></span>
-										</label>
-										<label class="container_radio">Otro
-											<input type="radio" name="etapa_actual" value="Otro" class="required"
-												{{datos.etapa4}}>
 											<span class="checkmark"></span>
 										</label>
 									</div>

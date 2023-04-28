@@ -12,7 +12,6 @@ let modalAcuerdo = false;
 
 /** Función para mostrar Dashboard de Empresas */
 empresaController.index = async (req, res) => {
-    diagnosticoPagado = false;
     etapaCompleta = {};
     consulAsignado = {};
     modalAcuerdo = false;
@@ -40,39 +39,39 @@ empresaController.index = async (req, res) => {
     }
 
     /** Consultando que pagos ha realizado el usuario */
-    const pagos = await consultarDatos('pagos')
-    let pago_empresa = pagos.find(i => i.id_empresa == id_empresa);
-    if (!pago_empresa) {
-        diagnosticoPagado = false;
-        const estado = JSON.stringify({ estado: 0 })
-        const nuevoPago = {
-            id_empresa,
-            diagnostico_negocio: estado,
-            analisis_negocio: estado,
-            analisis_negocio1: JSON.stringify({ estado: 1 }),
-            analisis_negocio2: estado,
-            analisis_negocio3: estado,
-            estrategico: estado,
-            empresarial0: estado,
-            empresarial1: JSON.stringify({ estado: 1 }),
-            empresarial2: estado,
-            empresarial3: estado,
-        }
-        await insertarDatos('pagos', nuevoPago)
-    } else {
-        const objDiagnostico = JSON.parse(pago_empresa.diagnostico_negocio)
-        if (objDiagnostico.estado == 1) {
-            // PAGÓ EL DIAGNOSTICO
-            diagnosticoPagado = objDiagnostico;
-            /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
-            let acuerdo = await consultarDatos('acuerdo_confidencial')
-            acuerdo = acuerdo.find(x => x.id_empresa == id_empresa);
-            if (!acuerdo) {
-                modalAcuerdo = true;
-            }
-        }
+    // const pagos = await consultarDatos('pagos')
+    // let pago_empresa = pagos.find(i => i.id_empresa == id_empresa);
+    // if (!pago_empresa) {
+    //     diagnosticoPagado = false;
+    //     const estado = JSON.stringify({ estado: 0 })
+    //     const nuevoPago = {
+    //         id_empresa,
+    //         diagnostico_negocio: estado,
+    //         analisis_negocio: estado,
+    //         analisis_negocio1: JSON.stringify({ estado: 1 }),
+    //         analisis_negocio2: estado,
+    //         analisis_negocio3: estado,
+    //         estrategico: estado,
+    //         empresarial0: estado,
+    //         empresarial1: JSON.stringify({ estado: 1 }),
+    //         empresarial2: estado,
+    //         empresarial3: estado,
+    //     }
+    //     await insertarDatos('pagos', nuevoPago)
+    // } else {
+    //     const objDiagnostico = JSON.parse(pago_empresa.diagnostico_negocio)
+    //     if (objDiagnostico.estado == 1) {
+    //         // PAGÓ EL DIAGNOSTICO
+    //         diagnosticoPagado = objDiagnostico;
+    //         /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
+    //         let acuerdo = await consultarDatos('acuerdo_confidencial')
+    //         acuerdo = acuerdo.find(x => x.id_empresa == id_empresa);
+    //         if (!acuerdo) {
+    //             modalAcuerdo = true;
+    //         }
+    //     }
 
-    }
+    // }
 
     /** ETAPAS DEL DIAGNOSTICO EN LA EMPRESA */
     const dataEmpresa = await pool.query('SELECT e.*, u.codigo, u.estadoAdm, f.telefono, f.id_empresa, p.*, a.id_empresa, a.estadoAcuerdo FROM empresas e LEFT OUTER JOIN ficha_cliente f ON f.id_empresa = ? LEFT OUTER JOIN pagos p ON p.id_empresa = ? LEFT OUTER JOIN acuerdo_confidencial a ON a.id_empresa = ? INNER JOIN users u ON u.codigo = ? AND rol = "Empresa" LIMIT 1', [id_empresa, id_empresa, id_empresa, empresa.codigo])
@@ -82,62 +81,41 @@ empresaController.index = async (req, res) => {
     /**
      * diagEmpresa -> EMPRESA ESTABLECIDA
      * diagEmpresa2 -> EMPRESA NUEVA
-     */
-
-    // INFORMES DE LA EMPRESA
-    const informes_empresa = await consultarDatos('informes')
+    */
+    // INFORMES GENERADOS POR CHATGPT
+    const informesIA = await consultarDatos('informes_ia')
 
     /**************************************************************************** */
     // PORCENTAJE ETAPA 1
-    let porcentaje = 100 / 6, porcentajeEtapa1 = 0;
-    porcentaje = Math.round(porcentaje)
+    let porcentaje = 100 / 4, porcentajeEtapa1 = 0;
+    // porcentaje = Math.round(porcentaje)
     const diagPorcentaje = { num: 0 }
 
     const e = dataEmpresa[0];
-    const diagnosticoPago = JSON.parse(e.diagnostico_negocio)
-    if (diagnosticoPago.estado == 1) {
-        diagPorcentaje.txt = 'Diagnóstico pagado'
-        porcentajeEtapa1 = porcentaje
-    }
-    if (e.estadoAcuerdo == 1) {
-        diagPorcentaje.txt = 'Acuerdo enviado'
-        porcentajeEtapa1 = porcentaje * 2
-    }
+    // const diagnosticoPago = JSON.parse(e.diagnostico_negocio)
+    // if (diagnosticoPago.estado == 1) {
+    //     diagPorcentaje.txt = 'Diagnóstico pagado'
+    //     porcentajeEtapa1 = porcentaje
+    // }
+    // if (e.estadoAcuerdo == 1) {
+    //     diagPorcentaje.txt = 'Acuerdo enviado'
+    //     porcentajeEtapa1 = porcentaje * 2
+    // }
     if (e.estadoAcuerdo == 2) {
-        diagPorcentaje.txt = 'Acuerdo firmado'
-        porcentajeEtapa1 = porcentaje * 3
+        diagPorcentaje.txt = 'Acuerdo aceptado'
+        porcentajeEtapa1 = porcentaje
     }
     if (e.telefono) {
         diagPorcentaje.txt = 'Ficha Cliente'
-        porcentajeEtapa1 = porcentaje * 4
+        porcentajeEtapa1 = porcentaje * 2
     }
 
     if (diagEmpresa.length > 0 || diagEmpresa2.length > 0) {
         diagPorcentaje.txt = 'Cuestionario diagnóstico'
-        porcentajeEtapa1 = porcentaje * 5
+        porcentajeEtapa1 = porcentaje * 3
     }
 
     // VERIFICACIÓN DE ETAPAS FINALIZADAS (Estapa 1)
-    const informeEtapa1 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe diagnóstico')
-    if (informeEtapa1) {
-        porcentajeEtapa1 = 100;
-        etapaCompleta.e1 = true
-
-        /*****************************************************
-         * VALIDANDO EL TIPO DE EMPRESA (NUEVA O ESTABLECIDA) - PARA HABILITAR EL MENÚ
-        */
-        // Empresa Establecida
-        if (diagEmpresa.length > 0) {
-            etapaCompleta.verAnalisis = true;
-            etapaCompleta.verEmpresarial = true;
-            // Empresa Nueva
-        } else if (diagEmpresa2.length > 0) {
-            etapaCompleta.verAnalisis = false;
-            etapaCompleta.verEmpresarial = true;
-        }
-    }
-
-    const informesIA = await consultarDatos('informes_ia')
     const informe1_IA = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Diagnóstico')
     if (informe1_IA) {
         porcentajeEtapa1 = 100;
@@ -158,17 +136,18 @@ empresaController.index = async (req, res) => {
     }
 
     // Informe de diagnóstico de empresa subido
-    let ultimosInformes = await consultarDatos('informes', 'ORDER BY id_informes DESC LIMIT 2')
-    ultimosInformes = ultimosInformes.filter(x => x.id_empresa == id_empresa)
-    if (ultimosInformes.length > 0) {
-        ultimosInformes.forEach(x => {
-            if (x.nombre == 'Informe diagnóstico') {
-                x.etapa = 'Diagnóstico'
-            }
-            if (x.nombre == 'Informe de dimensión producto' || x.nombre == 'Informe de dimensión administración' || x.nombre == 'Informe de dimensión operaciones' || x.nombre == 'Informe de dimensión marketing' || x.nombre == 'Informe de análisis') { x.etapa = 'Análisis' }
-            if (x.nombre == 'Informe de plan estratégico') { x.etapa = 'Plan estratégico' }
-        })
-    }
+    // let ultimosInformes = await consultarDatos('informes_ia', 'ORDER BY id DESC LIMIT 2')
+    // ultimosInformes = ultimosInformes.filter(x => x.id_empresa == id_empresa)
+    // if (ultimosInformes.length > 0) {
+    //     ultimosInformes.forEach(x => {
+    //         if (x.tipo == 'Diagnóstico') {
+    //             x.nombre = 'Informe de Diagnóstico'
+    //             x.etapa = 'Diagnóstico'
+    //         }
+    //         if (x.nombre == 'Informe de dimensión producto' || x.nombre == 'Informe de dimensión administración' || x.nombre == 'Informe de dimensión operaciones' || x.nombre == 'Informe de dimensión marketing' || x.nombre == 'Informe de análisis') { x.etapa = 'Análisis' }
+    //         if (x.nombre == 'Informe de plan estratégico') { x.etapa = 'Plan estratégico' }
+    //     })
+    // }
 
     /****************************************************************************** */
     // PORCENTAJE ETAPA 2
@@ -184,18 +163,16 @@ empresaController.index = async (req, res) => {
         if (analisisEmpresa.marketing) { porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
     }
 
-    const informeProducto = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión producto')
+    const informeProducto = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis producto')
     if (informeProducto) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
-    const informeAdministracion = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión administración')
+    const informeAdministracion = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis administración')
     if (informeAdministracion) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
-    const informeOperaciones = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión operaciones')
+    const informeOperaciones = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis operación')
     if (informeOperaciones) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
-    const informeMarketing = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión marketing')
+    const informeMarketing = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis marketing')
     if (informeMarketing) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
 
-    const informeEtapa2 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de análisis')
-    if (informeEtapa2) {
-        porcentajeEtapa2 = 100;
+    if (porcentajeEtapa2 == 100) {
         etapaCompleta.e2 = true;
         etapaCompleta.verEstrategico = true;
     }
@@ -240,7 +217,6 @@ empresaController.index = async (req, res) => {
         etapaCompleta.e4 = true;
     }
 
-    /************************************************************************** */
     /**************************************
      * PORCENTAJE GENERAL DE LA EMPRESA
     */
@@ -256,7 +232,7 @@ empresaController.index = async (req, res) => {
     /**
      * PC => Percepción Cliente
      * PE => Percepción Estadística
-     */
+    */
     let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
     let areasVitales = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ ASC')
     areasVitales = areasVitales.find(x => x.id_empresa == id_empresa)
@@ -370,7 +346,6 @@ empresaController.index = async (req, res) => {
     res.render('empresa/dashboard', {
         user_dash: true,
         pagoPendiente,
-        diagnosticoPagado,
         itemDashboard: true,
         consulAsignado,
         etapa1,
@@ -479,6 +454,7 @@ empresaController.diagnostico = async (req, res) => {
     // }
 
     // Validando Diagnóstico de negocio ha sido pagado
+    diagnosticoPagado.estado = 1
     if (diagnosticoPagado.estado == 1) {
         estadoPago.color = 'badge-success'
         estadoPago.texto = 'Pagado'
@@ -616,10 +592,9 @@ empresaController.fichaCliente = async (req, res) => {
     if (fichaCliente.length > 0) {
         ficha.es_propietario === "Si" ? datos.prop1 = 'checked' : datos.prop2 = 'checked';
         ficha.socios === 'Si' ? datos.socio1 = 'checked' : datos.socio2 = 'checked';
-        ficha.etapa_actual === 'En Proyecto' ? datos.etapa1 = 'checked' : datos.etapa1 = ''
+        ficha.etapa_actual === 'En proyecto' ? datos.etapa1 = 'checked' : datos.etapa1 = ''
         ficha.etapa_actual === 'Operativo' ? datos.etapa2 = 'checked' : datos.etapa2 = ''
         ficha.etapa_actual === 'En expansión' ? datos.etapa3 = 'checked' : datos.etapa3 = ''
-        ficha.etapa_actual === 'Otro' ? datos.etapa4 = 'checked' : datos.etapa4 = ''
 
         datos.redes_sociales = JSON.parse(ficha.redes_sociales)
         datos.objetivos = JSON.parse(ficha.objetivos)
@@ -651,12 +626,15 @@ empresaController.fichaCliente = async (req, res) => {
 }
 
 empresaController.addFichaCliente = async (req, res) => {
-    let { nombres, apellidos, email, countryCode, telFicha, fecha_nacimiento, pais, twitter, facebook, instagram, otra, es_propietario, socios, nombre_empresa, cantidad_socios, porcentaje_accionario, tiempo_fundacion, tipo_empresa, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivo1, objetivo2, objetivo3, fortaleza1, fortaleza2, fortaleza3, problema1, problema2, problema3, motivo_consultoria, fecha_zh } = req.body
+    let { nombres, apellidos, email, countryCode, telFicha, fecha_nacimiento, pais, twitter, facebook, instagram, otra, es_propietario, socios, nombre_empresa, cantidad_socios, porcentaje_accionario, tiempo_fundacion, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivo1, objetivo2, objetivo3, fortaleza1, fortaleza2, fortaleza3, problema1, problema2, problema3, motivo_consultoria, fecha_zh } = req.body
     let redes_sociales = JSON.stringify({ twitter, facebook, instagram, otra })
     let objetivos = JSON.stringify({ objetivo1, objetivo2, objetivo3 })
     let fortalezas = JSON.stringify({ fortaleza1, fortaleza2, fortaleza3 })
     let problemas = JSON.stringify({ problema1, problema2, problema3 })
     const telefono = "+" + countryCode + " " + telFicha;
+    let tipo_empresa = 1;
+
+    etapa_actual == 'En proyecto' ? tiempo_fundacion = 'Proyecto nuevo' : tipo_empresa = 2;
 
     es_propietario != undefined ? es_propietario : es_propietario = 'No'
     socios != undefined ? socios : socios = 'No'

@@ -203,17 +203,17 @@
                     <!-- PESTAÑAS DE LAS GRÁFICAS -->
                     <div class="profile-tab mb-2">
                         <div class="custom-tab-1">
-                            <ul class="nav nav-pills d-flex justify-content-center items-align-center mb-4">
+                            <ul class="nav nav-pills d-flex justify-content-center items-align-center mb-3">
                                 <li class="nav-item"><a href="#vitales" data-toggle="tab" class="nav-link active show btnIndicadoresAll" 
                                     style="width: 168.83px;">Áreas Vitales</a>
                                 </li>
                                 <li class="nav-item"><a href="#dimensiones" data-toggle="tab" 
-                                    class="nav-link btnIndicadoresAll">Por dimensiones</a>
+                                    class="nav-link btnIndicadoresAll">Por Dimensiones</a>
                                 </li>
-                                {{#if rendimiento.pe}}
+                                {{!-- {{#if rendimiento.pe}}
                                 <li class="nav-item"><a href="#pe_empresa" data-toggle="tab" class="nav-link ml-2 btnIndicadoresAll">Percepción Estadística</a>
                                 </li>
-                                {{/if}}
+                                {{/if}} --}}
                             </ul>
                         </div>
                     </div>
@@ -224,11 +224,17 @@
                         <div id="vitales" class="tab-pane fade active show">
                             <div class="card-body">
                                 <canvas id="chartEmpresa1"></canvas>
+
+                                <div class="row d-flex justify-content-center align-items-center mt-2">
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
+                                    </div>
+                                </div>
                             </div>
                             
                             {{#if rendimiento.op}}
-                            <div class="row justify-content-center mb-3">
-                                <span style="padding-top: 6px; padding-right: 8px;">Rendimiento Operativo del Negocio: <strong>{{rendimiento.op}}% </strong></span>
+                            <div class="d-flex justify-content-center align-items-center mb-3">
+                                <span>Rendimiento Operativo del Negocio: <strong>{{rendimiento.op}}% </strong></span>
                             </div>
                             {{/if}}
 
@@ -237,24 +243,34 @@
                         <div id="dimensiones" class="tab-pane fade">
                             <div class="card-body">
                                 <canvas id="chartEmpresa2"></canvas>
+
+                                <div class="row d-flex justify-content-center align-items-center mt-4">
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
+                                    </div>
+                                    {{#if rendimiento.pe}}
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Percepción Estadística</span>
+                                    </div>
+                                    {{/if}}
+                                </div>
                             </div>
                         
                             {{#if rendimiento.num}}
-                            <div class="row justify-content-center mb-3">
-                                <span style="padding-top: 6px; padding-right: 8px;font-weight: 800;">Rendimento del proyecto:
-                                    {{rendimiento.num}}% </span>
+                            <div class="d-flex justify-content-center align-items-center mb-3">
+                                <span style="font-weight: 800;">Rendimento del proyecto: {{rendimiento.num}}% </span>
                                 <span class="badge light {{rendimiento.color}}">{{rendimiento.txt}}</span>
                             </div>
                             {{/if}}
                         </div>
 
-                        {{#if rendimiento.pe}}
+                        {{!-- {{#if rendimiento.pe}}
                         <div id="pe_empresa" class="tab-pane fade">
                             <div class="card-body">
                                 <canvas id="chartEmpresa3"></canvas>
                             </div>
                         </div>
-                        {{/if}}
+                        {{/if}} --}}
 
                     </div>
 
@@ -389,12 +405,6 @@
 <!--**********************************
             Scripts
 ***********************************-->
-{{!-- Mensajes de Sweet Alert --}}
-{{#if pagoPendiente}}
-<input type="hidden" id="diagnosticoPagado" value="{{diagnosticoPagado}}">
-<input type="hidden" id="tokenForm" value="{{csrfToken}}">
-{{/if}}
-
 {{#if jsonDim_empresa}}
 <input type="hidden" id="jsonDim_empresa" value="{{jsonDim_empresa}}">
 {{> user/pieCharts}}

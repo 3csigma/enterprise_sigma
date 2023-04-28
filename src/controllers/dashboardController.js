@@ -1460,6 +1460,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     for (let key in objPE2) {
         pe_administracion += objPE2[key];
     }
+    pe_administracion = (pe_administracion/3).toFixed(2)
     console.log(`ADMINISTRACIÓN PE => ${pe_administracion}`);
 
     /**
@@ -1503,6 +1504,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     for (let key in objPE3) {
         pe_operaciones += objPE3[key];
     }
+    pe_operaciones = (pe_operaciones/4).toFixed(2)
     console.log(`OPERACIONES PE => ${pe_operaciones}`);
 
     /**
@@ -1528,6 +1530,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     for (let key in objPE4) {
         pe_marketing += objPE4[key];
     }
+    pe_marketing = (pe_marketing/2).toFixed(2)
     console.log(`MARKETING PE => ${pe_marketing} \n`);
 
     /************************************************************************************************* */

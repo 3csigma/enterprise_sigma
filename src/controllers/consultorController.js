@@ -211,7 +211,6 @@ consultorController.guardarAnalisisProducto = async (req, res) => {
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
 
-
     }
 }
 
@@ -264,7 +263,89 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
-        res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        /**
+         * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+        */
+        const obj_respuestas = {
+            '¿Qué queremos conseguir como Negocio?': vision1,
+            '¿Cómo se enfrentará el negocio a los cambios?': vision2,
+            '¿Cómo se diferenciará del resto?': vision3,
+            '¿Cómo logrará ser competitivo?': vision4,
+            'Declare su VISIÓN': vision5,
+            'Declare su MISIÓN': mision,
+            '¿Cuáles son los valores que rigen a su empresa?': valores,
+            '¿Cuáles son las oportunidades que puede identificar en su mercado para su negocio?': foda1,
+            '¿Cuáles son las amenazas que puede identificar en su mercado para su negocio?': foda2,
+            '¿Cuáles son las fortalezas de su negocio?¿Cuáles son las oportunidades que puede identificar en su mercado para su negocio?¿Cuáles son las fortalezas de su negocio?': foda3,
+            '¿Cuáles son los aspectos a mejorar que puede identificar de su negocio?': foda4,
+            '¿Qué oportunidades de las que identificó puede aprovechar en este momento con las fortalezas que tiene?': foda5,
+            '¿Qué oportunidades puede aprovechar si mejora los aspectos (debilidades) que identificó?': foda6,
+            '¿Qué amenazas puede evitar en este momento utilizando las fortalezas que tiene?': foda7,
+            '¿Qué amenazas puede evitar en este momento minimizando los aspectos a mejorar (debilidades) que identificó?': foda8,
+            'Estructura Organizativa': estructura_organizativa,
+            'Tipo de sistema administrativo': tipo_sistema,
+            '¿Describa el tipo de sistema que está utilizando para la facturación de su empresa?': sistema_facturacion,
+            'Principales funciones del personal': { puesto1,
+            funcion1,
+            puesto2, 
+            funcion2,
+            puesto3,
+            funcion3,
+            puesto4,
+            funcion4,
+            puesto5,
+            funcion5,
+            puesto6,
+            funcion6, },
+            '¿Qué habilidades se requieren para los distintos puestos?': { 
+                'puesto': h_puesto1,
+                'Habilidades interpersonales': habilidad_interp1,
+                'Habilidades técnicas': habilidad_tecnica1,
+                'puesto': h_puesto2,
+                'Habilidades interpersonales': habilidad_interp2,
+                'Habilidades técnicas': habilidad_tecnica2,
+                'puesto': h_puesto3,
+                'Habilidades interpersonales': habilidad_interp3,
+                'Habilidades técnicas': habilidad_tecnica3,
+                'puesto': h_puesto4,
+                'Habilidades interpersonales': habilidad_interp4,
+                'Habilidades técnicas': habilidad_tecnica4,
+                'puesto': h_puesto5,
+                'Habilidades interpersonales': habilidad_interp5,
+                'Habilidades técnicas': habilidad_tecnica5,
+                'puesto': h_puesto6,
+                'Habilidades interpersonales': habilidad_interp6,
+                'Habilidades técnicas': habilidad_tecnica6, },
+            '¿Qué habilidades interpersonales considera que deberían desarrollar sus colaboradores?': habilidad1,
+            '¿Qué habilidades técnicas considera que deberían desarrollar sus colaboradores?': habilidad2,
+            '¿Qué personal considera que requiere en este momento para su empresa?': necesidad_contratacion,
+            '¿Cuál es el motivo de contratación?': motivo_contratacion,
+            '¿Cuál es el criterio que utiliza para contratar al personal?': proceso_contratacion1,
+            '¿Cuál sería la información más importante que debería obtener de un futuro trabajador para ser contratado?': proceso_contratacion2,
+            '¿Cómo mide actualmente el desempeño de los trabajadores en su puesto de trabajo?': evaluacion_cargo,
+            '¿Cuál sería su proyección de ventas para los próximos meses?': proyeccion_ventas,
+            '¿Cómo es la estructura de costos de sus productos?': costo_ventas,
+            '¿A cuánto equivalen las cuentas por pagar de la empresa?': cuentas_pagar,
+            '¿A cuánto equivalen las cuentas por cobrar de la empresa?': cuentas_cobrar,
+            '¿Cuáles son los costos fijos y variables de la empresa?': costos_fijos_variables,
+            '¿Qué información muestra el Estado de Resultados de la empresa?': estado_resultados_empresa,
+            '¿Cuál es la utilidad neta de la empresa?': utilidad_neta,
+            '¿Cuál es la rentabilidad de la empresa?': rentabilidad,
+            '¿Cuál es el punto de equilibrio de la empresa?': punto_equilibrio,
+            '¿Cómo ha sido el Flujo de Caja de la empresa en los últimos 6 meses?': flujo_caja,
+            '¿Cuál es el retorno de inversión de la empresa?': retorno_inversion
+        }
+
+        const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de análisis de negocio en la dimensión administración para la empresa.")
+        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        let resultAI = await getResponseChatGPT(prompt)
+        const resp = resultAI.content.replaceAll('\n', '<br>');
+        const informeAI = { empresa: id_empresa, tipo: 'Análisis administración', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
+        const insertResult = await insertarDatos('informes_ia', informeAI)
+        if (insertResult.affectedRows > 0) {
+            req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
+            : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        }
     }
 }
 
@@ -312,10 +393,51 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
-        res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        /**
+         * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+        */
+        const obj_respuestas = {
+            '¿Cómo hace actualmente para facilitarle a sus clientes información rápida y efectiva de sus Productos y/o Servicios?': info_productos,
+            '¿Cómo mide actualmente la satisfacción de sus clientes con respecto a sus Productos y/o Servicios?': satisfaccion,
+            '¿Qué le preguntaría a sus clientes con respecto a sus Productos y/ o Servicios?': satisfaccion2,
+            '¿Qué información le interesaría conocer de sus clientes?': informacion_deClientes,
+            '¿Qué utilidad le ve a un Libro de quejas y reclamaciones?': utilidad_libro_quejas,
+            '¿En qué se puede beneficiar la empresa de un Libro de quejas y reclamaciones?': beneficio_libro_quejas,
+            '¿Qué estrategia puede utilizar para activar su usabilidad?': estrategia__libro_quejas,
+            '¿Qué es lo que hace en la actualidad para fidelizar a sus clientes?': fidelizacion_clientes,
+            '¿Qué tan adecuadas están las instalaciones donde opera el negocio?': instalaciones_op,
+            '¿Cómo están distribuidas las áreas del negocio?': areas_op,
+            '¿Qué influencia tienen las instalaciones en general hacia el éxito del negocio?': influencia_op,
+            '¿Cuáles son los permisos necesarios que requiere para la correcta operación del negocio?': permisos1,
+            '¿Qué tipo de permisos requiere actualmente o podría necesitar?': permisos2,
+            '¿Cómo está elaborado el plan de trabajo de cada trabajador dentro de la empresa?': plan_trabajo1,
+            '¿Cuál es la información más relevante que debe contener el plan de trabajo?': plan_trabajo2,
+            '¿Qué podría ayudar a que el plan de trabajo se cumpla?': plan_trabajo3,
+            '¿Qué tareas y procesos tiene actualmente estandarizados?': procesos_estandarizados1,
+            '¿Cuáles tareas y procesos le gustaría estandarizar?': procesos_estandarizados2,
+            '¿Qué hace actualmente para contribuir a generar un buen ambiente de trabajo dentro de la empresa?': ambiente_laboral,
+            '¿De qué manera se llevan a cabo las comunicaciones dentro de la empresa?': comunicacion,
+            '¿De qué manera le reconoce a sus colaboradores que están haciendo un buen trabajo?': reconocimiento1,
+            '¿Cómo puede brindar reconocimiento a sus colaboradores cuando están haciendo un buen trabajo?': reconocimiento2,
+            '¿Qué importancia le ve a la posibilidad de que sus trabajadores aportan ideas para la mejora dentro de la empresa?': innovacion_inidividual,
+            '¿Qué tipo de ideas le gustaría recibir por parte de sus trabajadores?': innovacion_inidividual2,
+            '¿Qué mejora en sus productos y/o servicios pueden incrementar tus ventas?': innovacion_productos,
+            '¿Qué cambios podrían mejorar los procesos operativos para desarrollarsus Productos y/o Servicios?': innovacion_procesos,
+            '¿Qué considera que podría innovar en su modelo de negocio?': innovacion_modelo,
+            '¿Qué podría mejorar dentro de los sistemas de gestión que tiene actualmente?': innovacion_gestion
+        }
 
-    } else {
-        console.log("Error no sé encontró la empresa y el consultor ligado..")
+        const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de análisis de negocio en la dimensión operación para la empresa.")
+        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        let resultAI = await getResponseChatGPT(prompt)
+        const resp = resultAI.content.replaceAll('\n', '<br>');
+        const informeAI = { empresa: id_empresa, tipo: 'Análisis operación', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
+        const insertResult = await insertarDatos('informes_ia', informeAI)
+        if (insertResult.affectedRows > 0) {
+            req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
+            : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        }
+
     }
 }
 
@@ -364,7 +486,54 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
-        res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        /**
+         * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+        */
+        const obj_respuestas = {
+            '¿Cuál es el objetivo principal que quisieras conseguir con una estrategia de marketing? y ¿Cómo lo vas a medir?': objetivo_principal,
+            '¿Quién es el cliente al que te diriges?': cliente,
+            '¿Cuál será tu factor de diferenciación frente a la competencia?': posicionamiento,
+            '¿Qué beneficios le aporta tu propuesta a quien adquiere tu producto?': beneficios,
+            '¿Cuál es el mensaje con el que vas a captar la atención de tus clientes?': mensaje,
+            '¿Cuál es la oferta de productos que tienes?': oferta1,
+            '¿Cuál es tu producto de entrada? si tienes un producto Premium.': oferta2,
+            '¿Cuáles pueden ser los problemas a resolver más importantes en cada fase del proceso de compra del cliente?': seguimiento,
+            '¿Cuál podría ser tu presupuesto máximo?': presupuesto,
+            '¿Qué acciones de atracción a clientes puedes realizar?': atraccion,
+            '¿Qué acciones puedes proponer para para conseguir fidelizar a los clientes, y que vuelvan a comprar y que recomienden los productos?': fidelizacion,
+            '¿Quieres trabajar sobre lo que está, o buscas algo totalmente nuevo?': sitioWeb1,
+            '¿Cómo quieres que se vea tu página Web? da ejemplo': sitioWeb2,
+            '¿Te gusta el diseño/funcionalidad de alguna página Web? Ejemplos': sitioWeb3,
+            '¿Qué incluirías de ese diseño en la tuya/qué no incluirías?': sitioWeb4,
+            '¿Cuál podría ser tu presupuesto máximo?': sitioWeb5,
+            '¿Cuál es el estado de tu marca en el mundo digital de las redes sociales?': sitioWeb6,
+            '¿Cuáles son tus redes sociales?': sitioWeb7,
+            '¿Quisieras cambiar algo sobre lo que ya tienes?': identidadC1,
+            '¿Hay algún elemento que quieras que aparezca en el logo?': identidadC2,
+            'En tu opinión, ¿qué define un logotipo bien diseñado?': identidadC3,
+            '¿Cuál es tu preferencia, en referencia a los iconos, tipografía, colores etc?': identidadC4,
+            '¿Qué palabras o iconos se deben incluir en el logo?': identidadC5,
+            '¿Qué logos te gustan y por qué?': identidadC6,
+            '¿Qué logos no te gustan y por qué?': identidadC7,
+            '¿Cuál es el eslogan que podría definir a tu empresa?': eslogan,
+            '¿Como haces para proyectar las ventas que esperas conseguir?': estrategia1,
+            '¿Qué haces para vender tus productos?': estrategia2,
+            '¿Cuáles son los canales que utilizas para vender?': estrategia3,
+            '¿Cómo organizas tus canales de ventas?': estrategia4,
+            '¿Cómo es tu plan de ventas actual?': estrategia5,
+            '¿Cómo le haces seguimiento al proceso de venta?': estrategia6
+        }
+
+        const prompt = (JSON.stringify(obj_respuestas)+" usando las respuestas anteriores, genera un informe detallado de análisis de negocio en la dimensión marketing para la empresa.")
+        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        let resultAI = await getResponseChatGPT(prompt)
+        const resp = resultAI.content.replaceAll('\n', '<br>');
+        const informeAI = { empresa: id_empresa, tipo: 'Análisis marketing', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
+        const insertResult = await insertarDatos('informes_ia', informeAI)
+        if (insertResult.affectedRows > 0) {
+            req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
+            : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
+        }
 
     }
 }
