@@ -1,13 +1,13 @@
 <div class="content-body">
   <div class="container-fluid">
     <div class="row">
-      <div class="col">
+      <div class="col-12">
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Analicemos tu empresa en 4 dimensiones</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios
-              que servirán para impulsar el desarrollo corporativo de tu empresa, a través de las dimensiones:</p>
+            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios que servirán para elevar el desarrollo corporativo de tu empresa, con esto se podrán identificar las falencias y pasos a seguir para crear las tareas que permitirán corregir los problemas e impulsar tu empresa a llegar al próximo nivel, se analizará tu empresa través de las dimensiones:
+            </p>
             <p style="color: #000; font-weight: bold;">
               <i class="fa-solid fa-box"></i> Producto</li></br>
               <i class="fa-solid fa-user-tie"></i> Administración</br>
@@ -17,230 +17,159 @@
           </div>
         </div>
       </div>
-      <div class="col">
-        <div class="card avtivity-card"
-          style="background: transparent !important;border: none !important; box-shadow: none !important">
-        </div>
-      </div>
     </div>
     {{!-- Fin de la 1era fila --}}
 
     <div class="row">
 
-      {{!-- TARJETA IZQUIERDA --}}
-      <div class="col-xl-6 col-xxl-6">
+      <div class="col-xl-12 col-xxl-12">
+        <div class="card">
+          <div class="card-header">
+            <h4 class="card-title">Cuestionarios</h4>
+          </div>
+          <div class="card-body">
+            <div class="table-responsive">
+              <table class="table table-responsive-md text-center">
+                <thead>
+                  <tr>
+                    <th>FECHA</th>
+                    <th>NOMBRE</th>
+                    <th>ESTADO</th>
+                    <th>ACCIÓN</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {{!-- DIMENSIÓN PRODUCTO --}}
+                  <tr>
+                    <td>{{#if cuestionario.producto.fecha}}{{cuestionario.producto.fecha}}{{else}}N/A{{/if}}</td>
+                    <td>Cuestionario dimensión producto</td>
+                    <td>
+                      <span class="badge light {{cuestionario.producto.color}}">{{cuestionario.producto.texto}}</span>
+                    </td>
+                    <td>
+                      {{#if cuestionario.producto.btnEdit}}
+                        {{#if cuestionario.producto.btnDisabled}}
+                        <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                        style="filter: grayscale(1);">
+                        <i class="fa fa-pencil"></i></a>
+                        {{else}}
+                        <a href="/analisis-dimension-producto/{{codigo}}"
+                          class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                          style="border-color: #812082;">
+                          <i class="fa fa-pencil"></i>
+                        </a>
+                        {{/if}}
+                      {{else}}
+                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                        data-target="#modalDimProducto" style="border-color: #FED061">
+                        <i class="fa fa-search"></i></a> --}}
+                      <a href="/generar-informe/dimensión_producto" target="_blank"
+                        class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      {{/if}}
+                    </td>
+                  </tr>
 
-        <div class="row">
-          <div class="col-xl-12">
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title">Cuestionarios</h4>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-responsive-md text-center">
-                    <thead>
-                      <tr>
-                        <th>FECHA</th>
-                        <th>NOMBRE</th>
-                        <th>ESTADO</th>
-                        <th>ACCIÓN</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {{!-- DIMENSIÓN PRODUCTO --}}
-                      <tr>
-                        <td>{{#if cuestionario.producto.fecha}}{{cuestionario.producto.fecha}}{{else}}N/A{{/if}}</td>
-                        <td>Cuestionario dimensión producto</td>
-                        <td>
-                          <span class="badge light {{cuestionario.producto.color}}">{{cuestionario.producto.texto}}</span>
-                        </td>
-                        <td>
-                          {{#if cuestionario.producto.btnEdit}}
-                            {{#if cuestionario.producto.btnDisabled}}
-                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="filter: grayscale(1);">
-                            <i class="fa fa-pencil"></i></a>
-                            {{else}}
-                            <a href="/analisis-dimension-producto/{{codigo}}"
-                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                              style="border-color: #812082;">
-                              <i class="fa fa-pencil"></i>
-                            </a>
-                            {{/if}}
-                          {{else}}
-                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimProducto" style="border-color: #FED061">
-                            <i class="fa fa-search"></i></a> --}}
-                          <a href="/generar-informe/dimensión_producto" target="_blank"
-                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                            <i class="fa fa-eye"></i>
-                          </a>
-                          {{/if}}
-                        </td>
-                      </tr>
+                  {{!-- DIMENSIÓN ADMINISTRACIÓN --}}
+                  <tr>
+                    <td>{{#if cuestionario.administracion.fecha}}{{cuestionario.administracion.fecha}}{{else}}N/A{{/if}}</td>
+                    <td>Cuestionario dimensión administración</td>
+                    <td>
+                      <span class="badge light {{cuestionario.administracion.color}}">{{cuestionario.administracion.texto}}</span>
+                    </td>
+                    <td>
+                      {{#if cuestionario.administracion.btnEdit}}
+                        {{#if cuestionario.administracion.btnDisabled}}
+                        <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                        style="filter: grayscale(1);">
+                        <i class="fa fa-pencil"></i></a>
+                        {{else}}
+                        <a href="/analisis-dimension-administracion/{{codigo}}"
+                          class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                          style="border-color: #812082;">
+                          <i class="fa fa-pencil"></i></a>
+                        {{/if}}
+                      {{else}}
+                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                        data-target="#modalDimAdministracion" style="border-color: #FED061">
+                        <i class="fa fa-search"></i></a> --}}
+                      <a href="/generar-informe/dimensión_administración" target="_blank"
+                        class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      {{/if}}
+                    </td>
+                  </tr>
 
-                      {{!-- DIMENSIÓN ADMINISTRACIÓN --}}
-                      <tr>
-                        <td>{{#if cuestionario.administracion.fecha}}{{cuestionario.administracion.fecha}}{{else}}N/A{{/if}}</td>
-                        <td>Cuestionario dimensión administración</td>
-                        <td>
-                          <span class="badge light {{cuestionario.administracion.color}}">{{cuestionario.administracion.texto}}</span>
-                        </td>
-                        <td>
-                          {{#if cuestionario.administracion.btnEdit}}
-                            {{#if cuestionario.administracion.btnDisabled}}
-                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="filter: grayscale(1);">
-                            <i class="fa fa-pencil"></i></a>
-                            {{else}}
-                            <a href="/analisis-dimension-administracion/{{codigo}}"
-                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                              style="border-color: #812082;">
-                              <i class="fa fa-pencil"></i></a>
-                            {{/if}}
-                          {{else}}
-                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimAdministracion" style="border-color: #FED061">
-                            <i class="fa fa-search"></i></a> --}}
-                          <a href="/generar-informe/dimensión_administración" target="_blank"
-                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                            <i class="fa fa-eye"></i>
-                          </a>
-                          {{/if}}
-                        </td>
-                      </tr>
+                  {{!-- DIMENSIÓN OPERACIÓN --}}
+                  <tr>
+                    <td>{{#if cuestionario.operacion.fecha}}{{cuestionario.operacion.fecha}}{{else}}N/A{{/if}}</td>
+                    <td>Cuestionario dimensión operación</td>
+                    <td>
+                      <span class="badge light {{cuestionario.operacion.color}}">{{cuestionario.operacion.texto}}</span>
+                    </td>
+                    <td>
+                      {{#if cuestionario.operacion.btnEdit}}
+                        {{#if cuestionario.operacion.btnDisabled}}
+                        <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                        style="filter: grayscale(1);">
+                        <i class="fa fa-pencil"></i></a>
+                        {{else}}
+                        <a href="/analisis-dimension-operaciones/{{codigo}}"
+                          class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                          style="border-color: #812082;">
+                          <i class="fa fa-pencil"></i></a>
+                        {{/if}}
+                      {{else}}
+                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                        data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
+                        <i class="fa fa-search"></i></a> --}}
+                      <a href="/generar-informe/dimensión_operación" target="_blank"
+                        class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      {{/if}}
+                    </td>
+                  </tr>
 
-                      {{!-- DIMENSIÓN OPERACIÓN --}}
-                      <tr>
-                        <td>{{#if cuestionario.operacion.fecha}}{{cuestionario.operacion.fecha}}{{else}}N/A{{/if}}</td>
-                        <td>Cuestionario dimensión operación</td>
-                        <td>
-                          <span class="badge light {{cuestionario.operacion.color}}">{{cuestionario.operacion.texto}}</span>
-                        </td>
-                        <td>
-                          {{#if cuestionario.operacion.btnEdit}}
-                            {{#if cuestionario.operacion.btnDisabled}}
-                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="filter: grayscale(1);">
-                            <i class="fa fa-pencil"></i></a>
-                            {{else}}
-                            <a href="/analisis-dimension-operaciones/{{codigo}}"
-                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                              style="border-color: #812082;">
-                              <i class="fa fa-pencil"></i></a>
-                            {{/if}}
-                          {{else}}
-                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
-                            <i class="fa fa-search"></i></a> --}}
-                          <a href="/generar-informe/dimensión_operación" target="_blank"
-                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                            <i class="fa fa-eye"></i>
-                          </a>
-                          {{/if}}
-                        </td>
-                      </tr>
+                  {{!-- DIMENSIÓN MARKETING --}}
+                  <tr>
+                    <td>{{#if cuestionario.marketing.fecha}}{{cuestionario.marketing.fecha}}{{else}}N/A{{/if}}</td>
+                    <td>Cuestionario dimensión marketing</td>
+                    <td>
+                      <span class="badge light {{cuestionario.marketing.color}}">{{cuestionario.marketing.texto}}</span>
+                    </td>
+                    <td>
+                      {{#if cuestionario.marketing.btnEdit}}
+                        {{#if cuestionario.marketing.btnDisabled}}
+                        <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                        style="filter: grayscale(1);">
+                        <i class="fa fa-pencil"></i></a>
+                        {{else}}
+                        <a href="/analisis-dimension-marketing/{{codigo}}"
+                        class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                        style="border-color: #812082;">
+                        <i class="fa fa-pencil"></i></a>
+                        {{/if}}
+                      {{else}}
+                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                        data-target="#modalDimMarketing" style="border-color: #FED061">
+                        <i class="fa fa-search"></i></a> --}}
+                      <a href="/generar-informe/dimensión_marketing" target="_blank"
+                        class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                        <i class="fa fa-eye"></i>
+                      </a>
+                      {{/if}}
+                    </td>
+                  </tr>
 
-                      {{!-- DIMENSIÓN MARKETING --}}
-                      <tr>
-                        <td>{{#if cuestionario.marketing.fecha}}{{cuestionario.marketing.fecha}}{{else}}N/A{{/if}}</td>
-                        <td>Cuestionario dimensión marketing</td>
-                        <td>
-                          <span class="badge light {{cuestionario.marketing.color}}">{{cuestionario.marketing.texto}}</span>
-                        </td>
-                        <td>
-                          {{#if cuestionario.marketing.btnEdit}}
-                            {{#if cuestionario.marketing.btnDisabled}}
-                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="filter: grayscale(1);">
-                            <i class="fa fa-pencil"></i></a>
-                            {{else}}
-                            <a href="/analisis-dimension-marketing/{{codigo}}"
-                            class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
-                            style="border-color: #812082;">
-                            <i class="fa fa-pencil"></i></a>
-                            {{/if}}
-                          {{else}}
-                          {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                            data-target="#modalDimMarketing" style="border-color: #FED061">
-                            <i class="fa fa-search"></i></a> --}}
-                          <a href="/generar-informe/dimensión_marketing" target="_blank"
-                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                            <i class="fa fa-eye"></i>
-                          </a>
-                          {{/if}}
-                        </td>
-                      </tr>
-
-                    </tbody>
-                  </table>
-                </div>
-              </div>
+                </tbody>
+              </table>
             </div>
           </div>
         </div>
       </div>
-
-      {{!-- TARJETA DERECHA --}}
-      {{#if archivos}}
-      <div class="col-xl-6 col-xxl-6">
-        <div class="row">
-          <div class="col-xl-12">
-            <div class="card">
-              <div class="card-header">
-                <h4 class="card-title">Carga de Archivos</h4>
-              </div>
-              <div class="card-body">
-                <div class="table-responsive">
-                  <table class="table table-responsive-md text-center">
-                    <thead>
-                      <tr>
-                        <th>DIMENSIÓN</th>
-                        <th>DESCRIPCIÓN</th>
-                        <th>ESTADO</th>
-                        <th>ACCIÓN</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {{#each archivos}}
-                      <tr>
-                        <td>{{dimension}}</td>
-                        <td>{{descripcion}}</td>
-                        <td><span id="spanEstado{{id}}" class="badge light badge-{{color}}">{{estado}}</span></td>
-                        <td>
-                          <table border="0" cellspacing="0" style="margin: 0 auto;">
-                            <tr>
-                              <td style="border-color: transparent; padding:3px">
-                                <label for="inputArchivo{{id}}"
-                                  onclick="cargarArchivos_Empresa('archivos_analisis', '{{id}}')">
-                                  <div class="btn color_primary shadow btn-xs sharp mr-1 text-white"
-                                    style="border-color: white;">
-                                    <i class="fa fa-upload"></i>
-                                  </div>
-                                </label>
-                                <input id="inputArchivo{{id}}" type="file" style="display:none" />
-                              </td>
-                              <td style="border-color: transparent; padding:3px">
-                                <a id="btnVer{{id}}" href="{{link}}"
-                                  style="display: {{display}}; margin: 0 auto; margin-top: -8px; border-color: #FED061"
-                                  target="_blank" class="btn color_tertiary shadow btn-xs sharp text-white">
-                                  <i class="fa fa-search"></i></a>
-                              </td>
-                            </tr>
-                          </table>
-                        </td>
-                      </tr>
-                      {{/each}}
-                    </tbody>
-                  </table>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-      {{/if}}
 
     </div>
 
@@ -252,7 +181,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
     Swal.fire({
-      title: '<strong>HTML <u>example</u></strong>',
+      title: '<strong>TUTORIAL <u>example</u></strong>',
       icon: 'info',
       html: 'You can use <b>bold text</b>, ' +
         '<a href="//sweetalert2.github.io">links</a> ' +

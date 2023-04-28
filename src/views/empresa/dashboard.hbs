@@ -39,7 +39,7 @@
                 <div class="row">
 
                     {{!-- Diagnóstico de negocio --}}
-                    <div class="col-sm-6">
+                    <div class="col-sm-12">
                         <div class="card avtivity-card">
                             <div class="card-body">
                                 <div class="media align-items-center">
@@ -67,9 +67,10 @@
                             <div class="effect color_tertiary"></div>
                         </div>
                     </div>
+                    
                     {{!-- Análisis de negocio --}}
-                    {{!-- {{#if etapaCompleta.verAnalisis}} --}}
-                    <div class="col-sm-6">
+                    {{#if etapaCompleta.verAnalisis}}
+                    <div class="col-sm-12">
                         <div class="card avtivity-card">
                             <div class="card-body">
                                 <div class="media align-items-center">
@@ -96,7 +97,7 @@
                             <div class="effect bg-secondary"></div>
                         </div>
                     </div>
-                    {{!-- {{/if}} --}}
+                    {{/if}}
                     
                     {{!-- Plan estratégico de negocio --}}
                     <div class="col-sm-12">
@@ -210,10 +211,6 @@
                                 <li class="nav-item"><a href="#dimensiones" data-toggle="tab" 
                                     class="nav-link btnIndicadoresAll">Por Dimensiones</a>
                                 </li>
-                                {{!-- {{#if rendimiento.pe}}
-                                <li class="nav-item"><a href="#pe_empresa" data-toggle="tab" class="nav-link ml-2 btnIndicadoresAll">Percepción Estadística</a>
-                                </li>
-                                {{/if}} --}}
                             </ul>
                         </div>
                     </div>
@@ -263,14 +260,6 @@
                             </div>
                             {{/if}}
                         </div>
-
-                        {{!-- {{#if rendimiento.pe}}
-                        <div id="pe_empresa" class="tab-pane fade">
-                            <div class="card-body">
-                                <canvas id="chartEmpresa3"></canvas>
-                            </div>
-                        </div>
-                        {{/if}} --}}
 
                     </div>
 
@@ -421,7 +410,7 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         Swal.fire({
-            title: '<strong>HTML <u>example</u></strong>',
+            title: '<strong>TUTORIAL <u>example</u></strong>',
             icon: 'info',
             html: 'You can use <b>bold text</b>, ' +
                 '<a href="//sweetalert2.github.io">links</a> ' +

@@ -7,7 +7,7 @@ const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
 const portalClientes = process.env.PORTAL_CLIENTES;
 const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
 
-let pagoPendiente = true, diagnosticoPagado = false, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
+let pagoPendiente = true, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
 let modalAcuerdo = false;
 
 /** Función para mostrar Dashboard de Empresas */
@@ -37,41 +37,6 @@ empresaController.index = async (req, res) => {
         const c4 = cAsignado.find(x => x.empresa == idEmpresaActual && x.orden == 4)
         c4 ? consulAsignado.c4 = c4 : consulAsignado.c4 = false;
     }
-
-    /** Consultando que pagos ha realizado el usuario */
-    // const pagos = await consultarDatos('pagos')
-    // let pago_empresa = pagos.find(i => i.id_empresa == id_empresa);
-    // if (!pago_empresa) {
-    //     diagnosticoPagado = false;
-    //     const estado = JSON.stringify({ estado: 0 })
-    //     const nuevoPago = {
-    //         id_empresa,
-    //         diagnostico_negocio: estado,
-    //         analisis_negocio: estado,
-    //         analisis_negocio1: JSON.stringify({ estado: 1 }),
-    //         analisis_negocio2: estado,
-    //         analisis_negocio3: estado,
-    //         estrategico: estado,
-    //         empresarial0: estado,
-    //         empresarial1: JSON.stringify({ estado: 1 }),
-    //         empresarial2: estado,
-    //         empresarial3: estado,
-    //     }
-    //     await insertarDatos('pagos', nuevoPago)
-    // } else {
-    //     const objDiagnostico = JSON.parse(pago_empresa.diagnostico_negocio)
-    //     if (objDiagnostico.estado == 1) {
-    //         // PAGÓ EL DIAGNOSTICO
-    //         diagnosticoPagado = objDiagnostico;
-    //         /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
-    //         let acuerdo = await consultarDatos('acuerdo_confidencial')
-    //         acuerdo = acuerdo.find(x => x.id_empresa == id_empresa);
-    //         if (!acuerdo) {
-    //             modalAcuerdo = true;
-    //         }
-    //     }
-
-    // }
 
     /** ETAPAS DEL DIAGNOSTICO EN LA EMPRESA */
     const dataEmpresa = await pool.query('SELECT e.*, u.codigo, u.estadoAdm, f.telefono, f.id_empresa, p.*, a.id_empresa, a.estadoAcuerdo FROM empresas e LEFT OUTER JOIN ficha_cliente f ON f.id_empresa = ? LEFT OUTER JOIN pagos p ON p.id_empresa = ? LEFT OUTER JOIN acuerdo_confidencial a ON a.id_empresa = ? INNER JOIN users u ON u.codigo = ? AND rol = "Empresa" LIMIT 1', [id_empresa, id_empresa, id_empresa, empresa.codigo])
@@ -135,20 +100,6 @@ empresaController.index = async (req, res) => {
         }
     }
 
-    // Informe de diagnóstico de empresa subido
-    // let ultimosInformes = await consultarDatos('informes_ia', 'ORDER BY id DESC LIMIT 2')
-    // ultimosInformes = ultimosInformes.filter(x => x.id_empresa == id_empresa)
-    // if (ultimosInformes.length > 0) {
-    //     ultimosInformes.forEach(x => {
-    //         if (x.tipo == 'Diagnóstico') {
-    //             x.nombre = 'Informe de Diagnóstico'
-    //             x.etapa = 'Diagnóstico'
-    //         }
-    //         if (x.nombre == 'Informe de dimensión producto' || x.nombre == 'Informe de dimensión administración' || x.nombre == 'Informe de dimensión operaciones' || x.nombre == 'Informe de dimensión marketing' || x.nombre == 'Informe de análisis') { x.etapa = 'Análisis' }
-    //         if (x.nombre == 'Informe de plan estratégico') { x.etapa = 'Plan estratégico' }
-    //     })
-    // }
-
     /****************************************************************************** */
     // PORCENTAJE ETAPA 2
     // let porcentaje2 = 100/4
@@ -178,26 +129,6 @@ empresaController.index = async (req, res) => {
     }
 
     /************************************************************************** */
-    // PORCENTAJE ETAPA 3
-    let porcentajeEtapa3 = 0
-    let tareas_plan_empresarial = await consultarDatos('tareas_plan_empresarial')
-    tareas_plan_empresarial = tareas_plan_empresarial.filter(x => x.empresa == id_empresa)
-    const totalTareas_empresarial = tareas_plan_empresarial.length;
-    let tareasCompletadas_empresarial = tareas_plan_empresarial.filter(x => x.estado == 2)
-    tareasCompletadas_empresarial = tareasCompletadas_empresarial.length
-    if (totalTareas_empresarial > 0) {
-        porcentajeEtapa3 = ((tareasCompletadas_empresarial / totalTareas_empresarial) * 100) * 0.75
-        porcentajeEtapa3 = Math.round(porcentajeEtapa3)
-    }
-    if (empresa.etapa_empresarial == 1) {
-        porcentajeEtapa3 = 100;
-        etapaCompleta.e3 = true;
-        if (etapaCompleta.verEmpresarial) {
-            etapaCompleta.verEstrategico = true;
-        }
-    }
-
-    /************************************************************************** */
     // PORCENTAJE ETAPA 4
     let porcentajeEtapa4 = 0
     let tareasEmpresa = await consultarDatos('tareas_plan_estrategico')
@@ -211,7 +142,7 @@ empresaController.index = async (req, res) => {
         porcentajeEtapa4 = Math.round(porcentajeEtapa4)
         verGraficasCircular = true;
     }
-    const informeEtapa4 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de plan estratégico')
+    const informeEtapa4 = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Estratégico')
     if (informeEtapa4) {
         porcentajeEtapa4 = 100;
         etapaCompleta.e4 = true;
@@ -221,10 +152,10 @@ empresaController.index = async (req, res) => {
      * PORCENTAJE GENERAL DE LA EMPRESA
     */
     // Empresa Establecida
-    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa3 + porcentajeEtapa4) / 4)
+    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa4) / 3)
     // Empresa Nueva
     if (diagEmpresa2.length > 0) {
-        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa3 + porcentajeEtapa4) / 3)
+        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa4) / 2)
     }
 
 
@@ -349,8 +280,8 @@ empresaController.index = async (req, res) => {
         itemDashboard: true,
         consulAsignado,
         etapa1,
-        porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa3, porcentajeEtapa4, porcentajeTotal,
-        tareas, ultimosInformes, verGraficasCircular,
+        porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa4, porcentajeTotal,
+        tareas, verGraficasCircular,
         nuevosProyectos, rendimiento, jsonDim_empresa, etapaCompleta, modalAcuerdo,
         tutoriales, jsonRendimiento, jsonIndicadores: JSON.stringify(jsonIndicadores)
     })
@@ -397,7 +328,6 @@ empresaController.perfilUsuarios = async (req, res) => {
     res.render('pages/profile', {
         rol, adminDash, user_dash, consultorDash, consultor, empresa,
         pagoPendiente,
-        diagnosticoPagado,
         etapa1, modalAcuerdo,
         consulAsignado: req.session.consulAsignado, etapaCompleta: req.session.etapaCompleta,
     })
@@ -428,40 +358,7 @@ empresaController.acuerdoCheck = async (req, res) => {
 /** Mostrar vista del Panel Diagnóstico de Negocio */
 empresaController.diagnostico = async (req, res) => {
     // ID Empresa Global => id_empresa
-    // Pago Diagnóstico => diagnosticoPagado
     // Consultor Asignado => consulAsignado
-    const estadoPago = {
-        color : 'badge-warning',
-        texto : 'Pendiente',
-        btn : 'background: #85bb65; color: white',
-        fecha : false
-    }
-
-    // let infoConsul = await consultarDatos('consultores')
-    // infoConsul = infoConsul.find(x => x.id_consultores == consulAsignado.c1.consultor)
-    // let costo = process.env.PRECIO_NIVEL1;
-    // if (infoConsul.nivel == '2'){
-    //     costo = process.env.PRECIO_NIVEL2;
-    // } else if (infoConsul.nivel == '3') {
-    //     costo = process.env.PRECIO_NIVEL3;
-    // } else if (infoConsul.nivel == '4') {
-    //     if (consulAsignado.c1.sede == 1)
-    //         costo = process.env.PRECIO_NIVEL4_SEDE1
-    //     else if (consulAsignado.c1.sede == 2)
-    //         costo = process.env.PRECIO_NIVEL4_SEDE2
-    //     else if (consulAsignado.c1.sede == 3)
-    //         costo = process.env.PRECIO_NIVEL4_SEDE3
-    // }
-
-    // Validando Diagnóstico de negocio ha sido pagado
-    diagnosticoPagado.estado = 1
-    if (diagnosticoPagado.estado == 1) {
-        estadoPago.color = 'badge-success'
-        estadoPago.texto = 'Pagado'
-        estadoPago.btn = 'background: #656c73; color: white; disabled= "true" '
-        costo = diagnosticoPagado.precio;
-        estadoPago.fecha = diagnosticoPagado.fecha
-    }
 
     /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
     let acuerdo = await consultarDatos('acuerdo_confidencial')
@@ -558,9 +455,8 @@ empresaController.diagnostico = async (req, res) => {
 
     res.render('empresa/diagnostico', {
         user_dash: true, cuestionario,
-        costo, estadoPago,
         actualYear: req.actualYear,
-        etapa1, informe: informeEmpresa[0],
+        etapa1,
         itemDiagnostico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta, modalAcuerdo,

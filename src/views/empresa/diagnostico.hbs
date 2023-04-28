@@ -1,16 +1,16 @@
 <div class="content-body">
   <div class="container-fluid">
     <div class="row">
-      <div class="col">
+      <div class="col-12">
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Queremos conocerte un poco más</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">Por favor completa el formulario a continuación para tener información mas detallada sobre tu empresa, estos datos son vitales para realizar un diagnóstico preciso. Si deseas modificar, agregar datos o rehacer el formulario puedes hacerlo.</p>
+            <p style="text-align: justify;margin-top: 2em;color: #000">Por favor completa el formulario a continuación para tener información mas detallada sobre tu empresa, estos datos son vitales para realizar un diagnóstico preciso. </br> Si deseas modificar, agregar datos o rehacer el formulario puedes hacerlo.<br> Una vez finalices con la ficha de cliente, podrás iniciar el diagnostico de tu empresa. Con base en las respuestas proporcionadas , nuesto sistema generará un informe especifico para ti.</p>
           </div>
         </div>
       </div>
-      <div class="col">
+      {{!-- <div class="col">
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           {{#if cuestionario.fichaCliente.estado}}
@@ -20,13 +20,13 @@
           </div>
           {{/if}}
         </div>
-      </div>
+      </div> --}}
     </div>
     {{!-- Fin de la 1era fila --}}
 
     <div class="row">
       {{!-- FORMULARIOS  (Ficha de Cliente & Cuestionario de Diagnóstico) --}}
-      <div class="col-xl-6 col-xxl-6">
+      <div class="col-xl-12 col-xxl-12">
         <div class="row">
           <div class="col-xl-12">
             <div class="card">
@@ -53,7 +53,7 @@
                             style="background: {{cuestionario.fichaCliente.estilo}}">{{cuestionario.fichaCliente.texto}}</span>
                         </td>
                         <td>
-                          <div class="d-flex">
+                          <div class="d-flex justify-content-center items-align-center">
                             <a href="/ficha-cliente/{{cuestionario.fichaCliente.usuario}}"
                               class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
                               <i class="fa fa-pencil"></i></a>
@@ -116,7 +116,7 @@
   // POPUP CON TUTORIAL
   document.addEventListener("DOMContentLoaded", () => {
     Swal.fire({
-      title: '<strong>HTML <u>example</u></strong>',
+      title: '<strong>TUTORIAL <u>example</u></strong>',
       icon: 'info',
       html: 'You can use <b>bold text</b>, ' +
           '<a href="//sweetalert2.github.io">links</a> ' +

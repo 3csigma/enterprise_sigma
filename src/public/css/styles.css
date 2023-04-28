@@ -238,6 +238,14 @@ a.btn_1.yellow:hover,
   z-index: 999999;
 }
 
+.img-gif-loader {
+  position: absolute;
+  top: 40%;
+  left: 50%;
+  margin-left: -25px;
+  margin-top: -10px;
+}
+
 [data-loader="circle-side"] {
   position: absolute;
   width: 50px;
@@ -257,7 +265,7 @@ a.btn_1.yellow:hover,
   border-radius: 100%;
 }
 
-#loader_form {
+#loader_form, #preloader_3CSigma {
   position: fixed;
   top: 0;
   left: 0;
