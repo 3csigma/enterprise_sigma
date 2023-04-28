@@ -179,23 +179,23 @@ empresaController.index = async (req, res) => {
 
     /************************************************************************** */
     // PORCENTAJE ETAPA 3
-    // let porcentajeEtapa3 = 0
-    // let tareas_plan_empresarial = await consultarDatos('tareas_plan_empresarial')
-    // tareas_plan_empresarial = tareas_plan_empresarial.filter(x => x.empresa == id_empresa)
-    // const totalTareas_empresarial = tareas_plan_empresarial.length;
-    // let tareasCompletadas_empresarial = tareas_plan_empresarial.filter(x => x.estado == 2)
-    // tareasCompletadas_empresarial = tareasCompletadas_empresarial.length
-    // if (totalTareas_empresarial > 0) {
-    //     porcentajeEtapa3 = ((tareasCompletadas_empresarial / totalTareas_empresarial) * 100) * 0.75
-    //     porcentajeEtapa3 = Math.round(porcentajeEtapa3)
-    // }
-    // if (empresa.etapa_empresarial == 1) {
-    //     porcentajeEtapa3 = 100;
-    //     etapaCompleta.e3 = true;
-    //     if (etapaCompleta.verEmpresarial) {
-    //         etapaCompleta.verEstrategico = true;
-    //     }
-    // }
+    let porcentajeEtapa3 = 0
+    let tareas_plan_empresarial = await consultarDatos('tareas_plan_empresarial')
+    tareas_plan_empresarial = tareas_plan_empresarial.filter(x => x.empresa == id_empresa)
+    const totalTareas_empresarial = tareas_plan_empresarial.length;
+    let tareasCompletadas_empresarial = tareas_plan_empresarial.filter(x => x.estado == 2)
+    tareasCompletadas_empresarial = tareasCompletadas_empresarial.length
+    if (totalTareas_empresarial > 0) {
+        porcentajeEtapa3 = ((tareasCompletadas_empresarial / totalTareas_empresarial) * 100) * 0.75
+        porcentajeEtapa3 = Math.round(porcentajeEtapa3)
+    }
+    if (empresa.etapa_empresarial == 1) {
+        porcentajeEtapa3 = 100;
+        etapaCompleta.e3 = true;
+        if (etapaCompleta.verEmpresarial) {
+            etapaCompleta.verEstrategico = true;
+        }
+    }
 
     /************************************************************************** */
     // PORCENTAJE ETAPA 4
@@ -211,7 +211,7 @@ empresaController.index = async (req, res) => {
         porcentajeEtapa4 = Math.round(porcentajeEtapa4)
         verGraficasCircular = true;
     }
-    const informeEtapa4 = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Estratégico')
+    const informeEtapa4 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de plan estratégico')
     if (informeEtapa4) {
         porcentajeEtapa4 = 100;
         etapaCompleta.e4 = true;
@@ -221,10 +221,10 @@ empresaController.index = async (req, res) => {
      * PORCENTAJE GENERAL DE LA EMPRESA
     */
     // Empresa Establecida
-    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa4) / 3)
+    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa3 + porcentajeEtapa4) / 4)
     // Empresa Nueva
     if (diagEmpresa2.length > 0) {
-        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa4) / 2)
+        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa3 + porcentajeEtapa4) / 3)
     }
 
 
@@ -349,8 +349,8 @@ empresaController.index = async (req, res) => {
         itemDashboard: true,
         consulAsignado,
         etapa1,
-        porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa4, porcentajeTotal,
-        tareas, verGraficasCircular,
+        porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa3, porcentajeEtapa4, porcentajeTotal,
+        tareas, ultimosInformes, verGraficasCircular,
         nuevosProyectos, rendimiento, jsonDim_empresa, etapaCompleta, modalAcuerdo,
         tutoriales, jsonRendimiento, jsonIndicadores: JSON.stringify(jsonIndicadores)
     })
@@ -558,6 +558,7 @@ empresaController.diagnostico = async (req, res) => {
 
     res.render('empresa/diagnostico', {
         user_dash: true, cuestionario,
+        costo, estadoPago,
         actualYear: req.actualYear,
         etapa1, informe: informeEmpresa[0],
         itemDiagnostico: true,

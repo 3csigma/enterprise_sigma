@@ -763,9 +763,6 @@ consultorController.eliminarArchivo = async (req, res) => {
 consultorController.nuevoRendimiento = async (req, res) => {
     let { total_ventas, total_compras, total_gastos, codigo } = req.body
     let result = false;
-    if (req.user.rol == 'Empresa') {
-        codigo = req.user.codigo;
-    }
     console.log("Código", codigo);
     let datosTabla = await consultarDatos('empresas')
     datosTabla = datosTabla.find(item => item.codigo == codigo)
