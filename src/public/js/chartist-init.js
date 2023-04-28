@@ -80,9 +80,9 @@
 									}
 								}
 							}
-						// TRANPONER MATRIZ (Ej: de 3 COLUMNAS a 2)
-						let arrayT = matriz[0].map((_, colIndex) => matriz.map(x => x[colIndex]));
-						multiLineChart(fechas, arrayT) 
+							// TRANPONER MATRIZ (Ej: de 3 COLUMNAS a 2)
+							let arrayT = matriz[0].map((_, colIndex) => matriz.map(x => x[colIndex]));
+							multiLineChart(fechas, arrayT) 
 						}
 					}
 		  
