@@ -369,7 +369,7 @@ empresaController.diagnostico = async (req, res) => {
         }
     }
 
-    const cuestionario = {fichaCliente: {}, diagnostico: {}};
+    const cuestionario = {fichaCliente: {}, diagnostico: {}}, resDiag = {};
     cuestionario.fichaCliente.id = id_empresa;
     cuestionario.fichaCliente.usuario = encriptarTxt('' + id_empresa)
     cuestionario.fichaCliente.estado = false;
@@ -414,6 +414,27 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico.color = 'badge-success'
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalNuevosProyectos';
+
+                // Respuestas del Cuestionario Diagnóstico Empresa Nueva
+                resDiag.rubro = datos.rubro
+                const obj = JSON.parse(datos.empresa_ofrece);
+                let ofrece_ = "";
+                for (let x in obj) { ofrece_ += obj[x]+". "; }
+                resDiag.ofrece = ofrece_;
+                resDiag.exp_rubro = JSON.parse(datos.exp_rubro)
+                resDiag.mentalidad = JSON.parse(datos.mentalidad_empresarial)
+                resDiag.viabilidad = JSON.parse(datos.viabilidad)
+                resDiag.producto = JSON.parse(datos.productos_servicios)
+                resDiag.administracion = JSON.parse(datos.administracion)
+                resDiag.talento = JSON.parse(datos.talento_humano)
+                resDiag.finanzas = JSON.parse(datos.finanzas)
+                resDiag.servicio = JSON.parse(datos.servicio_cliente)
+                resDiag.operaciones = JSON.parse(datos.operaciones)
+                resDiag.ambiente = JSON.parse(datos.ambiente_laboral)
+                resDiag.innovacion = JSON.parse(datos.innovacion)
+                resDiag.marketing = JSON.parse(datos.marketing)
+                resDiag.ventas = JSON.parse(datos.ventas)
+                resDiag.metas = JSON.parse(datos.metas)
             }
         } else {
             cuestionario.diagnostico.dos = true;
@@ -430,13 +451,31 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalEmpresasEstablecidas';
                 etapaCompleta.verAnalisis = true;
+
+                // Respuestas del Cuestionario Diagnóstico Empresa Establecida
+                resDiag.rubro = datos.rubro
+                const obj = JSON.parse(datos.empresa_ofrece);
+                let ofrece_ = "";
+                for (let x in obj) { ofrece_ += obj[x]+". "; }
+                resDiag.ofrece = ofrece_;
+                resDiag.producto = JSON.parse(datos.productos_servicios)
+                resDiag.administracion = JSON.parse(datos.administracion)
+                resDiag.talento = JSON.parse(datos.talento_humano)
+                resDiag.finanzas = JSON.parse(datos.finanzas)
+                resDiag.servicio = JSON.parse(datos.servicio_alcliente)
+                resDiag.operaciones = JSON.parse(datos.operaciones)
+                resDiag.ambiente = JSON.parse(datos.ambiente_laboral)
+                resDiag.innovacion = JSON.parse(datos.innovacion)
+                resDiag.marketing = JSON.parse(datos.marketing)
+                resDiag.ventas = JSON.parse(datos.ventas)
+                resDiag.fortalezas = JSON.parse(datos.fortalezas)
+                resDiag.oportunidades = JSON.parse(datos.oportunidades_mejoras)
+                resDiag.metas = JSON.parse(datos.metas_corto_plazo)
+
             }
         }
 
     }
-
-    // Informe de la empresa subido
-    let informeEmpresa = await consultarDatos('informes', `WHERE id_empresa = "${id_empresa}" LIMIT 1`)
 
     /**
      * VIDEOS TURIALES ACTIVAR o DESACTIVAR
@@ -460,7 +499,7 @@ empresaController.diagnostico = async (req, res) => {
         itemDiagnostico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta, modalAcuerdo,
-        tutoriales, id_empresa
+        tutoriales, id_empresa, resDiag
     })
 }
 
@@ -588,6 +627,7 @@ empresaController.analisis = async (req, res) => {
     administracion: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'},
     operacion: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'}, 
     marketing: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'}};
+    let dimProducto = false, dimAdmin = false, dimOperacion = false, dimMarketing = false;
     /************************************************************************************* */
     // Verificando conexión estable a la API de OPEN AI
     if (!checkGPT3Connectivity()) {
@@ -600,6 +640,8 @@ empresaController.analisis = async (req, res) => {
     let analisis_empresa = await consultarDatos('analisis_empresa')
     analisis_empresa = analisis_empresa.find(a => a.id_empresa == id_empresa)
     if (analisis_empresa) {
+
+
         // DIMENSIÓN PRODUCTO
         if (analisis_empresa.producto) {
             const a = JSON.parse(analisis_empresa.producto)
@@ -607,22 +649,49 @@ empresaController.analisis = async (req, res) => {
             cuestionario.producto.color = 'badge-success'
             cuestionario.producto.texto = 'Completado'
             cuestionario.producto.btnEdit = false;
+            dimProducto = a;
         }
         // DIMENSIÓN ADMINISTRACIÓN
         if (analisis_empresa.administracion) {
-            const a = JSON.parse(analisis_empresa.administracion)
-            cuestionario.administracion.fecha = a.fecha
+            const admin = JSON.parse(analisis_empresa.administracion)
+            cuestionario.administracion.fecha = admin.fecha
             cuestionario.administracion.color = 'badge-success'
             cuestionario.administracion.texto = 'Completado'
             cuestionario.administracion.btnEdit = false;
+            dimAdmin = {
+                fecha: admin.fecha,
+                v: admin.vision,
+                mision: admin.mision,
+                valores: admin.valores,
+                f: admin.foda,
+                estructura_organizativa: admin.estructura_organizativa,
+                tipo_sistema: admin.tipo_sistema,
+                sistema_facturacion: admin.sistema_facturacion,
+                av_th: admin.av_talento_humano,
+                av_fz: admin.av_finanzas,
+            }
         }
         // DIMENSIÓN OPERACIÓN
         if (analisis_empresa.operacion) {
-            const a = JSON.parse(analisis_empresa.operacion)
-            cuestionario.operacion.fecha = a.fecha
+            const op = JSON.parse(analisis_empresa.operacion)
+            cuestionario.operacion.fecha = op.fecha
             cuestionario.operacion.color = 'badge-success'
             cuestionario.operacion.texto = 'Completado'
             cuestionario.operacion.btnEdit = false;
+            dimOperacion = {
+                fecha: op.fecha,
+                info_productos: op.info_productos,
+                satisfaccion: op.satisfaccion,
+                encuesta_clientes: op.encuesta_clientes,
+                informacion_deClientes: op.informacion_deClientes,
+                utilidad_libro_quejas: op.utilidad_libro_quejas,
+                beneficio_libro_quejas: op.beneficio_libro_quejas,
+                estrategia__libro_quejas: op.estrategia__libro_quejas,
+                fidelizacion_clientes: op.fidelizacion_clientes,
+                av_op: op.av_operaciones,
+                av_ambiente: op.av_ambiente_laboral,
+                av_innovacion: op.av_innovacion,
+            }
         }
         // DIMENSIÓN MARKETING
         if (analisis_empresa.marketing) {
@@ -631,6 +700,7 @@ empresaController.analisis = async (req, res) => {
             cuestionario.marketing.color = 'badge-success'
             cuestionario.marketing.texto = 'Completado'
             cuestionario.marketing.btnEdit = false;
+            dimMarketing = a;
         }
     }
 
@@ -677,7 +747,8 @@ empresaController.analisis = async (req, res) => {
         itemAnalisis: true,
         etapa1, archivos,
         etapaCompleta: req.session.etapaCompleta,
-        tutoriales, cuestionario
+        tutoriales, cuestionario,
+        dimProducto, dimAdmin, dimOperacion, dimMarketing
     })
 }
 

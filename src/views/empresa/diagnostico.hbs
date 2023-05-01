@@ -10,22 +10,11 @@
           </div>
         </div>
       </div>
-      {{!-- <div class="col">
-        <div class="card avtivity-card"
-          style="background: transparent !important;border: none !important; box-shadow: none !important">
-          {{#if cuestionario.fichaCliente.estado}}
-          <div class="card-body">
-            <h2 style="color: #000; font-weight: bold;">Hemos recibido la información de tu empresa</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">Con base en tus respuestas se te generó un informe detallado de diagnóstico del estado general de tu empresa tu empresa, el cuál puedes revisar en el icono del ojito, en el apartado de <strong>Formularios</strong>.</p>
-          </div>
-          {{/if}}
-        </div>
-      </div> --}}
     </div>
     {{!-- Fin de la 1era fila --}}
 
+    {{!-- FORMULARIOS  (Ficha de Cliente & Cuestionario de Diagnóstico) --}}
     <div class="row">
-      {{!-- FORMULARIOS  (Ficha de Cliente & Cuestionario de Diagnóstico) --}}
       <div class="col-xl-12 col-xxl-12">
         <div class="row">
           <div class="col-xl-12">
@@ -83,14 +72,16 @@
                               <i class="fa fa-pencil"></i></a>
                             {{/if}}
                           {{else}}
-                          {{!-- <div class="d-flex">
-                            <button class="btn btn-primary shadow btn-xs sharp mr-1" style="filter: grayscale(1);">
-                              <i class="fa fa-pencil"></i></button>
-                          </div> --}}
-                          <a href="/generar-informe/Diagnóstico" target="_blank"
-                            class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                            <i class="fa fa-eye"></i>
-                          </a>
+                          <div class="d-flex justify-content-center align-items-center">
+                            <button type="button" data-toggle="modal" data-target="{{cuestionario.diagnostico.modal}}"
+                              class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                              <i class="fa fa-search"></i>
+                            </button>
+                            <a href="/generar-informe/Diagnóstico" target="_blank"
+                              class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                              <i class="fa fa-eye"></i>
+                            </a>
+                          </div>
                           {{/if}}
                         </td>
                       </tr>
@@ -107,6 +98,13 @@
 
   </div>
 </div>
+
+<!-- MODAL RESPUESTAS DEL CUESTIONARIO DIAGNÓSTICO -->
+{{#if cuestionario.diagnostico}}
+{{> modals/cuestionario}}
+{{else}}
+{{> modals/nuevosProyectos}}
+{{/if}}
 
 <!--**********************************
             Scripts

@@ -60,9 +60,11 @@
                         </a>
                         {{/if}}
                       {{else}}
-                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                        data-target="#modalDimProducto" style="border-color: #FED061">
-                        <i class="fa fa-search"></i></a> --}}
+                      <a class="btn color_tertiary shadow btn-xs sharp text-white"
+                        data-toggle="modal" data-target="#modalDimProducto"
+                        style="border-color: #FED061">
+                        <i class="fa fa-search"></i>
+                      </a>
                       <a href="/generar-informe/dimensión_producto" target="_blank"
                         class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
                         <i class="fa fa-eye"></i>
@@ -91,9 +93,9 @@
                           <i class="fa fa-pencil"></i></a>
                         {{/if}}
                       {{else}}
-                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                      <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                         data-target="#modalDimAdministracion" style="border-color: #FED061">
-                        <i class="fa fa-search"></i></a> --}}
+                        <i class="fa fa-search"></i></a>
                       <a href="/generar-informe/dimensión_administración" target="_blank"
                         class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
                         <i class="fa fa-eye"></i>
@@ -122,9 +124,9 @@
                           <i class="fa fa-pencil"></i></a>
                         {{/if}}
                       {{else}}
-                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                      <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                         data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
-                        <i class="fa fa-search"></i></a> --}}
+                        <i class="fa fa-search"></i></a>
                       <a href="/generar-informe/dimensión_operación" target="_blank"
                         class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
                         <i class="fa fa-eye"></i>
@@ -153,9 +155,9 @@
                         <i class="fa fa-pencil"></i></a>
                         {{/if}}
                       {{else}}
-                      {{!-- <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
+                      <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                         data-target="#modalDimMarketing" style="border-color: #FED061">
-                        <i class="fa fa-search"></i></a> --}}
+                        <i class="fa fa-search"></i></a>
                       <a href="/generar-informe/dimensión_marketing" target="_blank"
                         class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
                         <i class="fa fa-eye"></i>
@@ -175,6 +177,19 @@
 
   </div>
 </div>
+
+{{#if dimProducto}}
+{{> modals/dimensionProducto}}
+{{/if}}
+{{#if dimAdmin}}
+{{> modals/dimensionAdministracion}}
+{{/if}}
+{{#if dimOperacion}}
+{{> modals/dimensionOperaciones}}
+{{/if}}
+{{#if dimMarketing}}
+{{> modals/dimensionMarketing}}
+{{/if}}
 
 {{!-- POPUP CON TUTORIAL --}}
 {{#unless tutoriales.etapa}}

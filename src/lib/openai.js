@@ -35,7 +35,7 @@ module.exports = {
             console.log('\n\n <<< OpenAI connection successful! >>> \n\n')
             return true
         } catch (err) {
-            console.log('\n\n <<< Error connecting to OpenAI API  >>> \n\n')
+            console.log(`\n\n <<< Error connecting to OpenAI API  >>> \n ${err} \n`)
             return false
         }
     }

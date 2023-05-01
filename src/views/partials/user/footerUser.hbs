@@ -221,16 +221,18 @@
 
                 const pe_cliente1 = indicadores.dimensiones1
                 const pe_estadistica1 = indicadores.pe1;
+				
+				chartDimensiones1 = [pe_cliente1.producto, pe_cliente1.administracion, pe_cliente1.operaciones, pe_cliente1.marketing]
 
-                if (nuevosProyectos) {
-                    chartDimensiones1 = [pe_cliente1.producto, pe_cliente1.administracion, pe_cliente1.operaciones, pe_cliente1.marketing]
-					// PERCEPCIÓN ESTADÍSTICA
+				// PERCEPCIÓN ESTADÍSTICA
+				if (pe_estadistica1) {
 					chartDimensiones2 = [pe_estadistica1.producto, pe_estadistica1.administracion, pe_estadistica1.operaciones, pe_estadistica1.marketing]
-                    if (nuevosProyectos == 1) {
-                        titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
-                        chartDimensiones1 = [pe_cliente1.experiencia_rubro, pe_cliente1.mentalidad, pe_cliente1.viabilidad_, pe_cliente1.estructura]
-                    }
-                }
+				}
+
+				if (nuevosProyectos == 1) {
+					titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
+					chartDimensiones1 = [pe_cliente1.experiencia_rubro, pe_cliente1.mentalidad, pe_cliente1.viabilidad_, pe_cliente1.estructura]
+				}
 
 				if ($('#chartEmpresa2').length > 0) {
 					const chartEmpresaAdm2 = document.getElementById("chartEmpresa2").getContext('2d')

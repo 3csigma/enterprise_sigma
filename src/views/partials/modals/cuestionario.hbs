@@ -52,32 +52,57 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Sabe exactamente la necesidad que cubre su producto en el mercado?</td>
-                                        <td>{{resDiag.producto.necesidad_producto}}</td>
+                                        <td>¿En qué nicho, rubro, sector o área está tu negocio?</td>
+                                        <td>{{resDiag.rubro}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Sabe cuál es el nivel del precio de su producto con respecto al mercado?</td>
-                                        <td>{{resDiag.producto.precio_producto}}</td>
+                                        <td>¿Que ofrece tu empresa?</td>
+                                        <td>{{resDiag.ofrece}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Los productos de su empresa son coherentes entre sí?</td>
-                                        <td>{{resDiag.producto.productos_coherentes}}</td>
+                                        <td>¿Sabe qué problema específico resuelve su producto/servicio a sus clientes potenciales?</td>
+                                        <td>{{resDiag.producto.problema_resolver}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
+                                        <td>¿Sabe en qué se diferencia su producto/servicio de otros similares en el mercado?</td>
+                                        <td>{{resDiag.producto.diferencia_otros}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>¿Sabe cuál es el nivel del precio de su producto/servicio con otros similares en el mercado?</td>
+                                        <td>{{resDiag.producto.nivel_precio}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>¿Ha realizado una investigación de precios para determinar si su producto/servicio es competitivo?</td>
+                                        <td>{{resDiag.producto.investigacion_precios}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>¿Hay alguna conexión temática o conceptual entre los diferentes productos/servicios que ofrece su empresa?</td>
+                                        <td>{{resDiag.producto.conexion_tematica}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>¿Cree que sus clientes perciben una coherencia entre los productos/servicios de su empresa?</td>
+                                        <td>{{resDiag.producto.perciben_coherencia}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">9</td>
                                         <td>La calidad de su producto es</td>
                                         <td>{{resDiag.producto.calidad_producto}}</td>
                                     </tr>
                                     <tr>
-                                        <td scope="row">5</td>
-                                        <td>La presentación de su producto es</td>
+                                        <td scope="row">10</td>
+                                        <td>La presentación de su producto es:</td>
                                         <td>{{resDiag.producto.presentacion_producto}}</td>
                                     </tr>
                                     <tr>
-                                        <td scope="row">6</td>
-                                        <td>En una escala del 1 al 10 ¿Cómo calificaría de forma global a sus productos con respecto al mercado? Siendo uno el nivel más bajo, y diez el más alto.</td>
+                                        <td scope="row">11</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría de forma global a sus productos/servicios con respecto al mercado? </td>
                                         <td>{{resDiag.producto.calificacion_global_producto}}</td>
                                     </tr>
                                 </tbody>
@@ -99,12 +124,12 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Cuenta con una planeación estratégica del negocio?</td>
+                                        <td>¿Cuenta con una planeación estratégica para la empresa?</td>
                                         <td>{{resDiag.administracion.planeacion_estrategica}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Ha realizado un análisis FODA de su negocio?</td>
+                                        <td>¿Ha realizado un análisis FODA de su empresa?</td>
                                         <td>{{resDiag.administracion.analisis_foda}}</td>
                                     </tr>
                                     <tr>
@@ -114,17 +139,17 @@
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Dispone de un sistema administrativo?</td>
-                                        <td>{{resDiag.administracion.sistema_administrativo}}</td>
+                                        <td>¿Dispone de un sistema administrativo y/o contable?</td>
+                                        <td>{{resDiag.administracion.sistema_administrativo_contable}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿La facturación de la empresa es automatizada?</td>
-                                        <td>{{resDiag.administracion.facturacion_automatizada}}</td>
+                                        <td>¿Dispone de software empresarial que le ayude a mejorar la eficiencia y rentabilidad de su empresa?</td>
+                                        <td>{{resDiag.administracion.software_empresarial}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>Del 1 al 10 ¿Cómo calificaría la gestión de Administración del negocio? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>Del 1 al 10 ¿Cómo calificaría la gestión de Administración de su empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
                                         <td>{{resDiag.administracion.calificacion_administracion}}</td>
                                     </tr>
                                 </tbody>
@@ -148,33 +173,33 @@
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Cuenta con un programa de formación para sus colaboradores?</td>
-                                        <td>{{resDiag.talento.programa_formacion_colab}}</td>
+                                        <td>¿Cuenta con un plan de capacitación para sus colaboradores?</td>
+                                        <td>{{resDiag.talento.plan_capacitacion}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tienen algún cuadro de habilidades a desarrollar para sus colaboradores?</td>
-                                        <td>{{resDiag.talento.habilidades_colab}}</td>
+                                        <td>¿Tienen algún cuadro de habilidades requeridas para sus colaboradores?</td>
+                                        <td>{{resDiag.talento.cuadro_habilidades}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
                                         <td>¿Realiza alguna medición de desempeño del personal?</td>
-                                        <td>{{resDiag.talento.medicion__personal}}</td>
+                                        <td>{{resDiag.talento.medicion_personal}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Requiere personal capacitado para su empresa?</td>
-                                        <td>{{resDiag.talento.personal_capacitado}}</td>
+                                        <td>¿Dispone de un plan de remuneración para sus colaboradores?</td>
+                                        <td>{{resDiag.talento.plan_remuneracion}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>¿Dispone de algún proceso de contratación?</td>
-                                        <td>{{resDiag.talento.proceso_contratacion}}</td>
+                                        <td>¿Dispone de algún proceso para el reclutamiento y selección?</td>
+                                        <td>{{resDiag.talento.proceso_reclutamiento}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">7</td>
-                                        <td>En una escala del 1 al 10 ¿Cómo calificaría al personal que labora para el negocio? Siendo uno el nivel más bajo y diez el más alto.</td>
-                                        <td>{{resDiag.talento.calificacion_personal_laboral }}</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría al personal que labora para la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{resDiag.talento.calificacion_personal_laboral}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -212,35 +237,35 @@
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Ha realizado un análisis y evaluación básico de las finanzas de los últimos 12 meses?  </td>
+                                        <td>¿Ha realizado un análisis y evaluación básica de las finanzas de los últimos 12 meses?</td>
                                         <td>{{resDiag.finanzas.analisis_finanzas_anual }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>¿Conoce cuál es su utilidad neta?</td>
-                                        <td>{{resDiag.finanzas.utilidad_neta }}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">7</td>
-                                        <td>¿La empresa ya ha conseguido ser rentable?</td>
-                                        <td>{{resDiag.finanzas.empresa_rentable}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">8</td>
                                         <td>¿Conoce cuál es su punto de equilibrio?</td>
                                         <td>{{resDiag.finanzas.punto_equilibrio}}</td>
                                     </tr>
                                     <tr>
+                                        <td scope="row">7</td>
+                                        <td>¿Conoce cuál es su utilidad neta?</td>
+                                        <td>{{resDiag.finanzas.utilidad_neta }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>¿La empresa ya ha conseguido ser rentable?</td>
+                                        <td>{{resDiag.finanzas.empresa_rentable}}</td>
+                                    </tr>
+                                    <tr>
                                         <td scope="row">9</td>
-                                        <td>¿Conoce en cuanto tiempo recuperará la inversión total de su negocio?</td>
-                                        <td>{{resDiag.finanzas.recuperar_inversion}}</td>
+                                        <td>¿Ha realizado alguna proyección del flujo de efectivo para el próximo año?</td>
+                                        <td>{{resDiag.finanzas.proyeccion_flujo_efectivo}}</td>
                                     </tr>
                                        <td scope="row">10</td>
-                                        <td>¿Cree usted que la manera en que se está administrando las finanzas en su empresa, pueda contribuir mantener o mejorar la rentabilidad en el tiempo? </td>
+                                        <td>¿Cree usted que la manera en que se está administrando las finanzas en su empresa, pueda contribuir mantener o mejorar la rentabilidad en el tiempo?</td>
                                         <td>{{resDiag.finanzas.mejorar_rentabilidad}}</td>
                                     </tr>
                                        <td scope="row">11</td>
-                                        <td>Del 1 al 10 ¿Cómo calificaría la gestión de Finanzas del negocio? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>Del 1 al 10 ¿Cómo calificaría la gestión de Finanzas de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
                                         <td>{{resDiag.finanzas.calificacion_finanzas}}</td>
                                     </tr>
 
@@ -308,32 +333,32 @@
                                     <tr>
                                         <td scope="row">1</td>
                                         <td>¿Cuenta con las instalaciones adecuadas para realizar sus operaciones?</td>
-                                        <td>{{resDiag.operaciones.instalaciones_adecuadas }}</td>
+                                        <td>{{resDiag.operaciones.instalaciones_adecuadas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
                                         <td>¿Cuenta con todos los permisos requeridos por su localidad para realizar sus operaciones? </td>
-                                        <td>{{resDiag.operaciones.permisos_requeridos  }}</td>
+                                        <td>{{resDiag.operaciones.permisos_requeridos}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tiene un plan de trabajo diario, semanal o mensual para las operaciones de su negocio? </td>
-                                        <td>{{resDiag.operaciones.plan_detrabajo  }}</td>
+                                        <td>¿Tiene un plan de trabajo diario, semanal o mensual para las operaciones de su empresa?</td>
+                                        <td>{{resDiag.operaciones.plan_detrabajo_diario}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Cumple con los tiempos de entrega de sus productos ?</td>
-                                        <td>{{resDiag.operaciones.tiempos_entrega_productos  }}</td>
+                                        <td>¿Tiene documentadas todas las actividades que se desarrollan en la empresa?</td>
+                                        <td>{{resDiag.operaciones.documentos_actividades}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Cuenta con una estandarización para sus procesos operativos?</td>
-                                        <td>{{resDiag.operaciones.estandarizacion_procesos_op  }}</td>
+                                        <td>¿Cuenta con manuales de operaciones que describan los procedimientos y actividades dentro de la empresa?</td>
+                                        <td>{{resDiag.operaciones.manuales_operaciones}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
                                         <td>¿Cómo calificaría las operaciones y procesos de su empresa en una escala del 1 al 10? Siendo uno el nivel más bajo y diez el más alto.</td>
-                                        <td>{{resDiag.operaciones.calificacion_operaciones_procesos  }}</td>
+                                        <td>{{resDiag.operaciones.calificacion_operaciones_procesos}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -352,17 +377,17 @@
                                     <tr>
                                         <td scope="row">1</td>
                                         <td>¿Considera positivo el ambiente laboral dentro de su empresa? </td>
-                                        <td>{{resDiag.ambiente.ambienteLab_positivo}}</td>
+                                        <td>{{resDiag.ambiente.ambiente_positivo}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
                                         <td>¿Realiza alguna medición del ambiente laboral de la empresa?</td>
-                                        <td>{{resDiag.ambiente.medicion_ambienteLab }}</td>
+                                        <td>{{resDiag.ambiente.medicion_ambiente_laboral}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Conoce el grado de satisfacción e insatisfacción de sus empleados?</td>
-                                        <td>{{resDiag.ambiente.agrado_empleados}}</td>
+                                        <td>¿Conoce el grado de satisfacción de sus empleados?</td>
+                                        <td>{{resDiag.ambiente.satisfaccion_empleados}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
@@ -376,7 +401,7 @@
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>Del  1 al 10 ¿Cómo podría calificar el ambiente laboral del negocio? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>Del  1 al 10 ¿Cómo podría calificar el ambiente laboral de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
                                         <td>{{resDiag.ambiente.calificacion_ambiente}}</td>
                                     </tr>
                                 </tbody>
@@ -396,32 +421,32 @@
                                     <tr>
                                         <td scope="row">1</td>
                                         <td>¿Sus trabajadores aportan ideas para la mejora dentro de la empresa?</td>
-                                        <td>{{resDiag.innovacion.aportan_ideas }}</td>
+                                        <td>{{resDiag.innovacion.aportan_ideas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Considera que a través de la innovación de sus productos puede incrementar tus ventas?</td>
+                                        <td>¿Considera que a través de la innovación de sus productos/servicios puede incrementar sus ventas?</td>
                                         <td>{{resDiag.innovacion.incrementar_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Considera que los procesos operativos para desarrollar sus productos son Innovadores?</td>
-                                        <td>{{resDiag.innovacion.procesos_innovadores }}</td>
+                                        <td>¿Considera que los procesos operativos relacionados con sus productos/servicios son Innovadores?</td>
+                                        <td>{{resDiag.innovacion.procesos_innovadores}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
                                         <td>¿Calificaría su modelo de negocio como Innovador?</td>
-                                        <td>{{resDiag.innovacion.modelo_innovador }}</td>
+                                        <td>{{resDiag.innovacion.modelo_innovador}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
                                         <td>¿Calificaría la gestión de su empresa como Innovadora?</td>
-                                        <td>{{resDiag.innovacion.empresa_innovadora }}</td>
+                                        <td>{{resDiag.innovacion.empresa_innovadora}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>Del 1 al 10 ¿Cómo se calificaría la gestión de Innovación de los productos y/o servicios del negocio? Siendo uno el nivel más bajo y diez el más alto.</td>
-                                        <td>{{resDiag.innovacion.calificacion_innovacion }}</td>
+                                        <td>Del 1 al 10 ¿Cómo se calificaría la gestión de Innovación de los productos y/o servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{resDiag.innovacion.calificacion_innovacion}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -442,56 +467,56 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Realiza estudios de mercado sobre las características y precios de sus productos?</td>
-                                        <td>{{resDiag.marketing.estudio_mercado }}</td>
+                                        <td>¿Ha realizado estudios de mercado sobre las características y precios de sus productos/servicios?</td>
+                                        <td>{{resDiag.marketing.estudio_mercado}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Conoce el segmento que representan sus productos en el mercado? </td>
-                                        <td>{{resDiag.marketing.segmento_mercado }}</td>
+                                        <td>¿Conoce el segmento al que se dirigen sus productos/servicios?</td>
+                                        <td>{{resDiag.marketing.segmento_mercado}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Sus productos tienen posicionamiento en el mercado (Su localidad)? </td>
-                                        <td>{{resDiag.marketing.posicionamiento_mercado  }}</td>
+                                        <td>¿Sus productos/servicios están posicionados dentro de su mercado?</td>
+                                        <td>{{resDiag.marketing.posicionamiento_mercado}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Cuenta con estrategias de Marketing para impulsar sus productos  en el mercado o localidad?</td>
-                                        <td>{{resDiag.marketing.estrategias_marketing  }}</td>
+                                        <td>¿Cuenta con estrategias de Marketing para impulsar sus productos/servicios en su mercado?</td>
+                                        <td>{{resDiag.marketing.estrategias_marketing}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Cuenta con un Plan de Marketing? </td>
-                                        <td>{{resDiag.marketing.plan_marketing  }}</td>
+                                        <td>¿Cuenta con un Plan de Marketing?</td>
+                                        <td>{{resDiag.marketing.plan_marketing}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>¿Cuenta con página web para promover los productos de su empresa?</td>
-                                        <td>{{resDiag.marketing.pagina_web_promover  }}</td>
+                                        <td>¿Cuenta con página web para promover los productos/servicios de su empresa?</td>
+                                        <td>{{resDiag.marketing.landing_page}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">7</td>
-                                        <td>¿Utiliza redes sociales para promover los productos de su empresa?</td>
-                                        <td>{{resDiag.marketing.redes_sociales_promover }}</td>
+                                        <td>¿Utiliza redes sociales para promover los productos/servicios de su empresa?</td>
+                                        <td>{{resDiag.marketing.redes_sociales}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">8</td>
                                         <td>¿Cuenta con un Manual de Identidad Corporativa?</td>
-                                        <td>{{resDiag.marketing.manual_identidad }}</td>
+                                        <td>{{resDiag.marketing.manual_identidad}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">9</td>
-                                        <td>¿Su producto, servicio o marca, cuentan con un eslogan que los identifique con facilidad?</td>
-                                        <td>{{resDiag.marketing.tiene_eslogan }}</td>
+                                        <td>¿Su negocio cuenta con un eslogan que los identifique con facilidad?</td>
+                                        <td>{{resDiag.marketing.tiene_eslogan}}</td>
                                     </tr>
                                        <td scope="row">10</td>
                                         <td>¿Cuenta con un Brochure de presentación de su empresa?</td>
-                                        <td>{{resDiag.marketing.brochure_empresa }}</td>
+                                        <td>{{resDiag.marketing.brochure_empresa}}</td>
                                     </tr>
                                        <td scope="row">11</td>
-                                        <td>En una escala del 1 al 10 ¿Cómo calificaría la gestión de Marketing del negocio?  Siendo uno el nivel más bajo y diez el más alto.</td>
-                                        <td>{{resDiag.marketing.calificacion_marketing }}</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría la gestión de Marketing de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{resDiag.marketing.calificacion_marketing}}</td>
                                     </tr>
 
                                 </tbody>
@@ -510,33 +535,33 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Cree que los productos y/o servicios del negocio se venden con facilidad?</td>
-                                        <td>{{resDiag.ventas.ventas_conFacilidad }}</td>
+                                        <td>¿Cree que los productos/servicios de la empresa se venden con facilidad?</td>
+                                        <td>{{resDiag.ventas.facilidad_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Cómo calificaría las ventas de los productos del negocio en los últimos 6 meses?</td>
-                                        <td>{{resDiag.ventas.calificacion_productos_meses }}</td>
+                                        <td>¿Cómo calificaría las ventas de los productos/servicios de la empresa en los últimos 6 meses?</td>
+                                        <td>{{resDiag.ventas.calificacion_ventas_meses}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Realiza algún plan de ventas?</td>
-                                        <td>{{resDiag.ventas.plan_ventas }}</td>
+                                        <td>¿Su empresa tiene definido objetivos de ventas claros?</td>
+                                        <td>{{resDiag.ventas.objetivo_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Cuenta con estrategias de ventas para los productos de su negocio?</td>
-                                        <td>{{resDiag.ventas.estrategia_ventas }}</td>
+                                        <td>¿Cuenta con estrategias de ventas para los productos/servicios de su empresa?</td>
+                                        <td>{{resDiag.ventas.estrategia_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Tiene definido sus canales de venta para comercializar sus productos?</td>
-                                        <td>{{resDiag.ventas.canales_ventas }}</td>
+                                        <td>¿Tiene definido sus canales de venta para comercializar sus productos/servicios?</td>
+                                        <td>{{resDiag.ventas.canales_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>Del  1 al 10 ¿Cómo calificaría la gestión de ventas de los productos y/o servicios del negocio? Siendo uno el nivel más bajo y diez el más alto.</td>
-                                        <td>{{resDiag.ventas.calificacion_ventas }}</td>
+                                        <td>Del  1 al 10 ¿Cómo calificaría la gestión de ventas de los productos/servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{resDiag.ventas.calificacion_ventas}}</td>
                                     </tr>
                                 </tbody>
                             </table>
