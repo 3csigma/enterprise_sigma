@@ -100,10 +100,10 @@
 </div>
 
 <!-- MODAL RESPUESTAS DEL CUESTIONARIO DIAGNÓSTICO -->
-{{#if cuestionario.diagnostico}}
-{{> modals/cuestionario}}
-{{else}}
+{{#if cuestionario.nuevo}}
 {{> modals/nuevosProyectos}}
+{{else}}
+{{> modals/cuestionario}}
 {{/if}}
 
 <!--**********************************

@@ -414,6 +414,7 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico.color = 'badge-success'
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalNuevosProyectos';
+                cuestionario.nuevo = true;
 
                 // Respuestas del Cuestionario Diagnóstico Empresa Nueva
                 resDiag.rubro = datos.rubro
