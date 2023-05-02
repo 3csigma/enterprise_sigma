@@ -781,7 +781,6 @@ consultorController.nuevoRendimiento = async (req, res) => {
         total_gastos = total_gastos.replace(/[,]/g, '.');
         const utilidad = parseFloat(total_ventas) - parseFloat(total_compras) - parseFloat(total_gastos)
         const nuevoRendimiento = { empresa, total_ventas, total_compras, total_gastos, utilidad, fecha }
-        // await pool.query('INSERT INTO rendimiento_empresa SET ?', [nuevoRendimiento])
         result = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
         if (result.affectedRows > 0) result = true;
     }

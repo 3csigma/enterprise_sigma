@@ -348,7 +348,6 @@ empresaController.acuerdoCheck = async (req, res) => {
     // Efectuando firma del acuerdo
     console.log("\nEfectuando firma del acuerdo.....")
     const insertarAcuerdo = {id_empresa: datosEmpresa.id_empresas, estadoAcuerdo: estado}
-    // await pool.query('INSERT INTO acuerdo_confidencial SET ?', [insertarAcuerdo])
     await insertarDatos('acuerdo_confidencial', insertarAcuerdo)
     objRes.ok = true;
     objRes.txt = '/diagnostico-de-negocio'
@@ -596,7 +595,6 @@ empresaController.addFichaCliente = async (req, res) => {
     if (ficha.length > 0) {
         await pool.query('UPDATE ficha_cliente SET ? WHERE id_empresa = ?', [nuevaFichaCliente, id_empresa])
     } else {
-        // await pool.query('INSERT INTO ficha_cliente SET ?', [nuevaFichaCliente])
         await insertarDatos('ficha_cliente', nuevaFichaCliente)
     }
     // JSON.parse(redes_sociales) // CONVERTIR  JSON A UN OBJETO
@@ -1135,8 +1133,14 @@ empresaController.informeAutoGenerado = async (req, res) => {
         tipoDB = 'Análisis marketing'
     }
 
+    let codigo = req.user.codigo;
+    if (req.user.rol != 'Empresa') {
+        const referer = req.headers.referer;
+        codigo = referer.split('/').pop()
+    }
+
     let empresa = await consultarDatos('empresas')
-    empresa = empresa.find(e => e.codigo == req.user.codigo)
+    empresa = empresa.find(e => e.codigo == codigo)
     let data = await consultarDatos('informes_ia')
     data = data.find(x => x.empresa == empresa.id_empresas && x.tipo == tipoDB)
     const textoGPT = data.informe

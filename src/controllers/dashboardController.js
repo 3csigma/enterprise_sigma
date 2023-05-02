@@ -640,19 +640,20 @@ dashboardController.editarEmpresa = async (req, res) => {
         datos.etapa = 'Informe de plan estratégico de negocio'
     }
 
-    /************** DATOS PARA LAS GRÁFICAS DE DIAGNÓSTICO - ÁREAS VITALES & POR DIMENSIONES ****************/
+    /************** DATOS PARA LAS GRÁFICAS AREAS VITALES & POR DIMENSIONES & PERCEPCIÓN ESTADÍSTICA ****************/
     /**
      * PC => Percepción Cliente
      * PE => Percepción Estadística
-     */
+    */
     let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
     let areasVitales = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ ASC')
     areasVitales = areasVitales.find(x => x.id_empresa == idEmpresa)
     let areasVitales2 = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ DESC')
     areasVitales2 = areasVitales2.find(x => x.id_empresa == idEmpresa)
     if (areasVitales) {
-        jsonIndicadores.areasVitales1 = JSON.stringify(areasVitales);
-        jsonIndicadores.areasVitales2 = JSON.stringify(areasVitales2);
+        rendimiento.ok = true;
+        jsonIndicadores.areasVitales1 = areasVitales;
+        jsonIndicadores.areasVitales2 = areasVitales2;
         if (areasVitales.rendimiento_op >= 1) {
             rendimiento.op = areasVitales.rendimiento_op
         } else {
@@ -664,7 +665,8 @@ dashboardController.editarEmpresa = async (req, res) => {
     let resulCateg = await consultarDatos('resultado_categorias')
     resulCateg = resulCateg.find(x => x.id_empresa == idEmpresa)
     if (resulCateg) {
-        jsonIndicadores.dimensiones1 = JSON.stringify(resulCateg);
+        rendimiento.ok = true;
+        jsonIndicadores.dimensiones1 = resulCateg
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
         rendimiento.num = resulCateg.rendimiento
@@ -687,8 +689,9 @@ dashboardController.editarEmpresa = async (req, res) => {
     let xDimensiones2 = await consultarDatos('indicadores_dimensiones', 'ORDER BY id DESC')
     xDimensiones2 = xDimensiones2.find(x => x.id_empresa == idEmpresa)
     if (xDimensiones) {
-        jsonIndicadores.dimensiones1 = JSON.stringify(xDimensiones);
-        jsonIndicadores.dimensiones2 = JSON.stringify(xDimensiones2);
+        jsonIndicadores.ok = true;
+        jsonIndicadores.dimensiones1 = xDimensiones
+        jsonIndicadores.dimensiones2 = xDimensiones2
         nuevosProyectos = 0;
     }
 
@@ -700,8 +703,9 @@ dashboardController.editarEmpresa = async (req, res) => {
     // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica', 'ORDER BY id DESC')
     // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
     if (pe_dimensiones1) {
-        jsonIndicadores.pe1 = JSON.stringify(pe_dimensiones1);
-        // jsonIndicadores.pe2 = JSON.stringify(pe_dimensiones2);
+        rendimiento.pe = true;
+        jsonIndicadores.pe1 = pe_dimensiones1
+        // jsonIndicadores.pe2 = pe_dimensiones2
         nuevosProyectos = 0;
     }
 
@@ -795,142 +799,142 @@ dashboardController.editarEmpresa = async (req, res) => {
     /**************************************************************************************** */
     /* => Plan Empresarial ***************************************************************** */
     // PROPUESTA
-    propuesta.empresarial = propuestas.find(i => i.empresa == idEmpresa && i.tipo_propuesta == 'Plan empresarial')
-    let pagos_empresarial = {}, tareasEmpresarial = null;
-    const empresarial = {                     
-        negocio: { ver: 'none' },
-        marketing: { ver: 'none' },
-        branding: { ver: 'none' },
-        renders: { ver: 'none' },
-        website: { ver: 'none' },
-        otro: { ver: 'none' },
-        otro2: { ver: 'none' },
-        otro3: { ver: 'none' }
-    }
-    if (propuesta.empresarial) {
-        datos.etapa = 'Propuesta de Plan Empresarial enviada'
-        propuesta.empresarial.finalizada = false;
-        if (datosEmpresa.etapa_empresarial == 1) { propuesta.empresarial.finalizada = true; }
+    // propuesta.empresarial = propuestas.find(i => i.empresa == idEmpresa && i.tipo_propuesta == 'Plan empresarial')
+    // let pagos_empresarial = {}, tareasEmpresarial = null;
+    // const empresarial = {                     
+    //     negocio: { ver: 'none' },
+    //     marketing: { ver: 'none' },
+    //     branding: { ver: 'none' },
+    //     renders: { ver: 'none' },
+    //     website: { ver: 'none' },
+    //     otro: { ver: 'none' },
+    //     otro2: { ver: 'none' },
+    //     otro3: { ver: 'none' }
+    // }
+    // if (propuesta.empresarial) {
+    //     datos.etapa = 'Propuesta de Plan Empresarial enviada'
+    //     propuesta.empresarial.finalizada = false;
+    //     if (datosEmpresa.etapa_empresarial == 1) { propuesta.empresarial.finalizada = true; }
 
-        /** PAGOS DE PLAN EMPRESARIAL (ÚNICO o DIVIDIDO*/
-        pagos_empresarial.unico = JSON.parse(pay.empresarial0)
-        pagos_empresarial.uno = JSON.parse(pay.empresarial1)
-        pagos_empresarial.dos = JSON.parse(pay.empresarial2)
-        pagos_empresarial.tres = JSON.parse(pay.empresarial3)
+    //     /** PAGOS DE PLAN EMPRESARIAL (ÚNICO o DIVIDIDO*/
+    //     pagos_empresarial.unico = JSON.parse(pay.empresarial0)
+    //     pagos_empresarial.uno = JSON.parse(pay.empresarial1)
+    //     pagos_empresarial.dos = JSON.parse(pay.empresarial2)
+    //     pagos_empresarial.tres = JSON.parse(pay.empresarial3)
 
-        pagos_empresarial.unico.color = pagos_empresarial.uno.color = pagos_empresarial.dos.color = pagos_empresarial.tres.color = 'warning';
-        pagos_empresarial.unico.txt = pagos_empresarial.uno.txt = pagos_empresarial.dos.txt = pagos_empresarial.tres.txt = 'Pendiente';
-        pagos_empresarial.unico.btn = pagos_empresarial.uno.btn = true;
-        pagos_empresarial.dos.btn = pagos_empresarial.tres.btn = false;
-        pagos_empresarial.uno.precio = propuesta.empresarial.precio_per1
-        pagos_empresarial.dos.precio = propuesta.empresarial.precio_per2
-        pagos_empresarial.tres.precio = propuesta.empresarial.precio_per3
+    //     pagos_empresarial.unico.color = pagos_empresarial.uno.color = pagos_empresarial.dos.color = pagos_empresarial.tres.color = 'warning';
+    //     pagos_empresarial.unico.txt = pagos_empresarial.uno.txt = pagos_empresarial.dos.txt = pagos_empresarial.tres.txt = 'Pendiente';
+    //     pagos_empresarial.unico.btn = pagos_empresarial.uno.btn = true;
+    //     pagos_empresarial.dos.btn = pagos_empresarial.tres.btn = false;
+    //     pagos_empresarial.uno.precio = propuesta.empresarial.precio_per1
+    //     pagos_empresarial.dos.precio = propuesta.empresarial.precio_per2
+    //     pagos_empresarial.tres.precio = propuesta.empresarial.precio_per3
 
-        pagos_empresarial.unico.precio = parseFloat(propuesta.empresarial.precio_total*0.9);
+    //     pagos_empresarial.unico.precio = parseFloat(propuesta.empresarial.precio_total*0.9);
 
-        if (pagos_empresarial.unico.estado == 1) {
-            datos.etapa = 'Plan Empresarial pago único'
-            pagos_empresarial.unico.color = 'success'
-            pagos_empresarial.unico.txt = 'Pagado 100%'
-            propuesta.empresarial.pago = true;
-            pagos_empresarial.unico.btn = false;
-            precioPagado = pagos_empresarial.unico.precio;
-        }
-        if (pagos_empresarial.uno.estado == 2) {
-            datos.etapa = 'Plan Empresarial - Pagado 60%'
-            pagos_empresarial.uno.color = 'success'
-            pagos_empresarial.uno.txt = 'Pagado 60%'
-            propuesta.empresarial.pago = true;
-            pagos_empresarial.uno.btn = false;
-            pagos_empresarial.dos.btn = true;
-        }
-        if (pagos_empresarial.dos.estado == 2) {
-            datos.etapa = 'Plan Empresarial - Pagado 80%'
-            pagos_empresarial.dos.color = 'success'
-            pagos_empresarial.dos.txt = 'Pagado 80%'
-            pagos_empresarial.dos.btn = false;
-            pagos_empresarial.tres.btn = true;
-        }
-        if (pagos_empresarial.tres.estado == 2) {
-            datos.etapa = 'Plan Empresarial - Pagado 100%'
-            pagos_empresarial.tres.color = 'success'
-            pagos_empresarial.tres.txt = 'Pagado 100%'
-            pagos_empresarial.tres.btn = false;
-        }
+    //     if (pagos_empresarial.unico.estado == 1) {
+    //         datos.etapa = 'Plan Empresarial pago único'
+    //         pagos_empresarial.unico.color = 'success'
+    //         pagos_empresarial.unico.txt = 'Pagado 100%'
+    //         propuesta.empresarial.pago = true;
+    //         pagos_empresarial.unico.btn = false;
+    //         precioPagado = pagos_empresarial.unico.precio;
+    //     }
+    //     if (pagos_empresarial.uno.estado == 2) {
+    //         datos.etapa = 'Plan Empresarial - Pagado 60%'
+    //         pagos_empresarial.uno.color = 'success'
+    //         pagos_empresarial.uno.txt = 'Pagado 60%'
+    //         propuesta.empresarial.pago = true;
+    //         pagos_empresarial.uno.btn = false;
+    //         pagos_empresarial.dos.btn = true;
+    //     }
+    //     if (pagos_empresarial.dos.estado == 2) {
+    //         datos.etapa = 'Plan Empresarial - Pagado 80%'
+    //         pagos_empresarial.dos.color = 'success'
+    //         pagos_empresarial.dos.txt = 'Pagado 80%'
+    //         pagos_empresarial.dos.btn = false;
+    //         pagos_empresarial.tres.btn = true;
+    //     }
+    //     if (pagos_empresarial.tres.estado == 2) {
+    //         datos.etapa = 'Plan Empresarial - Pagado 100%'
+    //         pagos_empresarial.tres.color = 'success'
+    //         pagos_empresarial.tres.txt = 'Pagado 100%'
+    //         pagos_empresarial.tres.btn = false;
+    //     }
 
-        const archivosEmpresarial = await consultarDatos("archivos_plan_empresarial", `WHERE empresa = ${idEmpresa}`)
-        // PLAN DE NEGOCIO
-        let archivo = archivosEmpresarial.find(x => x.tipo == "Plan de negocio")
-        if (archivo) {
-            empresarial.negocio.fecha = archivo.fecha;
-            empresarial.negocio.ver = 'block';
-            empresarial.negocio.url = archivo.url;
-            datos.etapa = 'Archivo de Plan de negocio - Plan Empresarial'
-        }
-        // PLAN DE MARKETING
-        archivo = archivosEmpresarial.find(x => x.tipo == "Plan de marketing")
-        if (archivo) {
-            empresarial.marketing.fecha = archivo.fecha;
-            empresarial.marketing.ver = 'block';
-            empresarial.marketing.url = archivo.url;
-            datos.etapa = 'Archivo de Plan de marketing - Plan Empresarial'
-        }
-        // BRANDING
-        archivo = archivosEmpresarial.find(x => x.tipo == "Branding")
-        if (archivo) {
-            empresarial.branding.fecha = archivo.fecha;
-            empresarial.branding.ver = 'block';
-            empresarial.branding.url = archivo.url;
-            datos.etapa = 'Archivo de Branding - Plan Empresarial'
-        }
-        // RENDERS
-        archivo = archivosEmpresarial.find(x => x.tipo == "Renders")
-        if (archivo) {
-            empresarial.renders.fecha = archivo.fecha;
-            empresarial.renders.ver = 'block';
-            empresarial.renders.url = archivo.url;
-            datos.etapa = 'Archivo de Renders - Plan Empresarial'
-        }
-        // WEBSITE
-        archivo = archivosEmpresarial.find(x => x.tipo == "Website")
-        if (archivo) {
-            empresarial.website.fecha = archivo.fecha;
-            empresarial.website.ver = 'block';
-            empresarial.website.url = archivo.url;
-            datos.etapa = 'Link de website - Plan Empresarial'
-        }
-        // OTRO
-        archivo = archivosEmpresarial.find(x => x.tipo == "Otro")
-        if (archivo) {
-            empresarial.otro.fecha = archivo.fecha;
-            empresarial.otro.ver = 'block';
-            empresarial.otro.url = archivo.url;
-            empresarial.otro.nombre = archivo.nombre;
-            datos.etapa = 'Archivos - Plan Empresarial'
-        }
-        // OTRO 2
-        archivo = archivosEmpresarial.find(x => x.tipo == "Otro2")
-        if (archivo) {
-            empresarial.otro2.fecha = archivo.fecha;
-            empresarial.otro2.ver = 'block';
-            empresarial.otro2.url = archivo.url;
-            empresarial.otro2.nombre = archivo.nombre;
-            datos.etapa = 'Archivos - Plan Empresarial'
-        }
-        // OTRO 3
-        archivo = archivosEmpresarial.find(x => x.tipo == "Otro3")
-        if (archivo) {
-            empresarial.otro3.fecha = archivo.fecha;
-            empresarial.otro3.ver = 'block';
-            empresarial.otro3.url = archivo.url;
-            empresarial.otro3.nombre = archivo.nombre;
-            datos.etapa = 'Archivos - Plan Empresarial'
-        }
+    //     const archivosEmpresarial = await consultarDatos("archivos_plan_empresarial", `WHERE empresa = ${idEmpresa}`)
+    //     // PLAN DE NEGOCIO
+    //     let archivo = archivosEmpresarial.find(x => x.tipo == "Plan de negocio")
+    //     if (archivo) {
+    //         empresarial.negocio.fecha = archivo.fecha;
+    //         empresarial.negocio.ver = 'block';
+    //         empresarial.negocio.url = archivo.url;
+    //         datos.etapa = 'Archivo de Plan de negocio - Plan Empresarial'
+    //     }
+    //     // PLAN DE MARKETING
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Plan de marketing")
+    //     if (archivo) {
+    //         empresarial.marketing.fecha = archivo.fecha;
+    //         empresarial.marketing.ver = 'block';
+    //         empresarial.marketing.url = archivo.url;
+    //         datos.etapa = 'Archivo de Plan de marketing - Plan Empresarial'
+    //     }
+    //     // BRANDING
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Branding")
+    //     if (archivo) {
+    //         empresarial.branding.fecha = archivo.fecha;
+    //         empresarial.branding.ver = 'block';
+    //         empresarial.branding.url = archivo.url;
+    //         datos.etapa = 'Archivo de Branding - Plan Empresarial'
+    //     }
+    //     // RENDERS
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Renders")
+    //     if (archivo) {
+    //         empresarial.renders.fecha = archivo.fecha;
+    //         empresarial.renders.ver = 'block';
+    //         empresarial.renders.url = archivo.url;
+    //         datos.etapa = 'Archivo de Renders - Plan Empresarial'
+    //     }
+    //     // WEBSITE
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Website")
+    //     if (archivo) {
+    //         empresarial.website.fecha = archivo.fecha;
+    //         empresarial.website.ver = 'block';
+    //         empresarial.website.url = archivo.url;
+    //         datos.etapa = 'Link de website - Plan Empresarial'
+    //     }
+    //     // OTRO
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Otro")
+    //     if (archivo) {
+    //         empresarial.otro.fecha = archivo.fecha;
+    //         empresarial.otro.ver = 'block';
+    //         empresarial.otro.url = archivo.url;
+    //         empresarial.otro.nombre = archivo.nombre;
+    //         datos.etapa = 'Archivos - Plan Empresarial'
+    //     }
+    //     // OTRO 2
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Otro2")
+    //     if (archivo) {
+    //         empresarial.otro2.fecha = archivo.fecha;
+    //         empresarial.otro2.ver = 'block';
+    //         empresarial.otro2.url = archivo.url;
+    //         empresarial.otro2.nombre = archivo.nombre;
+    //         datos.etapa = 'Archivos - Plan Empresarial'
+    //     }
+    //     // OTRO 3
+    //     archivo = archivosEmpresarial.find(x => x.tipo == "Otro3")
+    //     if (archivo) {
+    //         empresarial.otro3.fecha = archivo.fecha;
+    //         empresarial.otro3.ver = 'block';
+    //         empresarial.otro3.url = archivo.url;
+    //         empresarial.otro3.nombre = archivo.nombre;
+    //         datos.etapa = 'Archivos - Plan Empresarial'
+    //     }
 
-        // PROCESO PARA LAS TAREAS (PLAN EMPRESARIAL)
-        tareasEmpresarial = await consultarTareasEmpresarial(idEmpresa, fechaActual)
-        console.log("\nTAREAS EMPRESARIAL >> ", tareasEmpresarial)
-    }
+    //     // PROCESO PARA LAS TAREAS (PLAN EMPRESARIAL)
+    //     tareasEmpresarial = await consultarTareasEmpresarial(idEmpresa, fechaActual)
+    //     console.log("\nTAREAS EMPRESARIAL >> ", tareasEmpresarial)
+    // }
 
     /************************************************************************************* */
     // => PLAN ESTRATÉGICO DE NEGOCIO *****************************************************/
@@ -1059,11 +1063,11 @@ dashboardController.editarEmpresa = async (req, res) => {
 
     // VALIDANDO CUALES TAREAS ESTÁN COMPLETADAS (EN GENERAL)
     // TAREAS PLAN EMPRESARIAL
-    if (tareasEmpresarial) {
-        tareasEmpresarial.forEach(x => {
-            botonesEtapas.plan1 ? x.taskBtns = true : x.taskBtns = false;
-        })
-    }
+    // if (tareasEmpresarial) {
+    //     tareasEmpresarial.forEach(x => {
+    //         botonesEtapas.plan1 ? x.taskBtns = true : x.taskBtns = false;
+    //     })
+    // }
 
     // TAREAS PLAN ESTRATÉGICO
     if (tareas) {
@@ -1122,7 +1126,6 @@ dashboardController.editarEmpresa = async (req, res) => {
         graficas2: true, propuesta, pagos_analisis, divInformes, filaInforme,
         pagoEstrategico, info, dimProducto, dimAdmin, dimOperacion, dimMarketing,
         tareas, jsonDim, jsonRendimiento, fechaActual, pagoDg_Realizado,
-        pago_diagnostico, pagos_empresarial, empresarial, tareasEmpresarial,
         rolAdmin, botonesEtapas, objconclusion, datosUsuario: JSON.stringify(req.user), tab_tareaAsignada,
         archivos_solicitados
     })
@@ -1140,7 +1143,6 @@ dashboardController.conclusiones = async (req, res) => {
         await pool.query('UPDATE conclusiones SET ? WHERE id_empresa = ? AND etapa = ?', [obj, id_empresa, etapa])
     } else {
         const objConclusion = {id_empresa, etapa, conclusion}
-        // await pool.query('INSERT INTO conclusiones SET ?', [objConclusion])
         await insertarDatos('conclusiones', objConclusion)
     }
     res.send(true)
@@ -1189,7 +1191,6 @@ dashboardController.actualizarEmpresa = async (req, res) => {
         } else {
             const datos = {consultor: value.id, empresa: idEmpresa, etapa: key, orden}
             if (value.sede) { datos.sede = value.sede }
-            // await pool.query('INSERT INTO consultores_asignados SET ?', [datos])
             await insertarDatos('consultores_asignados', datos)
             
             /** INFO PARA ENVÍO DE EMAIL A LA EMPRESA - NOTIFICANDO CONSULTOR ASIGNADO */
@@ -1799,7 +1800,6 @@ dashboardController.guardarRespuestas = async (req, res) => {
     }
 
     // Guardando en la Base de datos
-    // const cuestionario = await pool.query('INSERT INTO dg_empresa_nueva SET ?', [nuevoDiagnostico])
     const cuestionario = await insertarDatos('dg_empresa_nueva', nuevoDiagnostico)
     if (cuestionario.affectedRows > 0) {
 
@@ -1938,7 +1938,6 @@ dashboardController.guardarInforme = async (req, res) => {
     if (tieneInforme.length > 0) {
         informe = await pool.query('UPDATE informes SET ? WHERE id_empresa = ? AND nombre = ?', [actualizar, e.id_empresas, nombreInforme])
     } else {
-        // informe = await pool.query('INSERT INTO informes SET ?', [nuevoInforme])
         informe = await insertarDatos('informes', nuevoInforme)
     }
 

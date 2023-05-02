@@ -647,14 +647,20 @@
             /** GRÁFICA PARA INDICADORES */
             
             const chartAreasVitales = (indicadores, nuevosProyectos) => {
-                let chartAnalisis1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-                let chartAnalisis2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-
+                let dataAreasVitales1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+                let dataAreasVitales2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+				let label1 = 'Valor'
+				
                 const areasVitales = indicadores.areasVitales1
-                chartAnalisis1 = [areasVitales.producto, areasVitales.administracion, areasVitales.talento_humano, areasVitales.finanzas, areasVitales.servicio_cliente, areasVitales.operaciones, areasVitales.ambiente_laboral, areasVitales.innovacion, areasVitales.marketing, areasVitales.ventas]
+                dataAreasVitales1 = [areasVitales.producto, areasVitales.administracion, areasVitales.talento_humano, areasVitales.finanzas, areasVitales.servicio_cliente, areasVitales.operaciones, areasVitales.ambiente_laboral, areasVitales.innovacion, areasVitales.marketing, areasVitales.ventas]
 
-                const areasVitales2 = indicadores.areasVitales2
-                chartAnalisis2 = [areasVitales2.producto, areasVitales2.administracion, areasVitales2.talento_humano, areasVitales2.finanzas, areasVitales2.servicio_cliente, areasVitales2.operaciones, areasVitales2.ambiente_laboral, areasVitales2.innovacion, areasVitales2.marketing, areasVitales2.ventas]
+                /*
+				const areasVitales2 = indicadores.areasVitales2
+				if (areasVitales2) {
+					label1 = 'Análisis anterior'
+                	dataAreasVitales2 = [areasVitales2.producto, areasVitales2.administracion, areasVitales2.talento_humano, areasVitales2.finanzas, areasVitales2.servicio_cliente, areasVitales2.operaciones, areasVitales2.ambiente_laboral, areasVitales2.innovacion, areasVitales2.marketing, areasVitales2.ventas]
+				}
+				*/
 
                 let valorMax = 10;
                 if (nuevosProyectos == 1) {
@@ -670,20 +676,24 @@
                         data: {
                             defaultFontFamily: 'Oblivian',
                             labels: ["Producto", "Admin", "Talento Humano", "Finanzas", "Servicio al cliente", "Operaciones", "Ambiente Laboral", "Innovación", "Marketing", "Ventas"],
-                            datasets: [{
-                                label: "Puntaje",
-                                backgroundColor: "#50368C",
-                                borderColor: "#50368C",
-                                data: chartAnalisis1,
-                                fill: false,
-                            },
-                            {
-                            	label: "Último análisis",
-                             	fill: false,
-                                backgroundColor: "#FED061",
-                                borderColor: "#FED061",
-                                data: chartAnalisis2,
-                            }]
+                            datasets: [
+                                {
+                                    label: "Puntaje",
+                                    backgroundColor: "#50368C",
+                                    borderColor: "#50368C",
+                                    data: dataAreasVitales1,
+                                    fill: false,
+                                },
+                                /*
+                                {
+                                    label: "Último análisis",
+                                    fill: false,
+                                    backgroundColor: "#FED061",
+                                    borderColor: "#FED061",
+                                    data: dataAreasVitales2,
+                                }
+                                */
+                            ]
                         },
                         options: {
                             legend: false,
@@ -721,24 +731,25 @@
             }
 
             const chartPorDimensiones = (indicadores, nuevosProyectos) => {
-                let chartDimensiones1 = [0, 0, 0, 0]
+               let chartDimensiones1 = [0, 0, 0, 0]
                 let chartDimensiones2 = [0, 0, 0, 0]
                 let titulos = ["Producto", "Administración", "Operaciones", "Marketing"];
+				let label1 = 'Valor', label2 = 'Valor'
 
-                const valDimensiones1 = indicadores.dimensiones1
-                const valDimensiones2 = indicadores.dimensiones2
+                const pe_cliente1 = indicadores.dimensiones1
+                const pe_estadistica1 = indicadores.pe1;
+				
+				chartDimensiones1 = [pe_cliente1.producto, pe_cliente1.administracion, pe_cliente1.operaciones, pe_cliente1.marketing]
 
-                if (nuevosProyectos) {
-                    chartDimensiones1 = [valDimensiones1.producto, valDimensiones1.administracion, valDimensiones1.operaciones, valDimensiones1.marketing]
-                    if (nuevosProyectos == 1) {
-                        titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
-                        chartDimensiones1 = [valDimensiones1.experiencia_rubro, valDimensiones1.mentalidad, valDimensiones1.viabilidad_, valDimensiones1.estructura]
-                    }
-                }
+				// PERCEPCIÓN ESTADÍSTICA
+				if (pe_estadistica1) {
+					chartDimensiones2 = [pe_estadistica1.producto, pe_estadistica1.administracion, pe_estadistica1.operaciones, pe_estadistica1.marketing]
+				}
 
-                if (valDimensiones2) {
-                    chartDimensiones2 = [valDimensiones2.producto, valDimensiones2.administracion, valDimensiones2.operaciones, valDimensiones2.marketing]
-                }
+				if (nuevosProyectos == 1) {
+					titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
+					chartDimensiones1 = [pe_cliente1.experiencia_rubro, pe_cliente1.mentalidad, pe_cliente1.viabilidad_, pe_cliente1.estructura]
+				}
 
                 if ($('#chartEmpresaAdm2').length > 0) {
                     const chartEmpresaAdm2 = document.getElementById("chartEmpresaAdm2").getContext('2d')
@@ -750,14 +761,14 @@
                             defaultFontFamily: 'Oblivian',
                             labels: titulos,
                             datasets: [{
-                                label: "Puntaje",
+                                label: label1,
                                 backgroundColor: "#50368C",
                                 borderColor: "#50368C",
                                 data: chartDimensiones1,
                                 fill: false,
                             },
                             {
-                                label: "Último análisis",
+                                label: label2,
                                 fill: false,
                                 backgroundColor: "#FED061",
                                 borderColor: "#FED061",
