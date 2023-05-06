@@ -201,8 +201,99 @@
                 {{!-- Fin de Cuadros principales --}}
             </div>
 
-            {{!-- Grafíco de indicadores --}}
+            {{!-- NUEVO RENIDMIENTO y Últimos informes generados --}}
+            {{#if etapaCompleta.verAnalisis}}
+            <div class="col-xl-6 col-xxl-6">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Rendimiento de la Empresa</h4>
+                            </div>
+                            <div class="card-body">
+                                {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
+                                <div class="row mt-2">
+                                    {{#if jsonRendimiento}}
+                                    <input type="hidden" id="jsonRendimiento" value="{{jsonRendimiento}}">
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
+                                    </div>
+                                    <br>
+                                    <div class="card-body" style="margin-left: -50px;">
+                                        <div id="multi-line-chart" style="max-height: 26rem;" class="ct-chart ct-golden-section chartlist-chart"></div>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-top: -48px;">
+                                        <!-- BOTÓN PARA MODAL NUEVO RENDIMIENTO -->
+                                        <button type="button" class="btn color_gradient text-white" data-toggle="modal"
+                                            data-target="#modalNewRendimiento">Nuevo Rendimiento</button>
+                                    </div>
+                                    {{else}}
+                                    <div class="card-body px-0 d-flex justify-content-center align-items-center">
+                                        <div>
+                                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px; height: 60px; background-color: #f4f4f4;
+                                            padding-top: 14px; border-radius: 35px;"></i></center><br>
+                                            <label style="font-size:16px;color:#000;font-weight:500;margin-bottom: 20px;">Aún no hay información para mostrar</label>
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{else}}
             <div class="col-xl-6 col-xxl-12">
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Tareas recientes</h4>
+                            </div>
+                            <div class="card-body">
+                                <div class="table-responsive">
+                                    <table class="table table-responsive-md text-center">
+                                        <thead>
+                                            <tr>
+                                                <th>ENTREGA</th>
+                                                <th>NOMBRE</th>
+                                                <th>DIMENSIÓN</th>
+                                                <th>PRIORIDAD</th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            {{#if tareas}}
+                                            {{#each tareas}}
+                                            <tr>
+                                                <td>{{fecha_entrega}}</td>
+                                                <td>{{actividad}}</td>
+                                                <td>{{dimension}}</td>
+                                                <td>{{prioridad}}</td>
+                                            </tr>
+                                            {{/each}}
+                                            {{else}}
+                                            <tr>
+                                                <td colspan="5">Aún no hay tareas asignadas.</td>
+                                            </tr>
+                                            {{/if}}
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {{/if}}
+
+            {{!-- Grafíco de indicadores --}}
+            <div class="col-xl-12 col-xxl-12">
                 <div class="card">
                     <div class="card-header" style="margin: 0 auto; border-color: transparent">
                         <h4 class="card-title" id="titu-indicador">Indicadores</h4>
@@ -232,9 +323,7 @@
                                 <canvas id="chartEmpresa1"></canvas>
 
                                 <div class="row d-flex justify-content-center align-items-center mt-2">
-                                    <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
-                                    </div>
+                                    <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
                                 </div>
                             </div>
                             
@@ -251,11 +340,11 @@
                                 <canvas id="chartEmpresa2"></canvas>
 
                                 <div class="row d-flex justify-content-center align-items-center mt-4">
-                                    <div class="col-sm-4">
+                                    <div class="pl-2">
                                         <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
                                     </div>
                                     {{#if rendimiento.pe}}
-                                    <div class="col-sm-4">
+                                    <div class="pl-2">
                                         <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Percepción Estadística</span>
                                     </div>
                                     {{/if}}
@@ -296,22 +385,24 @@
                 {{/if}}
             </div>
 
+            {{#if etapaCompleta.verAnalisis}}
             {{!-- Últimas 2 tareas asignadas --}}
-            <div class="col-xl-6 col-xxl-6">
+            <div class="col-xl-12 col-xxl-12">
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Últimas tareas asignadas</h4>
+                                <h4 class="card-title">Tareas recientes</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
                                     <table class="table table-responsive-md text-center">
                                         <thead>
                                             <tr>
-                                                <th>FECHA</th>
+                                                <th>ENTREGA</th>
                                                 <th>NOMBRE</th>
                                                 <th>DIMENSIÓN</th>
+                                                <th>PRIORIDAD</th>
                                             </tr>
                                         </thead>
                                         <tbody>
@@ -321,6 +412,7 @@
                                                 <td>{{fecha_entrega}}</td>
                                                 <td>{{actividad}}</td>
                                                 <td>{{dimension}}</td>
+                                                <td>{{prioridad}}</td>
                                             </tr>
                                             {{/each}}
                                             {{else}}
@@ -336,56 +428,8 @@
                     </div>
                 </div>
             </div>
-
-            {{!-- NUEVO RENIDMIENTO y Últimos informes generados --}}
-            {{#if etapaCompleta.verAnalisis}}
-            <div class="col-xl-6 col-xxl-6">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">Rendimiento de la Empresa</h4>
-                            </div>
-                            <div class="card-body">
-                                {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
-                                <div class="row mt-2">
-                                    {{#if jsonRendimiento}}
-                                    <input type="hidden" id="jsonRendimiento" value="{{jsonRendimiento}}">
-                                    <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
-                                    </div>
-                                    <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
-                                    </div>
-                                    <br>
-                                    <div class="card-body" style="margin-left: -50px;">
-                                        <div id="multi-line-chart" class="ct-chart ct-golden-section chartlist-chart"></div>
-                                    </div>
-                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-top: -48px;">
-                                        <!-- BOTÓN PARA MODAL NUEVO RENDIMIENTO -->
-                                        <button type="button" class="btn color_gradient text-white" data-toggle="modal"
-                                            data-target="#modalNewRendimiento">Nuevo Rendimiento</button>
-                                    </div>
-                                    {{else}}
-                                    <div class="card-body px-0 d-flex justify-content-center align-items-center">
-                                        <div>
-                                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px; height: 60px; background-color: #f4f4f4;
-                                            padding-top: 14px; border-radius: 35px;"></i></center><br>
-                                            <label style="font-size:16px;color:#000;font-weight:500;margin-bottom: 20px;">Aún no hay información para mostrar</label>
-                                        </div>
-                                    </div>
-                                    {{/if}}
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
             {{/if}}
+
             <br>
         </div>
     </div>

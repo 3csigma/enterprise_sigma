@@ -47,10 +47,7 @@ empresaController.index = async (req, res) => {
      * diagEmpresa -> EMPRESA ESTABLECIDA
      * diagEmpresa2 -> EMPRESA NUEVA
     */
-    // INFORMES GENERADOS POR CHATGPT
-    const informesIA = await consultarDatos('informes_ia')
-
-    /**************************************************************************** */
+    
     // PORCENTAJE ETAPA 1
     let porcentaje = 100 / 4, porcentajeEtapa1 = 0;
     // porcentaje = Math.round(porcentaje)
@@ -80,6 +77,9 @@ empresaController.index = async (req, res) => {
         porcentajeEtapa1 = porcentaje * 3
     }
 
+    // INFORMES GENERADOS POR CHATGPT
+    const informesIA = await consultarDatos('informes_ia')
+
     // VERIFICACIÓN DE ETAPAS FINALIZADAS (Estapa 1)
     const informe1_IA = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Diagnóstico')
     if (informe1_IA) {
@@ -93,10 +93,11 @@ empresaController.index = async (req, res) => {
         if (diagEmpresa.length > 0) {
             etapaCompleta.verAnalisis = true;
             etapaCompleta.verEmpresarial = true;
-            // Empresa Nueva
+        // Empresa Nueva
         } else if (diagEmpresa2.length > 0) {
             etapaCompleta.verAnalisis = false;
-            etapaCompleta.verEmpresarial = true;
+            // etapaCompleta.verEmpresarial = true;
+            etapaCompleta.verEstrategico = true;
         }
     }
 
@@ -138,15 +139,16 @@ empresaController.index = async (req, res) => {
     tareasCompletadas = tareasCompletadas.length
     let verGraficasCircular = false;
     if (totalTareas > 0) {
-        porcentajeEtapa4 = ((tareasCompletadas / totalTareas) * 100) * 0.75
+        porcentajeEtapa4 = ((tareasCompletadas / totalTareas) * 100)
         porcentajeEtapa4 = Math.round(porcentajeEtapa4)
         verGraficasCircular = true;
     }
-    const informeEtapa4 = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Estratégico')
-    if (informeEtapa4) {
-        porcentajeEtapa4 = 100;
-        etapaCompleta.e4 = true;
-    }
+    if (porcentajeEtapa4 == 100) etapaCompleta.e4 = true;
+    // const informeEtapa4 = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Estratégico')
+    // if (informeEtapa4) {
+    //     porcentajeEtapa4 = 100;
+    //     etapaCompleta.e4 = true;
+    // }
 
     /**************************************
      * PORCENTAJE GENERAL DE LA EMPRESA
@@ -234,6 +236,11 @@ empresaController.index = async (req, res) => {
     tareas = tareas.filter(x => x.empresa == id_empresa)
     tareas.forEach(x => {
         x.fecha_entrega = new Date(x.fecha_entrega).toLocaleDateString('en-US')
+        if (x.prioridad == 0) x.prioridad = 'Sin especificar';
+        else if (x.prioridad == 1) x.prioridad = 'Baja';
+        else if (x.prioridad == 2) x.prioridad = 'Media';
+        else if (x.prioridad == 3) x.prioridad = 'Alta';
+        else if (x.prioridad == 4) x.prioridad = 'Crítica';
     })
 
     /************************************************************************************* */
@@ -991,24 +998,30 @@ empresaController.planEmpresarial = async (req, res) => {
 /** PLAN ESTRATÉGICO DE NEGOCIO - LISTADOD DE TAREAS + GRÁFICAS */
 empresaController.planEstrategico = async (req, res) => {
     let empresa = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
-    empresa = empresa[0].id_empresas
+    empresa = empresa.find(x => x.email == req.user.email)
     const fechaActual = new Date().toLocaleDateString('fr-CA');
     let subCancelada = false;
 
-    const dimObj = await tareasGenerales(empresa, fechaActual)
+    const dimObj = await tareasGenerales(empresa.id_empresas, fechaActual)
     const tareas = dimObj.tareas;
 
-    const informePlan = await consultarInformes(empresa, "Informe de plan estratégico")
+    if (tareas.completadas.cant == tareas.todas.length) {
+        req.session.etapaCompleta.e4 = true;
+    } else {
+        req.session.etapaCompleta.e4 = false;
+    }
+
+    const informePlan = await consultarInformes(empresa.id_empresas, "Informe de plan estratégico")
     let datosTabla = await consultarDatos('rendimiento_empresa')
-    datosTabla = datosTabla.filter(x => x.empresa == empresa)
+    datosTabla = datosTabla.filter(x => x.empresa == empresa.id_empresas)
     const jsonRendimiento = JSON.stringify(datosTabla)
 
     // PROPUESTA DE PLAN ESTRATÉGICO
     const botones = {}
     let propuesta = await consultarDatos('propuestas')
-    propuesta = propuesta.find(i => i.empresa == empresa && i.tipo_propuesta == 'Plan estratégico')
+    propuesta = propuesta.find(i => i.empresa == empresa.id_empresas && i.tipo_propuesta == 'Plan estratégico')
     let pagos = await consultarDatos('pagos')
-    pagos = pagos.find(i => i.id_empresa == empresa)
+    pagos = pagos.find(i => i.id_empresa == empresa.id_empresas)
     let tienePropuesta = false
     if (propuesta) {
         tienePropuesta = true
@@ -1064,7 +1077,7 @@ empresaController.planEstrategico = async (req, res) => {
     /************************************************************************************* */
     // ARCHIVOS CARGADOS
     let archivos = await consultarDatos('archivos_estrategico')
-    archivos = archivos.filter(i => i.empresa == empresa)
+    archivos = archivos.filter(i => i.empresa == empresa.id_empresas)
     if (archivos.length > 0) {
         archivos.forEach(x => {
             x.estado = 'Pendiente';
@@ -1085,13 +1098,13 @@ empresaController.planEstrategico = async (req, res) => {
     */
     const tutoriales = {};
     let registros = await consultarDatos('registro_tutoriales')
-    registros = registros.find(x => x.empresa == id_empresa)
+    registros = registros.find(x => x.empresa == empresa.id_empresas)
     if (registros) {
         if (registros.etapa4 == 1) {
             tutoriales.etapa = true;
         } else {
             const data = { etapa4: 1 }
-            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${id_empresa}`)
+            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${empresa.id_empresas}`)
         }
     }
 
@@ -1102,8 +1115,8 @@ empresaController.planEstrategico = async (req, res) => {
         itemEstrategico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta,
-        subCancelada, modalAcuerdo, portalClientes, archivos, empresa,
-        tutoriales
+        subCancelada, modalAcuerdo, portalClientes, archivos, empresa: JSON.stringify(empresa),
+        tutoriales, fechaActual
     })
 }
 

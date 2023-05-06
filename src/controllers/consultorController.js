@@ -547,16 +547,18 @@ consultorController.agregarTarea = async (req, res) => {
     const { actividad, fecha_inicio, fecha_entrega, dimension, empresa, nombreEmpresa, email } = req.body
     // nuevaTarea.fecha_inicio = new Date().toLocaleDateString("en-CA")
     if (dimension != undefined) {
-        /** Enviando Notificación al Email de nueva tarea */
-        const asunto = 'Se ha agregado una nueva tarea';
-        const template = tareaNuevaHTML(actividad, nombreEmpresa);
-        const resultEmail = await sendEmail(email, asunto, template);
-        if (resultEmail == false) {
-            console.log("\n<<<<< Ocurrio un error inesperado al enviar el email tarea nueva >>>> \n")
-        } else {
-            console.log("\n<<<<< Se ha notificado al email ("+email+") que se ha agregado una nueva tarea >>>>>\n")
+        if (req.user.rol != 'Empresa') {
+            /** Enviando Notificación al Email de nueva tarea */
+            const asunto = 'Se ha agregado una nueva tarea';
+            const template = tareaNuevaHTML(actividad, nombreEmpresa);
+            const resultEmail = await sendEmail(email, asunto, template);
+            if (resultEmail == false) {
+                console.log("\n<<<<< Ocurrio un error inesperado al enviar el email tarea nueva >>>> \n")
+            } else {
+                console.log("\n<<<<< Se ha notificado al email ("+email+") que se ha agregado una nueva tarea >>>>>\n")
+            }
+            /******************************************************* */
         }
-        /******************************************************* */
         const nuevaTarea = { actividad, fecha_inicio, fecha_entrega, dimension, empresa }
         const tarea = await insertarDatos('tareas_plan_estrategico', nuevaTarea)
         console.log("INFO TAREA DB >>> ", tarea)
@@ -603,15 +605,17 @@ consultorController.actualizarTarea = async (req, res) => {
     // Para Plan Estrategico
     else if (item == 2) {
         const actualizarTarea = { actividad, responsable, descripcion, fecha_inicio, fecha_entrega, dimension, estado, prioridad }
-        if (estado == 2) {
-            const email = req.body.email;
-            const asunto = 'Haz completado una tarea';
-            const template = tareaCompletadaHTML(actividad);
-            const resultEmail = await sendEmail(email, asunto, template)
-            if (resultEmail == false) {
-                console.log("\n<<<<< Ocurrio un error inesperado al enviar el email tarea completada >>>> \n")
-            } else {
-                console.log("\n<<<<< Se ha notificado la tarea completada al email de la empresa >>>>>\n")
+        if (req.user.rol != 'Empresa') {
+            if (estado == 2) {
+                const email = req.body.email;
+                const asunto = 'Haz completado una tarea';
+                const template = tareaCompletadaHTML(actividad);
+                const resultEmail = await sendEmail(email, asunto, template)
+                if (resultEmail == false) {
+                    console.log("\n<<<<< Ocurrio un error inesperado al enviar el email tarea completada >>>> \n")
+                } else {
+                    console.log("\n<<<<< Se ha notificado la tarea completada al email de la empresa >>>>>\n")
+                }
             }
         }
 

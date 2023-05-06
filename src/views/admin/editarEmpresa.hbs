@@ -635,8 +635,6 @@
                                 {{!-- {{#if pagoDg_Realizado}} --}}
 
                                 {{!-- TARJETA GRÁFICAS DE INDICADORES --}}
-                               
-
                                 <div class="card">
                                     <div class="card-header" style="margin: 0 auto; border-color: transparent">
                                         <h4 class="card-title" id="titu-indicador">Indicadores</h4>
@@ -800,8 +798,8 @@
                                                                         style="border-color: #FED061">
                                                                         <i class="fa fa-search"></i></a>
                                                                     <a href="/generar-informe/Diagnóstico" target="_blank"
-                                                                        class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                                                        <i class="fa fa-eye"></i>
+                                                                        class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                                        <i class="fa-regular fa-file-lines"></i>
                                                                     </a>
                                                                 </div>
                                                             </td>
@@ -821,8 +819,8 @@
                                                                     style="color: white;border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
                                                                     <a href="/generar-informe/Diagnóstico" target="_blank"
-                                                                    class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                                                    <i class="fa fa-eye"></i>
+                                                                    class="btn color_secondary shadow btn-xs sharp mr-1 text-white">
+                                                                    <i class="fa-regular fa-file-lines"></i>
                                                                     </a>
                                                                 </div>
                                                             </td>
@@ -1061,11 +1059,11 @@
                                                             <td>
                                                                 {{#if dimProducto}}
                                                                 <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
-                                                                    data-target="#modalDimProducto" style="border-color: #FED061">
+                                                                    data-target="#modalDimProducto">
                                                                     <i class="fa fa-search"></i></a>
                                                                 <a href="/generar-informe/dimensión_producto" target="_blank"
-                                                                    class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                                                    <i class="fa fa-eye"></i>
+                                                                    class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                                    <i class="fa-regular fa-file-lines"></i>
                                                                 </a>
                                                                 {{else}}
                                                                 {{#if botonesEtapas.dos}}
@@ -1096,8 +1094,8 @@
                                                                     data-target="#modalDimAdministracion" style="border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
                                                                 <a href="/generar-informe/dimensión_administración" target="_blank"
-                                                                    class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                                                    <i class="fa fa-eye"></i>
+                                                                    class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                                    <i class="fa-regular fa-file-lines"></i>
                                                                 </a>
                                                                 {{else}}
                                                                 {{#if botonesEtapas.dos}}
@@ -1128,8 +1126,8 @@
                                                                     data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
                                                                 <a href="/generar-informe/dimensión_operación" target="_blank"
-                                                                    class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                                                    <i class="fa fa-eye"></i>
+                                                                    class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                                    <i class="fa-regular fa-file-lines"></i>
                                                                 </a>
                                                                 {{else}}
                                                                 {{#if botonesEtapas.dos}}
@@ -1160,8 +1158,8 @@
                                                                     data-target="#modalDimMarketing" style="border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
                                                                 <a href="/generar-informe/dimensión_marketing" target="_blank"
-                                                                    class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
-                                                                    <i class="fa fa-eye"></i>
+                                                                    class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                                                                    <i class="fa-regular fa-file-lines"></i>
                                                                 </a>
                                                                 {{else}}
                                                                 {{#if botonesEtapas.dos}}
@@ -1457,11 +1455,11 @@
                             
                                             <div class="form-group col-md-6">
                                                 <label for="fecha_inicio-estrategico">Fecha de inicio *</label>
-                                                <duet-date-picker id="fecha_inicio-estrategico" min="{{fechaActual}}" first-day-of-week="0"></duet-date-picker>
+                                                <duet-date-picker id="fecha_inicio-estrategico" min="{{fechaActual}}" class="duet-fecha-us" first-day-of-week="0"></duet-date-picker>
                                             </div>
                                             <div class="form-group col-md-6">
                                                 <label for="fecha_entrega-estrategico">Fecha de entrega *</label>
-                                                <duet-date-picker id="fecha_entrega-estrategico" min="{{fechaActual}}" first-day-of-week="0"></duet-date-picker>
+                                                <duet-date-picker id="fecha_entrega-estrategico" min="{{fechaActual}}" class="duet-fecha-us" first-day-of-week="0"></duet-date-picker>
                                             </div>
                             
                                             <div class="col-md-3 mx-auto">

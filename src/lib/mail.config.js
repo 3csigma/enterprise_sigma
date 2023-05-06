@@ -4199,7 +4199,7 @@ const tareasRetrasadasHTML = (numTareas, empresa) => {
 <tr>
 <td class="pad">
 <div style="color:#101112;direction:ltr;font-family:'Helvetica Neue', Helvetica, Arial, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:200%;text-align:center;mso-line-height-alt:28px;">
-<p style="margin: 0;">Hay <strong>${numTareas}</strong> tarea(s) <strong>atrasada(s)</strong>, asegúrate de realizarlas para que tu empresa obtenga los mejores resultados, puedes pedirle más tiempo a tu consultor si lo necesitas</p>
+<p style="margin: 0;">Hay <strong>${numTareas}</strong> tarea(s) <strong>atrasada(s)</strong>, asegúrate de realizarlas para que tu empresa obtenga los mejores resultados, puedes aplazar la entrega de esta tarea si lo necesitas</p>
 </div>
 </td>
 </tr>

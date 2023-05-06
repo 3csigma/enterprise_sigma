@@ -144,7 +144,7 @@
             
             /*************************************************************************/    
             // CAMPO DATE PICKER (DUET LIBRARY)
-            const elementos = document.querySelectorAll("duet-date-picker")
+            const elementos = document.querySelectorAll(".duet-fecha-us")
             const DATE_FORMAT_US = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
             elementos.forEach(picker => {
                 picker.dateAdapter = {
@@ -175,6 +175,31 @@
                     monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
                     locale: "en-US",
                 }
+
+                picker.addEventListener('keydown', function(event) {
+                    event.preventDefault();
+                    if (picker.value == '') {
+                        picker.value = '';
+                        toastr.warning("Por favor escoge una fecha, haz clic en el calendario.", "Atención", {
+                            positionClass: "toast-top-full-width",
+                            timeOut: 3e3,
+                            closeButton: !0,
+                            debug: !1,
+                            newestOnTop: !0,
+                            progressBar: !0,
+                            preventDuplicates: !0,
+                            onclick: null,
+                            showDuration: "200",
+                            hideDuration: "200",
+                            extendedTimeOut: "200",
+                            showEasing: "swing",
+                            hideEasing: "linear",
+                            showMethod: "fadeIn",
+                            hideMethod: "fadeOut",
+                            tapToDismiss: !1
+                        })
+                    }
+                });
             })
 
             // Formateando Celdas con precios de propuestas para las etapas

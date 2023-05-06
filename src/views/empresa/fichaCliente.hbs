@@ -153,7 +153,8 @@
 								<div class="form-group col-md-6">
 									<duet-date-picker placeholder="Fecha de nacimiento" name="fecha_nacimiento"
 										id="fecha_nacimiento" min="1932-01-01" max="{{fechaMaxima}}"
-										value="{{ficha.fecha_nacimiento}}" class="required" required first-day-of-week="0"></duet-date-picker>
+										value="{{ficha.fecha_nacimiento}}" class="required" required first-day-of-week="0" readonly></duet-date-picker>
+									<small id="txtFecha_" class="text-red" style="display: none;">Por favor selecciona una fecha valida</small><br>
 								</div>
 
 								{{!-- CAMPO PAIS/NACIONALIDAD --}}
@@ -455,8 +456,7 @@
 	{{!-- SCRIPT MASCARAS PARA INPUT --}}
 	<script src="https://unpkg.com/imask"></script>
 
-	<script>
-
+<script>
 		//Capturando Campo Nombres para el paso Final
 		const nom1 = document.getElementById("nombres");
 		const nameFinal = document.getElementById("nameStepFinal");
@@ -470,11 +470,67 @@
 		console.log(tzLocal);
 		document.getElementById("fecha_zh").value = tzLocal;
 
-		// Formato de número USA (+1)
 		document.addEventListener("DOMContentLoaded", function () {
+			// Formato de número USA (+1)
 			IMask(document.getElementById('tel_Ficha'), {
 				mask: '(000) 000-0000'
 			});
+
+			// Separación para cifras en millares
+			IMask(document.getElementById('promedio_ingreso_anual'), {
+				mask: '$num',
+				blocks: {
+					num: {
+						// nested masks are available!
+						mask: Number,
+						thousandsSeparator: ' '
+					}
+				}
+			});
+
+			// Asignando Fecha de la base de datos
+			const txtFecha = $('#txtFecha_');
+			const fna = document.getElementById("fecha_nacimiento");
+			const DATE_FORMAT_US = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+			fna.dateAdapter = {
+				parse(value = "", createDate) {
+					const matches = value.match(DATE_FORMAT_US)
+
+					if (matches) { return createDate(matches[3], matches[1], matches[2]) }
+				},
+				format(date) { return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` },
+			}
+
+			fna.localization = {
+				placeholder: "Fecha de Nacimiento",
+				selectedDateMessage: "La fecha seleccionada es",
+				prevMonthLabel: "Mes anterior",
+				nextMonthLabel: "Mes siguiente",
+				monthSelectLabel: "Mes",
+				yearSelectLabel: "Año",
+				closeLabel: "Cerrar ventana",
+				calendarHeading: "Selecciona una fecha",
+				dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+				//dayNamesShort: ["DO", "LU", "MA", "MI", "JU", "VI", "SA"],
+				monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+				monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+				locale: "en-US",
+				inputEnabled: false,
+			}
+
+			fna.addEventListener('keydown', function(event) {
+				event.preventDefault();
+				if (fna.value == '') {
+					fna.value = '';
+					txtFecha.show();
+					setTimeout(function() {
+						txtFecha.hide();
+					}, 4000);
+				}
+			});
+
+			const fechaDB = document.getElementById("fechaDB").value;
+			//if (fechaDB) fna.value = fechaDB;
 		});
 
 		// Separación para cifras en millares
@@ -509,44 +565,5 @@
 				e.target.setSelectionRange(e.target.value.length - 1, e.target.value.length - 1);
 			}
 		});
-
-		// CAMPO DATE PICKER (DUET LIBRARY)
-		const picker = document.querySelector("duet-date-picker")
-		const DATE_FORMAT_US = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
-
-		picker.dateAdapter = {
-			parse(value = "", createDate) {
-				const matches = value.match(DATE_FORMAT_US)
-
-				if (matches) {
-					return createDate(matches[3], matches[1], matches[2])
-				}
-			},
-			format(date) {
-				return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}`
-			},
-		}
-
-		picker.localization = {
-			buttonLabel: "Fecha de Nacimiento",
-			placeholder: "Fecha de Nacimiento",
-			selectedDateMessage: "La fecha seleccionada es",
-			prevMonthLabel: "Mes anterior",
-			nextMonthLabel: "Mes siguiente",
-			monthSelectLabel: "Mes",
-			yearSelectLabel: "Año",
-			closeLabel: "Cerrar ventana",
-			calendarHeading: "Selecciona una fecha",
-			dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-			//dayNamesShort: ["DO", "LU", "MA", "MI", "JU", "VI", "SA"],
-			monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-			monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
-			locale: "en-US",
-		}
-
-		// Asignando Fecha de la base de datos
-		const fna = document.getElementById("fecha_nacimiento");
-		const fechaDB = document.getElementById("fechaDB").value;
-		fna.value = fechaDB
 
 	</script>

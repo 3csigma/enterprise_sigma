@@ -1,3 +1,15 @@
+<style>
+.ct-chart .ct-series.ct-series-a .ct-bar{
+    stroke: #fed061 ;
+}
+.ct-chart .ct-series.ct-series-b .ct-bar{
+    stroke: #50368c ;
+    
+}
+.ct-chart .ct-series.ct-series-c .ct-bar{
+    stroke: #812082 ;
+}
+</style>
 <!--**********************************
                     Content body start
 ***********************************-->
@@ -8,7 +20,7 @@
                 <div class="card avtivity-card"
                     style="background: transparent !important;border: none !important; box-shadow: none !important">
                     <div class="card-body">
-                        <h2 style="color: #000; font-weight: bold;">Planifiquemos tus estrategías</h2>
+                        <h2 style="color: #000; font-weight: bold;">Planifiquemos las tareas para el desarrollo de tu empresa</h2>
                         <p style="text-align: justify;margin-top: 2em;color: #000">A continuación puedes crear un
                             listado de tareas que te servirán para mejorar tu empresa, a través de las dimensiones:</p>
                         <p style="color: #000; font-weight: bold;">
@@ -24,26 +36,46 @@
             <div class="col-md-12 col-xl-5 col-xxl-5">
                 {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
                 {{#if etapaCompleta.verAnalisis}}
-                <div class="card avtivity-card">
-                    <div class="card-body">
-                        <h2 style="color: #000; font-weight: bold;margin-bottom: 21px;">Rendimiento</h2>
-                        <input type="hidden" id="jsonRendimiento" value="{{jsonRendimiento}}">
-                        <div class="row">
-                            <div class="col-sm-4">
-                                <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
+                <div class="row">
+                    <div class="col-xl-12">
+                        <div class="card">
+                            <div class="card-header">
+                                <h4 class="card-title">Rendimiento de la Empresa</h4>
                             </div>
-                            <div class="col-sm-4">
-                                <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
+                            <div class="card-body">
+                                {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
+                                <div class="row mt-2">
+                                    {{#if jsonRendimiento}}
+                                    <input type="hidden" id="jsonRendimiento" value="{{jsonRendimiento}}">
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
+                                    </div>
+                                    <div class="col-sm-4">
+                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
+                                    </div>
+                                    <br>
+                                    <div class="card-body" style="margin-left: -50px;">
+                                        <div id="multi-line-chart" class="ct-chart ct-golden-section chartlist-chart"></div>
+                                    </div>
+                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-top: -48px;">
+                                        <!-- BOTÓN PARA MODAL NUEVO RENDIMIENTO -->
+                                        <button type="button" class="btn color_gradient text-white" data-toggle="modal"
+                                            data-target="#modalNewRendimiento">Nuevo Rendimiento</button>
+                                    </div>
+                                    {{else}}
+                                    <div class="card-body px-0 d-flex justify-content-center align-items-center">
+                                        <div>
+                                            <center><i class="far fa-clipboard" style="font-size: 30px; width: 60px; height: 60px; background-color: #f4f4f4;
+                                            padding-top: 14px; border-radius: 35px;"></i></center><br>
+                                            <label style="font-size:16px;color:#000;font-weight:500;margin-bottom: 20px;">Aún no hay información para mostrar</label>
+                                        </div>
+                                    </div>
+                                    {{/if}}
+                                </div>
                             </div>
-                            <div class="col-sm-4">
-                                <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
-                            </div>
-                        </div>
-                        <br>
-                        <br>
-                        {{!-- <div id="line_chart_ventas" class="morris_chart_height"></div> --}}
-                        <div style="margin-left: -31px;">
-                            <div id="multi-line-chart" class="ct-chart ct-golden-section chartlist-chart"></div>
                         </div>
                     </div>
                 </div>
@@ -51,11 +83,12 @@
             </div>
         </div>
         {{!-- Fin de la 1era fila --}}
-        {{#if tienePropuesta}}
+
         <div class="row">
             
-            {{!-- TARJETAS LADO DERECHO - CARGA DE ARCHIVOS --}}
-            <input type="hidden" id="idEmpresa" value="{{empresa}}">
+            {{!-- CARGA DE ARCHIVOS --}}
+            <input type="hidden" id="dataEmpresa" value="{{empresa}}">
+            <!--
             <div class="col-xl-5 col-xxl-12">
                 {{#if archivos}}
                 <div class="row">
@@ -121,21 +154,69 @@
                 </div>
                 {{/if}}
             </div>
-            {{!-- FIN COLUMNAS - IZQUIERDA DERECHA --}}
+            -->
+            {{!-- FIN CARGA DE ARCHIVOS --}}
+            
+            {{!-- AGREGAR TAREAS --}}
+            <div class="col-xl-12 mt-2">
+                <div class="card">
+                    <div class="card-body">
+                        <div class="card-header">
+                            <h4 class="card-title" style="margin:0 auto">Nueva Tarea</h4>
+                        </div>
+                
+                        <div class="row mt-3">
+                            <div class="form-group col-md-6">
+                                <label for="actividad-estrategico">Título de actividad a realizar *</label>
+                                <input type="text" class="form-control" id="actividad-estrategico" maxlength="47"
+                                    placeholder="Escriba un título..">
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="dimension">Dimensión *</label><br>
+                                <select id="dimension" class="mr-sm-2 default-select text-center w-100" tabindex="-98" required>
+                                    <option value="">Escoja una dimensión...</option>
+                                    <option value="Producto">Producto</option>
+                                    <option value="Administración">Administración</option>
+                                    <option value="Operaciones">Operaciones</option>
+                                    <option value="Marketing">Marketing</option>
+                                </select>
+                            </div>
+                
+                            <div class="form-group col-md-6">
+                                <label for="fecha_inicio-estrategico">Fecha de inicio *</label>
+                                <duet-date-picker id="fecha_inicio-estrategico" class="duet-fecha-us" min="{{fechaActual}}"
+                                    first-day-of-week="0"></duet-date-picker>
+                            </div>
+                            <div class="form-group col-md-6">
+                                <label for="fecha_entrega-estrategico">Fecha de entrega *</label>
+                                <duet-date-picker id="fecha_entrega-estrategico" class="duet-fecha-us" min="{{fechaActual}}"
+                                    first-day-of-week="0"></duet-date-picker>
+                            </div>
+                
+                            <div class="col-md-3 mx-auto">
+                                <button onclick="agregarTarea()" class="btn color_gradient text-white"
+                                    style="margin-top: 1em; width: 100%; padding: 10px 15px;">
+                                    <p class="font-w500 m-auto">Agregar</p>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
 
             {{!-- TAREAS ASIGNADAS --}}
             <div class="col-xl-12 mt-2">
                 <div class="card plan-list">
                     <div class="card-header d-sm-flex flex-wrap d-block pb-0 border-0">
                         <div class="mr-auto pr-3 mb-3">
-                            <h4 class="text-black fs-20">Tareas asignadas</h4>
+                            <h4 class="text-black fs-20">Lista de Tareas</h4>
                             <p class="fs-13 mb-0 text-black">Haz clic en una tarea para verla</p>
                         </div>
                         <div class="card-action card-tabs mr-4 mt-3 mt-sm-0 mb-3">
                             <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
                                     <a class="nav-link tabs-Task active" data-toggle="tab" href="#Pendientes"
-                                        role="tab" aria-selected="true">Pendientes ({{tareas.pendientes.cant}})</a>
+                                        role="tab" aria-selected="true">Pendientes (<span id="cant-tab1">{{tareas.pendientes.cant}}</span>)</a>
                                 </li>
                                 <li class="nav-item">
                                     <a class="nav-link tabs-Task" data-toggle="tab" href="#EnProceso"
@@ -145,10 +226,6 @@
                                     <a class="nav-link tabs-Task" data-toggle="tab" href="#Completadas"
                                         role="tab">Completadas ({{tareas.completadas.cant}})</a>
                                 </li>
-                                {{!-- <li class="nav-item">
-                                    <a class="nav-link tabs-Task" data-toggle="tab" href="#Todas" role="tab"
-                                        aria-selected="false">Todas</a>
-                                </li> --}}
                             </ul>
                         </div>
 
@@ -160,32 +237,42 @@
                             {{#if tareas.pendientes}}
                             {{#each tareas.pendientes}}
                             <div class="d-flex border-bottom flex-wrap pt-3 list-row align-items-center mb-2">
+
                                 <div class="col-xl-5 col-xxl-6 col-lg-6 col-sm-8 d-flex align-items-center">
                                     <div class="list-icon bgl-primary mr-3 mb-3">
                                         <p class="fs-24 text-secondary mb-0 mt-2">{{dia}}</p>
                                         <span class="fs-14 text-secondary">{{mes}}</span>
                                     </div>
                                     <div class="info mb-3">
-                                        <h4 onclick="mostrarTarea({{id}})" class="fs-20"><span
+                                        <h4 onclick="editarTarea({{id}})" class="fs-20"><span
                                                 class="text-black">{{actividad}}</span></h4>
-                                        <span class="text-{{color}} font-w600">{{estado}}</span>
+                                        <span class="text-{{color}} font-w600 pr-2">{{estado}}</span>
                                         {{!-- TIEMPO --}}
                                         <span class="badge light color_gradient text-white"
                                             style="padding: 4px 14px; padding-left: 7px;">
                                             <i class="fa-regular fa-clock pr-2"></i> {{tiempo}}</span>
                                         {{!-- PRIORIDAD  --}}
-                                        <span>Prioridad: {{prioridad}}</span>
+                                        <span class="pl-2">Prioridad: {{prioridad}}</span>
                                     </div>
                                 </div>
-                                <div
-                                    class="col-xl-3 col-xxl-4 col-lg-3 col-sm-5 activities mb-3 mr-auto pl-3 pr-3 text-sm-center">
+
+                                <div class="col-xl-3 col-xxl-4 col-lg-3 col-sm-5 activities mb-3 mr-auto pl-3 pr-3 text-sm-center">
                                     <i class="fa-solid {{icono}}"></i>
                                     <span class="text-gray ml-2">{{dimension}}</span>
                                 </div>
-                                <div class="col-xl-4 col-xxl-2 col-lg-3 col-sm-12 d-flex align-items-center">
-                                    <a onclick="mostrarTarea({{id}})" class="btn mb-3 play-button rounded mr-3">
-                                        <i class="fa-regular fa-eye"></i> Ver Detalles
+                                
+                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex" style="flex-direction: row;justify-content: flex-end;">
+                                    <a onclick="editarTarea({{id}})" title="Editar"
+                                        class="btn color_gradient shadow btn-xs sharp mr-1 text-white rounded mr-3"><i class="fa fa-pencil"></i>
                                     </a>
+                                    <a onclick="eliminarTarea({{id}}, 2)" title="Eliminar" class="btn btn-danger shadow btn-xs sharp text-white rounded mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12px" viewBox="0 0 448 512">
+                                            <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" fill="white" />
+                                        </svg>
+                                    </a>
+                                    {{!-- <a onclick="mostrarTarea({{id}})" class="btn mb-3 play-button rounded mr-3">
+                                        <i class="fa-regular fa-eye"></i> Ver Detalles
+                                    </a> --}}
                                 </div>
                             </div>
                             {{/each}}
@@ -209,15 +296,15 @@
                                         <span class="fs-14 text-secondary">{{mes}}</span>
                                     </div>
                                     <div class="info mb-3">
-                                        <h4 onclick="mostrarTarea({{id}})" class="fs-20"><span
+                                        <h4 onclick="editarTarea({{id}})" class="fs-20"><span
                                                 class="text-black">{{actividad}}</span></h4>
-                                        <span class="text-{{color}} font-w600">{{estado}}</span>
+                                        <span class="text-{{color}} font-w600 pr-2">{{estado}}</span>
                                         {{!-- TIEMPO --}}
                                         <span class="badge light badge-success color_gradient text-white"
                                             style="padding: 4px 14px; padding-left: 7px;"><i
                                                 class="fa-regular fa-clock pr-2"></i> {{tiempo}}</span>
                                         {{!-- PRIORIDAD  --}}
-                                        <span>Prioridad: {{prioridad}}</span>
+                                        <span class="pl-2">Prioridad: {{prioridad}}</span>
                                     </div>
                                 </div>
                                 <div
@@ -225,9 +312,14 @@
                                     <i class="fa-solid {{icono}}"></i>
                                     <span class="text-gray ml-2">{{dimension}}</span>
                                 </div>
-                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex align-items-center">
-                                    <a onclick="mostrarTarea({{id}})" class="btn mb-3 play-button rounded mr-3">
-                                        <i class="fa-regular fa-eye"></i> Ver Detalles
+                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex" style="flex-direction: row;justify-content: flex-end;">
+                                    <a onclick="editarTarea({{id}})" title="Editar"
+                                        class="btn color_gradient shadow btn-xs sharp mr-1 text-white rounded mr-3"><i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a onclick="eliminarTarea({{id}}, 2)" title="Eliminar" class="btn btn-danger shadow btn-xs sharp text-white rounded mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12px" viewBox="0 0 448 512">
+                                            <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" fill="white" />
+                                        </svg>
                                     </a>
                                 </div>
                             </div>
@@ -252,7 +344,7 @@
                                         <span class="fs-14 text-secondary">{{mes}}</span>
                                     </div>
                                     <div class="info mb-3">
-                                        <h4 onclick="mostrarTarea({{id}})" class="fs-20"><span
+                                        <h4 onclick="editarTarea({{id}})" class="fs-20"><span
                                                 class="text-black">{{actividad}}</span></h4>
                                         <span class="text-{{color}} font-w600">{{estado}}</span>
                                     </div>
@@ -262,9 +354,14 @@
                                     <i class="fa-solid {{icono}}"></i>
                                     <span class="text-gray ml-2">{{dimension}}</span>
                                 </div>
-                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex align-items-center">
-                                    <a onclick="mostrarTarea({{id}})" class="btn mb-3 play-button rounded mr-3">
-                                        <i class="fa-regular fa-eye"></i> Ver Detalles
+                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex" style="flex-direction: row;justify-content: flex-end;">
+                                    <a onclick="editarTarea({{id}})" title="Editar"
+                                        class="btn color_gradient shadow btn-xs sharp mr-1 text-white rounded mr-3"><i class="fa fa-pencil"></i>
+                                    </a>
+                                    <a onclick="eliminarTarea({{id}}, 2)" title="Eliminar" class="btn btn-danger shadow btn-xs sharp text-white rounded mr-3">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="12px" viewBox="0 0 448 512">
+                                            <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" fill="white" />
+                                        </svg>
                                     </a>
                                 </div>
                             </div>
@@ -280,6 +377,7 @@
                         </div>
 
                         {{!-- TODAS LAS TAREAS --}}
+                        <!--
                         <div class="tab-pane fade" id="Todas">
                             {{#each tareas.todas}}
                             <div class="d-flex border-bottom flex-wrap pt-3 list-row align-items-center mb-2">
@@ -315,16 +413,20 @@
                             </div>
                             {{/each}}
                         </div>
+                        -->
                     </div>
 
                 </div>
             </div>
 
         </div>
-        {{/if}}
 
     </div>
 </div>
+
+{{#if jsonRendimiento}}
+{{> modals/nuevoRendimiento}}
+{{/if}}
 
 {{> general/mostrarTarea}}
 {{> general/sidebarTareas}}
@@ -343,17 +445,13 @@
             const screenWidth = $(window).width();
                 
             const setChartWidth = function(){
-                
-                if(screenWidth <= 768)
-                {
+                if (screenWidth <= 768) {
                     const chartBlockWidth = 0;
-                    if(screenWidth >= 500)
-                    {
+                    if (screenWidth >= 500) {
                         chartBlockWidth = 250;
                     }else{
                         chartBlockWidth = 300;
                     }
-                    
                     jQuery('.chartlist-chart').css('min-width',chartBlockWidth - 31);
                 }
             }
@@ -398,28 +496,30 @@
                     },
                     
                     load:function(){
-                        
                         /** Gráfica de Rendimiento para Empresas */
                         let matriz = new Array(), fechas = [];
-                        let dataEmpresa = document.querySelector('#jsonRendimiento').value
-                        dataEmpresa = JSON.parse(dataEmpresa)
-                        if (dataEmpresa.length > 0) {
-                            for(let i=0;i<dataEmpresa.length; i++){
-                                matriz[i] = new Array();
-                                fechas.push(dataEmpresa[i].fecha)
-                                for(let j=0;j<3; j++){
-                                    if(j == 0){
-                                        matriz[i][j] = dataEmpresa[i].total_ventas                                    
-                                    }  else if(j == 1){
-                                        matriz[i][j] = dataEmpresa[i].total_compras                                    
-                                    }else if(j == 2){
-                                        matriz[i][j] = dataEmpresa[i].total_gastos    
+                        let dataEmpresa = document.querySelector('#jsonRendimiento')
+                        if (dataEmpresa) {
+                            dataEmpresa = document.querySelector('#jsonRendimiento').value
+                            dataEmpresa = JSON.parse(dataEmpresa)
+                            if (dataEmpresa.length > 0) {
+                                for(let i=0;i<dataEmpresa.length; i++){
+                                    matriz[i] = new Array();
+                                    fechas.push(dataEmpresa[i].fecha)
+                                    for(let j=0;j<3; j++){
+                                        if(j == 0){
+                                            matriz[i][j] = dataEmpresa[i].total_ventas                                    
+                                        }  else if(j == 1){
+                                            matriz[i][j] = dataEmpresa[i].total_compras                                    
+                                        }else if(j == 2){
+                                            matriz[i][j] = dataEmpresa[i].total_gastos    
+                                        }
                                     }
                                 }
+                                // TRANPONER MATRIZ (Ej: de 3 COLUMNAS a 2)
+                                let arrayT = matriz[0].map((_, colIndex) => matriz.map(x => x[colIndex]));
+                                multiLineChart(fechas, arrayT) 
                             }
-                        // TRANPONER MATRIZ (Ej: de 3 COLUMNAS a 2)
-                        let arrayT = matriz[0].map((_, colIndex) => matriz.map(x => x[colIndex]));
-                        multiLineChart(fechas, arrayT) 
                         }
                     }
                 }
@@ -461,6 +561,8 @@
                 $('#txtDimension2').css('display', 'none')
                 $('#estado-sidebar2').css('display', 'none')
             })
+        
+            
         });
             
         jQuery(window).on('load',function(){
@@ -471,4 +573,354 @@
         });     
 
     })(jQuery);
+
+    // => FUNCIONES PARA LAS TAREAS DE PLAN ESTRATÉGICO
+    function addTaskToList(id, actividad, fecha_entrega, dimension) {
+        const dateObj = new Date(fecha_entrega);
+        const dia = dateObj.getDate()
+        let mes = dateObj.toLocaleString("es-US", { month: "short" });
+        mes = mes.replace(/(^\w{1})|(\s+\w{1})/g, letra => letra.toUpperCase());
+        let icono = ''
+        if (dimension == 'Producto') icono = 'fa-box';
+        else if (dimension == 'Administración') icono = 'fa-user-tie';
+        else if (dimension == 'Operaciones') icono = 'fa-gear';
+        else icono = 'fa-bullhorn';
+        return `
+        <div class="d-flex border-bottom flex-wrap pt-3 list-row align-items-center mb-2">
+            <div class="col-xl-5 col-xxl-8 col-lg-6 col-sm-8 d-flex align-items-center">
+                <div class="list-icon bgl-primary mr-3 mb-3">
+                    <p class="fs-24 text-secondary mb-0 mt-2">${dia}</p>
+                    <span class="fs-14 text-secondary">${mes}</span>
+                </div>
+                <div class="info mb-3">
+                    <h4 onclick="mostrarTarea(${id})" class="fs-20"><span
+                            class="text-black">${actividad}</span></h4>
+                    <span class="text-primary font-w600 pr-2">Pendiente</span>
+                    <span class="badge light badge-success color_gradient text-white"
+                        style="padding: 4px 14px; padding-left: 7px;"><i
+                            class="fa-regular fa-clock pr-2"></i> A tiempo</span>
+                    <span class="pl-2">Prioridad: Sin especificar</span>
+                </div>
+            </div>
+            <div
+                class="col-xl-3 col-xxl-5 col-lg-3 col-sm-5 activities mb-3 mr-auto pl-3 pr-3 text-sm-center">
+                <i class="fa-solid ${icono}"></i>
+                <span class="text-gray ml-2">${dimension}</span>
+            </div>
+            <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex" style="flex-direction: row;justify-content: flex-end;">
+                <a onclick="editarTarea(${id})" title="Editar"
+                    class="btn color_gradient shadow btn-xs sharp mr-3 text-white"><i class="fa fa-pencil"></i>
+                </a>
+                <a onclick="eliminarTarea(${id})" title="Eliminar" 
+                    class="btn btn-danger shadow btn-xs sharp mr-3 text-white"><svg xmlns="http://www.w3.org/2000/svg" width="12px" viewBox="0 0 448 512">
+                    <path d="M135.2 17.7C140.6 6.8 151.7 0 163.8 0H284.2c12.1 0 23.2 6.8 28.6 17.7L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64S14.3 32 32 32h96l7.2-14.3zM32 128H416V448c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64V128zm96 64c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16zm96 0c-8.8 0-16 7.2-16 16V432c0 8.8 7.2 16 16 16s16-7.2 16-16V208c0-8.8-7.2-16-16-16z" fill="white" />
+                    </svg>
+                </a>
+            </div>
+        </div>
+        `
+    }
+
+    function agregarTarea() {
+        const actividad = $("#actividad-estrategico").val();
+        const fecha_inicio = $("#fecha_inicio-estrategico").val();
+        const fecha_entrega = $("#fecha_entrega-estrategico").val();
+        const dimension = $("#dimension").val()
+
+        const fechaini = new Date(fecha_inicio).getTime();
+        const fechafin = new Date(fecha_entrega).getTime();
+
+        if(fechaini > fechafin){
+            toastr.warning("La fecha de finalización no puede ser inferior a la fecha de inicio", "Atención", {
+                positionClass: "toast-top-full-width",
+                timeOut: 3e3,
+                closeButton: !0,
+                debug: !1,
+                newestOnTop: !0,
+                progressBar: !0,
+                preventDuplicates: !0,
+                onclick: null,
+                showDuration: "200",
+                hideDuration: "200",
+                extendedTimeOut: "200",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut",
+                tapToDismiss: !1
+            })
+        } else if (actividad == '' || fecha_inicio == '' || fecha_entrega == '' || dimension == '') {
+            toastr.warning("Hay campos vacíos", "Atención", {
+                positionClass: "toast-top-full-width",
+                timeOut: 3e3,
+                closeButton: !0,
+                debug: !1,
+                newestOnTop: !0,
+                progressBar: !0,
+                preventDuplicates: !0,
+                onclick: null,
+                showDuration: "200",
+                hideDuration: "200",
+                extendedTimeOut: "200",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut",
+                tapToDismiss: !1
+            })
+        } else {
+            // Activar Sidebar
+            $('#sidebarEstrategico').addClass('active');
+            $('#cuerpoGeneral').css('overflow-y', 'hidden');
+            $("#tiempoTxt-sidebar2").text("A tiempo")
+            $("#comentario2").val("");
+
+            // Fuera del Sidebar
+            $('#actividad-estrategico').val(''); 
+            $('#fecha_inicio-estrategico').val('');
+            $('#fecha_entrega-estrategico').val(''); 
+            $('#dimension').val('');
+
+            // Enviar info a la base de datos
+            let e = $("#dataEmpresa").val();
+            e = JSON.parse(e)
+            const empresa = e.id_empresas;
+            const nombreEmpresa = e.nombre_empresa;
+            const email = e.email;
+            const data = JSON.stringify({ actividad, fecha_inicio, fecha_entrega, dimension, empresa, nombreEmpresa, email })
+
+            fetch('/agregarTarea', {
+                method: 'POST',
+                body: data,
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(error => console.error('Error Agregar Tarea: ', error))
+            .then(response => {
+                if (response) {
+                    const idTarea = response.insertId
+                    const itemTaskList = addTaskToList(idTarea, actividad, fecha_entrega, dimension)
+                    $('#Pendientes').prepend(itemTaskList);
+                    let newQty = $('#cant-tab1')
+                    newQty.text(parseInt(newQty.text())+1)
+                    console.log(newQty)
+                    $('#estado2').val(0)
+                    $('#prioridad2').val(0)
+                    $('#idTarea-sidebar2').val(idTarea)
+                    $('#actividad-sidebar2').val(actividad)
+                    $('#dimension-sidebar2').val(dimension)
+                    $('#fechaIni-sidebar2').val(fecha_inicio)
+                    $('#fechaFin-sidebar2').val(fecha_entrega)
+                    $('#responsable-sidebar2').val('')
+                } else {
+                    toastr.warning("Hubo una inconsistencia al agregar la tarea.", "Error", {
+                        positionClass: "toast-top-full-width",
+                        timeOut: 3e3,
+                        closeButton: !0,
+                        debug: !1,
+                        newestOnTop: !0,
+                        progressBar: !0,
+                        preventDuplicates: !0,
+                        onclick: null,
+                        showDuration: "200",
+                        hideDuration: "200",
+                        extendedTimeOut: "200",
+                        showEasing: "swing",
+                        hideEasing: "linear",
+                        showMethod: "fadeIn",
+                        hideMethod: "fadeOut",
+                        tapToDismiss: !1
+                    })
+
+                    setTimeout(function() {
+                        location.reload();
+                    }, 5000);
+                }
+            });
+        }
+    }
+
+    function editarTarea(idTarea){
+        const listaComentarios = document.querySelector('#listaComentarios2')
+        listaComentarios.innerHTML = ''
+        $("#comentario2").val("");
+        const tiempo = $('#tiempo-sidebar2')
+        tiempo.css('display', 'none')
+        $('#sidebarEstrategico').addClass('active');
+        $('#cuerpoGeneral').css('overflow-y', 'hidden');
+        fetch('/editarTarea', {
+            method: 'POST',
+            body: JSON.stringify({idTarea, item:2}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(error => console.error('Error Editar Tarea: ', error))
+        .then(r => {
+            $('#idEmpresa').val(r.empresa)
+            $('#idTarea-sidebar2').val(idTarea)
+            $('#actividad-sidebar2').val(r.actividad)
+            $('#responsable-sidebar2').val(r.responsable)
+            $('#descripcion-sidebar2').val(r.descripcion)
+            $('#fechaIni-sidebar2').val(r.fecha_inicio)
+            $('#fechaFin-sidebar2').val(r.fecha_entrega)
+            $('#dimension-sidebar2').val(r.dimension)
+            $('#estado2').val(r.estado)
+            $('#prioridad2').val(r.prioridad)
+
+            const comentarios = JSON.parse(r.mensajes)
+            if (comentarios) {
+                $('#divComentarios2').css('display', 'inline-block')
+                comentarios.forEach(x => {
+                    listaComentarios.innerHTML += `
+                        <li>
+                            <div class="timeline-badge primary"></div>
+                            <a class="timeline-panel text-muted">
+                                <span class="fechaMensajes">${x.fecha}</span>
+                                <h6 class="mb-0 txtSidebar">${x.mensaje}<br>
+                                    <span class="txtYellow">${x.nombres} ${x.apellidos} - ${x.rol}</span>
+                                </h6>
+                            </a>
+                        </li>
+                    `
+                })
+            } else {
+                $('#divComentarios2').css('display', 'none')
+            }
+
+            if (r.estado == 0 || r.estado == 1) {
+                tiempo.css('display', 'inline-table')
+                const fechaActual = new Date().toLocaleDateString('fr-CA')
+                $('#tiempoTxt-sidebar2').text('A tiempo')
+                if (fechaActual > r.fecha_entrega){
+                    $('#tiempoTxt-sidebar2').text('Retrasada')
+                }
+            }
+        })
+    }
+
+    function actualizarTarea() {
+        const empresa = $("#idEmpresa").val();
+        const email = $("#emailEmpresa").text();
+        const listaComentarios = document.querySelector('#listaComentarios2')
+        listaComentarios.innerHTML = ''
+        $('#divComentarios2').css('display', 'none')
+        const idTarea = $("#idTarea-sidebar2").val();
+        const actividad = $("#actividad-sidebar2").val();
+        const responsable = $("#responsable-sidebar2").val();
+        const descripcion = $("#descripcion-sidebar2").val();
+        let fecha_inicio = $("#fechaIni-sidebar2").val();
+        let fecha_entrega = $("#fechaFin-sidebar2").val();
+        const dimension = $("#dimension-sidebar2").val();
+        const prioridad = $("#prioridad2").val();
+        const estado = $("#estado2").val();
+        let fechaini, fechafin
+
+        fechaini = new Date(fecha_inicio);
+        fechaini = fechaini.getTime();
+        fechaini = (((fechaini / 1000) / 60) / 60) / 24
+        fechafin = new Date(fecha_entrega);
+        fechafin = fechafin.getTime();
+        fechafin = (((fechafin / 1000) / 60) / 60) / 24
+
+        if(fechaini > fechafin){
+            toastr.warning("La fecha de finalización no puede ser inferior a la fecha de inicio", "Atención", {
+                positionClass: "toast-top-full-width",
+                timeOut: 3e3,
+                closeButton: !0,
+                debug: !1,
+                newestOnTop: !0,
+                progressBar: !0,
+                preventDuplicates: !0,
+                onclick: null,
+                showDuration: "200",
+                hideDuration: "200",
+                extendedTimeOut: "200",
+                showEasing: "swing",
+                hideEasing: "linear",
+                showMethod: "fadeIn",
+                hideMethod: "fadeOut",
+                tapToDismiss: !1
+            })
+        } else {
+            const data = JSON.stringify({ idTarea, empresa, actividad, responsable, descripcion, fecha_inicio, fecha_entrega, dimension, estado, email, prioridad, item:2 })
+            fetch('/actualizarTarea', {
+                method: 'POST',
+                body: data,
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(error => console.error('Error Actualizar Tarea: ', error))
+            .then(response => {
+                location.hash = '#plan-estrategico';
+                location.reload(true)
+            })
+        }
+    }
+
+    /*************************************************************************/
+    function eliminarTarea(idTarea, item) {
+        Swal.fire({
+            title: '¿Deseas eliminar la tarea?',
+            text: "Esta acción no es reversible.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: '¡Sí, eliminar!'
+        }).then((result) => {
+            if (result.isConfirmed) {
+                fetch('/eliminarTarea', {
+                    method: 'POST',
+                    body: JSON.stringify({idTarea, item}),
+                    headers: {'Content-Type': 'application/json'}
+                }).then(res => res.json())
+                .catch(error => console.error('Error Eliminar Tarea: ', error))
+                .then(response => {
+                    item == 1 ? location.hash = '#plan-empresarial' : location.hash = '#plan-estrategico';
+                    location.reload(true)
+                })
+            }
+        })
+    }
+
+    /*************************************************************************/
+    // => Función para el envio de los comentarios a la base de datos
+    function addComentario(item = 2) {
+        const comentario = $("#comentario2").val();
+        const idTarea = parseInt($("#idTarea-sidebar2").val())
+        const listaComentarios = document.getElementById('listaComentarios2')
+        $('#divComentarios2').css('display', 'inline-block')
+        const btnComentario = document.getElementById('btnComentario2')
+
+        let e = $("#dataEmpresa").val();
+        e = JSON.parse(e)
+        const empresa = e.nombres +' '+ e.apellidos
+        const fecha = new Date().toLocaleDateString("en-US")
+
+        listaComentarios.innerHTML += `
+            <li class="animate__animated animate__fadeInUp">
+                <div class="timeline-badge primary"></div>
+                <a class="timeline-panel text-muted">
+                    <span class="fechaMensajes">${fecha}</span>
+                    <h6 class="mb-0 txtSidebar">${comentario}<br>
+                        <span class="txtYellow">${empresa} - Empresa</span>
+                    </h6>
+                </a>
+            </li> 
+        `
+
+        fetch('/comentarioTareas', {
+            method: 'POST',
+            body: JSON.stringify({comentario, idTarea, fecha, item}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(res => res.json())
+        .catch(error => console.error('Error:', error))
+        .then(response => {
+            if (response){
+                document.getElementById("comentario"+item).value = "";
+            } else {
+                const msg = "Ocurrió un error inesperado al agregar el mensaje por favor recargue la página e intente nuevamente. Si el error persiste contactar a soporte."
+                console.log("\n"+msg+"\n");
+                document.getElementById("comentario"+item).value = msg;
+            }
+        });
+    }
 </script>
