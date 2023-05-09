@@ -32,5 +32,6 @@ router.post('/guardar-archivos-estrategico', checkLogin, uploadFiles('Plan-estra
 
 // Informes Autogenerados
 router.get('/generar-informe/:tipo', checkLogin, empresaController.informeAutoGenerado)
+router.post('/informe-estrategico', checkLogin, empresaController.informeEstrategico)
 
 module.exports = router

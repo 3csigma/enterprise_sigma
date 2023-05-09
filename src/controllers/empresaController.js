@@ -646,8 +646,6 @@ empresaController.analisis = async (req, res) => {
     let analisis_empresa = await consultarDatos('analisis_empresa')
     analisis_empresa = analisis_empresa.find(a => a.id_empresa == id_empresa)
     if (analisis_empresa) {
-
-
         // DIMENSIÓN PRODUCTO
         if (analisis_empresa.producto) {
             const a = JSON.parse(analisis_empresa.producto)
@@ -997,10 +995,9 @@ empresaController.planEmpresarial = async (req, res) => {
 
 /** PLAN ESTRATÉGICO DE NEGOCIO - LISTADOD DE TAREAS + GRÁFICAS */
 empresaController.planEstrategico = async (req, res) => {
-    let empresa = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
+    let empresa = await consultarDatos('empresas')
     empresa = empresa.find(x => x.email == req.user.email)
     const fechaActual = new Date().toLocaleDateString('fr-CA');
-    let subCancelada = false;
 
     const dimObj = await tareasGenerales(empresa.id_empresas, fechaActual)
     const tareas = dimObj.tareas;
@@ -1011,68 +1008,9 @@ empresaController.planEstrategico = async (req, res) => {
         req.session.etapaCompleta.e4 = false;
     }
 
-    const informePlan = await consultarInformes(empresa.id_empresas, "Informe de plan estratégico")
     let datosTabla = await consultarDatos('rendimiento_empresa')
     datosTabla = datosTabla.filter(x => x.empresa == empresa.id_empresas)
     const jsonRendimiento = JSON.stringify(datosTabla)
-
-    // PROPUESTA DE PLAN ESTRATÉGICO
-    const botones = {}
-    let propuesta = await consultarDatos('propuestas')
-    propuesta = propuesta.find(i => i.empresa == empresa.id_empresas && i.tipo_propuesta == 'Plan estratégico')
-    let pagos = await consultarDatos('pagos')
-    pagos = pagos.find(i => i.id_empresa == empresa.id_empresas)
-    let tienePropuesta = false
-    if (propuesta) {
-        tienePropuesta = true
-        botones.pagar = true;
-        botones.editSub = false;
-        propuesta.color = 'warning';
-        propuesta.texto = 'Pendiente';
-        propuesta.pagada = false;
-        const objEstrategico = JSON.parse(pagos.estrategico)
-
-        /** VALIDANDO ESTADO DE LA SUBSCRIPCIÓN - POR SI RENUEVA O NO LA SUB */
-        let id_sub = null;
-        let subscription = null;
-        if (objEstrategico.subscription) {
-            id_sub = objEstrategico.subscription;
-            subscription = await stripe.subscriptions.retrieve(id_sub);
-            if (subscription.cancel_at != null) {
-                propuesta.fechaCancelacion = new Date(subscription.cancel_at*1000).toLocaleDateString('en-US');
-            } else {
-                propuesta.fechaCancelacion = false;
-            }
-            console.log("\n>>> DATA SUBSCRIPTION: ", subscription)
-            console.log('\n*******************\n');
-            if (subscription.status == 'active' && !subscription.cancel_at_period_end && subscription.cancel_at != null) {
-                propuesta.color = 'success';
-                propuesta.texto = 'Activa';
-                botones.pagar = false;
-                botones.editSub = true;
-                propuesta.pagada = true;
-            } else if (subscription.status == 'active' && subscription.cancel_at_period_end && subscription.cancel_at != null) {
-                propuesta.color = 'secondary';
-                propuesta.texto = 'Pendiente por cancelar';
-                botones.pagar = false;
-                botones.editSub = true;
-                propuesta.pagada = true;
-            } else if (subscription.status == 'active' && !subscription.cancel_at_period_end && subscription.cancel_at == null) {
-                propuesta.color = 'info';
-                propuesta.texto = 'Pendiente por renovar';
-                botones.pagar = false;
-                botones.editSub = true;
-                propuesta.pagada = true;
-            } else {
-                propuesta.color = 'danger';
-                propuesta.texto = 'Cancelada';
-                botones.pagar = false;
-                botones.editSub = false;
-                subCancelada = true;
-            }
-        }
-        
-    }
 
     /************************************************************************************* */
     // ARCHIVOS CARGADOS
@@ -1108,15 +1046,25 @@ empresaController.planEstrategico = async (req, res) => {
         }
     }
 
+    /************************************************************************************* */
+    /**
+     * CONSULTAR Y/O GENERAR INFORME POR CHATGPT
+    */
+    let verInforme = false;
+    let informeIA = await consultarDatos('informes_ia')
+    informeIA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Estratégico')
+    if (informeIA) {
+        verInforme = true;
+    }
+
     res.render('empresa/planEstrategico', {
-        user_dash: true, actualYear: req.actualYear, botones,
-        tareas, informePlan, propuesta,
-        dimObj, jsonRendimiento, tienePropuesta,
+        user_dash: true, actualYear: req.actualYear,
+        tareas, dimObj, jsonRendimiento,
         itemEstrategico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta,
-        subCancelada, modalAcuerdo, portalClientes, archivos, empresa: JSON.stringify(empresa),
-        tutoriales, fechaActual
+        modalAcuerdo, archivos, empresa: JSON.stringify(empresa),
+        tutoriales, fechaActual, verInforme
     })
 }
 
@@ -1126,7 +1074,7 @@ empresaController.planEstrategico = async (req, res) => {
 */
 empresaController.informeAutoGenerado = async (req, res) => {
     const { tipo } = req.params;
-    let tituloInforme = tipo, tipoInforme = 'negocio';
+    let tituloInforme = tipo + ' de', tipoInforme = 'negocio';
     let tipoDB = tipo;
     if (tipo == 'dimensión_producto') {
         tituloInforme = 'dimensión';
@@ -1144,6 +1092,9 @@ empresaController.informeAutoGenerado = async (req, res) => {
         tituloInforme = 'dimensión';
         tipoInforme = 'marketing'
         tipoDB = 'Análisis marketing'
+    } else if (tipo == 'estratégico') {
+        tituloInforme = 'Plan Estratégico de'
+        tipoDB = 'Estratégico'
     }
 
     let codigo = req.user.codigo;
@@ -1158,4 +1109,43 @@ empresaController.informeAutoGenerado = async (req, res) => {
     data = data.find(x => x.empresa == empresa.id_empresas && x.tipo == tipoDB)
     const textoGPT = data.informe
     res.render('pages/informeAutoGenerado', { empresa: empresa.nombre_empresa, tituloInforme, tipoInforme, textoGPT })
+}
+
+empresaController.informeEstrategico = async (req, res) => {
+    let empresa = await consultarDatos('empresas')
+    empresa = empresa.find(x => x.email == req.user.email)
+    /**
+     * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+    */
+    const informeIA = await consultarDatos('informes_ia')
+    let informe1_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Diagnóstico')
+    if (informe1_IA) informe1_IA = informe1_IA.informe;
+    let obj_respuestas = { 'Diagnóstico de Negocio': { informe1_IA } }
+    
+    if (req.session.etapaCompleta.verAnalisis) {
+        let informe2_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis producto')
+        if (informe2_IA) informe2_IA = informe2_IA.informe;
+        let informe3_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis administración')
+        if (informe3_IA) informe3_IA = informe3_IA.informe;
+        let informe4_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis operación')
+        if (informe4_IA) informe4_IA = informe4_IA.informe;
+        let informe5_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis marketing')
+        if (informe5_IA) informe5_IA = informe5_IA.informe;
+        obj_respuestas['Análisis de Negocio - Dimensión Producto'] = { informe2_IA };
+        obj_respuestas['Análisis de Negocio - Dimensión Administración'] = { informe3_IA };
+        obj_respuestas['Análisis de Negocio - Dimensión Operación'] = { informe4_IA };
+        obj_respuestas['Análisis de Negocio - Dimensión Marketing'] = { informe5_IA };
+    }
+
+    const prompt = (JSON.stringify(obj_respuestas)+" Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas.")
+    console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT INFORME ESTRATÉGICO ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+    let resultAI = await getResponseChatGPT(prompt)
+    const resp = resultAI.content.replaceAll('\n', '<br>');
+    const informeAI = { empresa: empresa.id_empresas, tipo: 'Estratégico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
+    const insertResult = await insertarDatos('informes_ia', informeAI)
+    if (insertResult.affectedRows > 0) {
+        res.send(true)
+    } else {
+        res.send(false)
+    }
 }

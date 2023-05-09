@@ -9,7 +9,30 @@
 .ct-chart .ct-series.ct-series-c .ct-bar{
     stroke: #812082 ;
 }
+#preloader_3CSigma {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  bottom: 0;
+  background-color: #fff;
+  background-color: rgba(255, 255, 255, 0.6);
+  z-index: 999999;
+  display: none;
+}
+.img-gif-loader {
+  position: absolute;
+  top: 30%;
+  left: 50%;
+  margin-left: -25px;
+  margin-top: -10px;
+}
 </style>
+<div id="preloader_3CSigma">
+    <img src="/img/Preloader_Informe_3C_Sigma_Enterprise.gif" class="img-gif-loader" alt="Loading...">
+</div>
 <!--**********************************
                     Content body start
 ***********************************-->
@@ -21,6 +44,14 @@
                     style="background: transparent !important;border: none !important; box-shadow: none !important">
                     <div class="card-body">
                         <h2 style="color: #000; font-weight: bold;">Planifiquemos las tareas para el desarrollo de tu empresa</h2>
+                        <div class="col-md-3 mx-auto">
+                            {{#if verInforme}}
+                            <a href="/generar-informe/estratégico" target="_blank"
+                                class="btn color_gradient text-white" style="margin-top: 1em; width: 100%; padding: 10px 15px;">
+                                <p class="font-w500 m-auto">Ver Informe</p>
+                            </a>
+                            {{/if}}
+                        </div>
                         <p style="text-align: justify;margin-top: 2em;color: #000">A continuación puedes crear un
                             listado de tareas que te servirán para mejorar tu empresa, a través de las dimensiones:</p>
                         <p style="color: #000; font-weight: bold;">
@@ -526,6 +557,42 @@
         }();
 
         jQuery(document).ready(function(){
+            {{#unless verInforme}}
+            console.log("Mostrando preloader")
+            $('#preloader_3CSigma').show()
+            fetch('/informe-estrategico', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+            .catch(error => console.error('Error:', error))
+            .then(response => {
+                if (response){
+                    setTimeout(function() {
+                        location.reload();
+                    }, 5000);
+                } else {
+                    console.log("Hubo un error inesperado al cargar la página.")
+                    toastr.warning("Hubo un error inesperado al cargar la página.", "Error", {
+                        positionClass: "toast-top-full-width",
+                        timeOut: 3e3,
+                        closeButton: !0,
+                        debug: !1,
+                        newestOnTop: !0,
+                        progressBar: !0,
+                        preventDuplicates: !0,
+                        onclick: null,
+                        showDuration: "200",
+                        hideDuration: "200",
+                        extendedTimeOut: "200",
+                        showEasing: "swing",
+                        hideEasing: "linear",
+                        showMethod: "fadeIn",
+                        hideMethod: "fadeOut",
+                        tapToDismiss: !1
+                    })
+                }
+            });
+            {{/unless}}
             {{#unless tutoriales.etapa}}
             //POPUP CON TUTORIAL
             Swal.fire({
