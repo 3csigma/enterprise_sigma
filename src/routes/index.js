@@ -8,7 +8,7 @@ const csrfProtection = csrf({ cookie: true })
 const multer = require('multer');
 const path = require('path');
 const cron = require('node-cron');
-const { habilitar_siguientePago, historial_consultores_admin, historial_empresas_admin, historial_informes_admin, historial_informes_consultor, historial_empresas_consultor, consultar_tiempo_tareas, uploadFiles } = require('../lib/helpers')
+const { habilitar_siguientePago, historial_consultores_admin, historial_empresas_admin, historial_informes_admin, historial_informes_consultor, historial_empresas_consultor, consultar_tiempo_tareas, uploadFiles, habilitar_sgteDiagnostico } = require('../lib/helpers')
 
 /** SUBIR CERTIFICADOS CONSULTORES */
 const rutaAlmacen = multer.diskStorage({
@@ -109,9 +109,11 @@ cron.schedule('0 1 1 * *',() => {
     historial_informes_admin();
     historial_empresas_consultor();
     historial_informes_consultor();
+    habilitar_sgteDiagnostico();
 });
 
 router.post('/historial_empresas_admin', historial_empresas_admin)
+router.post('/habilitardiagnostico', habilitar_sgteDiagnostico)
 
 // Ejecución Semanal
 cron.schedule('0 10 * * Mon',() => {

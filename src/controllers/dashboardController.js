@@ -696,15 +696,22 @@ dashboardController.editarEmpresa = async (req, res) => {
     }
 
     // Percepción Estadística
-    let pe_dimensiones1 = await consultarDatos('percepcion_estadistica', 'ORDER BY id ASC')
+    let pe_areasVitales1 = await consultarDatos('percepcion_estadistica_areas', 'ORDER BY id ASC')
+    pe_areasVitales1 = pe_areasVitales1.find(x => x.empresa == idEmpresa)
+    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica_dimensiones', 'ORDER BY id DESC')
+    // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
+    if (pe_areasVitales1) {
+        rendimiento.pe1 = true;
+        jsonIndicadores.pe_Areas1 = pe_areasVitales1
+        nuevosProyectos = 0;
+    }
+    let pe_dimensiones1 = await consultarDatos('percepcion_estadistica_dimensiones', 'ORDER BY id ASC')
     pe_dimensiones1 = pe_dimensiones1.find(x => x.empresa == idEmpresa)
-    console.log("PE DIMENSIONES");
-    console.log(pe_dimensiones1);
-    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica', 'ORDER BY id DESC')
+    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica_dimensiones', 'ORDER BY id DESC')
     // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
     if (pe_dimensiones1) {
-        rendimiento.pe = true;
-        jsonIndicadores.pe1 = pe_dimensiones1
+        rendimiento.pe2 = true;
+        jsonIndicadores.pe_Dimensiones1 = pe_dimensiones1
         // jsonIndicadores.pe2 = pe_dimensiones2
         nuevosProyectos = 0;
     }
@@ -1428,7 +1435,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     for (let key in objPE1) {
         pe_producto += objPE1[key];
     }
-    console.log(`\nPRODUCTO PE => ${pe_producto}`);
+    // console.log(`\nPRODUCTO PE => ${pe_producto}`);
 
     /**
      * ADMINISTRACIÓN
@@ -1462,7 +1469,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
         pe_administracion += objPE2[key];
     }
     pe_administracion = (pe_administracion/3).toFixed(2)
-    console.log(`ADMINISTRACIÓN PE => ${pe_administracion}`);
+    // console.log(`ADMINISTRACIÓN PE => ${pe_administracion}`);
 
     /**
      * OPERACIONES
@@ -1506,7 +1513,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
         pe_operaciones += objPE3[key];
     }
     pe_operaciones = (pe_operaciones/4).toFixed(2)
-    console.log(`OPERACIONES PE => ${pe_operaciones}`);
+    // console.log(`OPERACIONES PE => ${pe_operaciones}`);
 
     /**
      * MARKETING 
@@ -1532,7 +1539,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
         pe_marketing += objPE4[key];
     }
     pe_marketing = (pe_marketing/2).toFixed(2)
-    console.log(`MARKETING PE => ${pe_marketing} \n`);
+    // console.log(`MARKETING PE => ${pe_marketing} \n`);
 
     /************************************************************************************************* */
 
@@ -1547,10 +1554,36 @@ dashboardController.enviarCuestionario = async (req, res) => {
         total_compras = total_compras.replace(/[,]/g, '.');
         total_gastos = total_gastos.replace(/[$ ]/g, '');
         total_gastos = total_gastos.replace(/[,]/g, '.');
-        const utilidad = parseFloat(total_ventas) - parseFloat(total_compras) - parseFloat(total_gastos)
+
+        total_ventas = parseFloat(total_ventas);
+        total_compras = parseFloat(total_compras);
+        total_gastos = parseFloat(total_gastos);
+
+        const utilidad = total_ventas - total_compras - total_gastos // Utilidad = Ingresos - Costos Totales
+
         const nuevoRendimiento = {
             empresa: id_empresa, total_ventas, total_compras, total_gastos, utilidad, fecha: new Date().toLocaleDateString("en-US")
         }
+
+        let rendimientos = await consultarDatos('rendimiento_empresa')
+        rendimientos = rendimientos.filter(x => x.empresa == id_empresa)
+
+        if (rendimientos.length >= 1) {
+            let r = rendimientos;
+            const ventas1 = parseFloat(r[0].total_ventas)
+            const utilidad1 = parseFloat(r[0].utilidad)
+            nuevoRendimiento.porcentaje_ventas = ((total_ventas - ventas1)/ventas1)*100
+            nuevoRendimiento.porcentaje_utilidad = ((utilidad - utilidad1)/utilidad1)*100
+            if (rendimientos.length == 2) {
+                const ventas2 = parseFloat(r[1].total_ventas)
+                const utilidad2 = parseFloat(r[1].utilidad)
+                nuevoRendimiento.porcentaje_ventas = ((total_ventas - ventas2)/ventas2)*100
+                nuevoRendimiento.porcentaje_utilidad = ((utilidad - utilidad2)/utilidad2)*100
+            }
+            nuevoRendimiento.porcentaje_ventas = (nuevoRendimiento.porcentaje_ventas).toFixed(2)
+            nuevoRendimiento.porcentaje_utilidad = (nuevoRendimiento.porcentaje_utilidad).toFixed(2)
+        }
+        
         const rendimiento = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
         
         /************************************************************************************************* */
@@ -1577,12 +1610,32 @@ dashboardController.enviarCuestionario = async (req, res) => {
             marketing: (parseInt(calificacion_marketing) + parseInt(calificacion_ventas)) / 2
         }
         
-        const datos_pe = { empresa: id_empresa, producto: pe_producto, administracion: pe_administracion, operaciones: pe_operaciones, marketing: pe_marketing }
+        const datos_pe_areas = { 
+            empresa: id_empresa, 
+            producto: pe_producto,
+            administracion: objPE2.temp1,
+            talento_humano: objPE2.temp2,
+            finanzas: objPE2.temp3,
+            servicio_cliente: objPE3.temp1,
+            operaciones: objPE3.temp2,
+            ambiente_laboral: objPE3.temp3,
+            innovacion: objPE3.temp4,
+            marketing: objPE4.temp1,
+            ventas: objPE4.temp2,
+        }
+        const datos_pe_dimensiones = { 
+            empresa: id_empresa, 
+            producto: pe_producto,
+            administracion: pe_administracion,
+            operaciones: pe_operaciones,
+            marketing: pe_marketing
+        }
 
         const aVitales = await insertarDatos('indicadores_areasvitales', areasVitales)
         const aDimensiones = await insertarDatos('indicadores_dimensiones', areasDimensiones)
-        const percepcion_estadistica = await insertarDatos('percepcion_estadistica', datos_pe)
-        if ((aVitales.affectedRows > 0) && (aDimensiones.affectedRows > 0) && (rendimiento.affectedRows > 0) && (percepcion_estadistica.affectedRows > 0)) {
+        const pe_areas = await insertarDatos('percepcion_estadistica_areas', datos_pe_areas)
+        const pe_dimensiones = await insertarDatos('percepcion_estadistica_dimensiones', datos_pe_dimensiones)
+        if ((aVitales.affectedRows > 0) && (aDimensiones.affectedRows > 0) && (rendimiento.affectedRows > 0) && (pe_areas.affectedRows > 0) && (pe_dimensiones.affectedRows > 0) ) {
             console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n")
             /**
              * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 

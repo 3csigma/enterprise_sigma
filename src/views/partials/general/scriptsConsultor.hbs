@@ -648,11 +648,17 @@
             
             const chartAreasVitales = (indicadores, nuevosProyectos) => {
                 let dataAreasVitales1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+				let dataPE1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 let dataAreasVitales2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
-				let label1 = 'Valor'
 				
                 const areasVitales = indicadores.areasVitales1
                 dataAreasVitales1 = [areasVitales.producto, areasVitales.administracion, areasVitales.talento_humano, areasVitales.finanzas, areasVitales.servicio_cliente, areasVitales.operaciones, areasVitales.ambiente_laboral, areasVitales.innovacion, areasVitales.marketing, areasVitales.ventas]
+
+				// PERCEPCIÓN ESTADÍSTICA
+				if (indicadores.pe_Areas1) {
+					const pe_Areas1 = indicadores.pe_Areas1
+					dataPE1 = [pe_Areas1.producto, pe_Areas1.administracion, pe_Areas1.talento_humano, pe_Areas1.finanzas, pe_Areas1.servicio_cliente, pe_Areas1.operaciones, pe_Areas1.ambiente_laboral, pe_Areas1.innovacion, pe_Areas1.marketing, pe_Areas1.ventas]
+				}
 
                 /*
 				const areasVitales2 = indicadores.areasVitales2
@@ -684,15 +690,14 @@
                                     data: dataAreasVitales1,
                                     fill: false,
                                 },
-                                /*
-                                {
-                                    label: "Último análisis",
-                                    fill: false,
-                                    backgroundColor: "#FED061",
-                                    borderColor: "#FED061",
-                                    data: dataAreasVitales2,
-                                }
-                                */
+                                // PERCEPCIÓN ESTADÍSTICA
+								{
+									label: "Valor",
+									fill: false,
+									backgroundColor: "#FED061",
+									borderColor: "#FED061",
+									data: dataPE1,
+								}
                             ]
                         },
                         options: {
@@ -731,24 +736,22 @@
             }
 
             const chartPorDimensiones = (indicadores, nuevosProyectos) => {
-               let chartDimensiones1 = [0, 0, 0, 0]
-                let chartDimensiones2 = [0, 0, 0, 0]
+                let chartPE_cliente = [0, 0, 0, 0]
+                let chartPE_estadistica = [0, 0, 0, 0]
                 let titulos = ["Producto", "Administración", "Operaciones", "Marketing"];
-				let label1 = 'Valor', label2 = 'Valor'
 
                 const pe_cliente1 = indicadores.dimensiones1
-                const pe_estadistica1 = indicadores.pe1;
-				
-				chartDimensiones1 = [pe_cliente1.producto, pe_cliente1.administracion, pe_cliente1.operaciones, pe_cliente1.marketing]
+				chartPE_cliente = [pe_cliente1.producto, pe_cliente1.administracion, pe_cliente1.operaciones, pe_cliente1.marketing]
 
 				// PERCEPCIÓN ESTADÍSTICA
-				if (pe_estadistica1) {
-					chartDimensiones2 = [pe_estadistica1.producto, pe_estadistica1.administracion, pe_estadistica1.operaciones, pe_estadistica1.marketing]
+				if (indicadores.pe_Dimensiones1) {
+					const pe_estadistica1 = indicadores.pe_Dimensiones1
+					chartPE_estadistica = [pe_estadistica1.producto, pe_estadistica1.administracion, pe_estadistica1.operaciones, pe_estadistica1.marketing]
 				}
 
 				if (nuevosProyectos == 1) {
 					titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
-					chartDimensiones1 = [pe_cliente1.experiencia_rubro, pe_cliente1.mentalidad, pe_cliente1.viabilidad_, pe_cliente1.estructura]
+					chartPE_cliente = [pe_cliente1.experiencia_rubro, pe_cliente1.mentalidad, pe_cliente1.viabilidad_, pe_cliente1.estructura]
 				}
 
                 if ($('#chartEmpresaAdm2').length > 0) {
@@ -764,7 +767,7 @@
                                 label: label1,
                                 backgroundColor: "#50368C",
                                 borderColor: "#50368C",
-                                data: chartDimensiones1,
+                                data: chartPE_cliente,
                                 fill: false,
                             },
                             {
@@ -772,7 +775,7 @@
                                 fill: false,
                                 backgroundColor: "#FED061",
                                 borderColor: "#FED061",
-                                data: chartDimensiones2,
+                                data: chartPE_estadistica,
                             }]
                         },
                         options: {

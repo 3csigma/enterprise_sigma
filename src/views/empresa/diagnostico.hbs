@@ -53,7 +53,7 @@
                       </tr>
     
                       <!-- CUESTIONARIO EMPRESA ESTABLECIDA o NUEVA -->
-                      {{#if cuestionario.diagnostico}}
+                      {{#if cuestionario.diagnostico.ver}}
                       <tr>
                         <td>{{#if cuestionario.diagnostico.fecha}}{{cuestionario.diagnostico.fecha}}{{else}}N/A{{/if}}</td>
                         <td>Cuestionario diagnóstico</td>
@@ -86,6 +86,41 @@
                         </td>
                       </tr>
                       {{/if}}
+
+                      {{#if cuestionario.diagnostico2.ver}}
+                      <tr>
+                        <td>{{#if cuestionario.diagnostico2.fecha}}{{cuestionario.diagnostico2.fecha}}{{else}}N/A{{/if}}</td>
+                        <td>2° Cuestionario diagnóstico</td>
+                        <td><span
+                            class="badge light {{cuestionario.diagnostico2.color}}">{{cuestionario.diagnostico2.texto}}</span>
+                        </td>
+                        <td>
+                          {{#if cuestionario.diagnostico2.btnEdit}}
+                          {{#if cuestionario.operacion2.btnDisabled}}
+                            <a class="btn color_gradient shadow btn-xs sharp mr-1 text-white"
+                            style="filter: grayscale(1);">
+                            <i class="fa fa-pencil"></i></a>
+                            {{else}}
+                            <a href="{{cuestionario.diagnostico2.link}}"
+                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white" style="border-color: #812082;">
+                              <i class="fa fa-pencil"></i></a>
+                            {{/if}}
+                          {{else}}
+                          <div class="d-flex justify-content-center align-items-center">
+                            <button type="button" data-toggle="modal" data-target="{{cuestionario.diagnostico2.modal}}"
+                              class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
+                              <i class="fa fa-search"></i>
+                            </button>
+                            <a href="/generar-informe/Diagnóstico_2" target="_blank"
+                              class="btn color_tertiary shadow btn-xs sharp mr-1 text-white">
+                              <i class="fa-regular fa-file-lines"></i>
+                            </a>
+                          </div>
+                          {{/if}}
+                        </td>
+                      </tr>
+                      {{/if}}
+
                     </tbody>
                   </table>
                 </div>
@@ -102,8 +137,15 @@
 <!-- MODAL RESPUESTAS DEL CUESTIONARIO DIAGNÓSTICO -->
 {{#if cuestionario.nuevo}}
 {{> modals/nuevosProyectos}}
-{{else}}
+{{/if}}
+{{#if cuestionario.establecido}}
 {{> modals/cuestionario}}
+{{/if}}
+{{#if cuestionario.nuevo2}}
+{{> modals/nuevosProyectos2}}
+{{/if}}
+{{#if cuestionario.establecido2}}
+{{> modals/cuestionario2}}
 {{/if}}
 
 <!--**********************************

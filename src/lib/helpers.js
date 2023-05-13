@@ -92,9 +92,7 @@ capturarMes = () => {
     f.setMonth(mesAnterior - 1);
     let txtMes = f.toLocaleDateString("es", { month: "short" })
     let mes = txtMes.charAt(0).toUpperCase() + txtMes.slice(1);
-
     return {mes, mesAnterior}
-
 }
 
 // ACTUALIZACIÓN AUTOMATICA DE PAGOS PARA ANÁLISIS DE NEGOCIO Y PLAN EMPRESARIAL
@@ -279,7 +277,7 @@ helpers.habilitar_siguientePago = async () => {
     console.log("\n***************\nEJECUCIÓN CRON JOB FINALIZADA - PAGOS (ANÁLISIS & EMPRESARIAL) \n***************\n");
 }
 
-// ===>>> INSERTAR DATOS A LA TABLA HISTORIAL CONSULTORES ADMIN
+// INSERTAR DATOS A LA TABLA HISTORIAL CONSULTORES ADMIN
 helpers.historial_consultores_admin = async () => {
     const consultores = await helpers.consultarDatos('consultores')
 
@@ -320,7 +318,7 @@ helpers.historial_consultores_admin = async () => {
     console.log("CRON JOB HISTORIAL DE CONSULTORES ADMIN FINALIZADO...");
 };
 
-// ===>>> INSERTAR DATOS A LA TABLA HISTORIAL EMPRESAS ADMIN
+// INSERTAR DATOS A LA TABLA HISTORIAL EMPRESAS ADMIN
 helpers.historial_empresas_admin = async () => {
     const empresas = await helpers.consultarDatos('empresas')
     /** Proceso de Captura de Mes Actual & Anterior respecto a la Fecha */
@@ -359,7 +357,7 @@ helpers.historial_empresas_admin = async () => {
     console.log("CRON JOB HISTORIAL DE EMPRESAS ADMIN FINALIZADO...");
 };
 
-// ===>>> INSERTAR DATOS A LA TABLA HISTORIAL INFORMES ADMIN
+// INSERTAR DATOS A LA TABLA HISTORIAL INFORMES ADMIN
 helpers.historial_informes_admin = async () => {
 
     const informes = await helpers.consultarDatos('informes')
@@ -399,12 +397,12 @@ helpers.historial_informes_admin = async () => {
     console.log("CRON JOB HISTORIAL INFORMES ADMIN FINALIZADO..")
 };
 
-// ===>>> INSERTAR DATOS A LA TABLA HISTORIAL EMPRESAS CONSULTOR
+// INSERTAR DATOS A LA TABLA HISTORIAL EMPRESAS CONSULTOR
 helpers.historial_empresas_consultor = async () => {
     const empresas = await helpers.consultarDatos("empresas")
     const consultores = await helpers.consultarDatos("consultores")
 
-      /** Proceso de Captura de Mes Actual & Anterior respecto a la Fecha */
+    /** Proceso de Captura de Mes Actual & Anterior respecto a la Fecha */
     let fecha = new Date().toLocaleDateString("en-CA");
     const year = new Date().getFullYear();
     
@@ -441,7 +439,58 @@ helpers.historial_empresas_consultor = async () => {
     console.log("HISTORIAL DE EMPRESAS CONSULTOR FINALIZADO...");
 };
 
-/**************************************************************
+// HABILITAR SIGUIENTE DIAGNÓSTICO DE NEGOCIO (FECHA 2)
+helpers.habilitar_sgteDiagnostico = async () => {
+    const empresas = await pool.query('SELECT e.*, f.tipo_empresa FROM empresas e JOIN ficha_cliente f ON e.id_empresas = f.id_empresa')
+    const fechaActual = new Date().toLocaleDateString("en-US")
+    let fechaDB = '';
+    console.log("FECHA ACTUAL PARA COMPARAR: " + fechaActual);
+    if (empresas.length > 0) {
+        empresas.forEach(async e => {
+            if (e.diagnostico_fecha2 == 0) {
+                // EMPRESA NUEVA
+                if (e.tipo_empresa == 1) {
+                    const diagnostico = await helpers.consultarDatos('dg_empresa_nueva')
+                    const data = diagnostico.find(x => x.id_empresa == e.id_empresas)
+                    if (data) {
+                        fechaDB = new Date(data.fecha)
+                        fechaDB.setMonth(fechaDB.getMonth()+6)
+                        fechaDB = fechaDB.toLocaleDateString("en-US")
+                        console.log("fechaDB EMPRESA NUEVA >> ",fechaDB)
+                        // if (fechaActual == fechaDB) {
+                        //     const fecha2 = { diagnostico_fecha2: 1 }
+                        //     await helpers.actualizarDatos('empresa', fecha2, `WHERE empresa = ${e.id_empresas}`)
+                        //     console.log("LA FECHA DB COINCIDE CON LA ACTUAL PARA HABILITAR EL SIGUIENTE DIAGNÓSTICO EMPRESAS NUEVAS")
+                        // } else {
+                        //     console.log("LAS FECHAS PARA HABILITAR EL SIGUIENTE DIAGNÓSTICO NO COINCIDEN");
+                        // }
+                    }
+                // EMPRESA ESTABLECIDA
+                } else {
+                    const diagnostico = await helpers.consultarDatos('dg_empresa_establecida')
+                    const data = diagnostico.find(x => x.id_empresa == e.id_empresas)
+                    if (data) {
+                        fechaDB = new Date(data.fecha)
+                        fechaDB.setMonth(fechaDB.getMonth()+6)
+                        fechaDB = fechaDB.toLocaleDateString("en-US")
+                        console.log("fechaDB EMPRESA ESTABLECIDA >> ",fechaDB)
+                    }
+                }
+                if (fechaActual == fechaDB) {
+                    const fecha2 = { diagnostico_fecha2: 1 }
+                    await helpers.actualizarDatos('empresa', fecha2, `WHERE empresa = ${e.id_empresas}`)
+                    console.log("LA FECHA DB COINCIDE CON LA ACTUAL PARA HABILITAR EL SIGUIENTE CUESTIONARIO DIAGNÓSTICO EMPRESAS")
+                } else {
+                    console.log("LAS FECHAS PARA HABILITAR EL SIGUIENTE DIAGNÓSTICO NO COINCIDEN");
+                }
+            }
+        });
+    } else {
+        console.log("AÚN NO HAY EMPRESAS REGISTRADAS");
+    }
+}
+
+/***************************************************************************************************************************
  * CARGAR ARCHIVOS USUARIO EMPRESA (ANÁLISIS, EMPRESARIAL, ESTRATÉGICO)
 */
 helpers.cargarArchivo = async (id, empresa, link, tabla) => {
@@ -451,7 +500,7 @@ helpers.cargarArchivo = async (id, empresa, link, tabla) => {
     return true;
 }
 
-// ===>>> INSERTAR DATOS A LA TABLA HISTORIAL INFORMES CONSULTOR
+// INSERTAR DATOS A LA TABLA HISTORIAL INFORMES CONSULTOR
 helpers.historial_informes_consultor = async () => {
     const informes = await helpers.consultarDatos("informes")
     const consultores = await helpers.consultarDatos("consultores")

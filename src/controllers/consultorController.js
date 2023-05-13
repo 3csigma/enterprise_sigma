@@ -841,6 +841,26 @@ consultorController.nuevoRendimiento = async (req, res) => {
         total_gastos = total_gastos.replace(/[,]/g, '.');
         const utilidad = parseFloat(total_ventas) - parseFloat(total_compras) - parseFloat(total_gastos)
         const nuevoRendimiento = { empresa, total_ventas, total_compras, total_gastos, utilidad, fecha }
+
+        let rendimientos = await consultarDatos('rendimiento_empresa')
+        rendimientos = rendimientos.filter(x => x.empresa == empresa)
+
+        if (rendimientos.length >= 1) {
+            let r = rendimientos;
+            const ventas1 = parseFloat(r[0].total_ventas)
+            const utilidad1 = parseFloat(r[0].utilidad)
+            nuevoRendimiento.porcentaje_ventas = ((total_ventas - ventas1)/ventas1)*100
+            nuevoRendimiento.porcentaje_utilidad = ((utilidad - utilidad1)/utilidad1)*100
+            if (rendimientos.length == 2) {
+                const ventas2 = parseFloat(r[1].total_ventas)
+                const utilidad2 = parseFloat(r[1].utilidad)
+                nuevoRendimiento.porcentaje_ventas = ((total_ventas - ventas2)/ventas2)*100
+                nuevoRendimiento.porcentaje_utilidad = ((utilidad - utilidad2)/utilidad2)*100
+            }
+            nuevoRendimiento.porcentaje_ventas = (nuevoRendimiento.porcentaje_ventas).toFixed(2)
+            nuevoRendimiento.porcentaje_utilidad = (nuevoRendimiento.porcentaje_utilidad).toFixed(2)
+        }
+
         result = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
         if (result.affectedRows > 0) result = true;
     }

@@ -1,16 +1,11 @@
-<div class="modal fade bd-example-modal-lg" id="modalNuevosProyectos" tabindex="-1" role="dialog" aria-hidden="true">
+<div class="modal fade bd-example-modal-lg" id="modalEmpresasEstablecidas2" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="default-tab">
                     <ul class="nav nav-tabs" role="tablist" style="border-bottom: none;">
                         <li class="nav-item">
-                            <a class="nav-link active" data-toggle="tab" href="#categorias">
-                                <i class="fa-solid fa-tags" style="font-size: 14px; padding-right: 4px;"></i>
-                                Categorías</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#productos">
+                            <a class="nav-link active" data-toggle="tab" href="#productos">
                                 <?xml version="1.0" ?><svg height="20" id="icon" viewBox="0 0 32 32" width="20" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;}</style></defs><title/><rect height="2" width="6" x="8" y="18"/><rect height="2" width="10" x="8" y="22"/><path d="M26,4H6A2.0025,2.0025,0,0,0,4,6V26a2.0025,2.0025,0,0,0,2,2H26a2.0025,2.0025,0,0,0,2-2V6A2.0025,2.0025,0,0,0,26,4ZM18,6v4H14V6ZM6,26V6h6v6h8V6h6l.0012,20Z"/><rect class="cls-1" data-name="&lt;Transparent Rectangle&gt;" height="32" id="Transparent_Rectangle" width="32"/></svg>
                                 Producto</a>
                         </li>
@@ -30,9 +25,9 @@
                                 Marketing</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" data-toggle="tab" href="#metas">
+                            <a class="nav-link" data-toggle="tab" href="#fomm">
                                 <?xml version="1.0" ?><svg enable-background="new 0 0 32 32" height="20" width="20" id="svg2" version="1.1" viewBox="0 0 32 32"  xml:space="preserve" xmlns="http://www.w3.org/2000/svg" xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#" xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd" xmlns:svg="http://www.w3.org/2000/svg"><g id="background"><rect fill="none" height="32" width="32"/></g><g id="document_x5F_text_x5F_information"><path d="M24,14.059V5.584L18.414,0H0v32h24v-0.059c4.499-0.5,7.998-4.309,8-8.941C31.998,18.366,28.499,14.556,24,14.059z    M17.998,2.413L21.586,6h-3.588V2.413z M2,30V1.998h14v6.001h6v6.06c-1.752,0.194-3.352,0.89-4.652,1.941H4v2h11.517   c-0.412,0.616-0.743,1.289-0.994,2H4v2h10.059C14.022,22.329,14,22.661,14,23c0,2.829,1.308,5.351,3.349,7H2z M23,29.883   c-3.801-0.009-6.876-3.084-6.884-6.883c0.008-3.801,3.083-6.876,6.884-6.885c3.799,0.009,6.874,3.084,6.883,6.885   C29.874,26.799,26.799,29.874,23,29.883z M20,12H4v2h16V12z"/><path d="M22,28h2v-6h-2V28z M22,18v2h2v-2H22z"/></g></svg>
-                            Metas</a>
+                            FOMM</a>
                         </li>
                     </ul>
                 </div>
@@ -44,144 +39,7 @@
                 <div class="default-tab">
                     <div class="tab-content">
 
-                        <div class="tab-pane fade show active" id="categorias" role="tabpanel">
-                            <h4 style="color: #000 !important">Experiencia en el Rubro - ({{cuestionario.diagnostico.rubro}})</h4>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Pregunta</th>
-                                        <th>Respuesta</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td scope="row">1</td>
-                                        <td>¿En qué nicho, rubro, sector o área está tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.rubro}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">2</td>
-                                        <td>¿Que ofrece tu empresa?</td>
-                                        <td>{{cuestionario.diagnostico.ofrece}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">3</td>
-                                        <td>¿Tienes experiencia previa en el rubro?</td>
-                                        <td>{{cuestionario.diagnostico.exp_rubro.exp_previa}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">4</td>
-                                        <td>¿Has realizado un análisis FODA al negocio que deseas desarrollar?</td>
-                                        <td>{{cuestionario.diagnostico.exp_rubro.foda}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">5</td>
-                                        <td>¿Has pensando las diferentes unidades de negocio que se podrían implementar en este rubro?</td>
-                                        <td>{{cuestionario.diagnostico.exp_rubro.unidades_rubro}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">6</td>
-                                        <td>¿Conoces las actividades claves que se requieren en tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.exp_rubro.actividades}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">7</td>
-                                        <td>¿Conoces tu visión con este proyecto?</td>
-                                        <td>{{cuestionario.diagnostico.exp_rubro.vision}}</td>
-                                    </tr>
-                                   
-                                </tbody>
-                            </table>
-
-                            <hr class="my-5">
-                            <h4 style="color: #000 !important">Mentalidad Empresarial</h4>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Pregunta</th>
-                                        <th>Respuesta</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td scope="row">1</td>
-                                        <td>¿Tu propósito personal está alineado al propósito del negocio?</td>
-                                        <td>{{cuestionario.diagnostico.mentalidad.proposito_alineado}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">2</td>
-                                        <td>¿Tienes claro los objetivos a nivel personal y empresarial?</td>
-                                        <td>{{cuestionario.diagnostico.mentalidad.objetivos_claros}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">3</td>
-                                        <td>¿Tienes definido tus valores?</td>
-                                        <td>{{cuestionario.diagnostico.mentalidad.valores}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">4</td>
-                                        <td>¿Te has realizado un FODA personal para que identifiques las herramientas necesarias a implementar en tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.mentalidad.foda_personal}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">5</td>
-                                        <td>¿Dedicarías el 100% de tu tiempo a este negocio?</td>
-                                        <td>{{cuestionario.diagnostico.mentalidad.tiempo_completo}}</td>
-                                    </tr>
-                                    
-                                </tbody>
-                            </table>
-
-                            <hr class="my-5">
-                            <h4 style="color: #000 !important">Viabilidad del Negocio</h4>
-                            <table class="table">
-                                <thead>
-                                    <tr>
-                                        <th>#</th>
-                                        <th>Pregunta</th>
-                                        <th>Respuesta</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr>
-                                        <td scope="row">1</td>
-                                        <td>¿Cuentas con algún socio para desarrollar tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.viabilidad.socios}}</td>
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">2</td>
-                                        <td>¿Dispones de algún fondo financiero personal?</td>
-                                        <td>{{cuestionario.diagnostico.viabilidad.fondo_financiero}}</td>                                    
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">3</td>
-                                        <td>¿El negocio requiere ubicación física?</td>
-                                        <td>{{cuestionario.diagnostico.viabilidad.ubicacion_fisica}}</td>                                    
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">4</td>
-                                        <td>¿Has realizado algún estudio de mercado con respecto a tu producto o tu servicio?</td>
-                                        <td>{{cuestionario.diagnostico.viabilidad.estudio_mercado}}</td>                                    
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">5</td>
-                                        <td>¿Conoces los recursos claves para el funcionamiento de tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.viabilidad.recursos_claves}}</td>                                    
-                                    </tr>
-                                    <tr>
-                                        <td scope="row">6</td>
-                                        <td>¿Tienes identificado los posibles proveedores del negocio?</td>
-                                        <td>{{cuestionario.diagnostico.viabilidad.posibles_proveedores}}</td>                                    
-                                    </tr>
-                                    
-                                </tbody>
-                            </table>
-                            
-                        </div>
-
-                        <div class="tab-pane fade" id="productos">
+                        <div class="tab-pane fade show active" id="productos" role="tabpanel">
                             <h4 style="color: #000 !important">Productos o servicios</h4>
                             <table class="table">
                                 <thead>
@@ -194,28 +52,58 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Tienes identificado el problema que resolverá tu producto o servicio?</td>
-                                        <td>{{cuestionario.diagnostico.producto.problema_resolver}}</td>
+                                        <td>¿En qué nicho, rubro, sector o área está tu negocio?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.rubro}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Sabes cuál es será el producto principal del negocio?</td>
-                                        <td>{{cuestionario.diagnostico.producto.producto_principal}}</td>
+                                        <td>¿Que ofrece tu empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ofrece}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tienes definido el precio de venta de tu producto o servicio?</td>
-                                        <td>{{cuestionario.diagnostico.producto.precio_venta}}</td>
+                                        <td>¿Sabe qué problema específico resuelve su producto/servicio a sus clientes potenciales?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.problema_resolver}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Conoces cuál es el factor diferenciador del producto o servicio?</td>
-                                        <td>{{cuestionario.diagnostico.producto.factor_diferenciador}}</td>
+                                        <td>¿Sabe en qué se diferencia su producto/servicio de otros similares en el mercado?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.diferencia_otros}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Tienes definido el modelo de negocio?</td>
-                                        <td>{{cuestionario.diagnostico.producto.modelo_negocio}}</td>
+                                        <td>¿Sabe cuál es el nivel del precio de su producto/servicio con otros similares en el mercado?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.nivel_precio}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>¿Ha realizado una investigación de precios para determinar si su producto/servicio es competitivo?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.investigacion_precios}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>¿Hay alguna conexión temática o conceptual entre los diferentes productos/servicios que ofrece su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.conexion_tematica}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>¿Cree que sus clientes perciben una coherencia entre los productos/servicios de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.perciben_coherencia}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">9</td>
+                                        <td>La calidad de su producto es</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.calidad_producto}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">10</td>
+                                        <td>La presentación de su producto es:</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.presentacion_producto}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">11</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría de forma global a sus productos/servicios con respecto al mercado? </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.producto.calificacion_global_producto}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -236,18 +124,33 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Tienes una planeación estratégica de tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.administracion.planeacion_estrategica}}</td>
+                                        <td>¿Cuenta con una planeación estratégica para la empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.administracion.planeacion_estrategica}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Se requiere de algún sistema de inventario para tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.administracion.sistema_inventario}}</td>
+                                        <td>¿Ha realizado un análisis FODA de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.administracion.analisis_foda}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tienes definido una estructura organizacional para el negocio?</td>
-                                        <td>{{cuestionario.diagnostico.administracion.estructura_organizacional}}</td>
+                                        <td>¿Tiene definida la estructura organizativa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.administracion.estructura_organizativa}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>¿Dispone de un sistema administrativo y/o contable?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.administracion.sistema_administrativo_contable}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>¿Dispone de software empresarial que le ayude a mejorar la eficiencia y rentabilidad de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.administracion.software_empresarial}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>Del 1 al 10 ¿Cómo calificaría la gestión de Administración de su empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.administracion.calificacion_administracion}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -265,33 +168,38 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Tienes definidas las funciones principales, la de tus socios y colaboradores en caso de tenerlas?</td>
-                                        <td>{{cuestionario.diagnostico.talento.funciones_principales}}</td>
+                                        <td>¿Tiene definidas las principales funciones del personal según su puesto de trabajo?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.principales_funciones_personal}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Cuentas con algún programa de formación inicial para operar tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.talento.formacion_inicial}}</td>
+                                        <td>¿Cuenta con un plan de capacitación para sus colaboradores?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.plan_capacitacion}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tienes definido en cuánto tiempo vas a necesitar colaboradores?</td>
-                                        <td>{{cuestionario.diagnostico.talento.tiempo_colaboradores}}</td>
+                                        <td>¿Tienen algún cuadro de habilidades requeridas para sus colaboradores?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.cuadro_habilidades}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
                                         <td>¿Realiza alguna medición de desempeño del personal?</td>
-                                        <td>{{cuestionario.diagnostico.talento.medicion__personal}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.medicion_personal}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Tienes experiencia liderando equipos de trabajo?</td>
-                                        <td>{{cuestionario.diagnostico.talento.experiencia_liderando}}</td>
+                                        <td>¿Dispone de un plan de remuneración para sus colaboradores?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.plan_remuneracion}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">6</td>
-                                        <td>¿Consideras importante la creación de un equipo de trabajo para el desarrollo y sostenibilidad de la empresa en el tiempo?</td>
-                                        <td>{{cuestionario.diagnostico.talento.importancia_equipo}}</td>
+                                        <td>¿Dispone de algún proceso para el reclutamiento y selección?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.proceso_reclutamiento}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría al personal que labora para la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.talento.calificacion_personal_laboral}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -309,29 +217,58 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Has realizado alguna estructura de costos para tu producto o servicio?</td>
-                                        <td>{{cuestionario.diagnostico.finanzas.estructura_costos}}</td>
+                                        <td>¿Dispone de una proyección de ventas?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.proyeccion_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Sabes cuáles serán los gastos fijos y variables de tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.finanzas.gastos_fijos_variables}}</td>
+                                        <td>¿Tienen una estructura de Costos implementada?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.estructura_costos}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tienes definidas las herramientas a utilizar para tu control administrativo y financiero? </td>
-                                        <td>{{cuestionario.diagnostico.finanzas.control_financiero}}</td>
+                                        <td>¿Se tienen establecidas claramente las cuentas por pagar y cobrar del Negocio? </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.cuentas_pagar_cobrar }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Conoce cuál es su punto de equilibrio?</td>
-                                        <td>{{cuestionario.diagnostico.finanzas.punto_equilibrio}}</td>
+                                        <td>¿Conoce cuáles son los costos fijos y variables de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.costos_fijos_variables }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Conoces cuál será tu inversión inicial y en cuánto tiempo la recuperarás?</td>
-                                        <td>{{cuestionario.diagnostico.finanzas.recuperar_inversion}}</td>
+                                        <td>¿Ha realizado un análisis y evaluación básica de las finanzas de los últimos 12 meses?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.analisis_finanzas_anual }}</td>
                                     </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>¿Conoce cuál es su punto de equilibrio?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.punto_equilibrio}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>¿Conoce cuál es su utilidad neta?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.utilidad_neta }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>¿La empresa ya ha conseguido ser rentable?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.empresa_rentable}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">9</td>
+                                        <td>¿Ha realizado alguna proyección del flujo de efectivo para el próximo año?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.proyeccion_flujo_efectivo}}</td>
+                                    </tr>
+                                       <td scope="row">10</td>
+                                        <td>¿Cree usted que la manera en que se está administrando las finanzas en su empresa, pueda contribuir mantener o mejorar la rentabilidad en el tiempo?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.mejorar_rentabilidad}}</td>
+                                    </tr>
+                                       <td scope="row">11</td>
+                                        <td>Del 1 al 10 ¿Cómo calificaría la gestión de Finanzas de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.finanzas.calificacion_finanzas}}</td>
+                                    </tr>
+
                                 </tbody>
                             </table>
 
@@ -351,28 +288,33 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Has pensado cuáles serán tus principales canales de atención al cliente?</td>
-                                        <td>{{cuestionario.diagnostico.servicio.canales_atencion}}</td>
+                                        <td>¿Pueden sus clientes tener información rápida y efectiva de sus Productos?  </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.servicio.clientes_info_productos }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
                                         <td>¿Mide la Satisfacción de sus clientes con respecto a sus productos? </td>
-                                        <td>{{cuestionario.diagnostico.servicio.satisfaccion_clientes_productos}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.servicio.satisfaccion_clientes_productos }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Conoces qué experiencias quieres darles a tus clientes?</td>
-                                        <td>{{cuestionario.diagnostico.servicio.exp_brindar}}</td>
+                                        <td>¿Conoce las necesidades de potenciales clientes con respecto a sus productos?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.servicio.necesidades_clientes_productos }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Has considerado tener alguna herramienta para la medición de la satisfacción del cliente?</td>
-                                        <td>{{cuestionario.diagnostico.servicio.medir_satisfaccion}}</td>
+                                        <td>¿Dispone de algún mecanismo para quejas y reclamaciones?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.servicio.mecanismo_quejas_reclamos }}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Crees que un buen servicio se basa solo en la calidad de tu producto?</td>
-                                        <td>{{cuestionario.diagnostico.servicio.calidad_producto}}</td>
+                                        <td>¿Maneja estrategias para mantener la fidelidad de sus clientes? </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.servicio.estrategias_fidelidad_clientes }}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría la gestión de Servicio al Cliente del negocio? Siendo uno el nivel más bajo y diez el más alto. </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.servicio.calificacion_servicio_alcliente }}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -390,28 +332,33 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Conoces los permisos que necesitas para comenzar a operar el negocio?</td>
-                                        <td>{{cuestionario.diagnostico.operaciones.permisos}}</td>
+                                        <td>¿Cuenta con las instalaciones adecuadas para realizar sus operaciones?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.operaciones.instalaciones_adecuadas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Tienes idea de cómo planificar las actividades de tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.operaciones.planificar_actividades}}</td>
+                                        <td>¿Cuenta con todos los permisos requeridos por su localidad para realizar sus operaciones? </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.operaciones.permisos_requeridos}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Conoces al 100% los procesos de este negocio?</td>
-                                        <td>{{cuestionario.diagnostico.operaciones.conocer_procesos}}</td>
+                                        <td>¿Tiene un plan de trabajo diario, semanal o mensual para las operaciones de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.operaciones.plan_detrabajo_diario}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Has definido cuáles son los canales de comercialización de tus productos?</td>
-                                        <td>{{cuestionario.diagnostico.operaciones.canales_comercial}}</td>
+                                        <td>¿Tiene documentadas todas las actividades que se desarrollan en la empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.operaciones.documentos_actividades}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Has considerado cómo sería el proceso de devoluciones y reclamaciones en tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.operaciones.proceso_devoluciones}}</td>
+                                        <td>¿Cuenta con manuales de operaciones que describan los procedimientos y actividades dentro de la empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.operaciones.manuales_operaciones}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>¿Cómo calificaría las operaciones y procesos de su empresa en una escala del 1 al 10? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.operaciones.calificacion_operaciones_procesos}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -429,25 +376,34 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Crees que tu comunicación es efectiva?</td>
-                                        <td>{{cuestionario.diagnostico.ambiente.comunicacion_efectiva}}</td>
+                                        <td>¿Considera positivo el ambiente laboral dentro de su empresa? </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ambiente.ambiente_positivo}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Se te hace sencillo resaltar las habilidades de las personas?</td>
-                                        <td>{{cuestionario.diagnostico.ambiente.resaltar_habilidades}}</td>
+                                        <td>¿Realiza alguna medición del ambiente laboral de la empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ambiente.medicion_ambiente_laboral}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Estarías dispuesto a capacitarte en crecimiento personal para el desarrollo de tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.ambiente.capacitar_crecimiento}}</td>
+                                        <td>¿Conoce el grado de satisfacción de sus empleados?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ambiente.satisfaccion_empleados}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Crees que tienes las herramientas necesarias para crear un buen ambiente laboral?</td>
-                                        <td>{{cuestionario.diagnostico.ambiente.buen_ambiente}}</td>
+                                        <td>¿La comunicación dentro de su empresa es efectiva?  </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ambiente.comunicacion_efectiva}}</td>
                                     </tr>
-                                    
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>¿Le comunica a su personal que ha estado o está realizando un buen trabajo?   </td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ambiente.comunicar_buen_trabajo}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>Del  1 al 10 ¿Cómo podría calificar el ambiente laboral de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ambiente.calificacion_ambiente}}</td>
+                                    </tr>
                                 </tbody>
                             </table>
 
@@ -464,18 +420,33 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Crees que tienes un modelo de negocio innovador?</td>
-                                        <td>{{cuestionario.diagnostico.innovacion.modelo_innovador}}</td>
+                                        <td>¿Sus trabajadores aportan ideas para la mejora dentro de la empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.innovacion.aportan_ideas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Sabes la importancia de utilizar metodologías de innovación a la hora de crear nuevos productos?</td>
-                                        <td>{{cuestionario.diagnostico.innovacion.importancia_innovacion}}</td>
+                                        <td>¿Considera que a través de la innovación de sus productos/servicios puede incrementar sus ventas?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.innovacion.incrementar_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Conoces el proceso para la gestión correcta de los datos de los clientes?</td>
-                                        <td>{{cuestionario.diagnostico.innovacion.gestion_datos}}</td>
+                                        <td>¿Considera que los procesos operativos relacionados con sus productos/servicios son Innovadores?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.innovacion.procesos_innovadores}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>¿Calificaría su modelo de negocio como Innovador?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.innovacion.modelo_innovador}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>¿Calificaría la gestión de su empresa como Innovadora?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.innovacion.empresa_innovadora}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>Del 1 al 10 ¿Cómo se calificaría la gestión de Innovación de los productos y/o servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.innovacion.calificacion_innovacion}}</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -496,29 +467,58 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Cuentas con una estrategia de Marketing definida?</td>
-                                        <td>{{cuestionario.diagnostico.marketing.estrategia_marketing}}</td>
+                                        <td>¿Ha realizado estudios de mercado sobre las características y precios de sus productos/servicios?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.estudio_mercado}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Tienes un dominio de sitio web reservado?</td>
-                                        <td>{{cuestionario.diagnostico.marketing.dominio_web}}</td>
+                                        <td>¿Conoce el segmento al que se dirigen sus productos/servicios?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.segmento_mercado}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Sabes a qué segmento de cliente te quieres dirigir?</td>
-                                        <td>{{cuestionario.diagnostico.marketing.segmento_cliente}}</td>
+                                        <td>¿Sus productos/servicios están posicionados dentro de su mercado?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.posicionamiento_mercado}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>¿Cuentas con un logo y branding de tu negocio?</td>
-                                        <td>{{cuestionario.diagnostico.marketing.tiene_logo}}</td>
+                                        <td>¿Cuenta con estrategias de Marketing para impulsar sus productos/servicios en su mercado?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.estrategias_marketing}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>¿Has identificado qué mercado quieres abarcar inicialmente?</td>
-                                        <td>{{cuestionario.diagnostico.marketing.mercado_inicial}}</td>
+                                        <td>¿Cuenta con un Plan de Marketing?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.plan_marketing}}</td>
                                     </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>¿Cuenta con página web para promover los productos/servicios de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.landing_page}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>¿Utiliza redes sociales para promover los productos/servicios de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.redes_sociales}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>¿Cuenta con un Manual de Identidad Corporativa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.manual_identidad}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">9</td>
+                                        <td>¿Su negocio cuenta con un eslogan que los identifique con facilidad?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.tiene_eslogan}}</td>
+                                    </tr>
+                                       <td scope="row">10</td>
+                                        <td>¿Cuenta con un Brochure de presentación de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.brochure_empresa}}</td>
+                                    </tr>
+                                       <td scope="row">11</td>
+                                        <td>En una escala del 1 al 10 ¿Cómo calificaría la gestión de Marketing de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.marketing.calificacion_marketing}}</td>
+                                    </tr>
+
                                 </tbody>
                             </table>
 
@@ -535,26 +535,124 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>¿Conoces cuáles son tus canales de captación de tus clientes potenciales?</td>
-                                        <td>{{cuestionario.diagnostico.ventas.captacion_clientes}}</td>
+                                        <td>¿Cree que los productos/servicios de la empresa se venden con facilidad?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ventas.facilidad_ventas}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>¿Tienes definido los medios de pago disponibles para tus clientes?</td>
-                                        <td>{{cuestionario.diagnostico.ventas.medios_pago}}</td>
+                                        <td>¿Cómo calificaría las ventas de los productos/servicios de la empresa en los últimos 6 meses?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ventas.calificacion_ventas_meses}}</td>
                                     </tr>
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>¿Tienes alguna proyección de ventas?</td>
-                                        <td>{{cuestionario.diagnostico.ventas.proyeccion}}</td>
+                                        <td>¿Su empresa tiene definido objetivos de ventas claros?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ventas.objetivo_ventas}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>¿Cuenta con estrategias de ventas para los productos/servicios de su empresa?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ventas.estrategia_ventas}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>¿Tiene definido sus canales de venta para comercializar sus productos/servicios?</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ventas.canales_ventas}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>Del  1 al 10 ¿Cómo calificaría la gestión de ventas de los productos/servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto.</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.ventas.calificacion_ventas}}</td>
                                     </tr>
                                 </tbody>
                             </table>
 
                         </div>
 
-                        <div class="tab-pane fade" id="metas">
+                        <div class="tab-pane fade" id="fomm">
 
+                            <h4 style="color: #000 !important">Fortalezas</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td scope="row">1</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.fortalezas.f1}}</td>
+                                    </tr>
+                                    {{#if cuestionario.diagnostico2.respuestas.fortalezas.f2}}
+                                    <tr>
+                                        <td scope="row">2</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.fortalezas.f2}}</td>
+                                    </tr>
+                                    {{/if}}
+                                    {{#if cuestionario.diagnostico2.respuestas.fortalezas.f3}}
+                                    <tr>
+                                        <td scope="row">3</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.fortalezas.f3}}</td>
+                                    </tr>
+                                    {{/if}}
+                                    {{#if cuestionario.diagnostico2.respuestas.fortalezas.f4}}
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.fortalezas.f4}}</td>
+                                    </tr>
+                                    {{/if}}
+                                    {{#if cuestionario.diagnostico2.respuestas.fortalezas.f5}}
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.fortalezas.f5}}</td>
+                                    </tr>
+                                    {{/if}}
+                                </tbody>
+                            </table>
+                            
+
+                            <hr class="my-5">
+                            <h4 style="color: #000 !important">Oportunidades de mejoras</h4>
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Descripción</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td scope="row">1</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.oportunidades.o1}}</td>
+                                    </tr>
+                                    {{#if cuestionario.diagnostico2.respuestas.oportunidades.o2}}
+                                    <tr>
+                                        <td scope="row">2</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.oportunidades.o2}}</td>
+                                    </tr>
+                                    {{/if}}
+                                    {{#if cuestionario.diagnostico2.respuestas.oportunidades.o3}}
+                                    <tr>
+                                        <td scope="row">3</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.oportunidades.o3}}</td>
+                                    </tr>
+                                    {{/if}}
+                                    {{#if cuestionario.diagnostico2.respuestas.oportunidades.o4}}
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.oportunidades.o4}}</td>
+                                    </tr>
+                                    {{/if}}
+                                    {{#if cuestionario.diagnostico2.respuestas.oportunidades.o5}}
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.oportunidades.o5}}</td>
+                                    </tr>
+                                    {{/if}}
+                                </tbody>
+                            </table>
+
+                            <hr class="my-5">
                             <h4 style="color: #000 !important">Metas a corto plazo</h4>
                             <table class="table">
                                 <thead>
@@ -566,30 +664,30 @@
                                 <tbody>
                                     <tr>
                                         <td scope="row">1</td>
-                                        <td>{{cuestionario.diagnostico.metas.m1}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.metas.m1}}</td>
                                     </tr>
-                                    {{#if cuestionario.diagnostico.metas.m2}}
+                                    {{#if cuestionario.diagnostico2.respuestas.metas.m2}}
                                     <tr>
                                         <td scope="row">2</td>
-                                        <td>{{cuestionario.diagnostico.metas.m2}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.metas.m2}}</td>
                                     </tr>
                                     {{/if}}
-                                    {{#if cuestionario.diagnostico.metas.m3}}
+                                    {{#if cuestionario.diagnostico2.respuestas.metas.m3}}
                                     <tr>
                                         <td scope="row">3</td>
-                                        <td>{{cuestionario.diagnostico.metas.m3}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.metas.m3}}</td>
                                     </tr>
                                     {{/if}}
-                                    {{#if cuestionario.diagnostico.metas.m4}}
+                                    {{#if cuestionario.diagnostico2.respuestas.metas.m4}}
                                     <tr>
                                         <td scope="row">4</td>
-                                        <td>{{cuestionario.diagnostico.metas.m4}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.metas.m4}}</td>
                                     </tr>
                                     {{/if}}
-                                    {{#if cuestionario.diagnostico.metas.m5}}
+                                    {{#if cuestionario.diagnostico2.respuestas.metas.m5}}
                                     <tr>
                                         <td scope="row">5</td>
-                                        <td>{{cuestionario.diagnostico.metas.m5}}</td>
+                                        <td>{{cuestionario.diagnostico2.respuestas.metas.m5}}</td>
                                     </tr>
                                     {{/if}}
                                 </tbody>
@@ -602,7 +700,7 @@
                 </div>
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn color_gradient light text-white" style="border-color: #50368C;" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn color_gradient light text-white" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>
