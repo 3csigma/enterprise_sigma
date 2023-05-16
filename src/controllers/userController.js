@@ -3,6 +3,7 @@ const passport = require('passport')
 const bcrypt = require('bcryptjs');
 const { restablecerCuentaHTML, sendEmail } = require('../lib/mail.config')
 const randtoken = require('rand-token');
+const helpers = require('../lib/helpers')
 const userController = exports;
 
 // Cerrar Sesión
@@ -69,9 +70,12 @@ userController.confirmarRegistro = async (req, res) => {
 
 /**************************************************************************************************************** */
 // --------------------------------------- RESTABLECER CONTRASEÑA ----------------------------------------------
+userController.solicitarClave = (req, res) => {
+    res.render('auth/restablecer-clave', { csrfToken: req.csrfToken(), tituloH3: 'Solicitar Clave' });
+}
 
 userController.getrestablecerClave = (req, res) => {
-    res.render('auth/restablecer-clave', { csrfToken: req.csrfToken() });
+    res.render('auth/restablecer-clave', { csrfToken: req.csrfToken(), tituloH3: 'Restablacer cuenta', resetUser: true });
 }
 
 userController.getresetPassword = (req, res) => {
@@ -79,17 +83,21 @@ userController.getresetPassword = (req, res) => {
 }
 
 userController.resetPassword = async (req, res, next) => {
-    let { email } = req.body;
+    let { email, resetUser } = req.body;
 
     pool.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
         if (err) throw err;
-        let type = ''
-        let msg = ''
+        let type = 'error', msg = 'Este correo no está registrado', ruta = '/restablecer-clave';
         if (result.length > 0) {
             const token = randtoken.generate(20);
-            // ! ************* PROCESO DEL EMAIL PARA VENDEDOR ************
-            const asunto = "Reestablece tu contraseña en 3C Sigma"
-            const plantilla = restablecerCuentaHTML(token)
+            let asunto = "Reestablece tu contraseña en 3C Sigma"
+            let txt1 = "Olvidaste", txt2 = "restablecerla", txt3 = "Restablecer";
+            if (!resetUser) {
+                asunto = "Crea tu contraseña en 3C Sigma";
+                txt1 = "Solicitaste", txt2 = "crearla", txt3 = "Crear";
+                ruta = '/solicitar-clave'
+            }
+            const plantilla = restablecerCuentaHTML(token, txt1, txt2, txt3)
             // Enviar email
             const resultEmail = sendEmail(email, asunto, plantilla)
 
@@ -98,57 +106,62 @@ userController.resetPassword = async (req, res, next) => {
                 msg = 'Ocurrió un error. Inténtalo de nuevo';
                 console.log("Ocurrio un error inesperado al enviar el email de restablecer la clave");
             } else {
-                const data = {
-                    token: token
-                }
+                const data = { token: token }
                 pool.query("UPDATE users SET ? WHERE email = ?", [data, email], (err, result) => {
                     if (err) throw err
                 })
                 type = 'success';
                 msg = 'Revisa tu bandeja de entrada';
             }
-            // ! **************************************************************
-        } else {
-            console.log('2');
-            type = 'error';
-            msg = 'Este correo no está registrado';
         }
         req.flash(type, msg);
-        res.redirect('/restablecer-clave');
+        res.redirect(ruta);
     });
 }
 
 userController.updatePassword = async (req, res, next) => {
-    const { clave, token } = req.body;
+    let { clave, token } = req.body;
 
-    await pool.query('SELECT * FROM users WHERE token = ?', [token], (err, result) => {
+    await pool.query('SELECT * FROM users WHERE token = ?', [token], async (err, result) => {
         if (err) throw err;
-        let type
-        let msg
+
+        let type = 'error', msg = 'Link inválido. Inténtalo de nuevo';
+        
         if (result.length > 0) {
-            const email = result[0].email
-            console.log("¡¡¡¡¡¡¡¡¡¡¡¡= EMAIL =¡¡¡¡¡¡¡¡¡¡¡¡:::>>>>", email);
-            const saltRounds = 10;
-            bcrypt.genSalt(saltRounds, (err, salt) => {
-                if (err) throw err;
-                bcrypt.hash(clave, salt, (err, hash) => {
-                    if (err) throw err;
-                    const data = { clave: hash }
-                    console.log("¡¡¡¡¡¡¡¡¡¡¡¡= DATA =¡¡¡¡¡¡¡¡¡¡¡¡:::>>>>", data);
-                    pool.query('UPDATE users SET ? WHERE email = ?', [data, email], (err, result) => {
-                        if (err) throw err
-                    });
-                });
-            });
+            const datos = result[0];
+
+            // Encriptando la clave
+            clave = await helpers.encryptPass(clave)
+
+            const actualizarUsuario = { clave }
+
+            if (!datos.codigo) {
+                const tableUsers = await consultarDatos('users')
+                const admin  = tableUsers.find(x => x.rol == 'Admin')
+                const lastUser = tableUsers[tableUsers.length-1];
+                const hashCode = email+(parseInt(lastUser.id_usuarios+1));
+                // Generar código MD5 con base a su email
+                const codigo = crypto.createHash('md5').update(hashCode).digest("hex");
+                // Fecha de Creación
+                const fecha_creacion = new Date().toLocaleDateString("en-US", { timeZone: zh_empresa })
+                const arrayFecha = fecha_creacion.split("/")
+                const mes = arrayFecha[0] ;
+                const year = arrayFecha[2];
+                actualizarUsuario.codigo = codigo;
+                const infoActualizar = { codigo, fecha_creacion, mes, year }
+                await helpers.actualizarDatos('empresas', infoActualizar, `WHERE email = "${datos.email}"`)
+                // Obtener la plantilla de Email
+                const templateNuevaEmpresa = nuevaEmpresa('Carlos', datos.nombre_empresa)
+                console.log("\n>>>\n>>> Enviando email al admin de nueva empresa registrada..\n")
+                // Enviar Email
+                await sendEmail(admin.email, '¡Se ha registrado una nueva empresa!', templateNuevaEmpresa)
+            }
+
+            await helpers.actualizarDatos('users', actualizarUsuario, `WHERE email = "${datos.email}"`)
             type = 'success';
             msg = 'Contraseña actualizada correctamente';
-        } else {
-            console.log('2 Soy una respuesta negativa');
-            console.log("\n")
-
-            type = 'error';
-            msg = 'Link inválido. Inténtalo de nuevo';
         }
+
         req.flash(type, msg);
         res.render('auth/login', { msgSuccessClave: true, csrfToken: req.csrfToken() })
     });

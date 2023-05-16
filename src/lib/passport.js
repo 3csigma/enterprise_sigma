@@ -4,7 +4,6 @@ const pool = require('../database')
 const helpers = require('../lib/helpers')
 const crypto = require('crypto');
 const { confirmarRegistro, sendEmail, nuevaEmpresa, nuevoConsultorRegistrado } = require('../lib/mail.config')
-const { consultarDatos, insertarDatos } = require('../lib/helpers')
 
 passport.serializeUser((user, done) => { // Almacenar usuario en una sesión de forma codificada
     done(null, user.id_usuarios);
@@ -24,7 +23,6 @@ passport.use('local.registro', new LocalStrategy({
 }, async (req, email, clave, done) => {
 
     const { nombres, apellidos, nombre_empresa, zh_empresa } = req.body
-    const rol = 'Empresa'
     // Verificando si el usuario existe o no
     await pool.query('SELECT * FROM users WHERE email = ?', [email], async (err, result) => {
 
@@ -38,7 +36,7 @@ passport.use('local.registro', new LocalStrategy({
             let username = email.split('@')
             username = username[0]
 
-            const tableUsers = await consultarDatos('users')
+            const tableUsers = await helpers.consultarDatos('users')
             const admin  = tableUsers.find(x => x.rol == 'Admin')
             const lastUser = tableUsers[tableUsers.length-1];
             const hashCode = email+(parseInt(lastUser.id_usuarios+1));
@@ -73,10 +71,10 @@ passport.use('local.registro', new LocalStrategy({
             }
 
             // Guardar en la base de datos
-            const fila = await insertarDatos('users', newUser)
+            const fila = await helpers.insertarDatos('users', newUser)
             const empresa = { nombres, apellidos, nombre_empresa, email, codigo, fecha_creacion, mes, year }
             if (fila.affectedRows > 0) {
-                await insertarDatos('empresas', empresa)
+                await helpers.insertarDatos('empresas', empresa)
             }
             return done(null, false, req.flash('registro', 'Registro enviado, revisa tu correo en unos minutos y activa tu cuenta.'))
         }
@@ -100,7 +98,7 @@ passport.use('local.registroConsultores', new LocalStrategy({
             return done(null, false, req.flash('message', 'Ya existe un consultor con este Email'));
         } else {
 
-            const tableUsers = await consultarDatos('users')
+            const tableUsers = await helpers.consultarDatos('users')
             const admin  = tableUsers.find(x => x.rol == 'Admin')
             const lastUser = tableUsers[tableUsers.length-1];
             const hashCode = email+(parseInt(lastUser.id_usuarios+1));
@@ -136,9 +134,9 @@ passport.use('local.registroConsultores', new LocalStrategy({
                 return done(null, false, req.flash('message', 'Ocurrió algo inesperado al enviar el registro'))
             } else {
                 // Guardar en la base de datos
-                const fila1 = await insertarDatos('users', newUser);
+                const fila1 = await helpers.insertarDatos('users', newUser);
                 if (fila1.affectedRows > 0) {
-                    await insertarDatos('consultores', nuevoConsultor);
+                    await helpers.insertarDatos('consultores', nuevoConsultor);
                 }
 
                 return done(null, false, req.flash('registro', 'Registro enviado. Recibirás una confirmación en tu correo cuando tu cuenta sea aprobada por un administrador'));
@@ -155,7 +153,7 @@ passport.use('local.login', new LocalStrategy({
     passReqToCallback: true
 }, async (req, email, clave, done) => {
 
-    let usuario = await consultarDatos('users')
+    let usuario = await helpers.consultarDatos('users')
     usuario = usuario.find(x => x.email == email)
 
     if (usuario) {
