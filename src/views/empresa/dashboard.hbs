@@ -26,18 +26,35 @@
     #icon_avance_general {
         fill: url(#my-cool-gradient) #447799;
     }
+
 </style>
+
 <!--**********************************
         Content body start
 ***********************************-->
 <div class="content-body">
     <!-- row -->
     <div class="container-fluid">
+        {{!-- <div class="row">
+            <div class="col-8">
+                <h3>Tablero principal</h3>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid velit repellendus blanditiis, sunt odit et delectus voluptatum aliquam, eius omnis aspernatur illum quasi laudantium maiores assumenda quis nulla ipsum! Fuga.
+            </div>
+       
+            <div class="col-4">
+                <a href="https://www.notion.so/f2b98925384f44e88f5f952fa38326d0?v=17a4b1f07de84984acc973de739ecf9c" target="_blank">
+                    <button type="button" class="btn color_primary text-white">Ir a mi Notion</button>
+                </a>
+                <a href="https://cosmic-breath-2fb.notion.site/f2b98925384f44e88f5f952fa38326d0?v=17a4b1f07de84984acc973de739ecf9c" target="_blank">
+                    <button type="button" class="btn color_primary text-white">Ver en Notion</button>
+                </a>
+            </div>
+    </div> --}}
+    <br>
         <div class="row">
             {{!-- Cuadros principales sobre las etapas --}}
             <div class="col-xl-6 col-xxl-12">
-                <div class="row">
-
+                <div style="width: 100%">
                     {{!-- Diagnóstico de negocio --}}
                     <div class="col-sm-6">
                         <div class="card avtivity-card">
@@ -372,9 +389,6 @@
 <input type="hidden" id="tokenForm" value="{{csrfToken}}">
 {{/if}}
 
-
-
-
 <!-- ****************** Required JS - DASHBOARD ****************** -->
 <script src="../vendor/js/Chart.bundle.min.js"></script>
 <script src="../vendor/js/owl.carousel.js"></script>
@@ -392,3 +406,13 @@
 <script src="https://polyfill.io/v3/polyfill.min.js?version=3.52.1&features=fetch"></script>
 <script src="https://js.stripe.com/v3/"></script>
 {{/if}}
+
+
+<script>
+    window.onload = function () {
+        const adsContainer = document.querySelector('.notion-body');
+        const adsLinks = adsContainer.querySelectorAll('a[href="https://embednotion.com"]');
+        const adsLink = adsLinks[1]; // Acceder a la segunda etiqueta 'a'
+        adsLink.style.display = 'none ';
+    };
+</script>

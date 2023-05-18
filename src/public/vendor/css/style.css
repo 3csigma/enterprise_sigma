@@ -39578,6 +39578,7 @@ button:focus {
   vertical-align: middle;
   margin-left: 0.25em;
   line-height: 1;
+  margin-top: -14px !important;
 }
 
 .dropup .dropdown-toggle:after {
@@ -41919,18 +41920,17 @@ code {
 .widget-media .timeline .timeline-panel {
   display: flex;
   align-items: center;
-  border-bottom: 1px solid #eaeaea;
   padding-bottom: 15px;
   margin-bottom: 15px;
 }
 
 .widget-media .timeline .timeline-panel .media {
-  width: 50px;
-  height: 50px;
+  width: 25px;
+  height: 25px;
   background: #eee;
   border-radius: 1.25rem;
   overflow: hidden;
-  font-size: 20px;
+  font-size: 14px;
   text-align: center;
   display: flex;
   align-items: center;
@@ -41977,7 +41977,7 @@ code {
 
 .widget-media .timeline .timeline-panel .media-success {
   background: #e3f9e9;
-  color: #2BC155;
+  color: #272827;
 }
 
 [data-theme-version="dark"] .widget-media .timeline .timeline-panel .media-success {
