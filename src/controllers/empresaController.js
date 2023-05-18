@@ -1,11 +1,13 @@
-const pool = require('../database')
+const pool = require('../database');
 const empresaController = exports;
-const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarInformes, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers')
+const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarInformes, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers');
 const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
 const portalClientes = process.env.PORTAL_CLIENTES;
 const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
+const multer = require('multer');
+const path = require('path');
 
 let pagoPendiente = true, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
 let modalAcuerdo = false;
@@ -675,6 +677,121 @@ empresaController.diagnostico = async (req, res) => {
         tutoriales, id_empresa
     })
 }
+
+
+empresaController.enviar_archivo = async (req, res, next) => {
+    const rutaCarpeta = multer.diskStorage({
+      destination: function (req, file, callback) {
+        const rutaRecursos = path.join(__dirname, '../public/recurso_empresa');
+        callback(null, rutaRecursos);
+      },
+      filename: function (req, file, callback) {
+        const nombre_archivo = req.body.nombre_archivo;
+        const extension = path.extname(file.originalname);
+        const urlRecurso = nombre_archivo + extension;
+        callback(null, urlRecurso);
+      }
+    });
+  
+    const cargarRecurso = multer({ storage: rutaCarpeta });
+  
+    cargarRecurso.single('recursoEmpresa')(req, res, function (err) {
+      if (err) {
+        // Maneja el error de la subida de archivos
+        return next(err);
+      }
+  
+      // El archivo se subió con éxito, realiza el procesamiento adicional que necesites
+      const { categoria, tipo_archivo, nombre_archivo } = req.body;
+      const archivo = req.file;
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 1" , nombre_archivo);
+      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 2" , categoria);
+  
+      // Realiza las operaciones necesarias con los datos recibidos
+  
+      res.redirect('/recursos/');
+    });
+};
+
+// ENVIAR LINK DE RECURSOS ::
+empresaController.cargar_link = async (req, res) => {
+    const { nombre_recurso, categoria, tipo_archivo, link_recurso, idEmpresa } = req.body;
+    // Obtener la fecha actual
+    let fechaActual = new Date();
+    
+    // Obtener el día, el mes y el año
+    let dia = fechaActual.getDate();
+    let mes = fechaActual.toLocaleString('default', { month: 'short' });
+    let año = fechaActual.getFullYear();
+    
+    // Formatear la fecha en el formato deseado
+    let fecha= dia + '/' + mes + '/' + año;
+    const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, link_recurso, validar_link: 1}
+
+    await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
+
+      res.redirect('/recursos/');
+  
+  };
+
+// Eliminar recurso
+empresaController.eliminarRecurso = async (req, res) => {
+    const { id } = req.body;
+    const recurso = await eliminarDatos('recursos', `WHERE id = ${id}`)
+    let respu = undefined;
+    if (recurso.affectedRows > 0) {
+        console.log("Eliminando recurso...")
+        respu = true;
+    } else {
+        respu = false;
+    }
+    res.send(respu)
+}
+
+
+// RENDERIZADO DE LA VISTA RECURSOS ::
+empresaController.recursos = async (req, res) => {
+    const emailEmpresa = req.user.email
+    let row = await consultarDatos('empresas')
+    const info = row.find(x => x.email === emailEmpresa)
+    let id_empresa
+    if(info) {
+        id_empresa = info.id_empresas
+    }
+    let rec = await pool.query("SELECT DISTINCT categoria FROM recursos WHERE idEmpresa = ?", [id_empresa])
+    let categorias = []
+    if (rec) {
+        rec.forEach(r => {
+            categorias.push(r.categoria)
+        });
+    }
+    let datos = []
+    let inforec = await pool.query("SELECT id, nombre_recurso, categoria, fecha, link_recurso, GROUP_CONCAT(tipo_archivo) AS tipo_archivo FROM recursos GROUP BY categoria;")
+    console.log(">............" , inforec);
+    if (inforec) {
+        inforec.forEach(i => {
+            datos.push({
+                idRecurso: i.id,
+                categoria: i.categoria,
+                fecha: i.fecha,
+                nombre_recurso: i.nombre_recurso,
+                link_recurso: i.link_recurso,
+                tipo_archivo: i.tipo_archivo.split(',') // Convertir la cadena de tipos de archivo en un array
+            });
+        });
+    }
+    res.render('empresa/recursos', {
+        user_dash: true, id_empresa, categorias, rec, datos
+    })
+}
+
+empresaController.ejemplo2 = async (req, res) => {
+ 
+    res.render('empresa/ejemplo2', {
+        user_dash: true
+    })
+}
+
 
 /** Mostrar vista del formulario Ficha Cliente */
 empresaController.validarFichaCliente = async (req, res) => {

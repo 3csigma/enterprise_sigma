@@ -1,5 +1,7 @@
 const express = require('express')
 const router = express.Router()
+const multer = require('multer');
+const path = require('path');
 const { checkLogin, validarIDFicha } = require('../lib/auth');
 const empresaController = require('../controllers/empresaController');
 // const signingViaEmail = require('../controllers/envelopeController');
@@ -7,6 +9,8 @@ const { uploadFiles } = require('../lib/helpers')
 
 // Diagnóstico de Negocio
 router.get('/diagnostico-de-negocio', checkLogin, empresaController.diagnostico)
+router.get('/recursos', checkLogin, empresaController.recursos)
+router.get('/ejemplo2', checkLogin, empresaController.ejemplo2)
 
 // Ficha de Cliente
 router.get('/ficha-cliente/:id', checkLogin, empresaController.validarFichaCliente)
@@ -33,5 +37,12 @@ router.post('/guardar-archivos-estrategico', checkLogin, uploadFiles('Plan-estra
 // Informes Autogenerados
 router.get('/generar-informe/:tipo', checkLogin, empresaController.informeAutoGenerado)
 router.post('/informe-estrategico', checkLogin, empresaController.informeEstrategico)
+
+// Recursos
+router.post('/enviar-archivo', checkLogin, empresaController.enviar_archivo);
+router.post('/cargar-link', checkLogin, empresaController.cargar_link);
+router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
+  
+
 
 module.exports = router

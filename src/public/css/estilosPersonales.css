@@ -3,25 +3,31 @@
     -webkit-appearance: none;
     appearance: none;
 }
+
 .barra-scroll::-webkit-scrollbar:vertical {
     width: 10px;
 }
+
 .barra-scroll::-webkit-scrollbar-button:increment,
 .barra-scroll::-webkit-scrollbar-button {
     display: none;
 }
+
 .barra-scroll::-webkit-scrollbar:horizontal {
     height: 10px;
 }
+
 .barra-scroll::-webkit-scrollbar-thumb {
     background-color: #50368c;
     border-radius: 10px;
     border: 1px solid rgba(155, 155, 155, 0.747);
 }
+
 .barra-scroll::-webkit-scrollbar-track {
     border-radius: 10px;
     background-color: #eae6f4;
 }
+
 /* Fin Barra scroll personalizada */
 
 /* Clases generales */
@@ -29,6 +35,7 @@
     overflow-y: auto;
     overflow-x: hidden;
 }
+
 .overflow-x-auto {
     overflow-x: auto;
     overflow-y: hidden;
@@ -41,41 +48,254 @@
 .color_primary {
     background: #812082 !important;
 }
+
 .color_secondary {
     background: #50368c !important;
 }
+
 .color_tertiary {
     background: #FED061 !important;
 }
+
 .color_gradient {
     background: linear-gradient(180deg, #FED061 -149.33%, #812082 -19.27%, #50368C 158.67%) !important;
 }
+
 .card_gradient {
-    background: linear-gradient(20deg, rgba(80,54,140,1) 0%, rgba(129,32,130,1) 50%, rgba(254,208,97,1) 100%)!important;
+    background: linear-gradient(20deg, rgba(80, 54, 140, 1) 0%, rgba(129, 32, 130, 1) 50%, rgba(254, 208, 97, 1) 100%) !important;
 }
 
 /* ****************************************************** 
              ====>>  COLORES DE TEXTOS <<===
 - titulos, subtitulos, parrafos, color de iconos
-*/             
+*/
 .text-white {
     color: #fff !important;
-  }
-  
-  .text-primary {
+}
+
+.text-primary {
     color: #812082 !important;
-  }
-  
-  a.text-primary:hover,
-  a.text-primary:focus {
+}
+
+a.text-primary:hover,
+a.text-primary:focus {
     color: #813c82 !important;
-  }
-  
-  .text-secondary {
+}
+
+.text-secondary {
     color: #50368c !important;
-  }
-  
-  a.text-secondary:hover,
-  a.text-secondary:focus {
+}
+
+a.text-secondary:hover,
+a.text-secondary:focus {
     color: #50368c !important;
-  }
+}
+
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+/*  => ESTILOS DE LA VISTA RECURSOS*/
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+
+.drop-area {
+    background: #FFFAFF;
+    border: 1px dashed #812082;
+    border-radius: 25px;
+    height: 290px;
+    width: 725px;
+    padding-top: 20px;
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+}
+
+.drop-area.active {
+    background-color: #b8d4fe;
+    color: #812082;
+    border: 2px dashed #618ac9;
+}
+
+.drop-area h2 {
+    font-size: 25px;
+    font-weight: 500;
+    color: #000000;
+}
+
+.drop-area span {
+    font-size: 25px;
+    color: #000000;
+}
+
+.drop-area button {
+    background: #FFFFFF;
+    border: 1px solid #812082;
+    border-radius: 5px;
+    font-size: 15px;
+    width: 155px;
+    height: 28px;
+    outline: none;
+    color: #eae6f4;
+    cursor: pointer;
+    margin: 5px;
+    font-weight: 500;
+    font-size: 15px;
+    color: #812082;
+}
+
+.file-container {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px;
+    border: solid 1px #ddd;
+}
+
+#preview {
+    margin-top: 10px;
+    width: 700px;
+}
+
+.status-text {
+    padding: 0 10px;
+}
+
+.success {
+    color: #52ad5a;
+}
+
+.failure {
+    color: #ff0000;
+}
+
+.opera {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.iconoDatos {
+    font-size: 19px;
+    background: #0e2222;
+    vertical-align: center;
+}
+
+.card-recursos {
+    height: 228px !important;
+    background: linear-gradient(255.07deg, #FED061 10.6%, #812082 78.38%, #50368C 137.18%);
+    background-color: #d6e7ff;
+    box-shadow: 2px 2px 6px 0px #d5d5d5;
+    border-radius: 23px;
+}
+
+.timeline-panel {
+    margin-right: -8px;
+}
+
+.folder {
+    width: 271px;
+    height: 254px;
+    position: absolute;
+    top: 8px;
+    margin-left: -304px;
+    z-index: 1;
+}
+
+.nube {
+    width: 306px;
+    height: 306px;
+}
+
+.titulo {
+    position: absolute;
+    margin-left: -109px;
+    font-weight: 600;
+    font-size: 25px;
+    color: #FFFFFF;
+}
+
+.texto {
+    position: absolute;
+    width: 541px;
+    margin-left: -108px;
+    font-family: 'Oblivian';
+    font-style: normal;
+    font-weight: 300;
+    font-size: 15px;
+    line-height: 27px;
+    color: #FFFFFF;
+}
+
+.btnArchivo {
+    width: 172px !important;
+    height: 45px !important;
+    margin-left: -108px !important;
+    margin-top: 86px !important;
+    background-color: #FED061 !important;
+    box-shadow: 6px 27px 11px rgba(0, 0, 0, 0.03), 3px 15px 9px rgba(0, 0, 0, 0.09), 1px 7px 7px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.18), 0px 0px 0px rgba(0, 0, 0, 0.18) !important;
+    border-radius: 22.5px !important;
+    border: none !important;
+    font-family: 'Oblivian' !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    font-size: 16px !important;
+}
+
+.btnGrupo {
+    width: 172px !important;
+    height: 45px !important;
+    margin-left: -103px !important;
+    margin-top: 86px !important;
+    background: #000000;
+    box-shadow: 6px 27px 11px rgba(0, 0, 0, 0.03), 3px 15px 9px rgba(0, 0, 0, 0.09), 1px 7px 7px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.18), 0px 0px 0px rgba(0, 0, 0, 0.18) !important;
+    border-radius: 22.5px !important;
+    border: none !important;
+    font-family: 'Oblivian' !important;
+    font-style: normal !important;
+    font-weight: 600 !important;
+    color: white !important;
+}
+
+.input-recursos {
+    width: 278px !important;
+    height: 31px !important;
+    background: #FFFFFF !important;
+    border: 0.7px solid #898989 !important;
+    border-radius: 5px !important;
+    padding-top: 2px !important;
+}
+.input-recursos2 {
+    height: 31px !important;
+    background: #FFFFFF !important;
+    border: 0.7px solid #898989 !important;
+    border-radius: 5px !important;
+    padding-top: 2px !important;
+}
+
+.input-recursos::placeholder {
+    font-size: 11px !important;
+}
+
+.btnTypeArchivo{
+    margin-top: 28px;
+    background: #812082 !important;
+    border-radius: 5px !important;
+    width: 196px !important;
+    height: 35px !important;
+    border: none !important;
+    font-weight: 500 !important;
+    font-size: 11px !important;
+    padding: 0px 0px 5px !important;
+}
+
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+/*  => fin ESTILOS DE LA VISTA RECURSOS*/
+/* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
+
+.chosen-container-single .chosen-single{
+    height: 31px !important;
+    width: 106% !important;
+    background: #ffff0000 !important;
+    font-size: 10px !important;
+}
+
+
+

@@ -9,6 +9,7 @@ const path = require('path');
 const flash = require('connect-flash')
 const cookieParser = require('cookie-parser');
 const MemoryStore = require('memorystore')(session);
+const multer = require('multer');
 
 // Inicializaciones
 const app = express();
@@ -71,6 +72,7 @@ app.use((req, res, next) => {
   res.locals.session = req.session;
   global.urlPropuestaNegocio = '';
   global.urlProfile = ''
+  global.urlRecurso = ''
   if(!req.session.initialised) {
     req.session.initialised = true;
     req.session.empresa = false;
