@@ -749,41 +749,48 @@ empresaController.eliminarRecurso = async (req, res) => {
 }
 
 
-// RENDERIZADO DE LA VISTA RECURSOS ::
 empresaController.recursos = async (req, res) => {
-    const emailEmpresa = req.user.email
-    let row = await consultarDatos('empresas')
-    const info = row.find(x => x.email === emailEmpresa)
-    let id_empresa
-    if(info) {
-        id_empresa = info.id_empresas
+    const emailEmpresa = req.user.email;
+    let row = await consultarDatos('empresas');
+    const info = row.find(x => x.email === emailEmpresa);
+    let id_empresa;
+    if (info) {
+      id_empresa = info.id_empresas;
     }
-    let rec = await pool.query("SELECT DISTINCT categoria FROM recursos WHERE idEmpresa = ?", [id_empresa])
-    let categorias = []
-    if (rec) {
-        rec.forEach(r => {
-            categorias.push(r.categoria)
+    let recurso = await pool.query("SELECT DISTINCT categoria FROM recursos WHERE idEmpresa = ?", [id_empresa]);
+    let categorias = [];
+    if (recurso) {
+      recurso.forEach(r => {
+        categorias.push(r.categoria);
+      });
+    }
+    
+    const datos = [];
+    let categoriaAnterior = null;
+    let iconoSVG
+    const infoRecursos = await pool.query("SELECT id, nombre_recurso, tipo_archivo, categoria, fecha, link_recurso FROM recursos ORDER BY categoria;");
+    if (infoRecursos) {
+      infoRecursos.forEach(i => {
+
+        if (i.categoria !== categoriaAnterior) {datos.push({categoria: i.categoria}); categoriaAnterior = i.categoria;}
+
+        if (i.tipo_archivo == "Pagina web") {
+            iconoSVG = "../logos_recursos/Pagina_Web.svg"
+        }
+
+        datos.push({
+          iconoSVG,
+          idRecurso: i.id,fecha: i.fecha,
+          nombre_recurso: i.nombre_recurso, link_recurso: i.link_recurso,
+          tipo_archivo: i.tipo_archivo.split(',')
         });
+      });
     }
-    let datos = []
-    let inforec = await pool.query("SELECT id, nombre_recurso, categoria, fecha, link_recurso, GROUP_CONCAT(tipo_archivo) AS tipo_archivo FROM recursos GROUP BY categoria;")
-    console.log(">............" , inforec);
-    if (inforec) {
-        inforec.forEach(i => {
-            datos.push({
-                idRecurso: i.id,
-                categoria: i.categoria,
-                fecha: i.fecha,
-                nombre_recurso: i.nombre_recurso,
-                link_recurso: i.link_recurso,
-                tipo_archivo: i.tipo_archivo.split(',') // Convertir la cadena de tipos de archivo en un array
-            });
-        });
-    }
+    
     res.render('empresa/recursos', {
-        user_dash: true, id_empresa, categorias, rec, datos
-    })
-}
+      user_dash: true,id_empresa,categorias,recurso, datos });
+  }
+
 
 empresaController.ejemplo2 = async (req, res) => {
  

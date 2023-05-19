@@ -29,20 +29,39 @@ a:not([href]):not([tabindex]) {
 .chosen-container .chosen-single {
     min-width: 217px; /* Establece el ancho mínimo deseado */
 }
+
 .truncated-cell {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 150px; /* Ajusta el valor según tus necesidades */
+  padding: 21px !important;
+  background-color: white !important;
 }   
+
+.truncated-link {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px; /* Ajusta el valor según tus necesidades */
+  padding: 21px !important;
+  background-color: white !important;
+
+}
+
 
 .tituloRecurso{
     color:#000000;font-weight: 600;
     text-transform: lowercase;
+    margin: 25px 0px 28px;
 }
 .tituloRecurso:first-letter {
     text-transform: uppercase;
 }
+
+ table.header-border td {
+        padding: 5px 10px; /* Ajusta los valores según tus necesidades */
+    }
 
 </style>
 
@@ -396,31 +415,34 @@ a:not([href]):not([tabindex]) {
                 <div class="row">
                     <div class="col-lg-12">
                         <div class="table-responsive">
-                        <table class="table header-border">
-                            <style>
-
-                            </style>
-                            <tbody>
+                           <table class="table header-border">
                                 {{#each datos}}
-                                <tr>
-                                    <td colspan="5">
-                                        <h3 class="tituloRecurso">{{categoria}}</h3>
-                                    </td>
-                                </tr>
-                                <tr class="table-active text-black">
-                                    <td class="truncated-cell">{{nombre_recurso}}</td>
-                                    <td class="truncated-cell">{{link_recurso}}</td>
-                                    <td class="truncated-cell">{{fecha}}</td>
-                                    <td>
-                                        <div style="margin: 0 auto">
-                                            <a onclick="bloquearEmpresa({{id_empresas}})" class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa-solid fa-cloud-arrow-down"></i></a>
-                                            <a onclick="eliminarRecurso({{idRecurso}})" class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
-                                        </div>
-                                    </td>
-                                </tr>
+                                {{#if categoria}}
+                                <tbody>
+                                    <tr>
+                                        <td colspan="5">
+                                            <h3 class="tituloRecurso">{{categoria}}</h3>
+                                        </td>
+                                    </tr>
+                                {{else}}
+                                    <tbody>
+                                        <tr class="table-active text-black">
+                                            <td class="truncated-cell"><img src="{{ iconoSVG }}" alt="Icono SVG"></td>
+                                            <td class="truncated-link">
+                                                <a class="text-black" href="{{link_recurso}}" title="{{link_recurso}}" target="_blank">{{nombre_recurso}}</a>
+                                            </td>
+                                            <td class="truncated-cell">{{fecha}}</td>
+                                            <td class="truncated-cell">
+                                                <div style="margin: 0 auto">
+                                                    <a onclick="bloquearEmpresa({{id_empresas}})" class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa-solid fa-cloud-arrow-down"></i></a>
+                                                    <a onclick="eliminarRecurso({{idRecurso}})" class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                {{/if}}
                                 {{/each}}
-                            </tbody>
-                        </table>
+                            </table>
                         </div>
                     </div>
                 </div>
