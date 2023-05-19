@@ -774,8 +774,15 @@ empresaController.recursos = async (req, res) => {
 
         if (i.categoria !== categoriaAnterior) {datos.push({categoria: i.categoria}); categoriaAnterior = i.categoria;}
 
-        if (i.tipo_archivo == "Pagina web") {
+        if (i.tipo_archivo == "Google Drive") {
+            iconoSVG = "../logos_recursos/Archivo_Google_Drive.svg"
+        }else if(i.tipo_archivo == "Pagina web") {
             iconoSVG = "../logos_recursos/Pagina_Web.svg"
+        }else if(i.tipo_archivo == "Video de YouTube")  {
+            iconoSVG = "../logos_recursos/Video_Youtube.svg"
+        }else if(i.tipo_archivo == "Video de Vimeo")  {
+            iconoSVG = "../logos_recursos/Video_Vimeo.svg"
+
         }
 
         datos.push({
