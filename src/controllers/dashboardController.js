@@ -1729,7 +1729,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
                 'Metas a corto plazo': { m1, m2, m3, m4, m5 }
             }
 
-            const prompt = (JSON.stringify(obj_respuestas)+" Con base en las respuestas anteriores genera un informe de diagnóstico separado por dimensiones que incluya las oportunidades de mejora, sugerencias, actividades a realizar.")
+            const prompt = (JSON.stringify(obj_respuestas)+" Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Que incluya las oportunidades de mejora, sugerencias, actividades a realizar.")
             console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`);
             let resultAI = await getResponseChatGPT(prompt)
             const resp = resultAI.content.replaceAll('\n', '<br>');
