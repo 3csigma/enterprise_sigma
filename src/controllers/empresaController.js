@@ -582,7 +582,7 @@ empresaController.cargar_link = async (req, res) => {
 
       res.redirect('/recursos/');
   
-  };
+};
 
 // ELIMINAR RECURSOS
 empresaController.eliminarRecurso = async (req, res) => {
@@ -596,7 +596,7 @@ empresaController.eliminarRecurso = async (req, res) => {
         respu = false;
     }
     res.send(respu)
-}
+};
 
 // GUARDAR GRUPO DE DOCUMENTOS - RECURSOS ::
 empresaController.guardar_grupo = async (req, res) => {
@@ -634,7 +634,7 @@ empresaController.eliminarGrupo = async (req, res) => {
         respu = false;
     }
     res.send(respu)
-}
+};
   
 // RENDERIZADO DE RECURSOS ::
 empresaController.recursos = async (req, res) => {
@@ -712,8 +712,7 @@ empresaController.recursos = async (req, res) => {
       datos,grupos
      // titulos: grupo // Pasar los títulos como parte del objeto de contexto al renderizar la vista
     });
-  };
-
+};
 
 empresaController.ejemplo2 = async (req, res) => {
  

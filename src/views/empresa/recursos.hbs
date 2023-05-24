@@ -245,13 +245,13 @@ a:not([href]):not([tabindex]) {
                                                                     <input type="text" class="form-control input-recursos" required name="nombre_grupo" placeholder="Introduce el nombre del grupo de recursos">
                                                                </div>
                                                                <div class="col-4">
-                                                                    <textarea name="descrip_grupo" class="form-control input-recursos" required cols="30" rows="10" placeholder="Introduce la descripcion del grupo de recurso"></textarea>
+                                                                    <textarea name="descrip_grupo" class="form-control input-recursos" required maxlength="120" cols="30" rows="10" placeholder="Introduce la descripcion del grupo de recurso"></textarea>
                                                                </div>
                                                             </div>
                                                              <br>
                                                             <div class="row opera">
                                                                 <div class="col-6">
-                                                                <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
+                                                                    <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
                                                                     <div class="colorButtons">
                                                                         <button type="button" class="colorButton" data-color="#D74040"></button>
                                                                         <button type="button" class="colorButton" data-color="#739232"></button>
@@ -262,28 +262,29 @@ a:not([href]):not([tabindex]) {
                                                                         <button type="button" class="colorButton" data-color="#812082"></button>
                                                                         <button type="button" class="colorButton" data-color="#FED061"></button>
                                                                     </div>
-                                                                    <div id="colorPreview"></div>
                                                                    <input type="hidden" id="colorGrupoInput" name="color_grupo">
                                                                 </div>
-                                                                <div class="col-6">
-                                                                {{!-- <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3> --}}
-<select id="opciones">
-  <option value="">Opciones</option>
-  <option value="titulo">Título</option>
-  <option value="descripcion">Descripción</option>
-  <option value="separador">Separador</option>
-  <option value="url">URL</option>
-  {{!-- <option value="archivo">Subir Archivo</option> --}}
-</select>
-<div id="contenido"></div>
-                                                   
+                                                            </div>
+                                                           <div class="row opera flex-column">
+                                                                <div class="col-3" style="margin-bottom: 25px;">
+                                                                    <select id="opciones" class="form-control-sm default-select btnTypeArchivo text-white">
+                                                                        <option value="">Agregar Elemento</option>
+                                                                        <option value="titulo">Título</option>
+                                                                        <option value="descripcion">Bloque de texto</option>
+                                                                        <option value="separador">Separador</option>
+                                                                        <option value="url">URL</option>
+                                                                        <option value="archivo">Subir Archivo</option>
+                                                                    </select>
+                                                                </div>
+                                                                <div class="col-10">
+                                                                    <div id="contenido"></div>
                                                                 </div>
                                                             </div>
                                                             <br>
                                                         </div>
                                                         <div class="modal-footer justify-content-center">
-                                                                    <button type="submit" id="myForm" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
-                                                                </div>
+                                                            <button type="submit" id="myForm" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
+                                                        </div>
                                                     </div>
                                                 </form>
                                             </div>
@@ -331,116 +332,11 @@ a:not([href]):not([tabindex]) {
                             </div>
                         </div>
                     </div>
-                    <div class="col-xl-3">
-                        <div class="card text-white" style="background: linear-gradient(203.15deg, #30AFF7 2.17%, rgba(85, 194, 255, 0.934375) 85.02%);box-shadow: 0px 0px 30px rgba(66, 184, 250, 0.4);border-radius: 11px;width: 240px; height: 215px;">
-                            <div class="card-body mb-0">
-                                <br>
-                                <div class="widget-media">
-                                    <div class="timeline d-flex flex-row">
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-word"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-regular fa-file-excel"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-pdf"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-image"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h3 class="card-footer bg-transparent border-0 text-white"
-                                        style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">Documentos financieros</h3>
-                                    <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">Documentos necesarios para presentar reporte de ingresos y declaracion de impuestos en el estado de la Florida</div>
-
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-xl-3">
-                        <div class="card text-white" style="background: #48A785;box-shadow: 0px 0px 30px rgba(72, 167, 133, 0.4);border-radius: 11px; width: 240px;height: 215px;">
-                            <div class="card-body mb-0">
-                                <br>
-                                <div class="widget-media">
-                                    <div class="timeline d-flex flex-row">
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-word"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-regular fa-file-excel"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-pdf"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-image"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h3 class="card-footer bg-transparent border-0 text-white"
-                                        style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">Documentos financieros</h3>
-                                    <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">Documentos necesarios para presentar reporte de ingresos y declaracion de impuestos en el estado de la Florida</div>
-
-                                </div>
-                            </div>
-                    </div>
-                    </div>
-                    <div class="col-xl-3">
-                        <div class="card text-white" style="background: #6B6496;box-shadow: 0px 0px 30px rgba(107, 100, 150, 0.4);border-radius: 11px;width: 240px;height: 215px;">
-                            <div class="card-body mb-0">
-                                <br>
-                                <div class="widget-media">
-                                    <div class="timeline d-flex flex-row">
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-word"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-regular fa-file-excel"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-pdf"></i>
-                                            </div>
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-image"></i>
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <h3 class="card-footer bg-transparent border-0 text-white"
-                                        style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">Documentos financieros</h3>
-                                    <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">Documentos necesarios para presentar reporte de ingresos y declaracion de impuestos en el estado de la Florida</div>
-
-                                </div>
-                            </div>
-                    </div>
-                    </div>
                 </div>
                 <div class="row" style="margin-top: 15%;">
                     <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Mis documentos</h3>
                     <h3 style="position: absolute; margin-top: -35px;margin-left: 16px;color:#000000;font-weight: 300;">Grupos</h3>
-                   {{#each grupos}}
+                    {{#each grupos}}
                         <div class="col-xl-3">
                             <div class="card text-white" style="background:{{color_grupo}};border-radius: 11px;width: 240px; height: 215px;">
                             <a onclick="eliminarGrupo({{idGrupo}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 5px;right: 5px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
@@ -518,13 +414,41 @@ a:not([href]):not([tabindex]) {
 </div>
 
 <style>
-    .campo {
-    font-size: 1.5em;
-    font-weight: bold;
-    color: #000000;
-    border: none;
-    background-color: transparent;
-  }
+.campo {
+    font-size: 1.2em;
+    font-weight: 700;
+    color: black !important;
+    border: 0px solid #000000;
+    text-align: left;
+}
+
+.campo_descrip {
+    color: black !important ;
+    border:0px solid;
+    text-align: left;
+    font-weight: 100;
+}
+.campo_url {
+    color: black !important;
+    border: 0px solid;
+    text-align: left;
+    text-decoration-line: underline;
+}
+.campo-container {
+    display: flex;
+    align-items: baseline;
+    justify-content: left;
+    flex-direction: row-reverse;
+}
+
+.titulo-container {
+  flex-grow: 1;
+}
+
+.separador{
+    width: 100%;
+    margin-left: 5px;
+}
 </style>
 
 <script src="../js/upload.js"></script>
@@ -548,19 +472,25 @@ function crearCampoTitulo() {
   const inputTitulo = document.createElement("input");
   inputTitulo.type = "text";
   inputTitulo.classList.add("form-control", "campo");
+  inputTitulo.style.color = "black"; // Cambiar el color del icono a rojo
   inputTitulo.placeholder = "Ingrese el título aquí";
   inputTitulo.name = "titulo" + contadorTitulo;
 
   const campoTituloContainer = document.createElement("div");
   campoTituloContainer.classList.add("campo-container");
-  campoTituloContainer.appendChild(inputTitulo);
+
+  const tituloContainer = document.createElement("div");
+  tituloContainer.classList.add("titulo-container");
+  tituloContainer.appendChild(inputTitulo);
 
   const botonBorrarTitulo = document.createElement("i");
   botonBorrarTitulo.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarTitulo.style.color = "red"; // Cambiar el color del icono a rojo
   botonBorrarTitulo.addEventListener("click", function() {
     contenido.removeChild(campoTituloContainer);
   });
 
+  campoTituloContainer.appendChild(tituloContainer);
   campoTituloContainer.appendChild(botonBorrarTitulo);
 
   contenido.appendChild(campoTituloContainer);
@@ -570,8 +500,10 @@ function crearCampoTitulo() {
 // Función para crear el campo de descripción
 function crearCampoDescripcion() {
   const textarea = document.createElement("textarea");
-  textarea.classList.add("form-control");
-  textarea.placeholder = "Describa el grupo...";
+  textarea.classList.add("form-control", "campo_descrip");
+  textarea.placeholder = "Agrega algo de texto";
+  textarea.style.color = "black";
+  textarea.style.resize = "none"; // Quitar la capacidad de redimensionar
   textarea.name = "descripcion" + contadorDescripcion;
 
   const campoDescripcionContainer = document.createElement("div");
@@ -580,6 +512,7 @@ function crearCampoDescripcion() {
 
   const botonBorrarDescripcion = document.createElement("i");
   botonBorrarDescripcion.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarDescripcion.style.color = "red";
   botonBorrarDescripcion.addEventListener("click", function() {
     contenido.removeChild(campoDescripcionContainer);
   });
@@ -588,12 +521,19 @@ function crearCampoDescripcion() {
 
   contenido.appendChild(campoDescripcionContainer);
   contadorDescripcion++;
+
+  // Ajustar la altura del textarea en función de su contenido
+  textarea.addEventListener("input", function() {
+    this.style.height = "auto";
+    this.style.height = this.scrollHeight + "px";
+  });
 }
+
 
 // Función para crear el separador
 function crearSeparador() {
   const hr = document.createElement("hr");
-  hr.style.border = "1px solid black";
+  hr.style.border = "1px solid #5c5c5c";
   hr.classList.add("separador");
 
   const separadorContainer = document.createElement("div");
@@ -602,6 +542,7 @@ function crearSeparador() {
 
   const botonBorrarSeparador = document.createElement("i");
   botonBorrarSeparador.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarSeparador.style.color = "red"; // Cambiar el color del icono a rojo
   botonBorrarSeparador.addEventListener("click", function() {
     contenido.removeChild(separadorContainer);
   });
@@ -617,7 +558,8 @@ function crearCampoUrl() {
   const inputUrl = document.createElement("input");
   inputUrl.type = "text";
   inputUrl.placeholder = "Ingrese la URL";
-  inputUrl.classList.add("form-control", "input-recursos2");
+  inputUrl.classList.add("form-control","campo_url");
+  inputUrl.style.color = "black"; // Cambiar el color del icono a rojo
   inputUrl.name = "url" + contadorUrl;
 
   const campoUrlContainer = document.createElement("div");
@@ -626,6 +568,7 @@ function crearCampoUrl() {
 
   const botonBorrarUrl = document.createElement("i");
   botonBorrarUrl.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarUrl.style.color = "red"; // Cambiar el color del icono a rojo
   botonBorrarUrl.addEventListener("click", function() {
     contenido.removeChild(campoUrlContainer);
   });
@@ -647,6 +590,7 @@ function crearCampoArchivo() {
 
   const botonBorrarArchivo = document.createElement("i");
   botonBorrarArchivo.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarArchivo.style.color = "red"; // Cambiar el color del icono a rojo
   botonBorrarArchivo.addEventListener("click", function() {
     contenido.removeChild(campoArchivoContainer);
   });
@@ -700,35 +644,28 @@ document.querySelector("form").addEventListener("submit", function(e) {
 
 // :: PARA CAPTURAR EL COLOR DEL GRUPO ::
 
-  // Obtener los botones de selección de color
-  let colorButtons = document.querySelectorAll('.colorButton');
-  let colorPreviewElement = document.getElementById("colorPreview");
-  let colorGrupoInput = document.getElementById("colorGrupoInput");
+// Obtener los botones de selección de color
+let colorButtons = document.querySelectorAll('.colorButton');
+let colorGrupoInput = document.getElementById("colorGrupoInput");
 
-  // Agregar evento de clic a los botones de color
-  colorButtons.forEach(function(button) {
-    button.addEventListener("click", function() {
-      // Remover la clase 'selected' de todos los botones
-      colorButtons.forEach(function(btn) {
-        btn.classList.remove('selected');
-      });
-
-      // Agregar la clase 'selected' al botón clicado
-      this.classList.add('selected');
-
-      // Obtener el color seleccionado
-      let selectedColor = this.getAttribute('data-color');
-
-      // Mostrar el color seleccionado en el elemento de vista previa
-      colorPreviewElement.style.backgroundColor = selectedColor;
-
-      // Guardar el color seleccionado en el campo de entrada oculto
-      colorGrupoInput.value = selectedColor;
+// Agregar evento de clic a los botones de color
+colorButtons.forEach(function(button) {
+  button.addEventListener("click", function() {
+    // Remover la clase 'selected' de todos los botones
+    colorButtons.forEach(function(btn) {
+      btn.classList.remove('selected');
     });
+
+    // Agregar la clase 'selected' al botón clicado
+    this.classList.add('selected');
+
+    // Obtener el color seleccionado
+    let selectedColor = this.getAttribute('data-color');
+
+    // Guardar el color seleccionado en el campo de entrada oculto
+    colorGrupoInput.value = selectedColor;
   });
-
-
-
+});
 
 
 (function () {
@@ -831,7 +768,7 @@ function eliminarRecurso(id) {
 function eliminarGrupo(id) {
     Swal.fire({
     title: '¿Seguro de eliminar este recurso ?',
-    text: "Se quitara de tus grupos de recursos.",
+    text: "Se quitara de tu grupos de recursos.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#50368C',
