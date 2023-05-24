@@ -298,4 +298,61 @@ a.text-secondary:focus {
 }
 
 
+.colorButtons {
+    display: flex;
+    justify-content: center;
+  }
+  
+  .colorButton {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    margin-right: 10px;
+    cursor: pointer;
+  }
+  
+  .colorButton.selected {
+    border: 3px solid black;
+  }
+  
+  #colorPreview {
+    width: 100px;
+    height: 100px;
+    margin-top: 20px;
+  }
+  
+  .colorButton[data-color="#D74040"] {
+    background-color: #D74040;
+  }
+  
+  .colorButton[data-color="#739232"] {
+    background-color: #739232;
+  }
+  
+  .colorButton[data-color="#58B57D"] {
+    background-color: #58B57D;
+  }
+  
+  .colorButton[data-color="#407CD7"] {
+    background-color: #407CD7;
+  }
+  
+  .colorButton[data-color="#4085D7"] {
+    background-color: #4085D7;
+  }
+  
+  .colorButton[data-color="#9540D7"] {
+    background-color: #9540D7;
+  }
+  
+  .colorButton[data-color="#812082"] {
+    background-color: #812082;
+  }
+  
+  .colorButton[data-color="#FED061"] {
+    background-color: #FED061;
+  }
+
+
 
