@@ -42,6 +42,8 @@ router.post('/informe-estrategico', checkLogin, empresaController.informeEstrate
 router.post('/enviar-archivo', checkLogin, empresaController.enviar_archivo);
 router.post('/cargar-link', checkLogin, empresaController.cargar_link);
 router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
+router.post('/guardar-grupo', checkLogin, empresaController.guardar_grupo);
+router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)
   
 
 

@@ -3162,6 +3162,16 @@ textarea.form-control-lg {
   background-color: #DC0000;
   border-color: #DC0000;
 }
+.btn-white {
+  color: #DC0000 !important;
+  background-color: white;
+  border-color: white;
+}
+.btn-white:hover {
+  color: #DC0000 !important;
+  background-color: white;
+  border-color: white;
+}
 .btn-danger:hover {
   color: #fff;
   background-color: #DC0000;

@@ -678,42 +678,35 @@ empresaController.diagnostico = async (req, res) => {
     })
 }
 
+    // const rutaCarpeta = multer.diskStorage({
+    //   destination: function (req, file, callback) {
+    //     const rutaRecursos = path.join(__dirname, '../public/recurso_empresa');
+    //     callback(null, rutaRecursos);
+    //   },
+    //   filename: function (req, file, callback) {
+    //     const nombre_archivo = req.body.nombre_archivo;
+    //     const extension = path.extname(file.originalname);
+    //     const urlRecurso = nombre_archivo + extension;
+    //     callback(null, urlRecurso);
+    //   }
+    // });
+  
+    // const cargarRecurso = multer({ storage: rutaCarpeta });
+  
+    // cargarRecurso.single('recursoEmpresa')(req, res, function (err) {
+    //   if (err) {
+    //     // Maneja el error de la subida de archivos
+    //     return next(err);
+    //   }
 
 empresaController.enviar_archivo = async (req, res, next) => {
-    const rutaCarpeta = multer.diskStorage({
-      destination: function (req, file, callback) {
-        const rutaRecursos = path.join(__dirname, '../public/recurso_empresa');
-        callback(null, rutaRecursos);
-      },
-      filename: function (req, file, callback) {
-        const nombre_archivo = req.body.nombre_archivo;
-        const extension = path.extname(file.originalname);
-        const urlRecurso = nombre_archivo + extension;
-        callback(null, urlRecurso);
-      }
-    });
-  
-    const cargarRecurso = multer({ storage: rutaCarpeta });
-  
-    cargarRecurso.single('recursoEmpresa')(req, res, function (err) {
-      if (err) {
-        // Maneja el error de la subida de archivos
-        return next(err);
-      }
-  
-      // El archivo se subió con éxito, realiza el procesamiento adicional que necesites
       const { categoria, tipo_archivo, nombre_archivo } = req.body;
-      const archivo = req.file;
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 1" , nombre_archivo);
-      console.log(">>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>>> 2" , categoria);
-  
-      // Realiza las operaciones necesarias con los datos recibidos
   
       res.redirect('/recursos/');
-    });
+    
 };
 
-// ENVIAR LINK DE RECURSOS ::
+// GUARDAR LINK DE RECURSOS ::
 empresaController.cargar_link = async (req, res) => {
     const { nombre_recurso, categoria, tipo_archivo, link_recurso, idEmpresa } = req.body;
     // Obtener la fecha actual
@@ -734,7 +727,7 @@ empresaController.cargar_link = async (req, res) => {
   
   };
 
-// Eliminar recurso
+// ELIMINAR RECURSOS
 empresaController.eliminarRecurso = async (req, res) => {
     const { id } = req.body;
     const recurso = await eliminarDatos('recursos', `WHERE id = ${id}`)
@@ -748,7 +741,45 @@ empresaController.eliminarRecurso = async (req, res) => {
     res.send(respu)
 }
 
+// GUARDAR GRUPO DE DOCUMENTOS - RECURSOS ::
+empresaController.guardar_grupo = async (req, res) => {
+    const  {idEmpresa , nombre_grupo , descrip_grupo , color_grupo} = req.body;
+    const grupo = {};
+    
+    console.log("<< nombre grupo >> ", nombre_grupo);
+    console.log("<< descripcion grupo >> ", descrip_grupo);
+    console.log("<< color grupo >> ", color_grupo);
+    
+    
+    for (const key in req.body) {
+        if (key.includes('titulo') || key.includes('descripcion') || key.includes('url')) {
+            grupo[key] = req.body[key];
+        }
+    }
+    
+    console.log("<< cuerpo del grupo >> ", grupo);
+    
+    const recurso_armado = JSON.stringify(grupo); // Convertir el objeto a una cadena JSON
+    
+    await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
+    res.redirect('/recursos/');
+};
 
+// ELIMINAR GRUPOS
+empresaController.eliminarGrupo = async (req, res) => {
+    const { id } = req.body;
+    const recurso = await eliminarDatos('grupo_recursos', `WHERE id = ${id}`)
+    let respu = undefined;
+    if (recurso.affectedRows > 0) {
+        console.log("Eliminando recurso...")
+        respu = true;
+    } else {
+        respu = false;
+    }
+    res.send(respu)
+}
+  
+// RENDERIZADO DE RECURSOS ::
 empresaController.recursos = async (req, res) => {
     const emailEmpresa = req.user.email;
     let row = await consultarDatos('empresas');
@@ -765,7 +796,7 @@ empresaController.recursos = async (req, res) => {
       });
     }
     
-    const datos = [];
+    const datos = [], grupos = [];
     let categoriaAnterior = null;
     let iconoSVG
     const infoRecursos = await pool.query("SELECT id, nombre_recurso, tipo_archivo, categoria, fecha, link_recurso FROM recursos ORDER BY categoria;");
@@ -793,10 +824,38 @@ empresaController.recursos = async (req, res) => {
         });
       });
     }
-    
+
+
+    const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ? ' , [id_empresa]);
+    if (resultado.length > 0) {
+        resultado.forEach(r => {
+            grupos.push({
+                idGrupo: r.id,
+                nombre_grupo: r.nombre_grupo,
+                descrip_grupo:r.descrip_grupo,
+                color_grupo: r.color_grupo,
+              });
+        });
+    }
+
+
+//    let grupo = ''
+//     if (resultado.length > 0) {
+        
+//         const epale = resultado[0].titulos; // Obtener la cadena JSON de la columna "titulos" en la base de datos
+      
+//         grupo = JSON.parse(epale); // Convertir la cadena JSON a un objeto JavaScript
+      
+//     }
     res.render('empresa/recursos', {
-      user_dash: true,id_empresa,categorias,recurso, datos });
-  }
+      user_dash: true,
+      id_empresa,
+      categorias,
+      recurso,
+      datos,grupos
+     // titulos: grupo // Pasar los títulos como parte del objeto de contexto al renderizar la vista
+    });
+  };
 
 
 empresaController.ejemplo2 = async (req, res) => {
