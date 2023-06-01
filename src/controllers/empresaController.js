@@ -743,28 +743,54 @@ empresaController.eliminarRecurso = async (req, res) => {
 
 // GUARDAR GRUPO DE DOCUMENTOS - RECURSOS ::
 empresaController.guardar_grupo = async (req, res) => {
-    const  {idEmpresa , nombre_grupo , descrip_grupo , color_grupo} = req.body;
-    const grupo = {};
-    
-    console.log("<< nombre grupo >> ", nombre_grupo);
-    console.log("<< descripcion grupo >> ", descrip_grupo);
-    console.log("<< color grupo >> ", color_grupo);
-    
-    
-    for (const key in req.body) {
-        if (key.includes('titulo') || key.includes('descripcion') || key.includes('url')) {
-            grupo[key] = req.body[key];
-        }
-    }
-    
-    console.log("<< cuerpo del grupo >> ", grupo);
-    
-    const recurso_armado = JSON.stringify(grupo); // Convertir el objeto a una cadena JSON
-    
-    await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
-    res.redirect('/recursos/');
-};
+    const { idEmpresa, nombre_grupo, descrip_grupo, color_grupo, esFormulario } = req.body;
 
+    // Obtener los datos acumulados de la variable de sesión
+    let datosAcumulados = req.session.datosAcumulados || [];
+
+     // Acceder a los archivos subidos en req.files
+    const archivo = req.file;
+    let valor
+
+    const campoId = req.body.id;
+    let valorCampo = req.body.valor;
+    console.log("...." , valorCampo);
+    const tipoCampo = req.body.tipo;
+
+    // Recorrer los archivos y obtener sus nombres
+    if (archivo && archivo.length > 0) {
+        archivo.forEach((archivox) => {
+        valor = '../grupo_recursos/' + archivox.filename
+        valorCampo = valor;
+        // Guardar el nombre del archivo en la base de datos u realizar otras operaciones necesarias
+        });
+    }
+
+    // Verificar si el campo ya existe en los datos acumulados
+    const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
+    if (campoExistente) {
+      // Si el campo existe, actualizar su valor y tipo
+      campoExistente.valor = valorCampo;
+      campoExistente.tipo = tipoCampo;
+    } else {
+      // Si el campo no existe, agregarlo a los datos acumulados con su valor y tipo
+      datosAcumulados.push({ id: campoId, valor: valorCampo, tipo: tipoCampo });
+    }
+  
+    // Guardar los datos acumulados en la variable de sesión
+    req.session.datosAcumulados = datosAcumulados;
+    console.log(datosAcumulados);
+    const recurso_armado = JSON.stringify(datosAcumulados);
+  
+    if (esFormulario === 'true') {
+      // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
+      await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
+    }
+  
+    res.redirect('/recursos/');
+  };
+
+  
 // ELIMINAR GRUPOS
 empresaController.eliminarGrupo = async (req, res) => {
     const { id } = req.body;
@@ -813,7 +839,6 @@ empresaController.recursos = async (req, res) => {
             iconoSVG = "../logos_recursos/Video_Youtube.svg"
         }else if(i.tipo_archivo == "Video de Vimeo")  {
             iconoSVG = "../logos_recursos/Video_Vimeo.svg"
-
         }
 
         datos.push({
@@ -826,37 +851,49 @@ empresaController.recursos = async (req, res) => {
     }
 
 
-    const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ? ' , [id_empresa]);
+    const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ?', [id_empresa]);
     if (resultado.length > 0) {
-        resultado.forEach(r => {
-            grupos.push({
-                idGrupo: r.id,
-                nombre_grupo: r.nombre_grupo,
-                descrip_grupo:r.descrip_grupo,
-                color_grupo: r.color_grupo,
-              });
+      resultado.forEach(r => {
+        const recursoArmado = JSON.parse(r.recurso_armado);
+        let cuerpoHTML = '';
+        recursoArmado.forEach(recurso => {
+          if (recurso.tipo === '1') {
+            cuerpoHTML += `<input type="" style="font-size: 1.2em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos epale" required id="${recurso.id}" value="${recurso.valor}">`;
+          } else if (recurso.tipo === '2') {
+            cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100; resize: none;" class="epale" id="${recurso.id}">${recurso.valor}</textarea>`;
+          } else if (recurso.tipo === '3') {
+            cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
+          }else if (recurso.tipo === '4') {
+            cuerpoHTML += `<input type="" style=" color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control input-recursos epale" required id="${recurso.id}" value="${recurso.valor}">`;
+          }
         });
+    
+        grupos.push({
+          idGrupo: r.id,
+          nombre_grupo: r.nombre_grupo,
+          descrip_grupo: r.descrip_grupo,
+          color_grupo: r.color_grupo,
+          recurso_armado: r.recurso_armado,
+          cuerpoHTML: cuerpoHTML
+        });
+      });
     }
 
 
-//    let grupo = ''
-//     if (resultado.length > 0) {
-        
-//         const epale = resultado[0].titulos; // Obtener la cadena JSON de la columna "titulos" en la base de datos
-      
-//         grupo = JSON.parse(epale); // Convertir la cadena JSON a un objeto JavaScript
-      
-//     }
-    res.render('empresa/recursos', {
-      user_dash: true,
-      id_empresa,
-      categorias,
-      recurso,
-      datos,grupos
-     // titulos: grupo // Pasar los títulos como parte del objeto de contexto al renderizar la vista
-    });
-};
+      res.render('empresa/recursos', {
+        user_dash: true, id_empresa, categorias,
+        recurso, datos, grupos
 
+      });
+    }
+
+// empresaController.actualizarRecurso = async (req, res) => {
+//     const campoId = req.body.id;
+//     const valorCampo = req.body.valor;
+//     console.log(campoId, valorCampo);
+  
+  
+// }
 empresaController.ejemplo2 = async (req, res) => {
  
     res.render('empresa/ejemplo2', {
