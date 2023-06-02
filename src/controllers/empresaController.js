@@ -749,20 +749,18 @@ empresaController.guardar_grupo = async (req, res) => {
     let datosAcumulados = req.session.datosAcumulados || [];
 
      // Acceder a los archivos subidos en req.files
-    const archivo = req.file;
+    const archivos = req.files;
     let valor
 
     const campoId = req.body.id;
     let valorCampo = req.body.valor;
-    console.log("...." , valorCampo);
     const tipoCampo = req.body.tipo;
 
     // Recorrer los archivos y obtener sus nombres
-    if (archivo && archivo.length > 0) {
-        archivo.forEach((archivox) => {
-        valor = '../grupo_recursos/' + archivox.filename
+    if (archivos && archivos.length > 0) {
+        archivos.forEach((archivo) => {
+        valor = '../grupo_recursos/' + archivo.filename
         valorCampo = valor;
-        // Guardar el nombre del archivo en la base de datos u realizar otras operaciones necesarias
         });
     }
 
