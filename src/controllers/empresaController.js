@@ -316,6 +316,12 @@ empresaController.index = async (req, res) => {
         ])
     }
 
+    if (req.user.programa == 1) {
+        etapaCompleta.gratis = true;
+        porcentajeTotal = porcentajeEtapa1;
+        etapaCompleta.verAnalisis = etapaCompleta.verEstrategico = false;
+    }
+
     req.session.etapaCompleta = etapaCompleta;
     req.session.consulAsignado = consulAsignado;
 
@@ -483,7 +489,6 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico2.color = 'badge-danger'
                 cuestionario.diagnostico2.texto = 'Pendiente'
                 cuestionario.diagnostico2.btnEdit = true;
-                cuestionario.diagnostico2.link = '/diagnostico-proyecto/'+req.user.codigo
             }
 
             let data = await consultarDatos('dg_empresa_nueva')
@@ -563,7 +568,6 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico2.color = 'badge-danger'
                 cuestionario.diagnostico2.texto = 'Pendiente'
                 cuestionario.diagnostico2.btnEdit = true;
-                cuestionario.diagnostico2.link = '/cuestionario-diagnostico/'+req.user.codigo
             }
             let data = await consultarDatos('dg_empresa_establecida')
             data = data.filter(x => x.id_empresa == id_empresa)
@@ -687,6 +691,12 @@ empresaController.fichaCliente = async (req, res) => {
         ficha.etapa_actual === 'En proyecto' ? datos.etapa1 = 'checked' : datos.etapa1 = ''
         ficha.etapa_actual === 'Operativo' ? datos.etapa2 = 'checked' : datos.etapa2 = ''
         ficha.etapa_actual === 'En expansión' ? datos.etapa3 = 'checked' : datos.etapa3 = ''
+
+        if (etapaCompleta.e1) {
+            datos.etapa1 = datos.etapa1 + ' disabled'
+            datos.etapa2 = datos.etapa2 + ' disabled'
+            datos.etapa3 = datos.etapa3 + ' disabled'
+        }
 
         datos.redes_sociales = JSON.parse(ficha.redes_sociales)
         datos.objetivos = JSON.parse(ficha.objetivos)

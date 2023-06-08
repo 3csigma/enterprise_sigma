@@ -1,9 +1,10 @@
 const pool = require('../database')
 const passport = require('passport')
 const bcrypt = require('bcryptjs');
-const { restablecerCuentaHTML, sendEmail } = require('../lib/mail.config')
+const { restablecerCuentaHTML, sendEmail, nuevaEmpresa } = require('../lib/mail.config')
 const randtoken = require('rand-token');
 const helpers = require('../lib/helpers')
+const crypto = require('crypto');
 const userController = exports;
 
 // Cerrar Sesión
@@ -88,15 +89,16 @@ userController.resetPassword = async (req, res, next) => {
     pool.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
         if (err) throw err;
         let type = 'error', msg = 'Este correo no está registrado', ruta = '/restablecer-clave';
+        let asunto = "Reestablece tu contraseña en 3C Sigma"
+        let txt1 = "Olvidaste", txt2 = "restablecerla", txt3 = "Restablecer";
+        if (!resetUser) {
+            asunto = "Crea tu contraseña en 3C Sigma";
+            txt1 = "Solicitaste", txt2 = "crearla", txt3 = "Crear";
+            ruta = '/solicitar-clave'
+        }
         if (result.length > 0) {
             const token = randtoken.generate(20);
-            let asunto = "Reestablece tu contraseña en 3C Sigma"
-            let txt1 = "Olvidaste", txt2 = "restablecerla", txt3 = "Restablecer";
-            if (!resetUser) {
-                asunto = "Crea tu contraseña en 3C Sigma";
-                txt1 = "Solicitaste", txt2 = "crearla", txt3 = "Crear";
-                ruta = '/solicitar-clave'
-            }
+            
             const plantilla = restablecerCuentaHTML(token, txt1, txt2, txt3)
             // Enviar email
             const resultEmail = sendEmail(email, asunto, plantilla)
@@ -111,8 +113,10 @@ userController.resetPassword = async (req, res, next) => {
                     if (err) throw err
                 })
                 type = 'success';
-                msg = 'Revisa tu bandeja de entrada';
+                msg = 'Solicitud exitosa! Dentro de un par de minutos revisa tu bandeja de entrada.';
             }
+        } else {
+
         }
         req.flash(type, msg);
         res.redirect(ruta);
@@ -120,7 +124,7 @@ userController.resetPassword = async (req, res, next) => {
 }
 
 userController.updatePassword = async (req, res, next) => {
-    let { clave, token } = req.body;
+    let { clave, token, zh_empresa } = req.body;
 
     await pool.query('SELECT * FROM users WHERE token = ?', [token], async (err, result) => {
         if (err) throw err;
@@ -136,10 +140,10 @@ userController.updatePassword = async (req, res, next) => {
             const actualizarUsuario = { clave }
 
             if (!datos.codigo) {
-                const tableUsers = await consultarDatos('users')
+                const tableUsers = await helpers.consultarDatos('users')
                 const admin  = tableUsers.find(x => x.rol == 'Admin')
                 const lastUser = tableUsers[tableUsers.length-1];
-                const hashCode = email+(parseInt(lastUser.id_usuarios+1));
+                const hashCode = datos.email+(parseInt(lastUser.id_usuarios+1));
                 // Generar código MD5 con base a su email
                 const codigo = crypto.createHash('md5').update(hashCode).digest("hex");
                 // Fecha de Creación

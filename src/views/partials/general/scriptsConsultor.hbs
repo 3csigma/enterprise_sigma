@@ -643,6 +643,38 @@
     (function () {
 
         const dzChartlist = function () {
+            const coloresDim = ['#812082', '#f2f2f2'];
+			const opciones = {
+				legend: false,
+				scales: {
+					yAxes: [{
+						gridLines: {
+							display: true
+						},
+						ticks: {
+							beginAtZero: true,
+							min: 0, // minimum value
+							max: 10 // maximum value
+						}
+					}],
+					xAxes: [{
+						gridLines: {
+							display: false
+						},
+						ticks: {
+							fontSize: 10
+						},
+						//barPercentage: 0.5,
+						//categoryPercentage: 1,
+						//barThickness: 14,
+						//maxBarThickness: 10,
+						barPercentage: 4,
+						categoryPercentage: 4,
+						barThickness: 28,
+						maxBarThickness: 25,
+					}]
+				}
+			}
 
             /** GRÁFICA PARA INDICADORES */
             
@@ -650,47 +682,51 @@
                 let dataAreasVitales1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 				let dataPE1 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
                 let dataAreasVitales2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
+				let dataPE2 = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]
 				
+				// PERCEPCIÓN CLIENTE
                 const areasVitales = indicadores.areasVitales1
                 dataAreasVitales1 = [areasVitales.producto, areasVitales.administracion, areasVitales.talento_humano, areasVitales.finanzas, areasVitales.servicio_cliente, areasVitales.operaciones, areasVitales.ambiente_laboral, areasVitales.innovacion, areasVitales.marketing, areasVitales.ventas]
 
+				if (indicadores.areasVitales2) {
+					const areasVitales = indicadores.areasVitales2
+                	dataAreasVitales2 = [areasVitales.producto, areasVitales.administracion, areasVitales.talento_humano, areasVitales.finanzas, areasVitales.servicio_cliente, areasVitales.operaciones, areasVitales.ambiente_laboral, areasVitales.innovacion, areasVitales.marketing, areasVitales.ventas]
+				}
+
 				// PERCEPCIÓN ESTADÍSTICA
 				if (indicadores.pe_Areas1) {
-					const pe_Areas1 = indicadores.pe_Areas1
-					dataPE1 = [pe_Areas1.producto, pe_Areas1.administracion, pe_Areas1.talento_humano, pe_Areas1.finanzas, pe_Areas1.servicio_cliente, pe_Areas1.operaciones, pe_Areas1.ambiente_laboral, pe_Areas1.innovacion, pe_Areas1.marketing, pe_Areas1.ventas]
+					const pe_Areas = indicadores.pe_Areas1
+					dataPE1 = [pe_Areas.producto, pe_Areas.administracion, pe_Areas.talento_humano, pe_Areas.finanzas, pe_Areas.servicio_cliente, pe_Areas.operaciones, pe_Areas.ambiente_laboral, pe_Areas.innovacion, pe_Areas.marketing, pe_Areas.ventas]
+				}
+				if (indicadores.pe_Areas2) {
+					const pe_Areas = indicadores.pe_Areas2
+					dataPE2 = [pe_Areas.producto, pe_Areas.administracion, pe_Areas.talento_humano, pe_Areas.finanzas, pe_Areas.servicio_cliente, pe_Areas.operaciones, pe_Areas.ambiente_laboral, pe_Areas.innovacion, pe_Areas.marketing, pe_Areas.ventas]
 				}
 
-                /*
-				const areasVitales2 = indicadores.areasVitales2
-				if (areasVitales2) {
-					label1 = 'Análisis anterior'
-                	dataAreasVitales2 = [areasVitales2.producto, areasVitales2.administracion, areasVitales2.talento_humano, areasVitales2.finanzas, areasVitales2.servicio_cliente, areasVitales2.operaciones, areasVitales2.ambiente_laboral, areasVitales2.innovacion, areasVitales2.marketing, areasVitales2.ventas]
-				}
-				*/
-
-                let valorMax = 10;
                 if (nuevosProyectos == 1) {
-                    valorMax = 5;
+                    opciones.scales.yAxes[0].ticks.max = 5;
                 }
 
-                if ($('#chartEmpresaAdm1').length > 0) {
-                    const chartEmpresaAdm1 = document.getElementById("chartEmpresaAdm1").getContext('2d')
+				// GRAFICA FECHA INICIO
+                if ($('#chartEmpresaAdm_areas1').length > 0) {
+                    const chartEmpresa = document.getElementById("chartEmpresaAdm_areas1").getContext('2d')
 
-                    chartEmpresaAdm1.height = 100;
-                    new Chart(chartEmpresaAdm1, {
-                        type: 'bar',
-                        data: {
-                            defaultFontFamily: 'Oblivian',
-                            labels: ["Producto", "Admin", "Talento Humano", "Finanzas", "Servicio al cliente", "Operaciones", "Ambiente Laboral", "Innovación", "Marketing", "Ventas"],
-                            datasets: [
-                                {
-                                    label: "Puntaje",
-                                    backgroundColor: "#50368C",
-                                    borderColor: "#50368C",
-                                    data: dataAreasVitales1,
-                                    fill: false,
-                                },
-                                // PERCEPCIÓN ESTADÍSTICA
+					chartEmpresa.height = 100;
+					new Chart(chartEmpresa, {
+						type: 'bar',
+						data: {
+							defaultFontFamily: 'Oblivian',
+							labels: ["Producto", "Admin", "Talento Humano", "Finanzas", "S. Al cliente", "Operaciones", "A. Laboral", "Innovación", "Marketing", "Ventas"],
+							datasets: [
+								// PERCEPCIÓN CLIENTE
+								{
+									label: 'Valor',
+									backgroundColor: "#50368C",
+									borderColor: "#50368C",
+									data: dataAreasVitales1,
+									fill: false,
+								},
+								// PERCEPCIÓN ESTADÍSTICA
 								{
 									label: "Valor",
 									fill: false,
@@ -698,190 +734,142 @@
 									borderColor: "#FED061",
 									data: dataPE1,
 								}
-                            ]
-                        },
-                        options: {
-                            legend: false,
-                            scales: {
-                                yAxes: [{
-                                    gridLines: {
-                                        display: true
-                                    },
-                                    ticks: {
-                                        beginAtZero: true,
-                                        min: 0, // minimum value
-                                        max: valorMax // maximum value
-                                    }
-                                }],
-                                xAxes: [{
-                                    gridLines: {
-                                        display: false
-                                    },
-                                    ticks: {
-                                        fontSize: 11
-                                    },
-                                    //barPercentage: 0.5,
-									//categoryPercentage: 1,
-									//barThickness: 14,
-									//maxBarThickness: 10,
-									barPercentage: 4,
-                                    categoryPercentage: 4,
-                                    barThickness: 28,
-                                    maxBarThickness: 25,
-                                }]
-                            }
-                        }
-                    });
-                }
+							]
+						},
+						options: opciones
+					});
+				}
+
+                // GRAFICA FECHA FINAL
+				if ($('#chartEmpresaAdm_areas2').length > 0) {
+					const chartEmpresa = document.getElementById("chartEmpresaAdm_areas2").getContext('2d')
+
+					chartEmpresa.height = 100;
+					new Chart(chartEmpresa, {
+						type: 'bar',
+						data: {
+							defaultFontFamily: 'Oblivian',
+							labels: ["Producto", "Admin", "Talento Humano", "Finanzas", "S. Al cliente", "Operaciones", "A. Laboral", "Innovación", "Marketing", "Ventas"],
+							datasets: [
+								// PERCEPCIÓN CLIENTE
+								{
+									label: 'Valor',
+									backgroundColor: "#50368C",
+									borderColor: "#50368C",
+									data: dataAreasVitales2,
+									fill: false,
+								},
+								// PERCEPCIÓN ESTADÍSTICA
+								{
+									label: "Valor",
+									fill: false,
+									backgroundColor: "#FED061",
+									borderColor: "#FED061",
+									data: dataPE2,
+								}
+							]
+						},
+						options: opciones
+					});
+				}
             }
 
             const chartPorDimensiones = (indicadores, nuevosProyectos) => {
                 let chartPE_cliente = [0, 0, 0, 0]
                 let chartPE_estadistica = [0, 0, 0, 0]
+				let chartPE_cliente2 = [0, 0, 0, 0]
+                let chartPE_estadistica2 = [0, 0, 0, 0]
                 let titulos = ["Producto", "Administración", "Operaciones", "Marketing"];
 
-                const pe_cliente1 = indicadores.dimensiones1
-				chartPE_cliente = [pe_cliente1.producto, pe_cliente1.administracion, pe_cliente1.operaciones, pe_cliente1.marketing]
+                const pe_cliente = indicadores.dimensiones1
+				chartPE_cliente = [pe_cliente.producto, pe_cliente.administracion, pe_cliente.operaciones, pe_cliente.marketing]
+				if (indicadores.dimensiones2) {
+					const pe_cliente = indicadores.dimensiones2
+					chartPE_cliente2 = [pe_cliente.producto, pe_cliente.administracion, pe_cliente.operaciones, pe_cliente.marketing]
+				}
 
 				// PERCEPCIÓN ESTADÍSTICA
 				if (indicadores.pe_Dimensiones1) {
-					const pe_estadistica1 = indicadores.pe_Dimensiones1
-					chartPE_estadistica = [pe_estadistica1.producto, pe_estadistica1.administracion, pe_estadistica1.operaciones, pe_estadistica1.marketing]
+					const pe_estadistica = indicadores.pe_Dimensiones1
+					chartPE_estadistica = [pe_estadistica.producto, pe_estadistica.administracion, pe_estadistica.operaciones, pe_estadistica.marketing]
+				}
+				if (indicadores.pe_Dimensiones2) {
+					const pe_estadistica = indicadores.pe_Dimensiones2
+					chartPE_estadistica2 = [pe_estadistica.producto, pe_estadistica.administracion, pe_estadistica.operaciones, pe_estadistica.marketing]
 				}
 
 				if (nuevosProyectos == 1) {
 					titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
-					chartPE_cliente = [pe_cliente1.experiencia_rubro, pe_cliente1.mentalidad, pe_cliente1.viabilidad_, pe_cliente1.estructura]
+					chartPE_cliente = [pe_cliente.experiencia_rubro, pe_cliente.mentalidad, pe_cliente.viabilidad_, pe_cliente.estructura]
+
+					if (indicadores.dimensiones2) {
+						const pe_cliente = indicadores.dimensiones2
+						chartPE_cliente2 = [pe_cliente.experiencia_rubro, pe_cliente.mentalidad, pe_cliente.viabilidad_, pe_cliente.estructura]
+					}
 				}
 
-                if ($('#chartEmpresaAdm2').length > 0) {
-                    const chartEmpresaAdm2 = document.getElementById("chartEmpresaAdm2").getContext('2d')
+                if ($('#chartEmpresaAdm_dim1').length > 0) {
+                    const chartEmpresa = document.getElementById("chartEmpresaAdm_dim1").getContext('2d')
 
-                    chartEmpresaAdm2.height = 100;
-                    new Chart(chartEmpresaAdm2, {
-                        type: 'bar',
-                        data: {
-                            defaultFontFamily: 'Oblivian',
-                            labels: titulos,
-                            datasets: [{
-                                label: label1,
-                                backgroundColor: "#50368C",
-                                borderColor: "#50368C",
-                                data: chartPE_cliente,
-                                fill: false,
-                            },
-                            {
-                                label: label2,
-                                fill: false,
-                                backgroundColor: "#FED061",
-                                borderColor: "#FED061",
-                                data: chartPE_estadistica,
-                            }]
-                        },
-                        options: {
-                            legend: false,
-                            scales: {
-                                yAxes: [{
-                                    gridLines: {
-                                        display: true
-                                    },
-                                    ticks: {
-                                        beginAtZero: true,
-                                        min: 0, // minimum value
-                                        //max: 10 // maximum value
-                                    }
-                                }],
-                                xAxes: [{
-                                    gridLines: {
-                                        display: false
-                                    },
-                                    ticks: {
-                                        fontSize: 11
-                                    },
-                                    barPercentage: 4,
-                                    categoryPercentage: 4,
-                                    barThickness: 28,
-                                    maxBarThickness: 25,
-                                }]
-                            }
-                        }
-                    });
-                }
-            }
+                    chartEmpresa.height = 100;
+					new Chart(chartEmpresa, {
+						type: 'bar',
+						data: {
+							defaultFontFamily: 'Oblivian',
+							labels: titulos,
+							datasets: [
+								// PERCEPCIÓN CLIENTE
+								{
+									label: 'Valor',
+									backgroundColor: "#50368C",
+									borderColor: "#50368C",
+									data: chartPE_cliente,
+									fill: false,
+								},
+								// PERCEPCIÓN ESTADÍSTICA
+								{
+									label: 'Valor',
+									fill: false,
+									backgroundColor: "#FED061",
+									borderColor: "#FED061",
+									data: chartPE_estadistica,
+								}
+							]
+						},
+						options: opciones
+					});
+				}
 
-			// PERCEPCIÓN ESTADÍSTICA
-            const chartEstadistica = (indicadores, nuevosProyectos) => {
-                let chartDimensiones1 = [0, 0, 0, 0]
-                let chartDimensiones2 = [0, 0, 0, 0]
-                let titulos = ["Producto", "Administración", "Operaciones", "Marketing"];
-
-                const valDimensiones1 = indicadores.pe1
-                chartDimensiones1 = [valDimensiones1.producto, valDimensiones1.administracion, valDimensiones1.operaciones, valDimensiones1.marketing]
-                //const valDimensiones2 = JSON.parse(indicadores.pe2)
-                /*
-                if (valDimensiones2) {
-                    chartDimensiones2 = [valDimensiones2.producto, valDimensiones2.administracion, valDimensiones2.operaciones, valDimensiones2.marketing]
-                }
-                
-                if (nuevosProyectos == 1) {
-                    titulos = ["Experiencia en el Rubro", "Mentalidad Empresarial", "Viabilidad del Negocio", "Estructura del Negocio"]
-                    chartDimensiones1 = [valDimensiones1.experiencia_rubro, valDimensiones1.mentalidad, valDimensiones1.viabilidad_, valDimensiones1.estructura]
-                }
-                */
-
-                if ($('#chartEmpresaAdm3').length > 0) {
-                    const chartEmpresaAdm3 = document.getElementById("chartEmpresaAdm3").getContext('2d')
-
-                    chartEmpresaAdm2.height = 100;
-                    new Chart(chartEmpresaAdm3, {
-                        type: 'bar',
-                        data: {
-                            defaultFontFamily: 'Oblivian',
-                            labels: titulos,
-                            datasets: [{
-                                label: "Puntaje",
-                                backgroundColor: "#50368C",
-                                borderColor: "#50368C",
-                                data: chartDimensiones1,
-                                fill: false,
-                            },
-                            {
-                                label: "Último análisis",
-                                fill: false,
-                                backgroundColor: "#FED061",
-                                borderColor: "#FED061",
-                                data: chartDimensiones2,
-                            }]
-                        },
-                        options: {
-                            legend: false,
-                            scales: {
-                                yAxes: [{
-                                    gridLines: {
-                                        display: true
-                                    },
-                                    ticks: {
-                                        beginAtZero: true,
-                                        min: 0, // minimum value
-                                        //max: 10 // maximum value
-                                    }
-                                }],
-                                xAxes: [{
-                                    gridLines: {
-                                        display: false
-                                    },
-                                    ticks: {
-                                        fontSize: 11
-                                    },
-                                    barPercentage: 4,
-                                    categoryPercentage: 4,
-                                    barThickness: 28,
-                                    maxBarThickness: 25,
-                                }]
-                            }
-                        }
-                    });
-                }
+                if ($('#chartEmpresaAdm_dim2').length > 0) {
+					const chartEmpresa = document.getElementById("chartEmpresaAdm_dim2").getContext('2d')
+					chartEmpresa.height = 100;
+					new Chart(chartEmpresa, {
+						type: 'bar',
+						data: {
+							defaultFontFamily: 'Oblivian',
+							labels: titulos,
+							datasets: [
+								// PERCEPCIÓN CLIENTE
+								{
+									label: 'Valor',
+									backgroundColor: "#50368C",
+									borderColor: "#50368C",
+									data: chartPE_cliente2,
+									fill: false,
+								},
+								// PERCEPCIÓN ESTADÍSTICA
+								{
+									label: 'Valor',
+									fill: false,
+									backgroundColor: "#FED061",
+									borderColor: "#FED061",
+									data: chartPE_estadistica2,
+								}
+							]
+						},
+						options: opciones
+					});
+				}
             }
 
             /*************************** FIN GRÁFICA INDICADORES *******************************/
@@ -892,7 +880,6 @@
                     {{#if graficas2}}
                     chartAreasVitales(data, empresaNueva);
                     chartPorDimensiones(data, empresaNueva);
-                    chartEstadistica(data, empresaNueva);
                     {{/if}}
                 },
             }

@@ -126,7 +126,7 @@
 
     (function ($) {
 
-        const dzGraficasEmpresa = function (indicadores) {
+        const dzGraficasEmpresa = function () {
 			const coloresDim = ['#812082', '#f2f2f2'];
 			const opciones = {
 				legend: false,
@@ -286,9 +286,9 @@
 					chartPE_cliente = [pe_cliente.experiencia_rubro, pe_cliente.mentalidad, pe_cliente.viabilidad_, pe_cliente.estructura]
 
 					if (indicadores.dimensiones2) {
-					const pe_cliente = indicadores.dimensiones2
-					chartPE_cliente2 = [pe_cliente.experiencia_rubro, pe_cliente.mentalidad, pe_cliente.viabilidad_, pe_cliente.estructura]
-				}
+						const pe_cliente = indicadores.dimensiones2
+						chartPE_cliente2 = [pe_cliente.experiencia_rubro, pe_cliente.mentalidad, pe_cliente.viabilidad_, pe_cliente.estructura]
+					}
 				}
 
 				if ($('#chartEmpresa_dim1').length > 0) {

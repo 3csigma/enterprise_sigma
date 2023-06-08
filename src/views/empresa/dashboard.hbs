@@ -45,7 +45,7 @@
     <div class="container-fluid">
         <div class="row">
             {{!-- Cuadros principales sobre las etapas --}}
-            <div class="col-xl-6 col-xxl-12">
+            <div class="{{#if etapaCompleta.gratis}}col-xl-12{{else}}col-xl-6{{/if}} col-xxl-12">
                 <div class="row">
 
                     {{!-- Diagnóstico de negocio --}}
@@ -109,6 +109,7 @@
                     </div>
                     {{/if}}
                     
+                    {{#if etapaCompleta.verEstrategico}}
                     {{!-- Plan estratégico de negocio --}}
                     <div class="col-sm-12">
                         <div class="card avtivity-card">
@@ -138,6 +139,7 @@
                             <div class="effect bg-estrategico"></div>
                         </div>
                     </div>
+                    {{/if}}
 
                     {{!-- PLAN EMPRESARIAL --}}
                     {{!-- <div class="col-sm">
@@ -201,6 +203,7 @@
                 {{!-- Fin de Cuadros principales --}}
             </div>
 
+            {{#unless etapaCompleta.gratis}}
             {{#if etapaCompleta.verAnalisis}}
             {{!-- NUEVO RENIDMIENTO --}}
             <div class="col-xl-6 col-xxl-6">
@@ -294,6 +297,7 @@
                 </div>
             </div>
             {{/if}}
+            {{/unless}}
 
             {{!-- GRÁFICAS DE INDICADORES (ÁREAS VITALES Y DIMENSIONES) --}}
             <div class="col-xl-12 col-xxl-12">

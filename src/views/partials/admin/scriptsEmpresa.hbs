@@ -1,4 +1,47 @@
 <script>
+    document.addEventListener("DOMContentLoaded", () => {
+        $('#div_areas2').hide();
+        $('#div_dim2').hide();
+
+    });
+
+    function cambiarIndicadores(i) {
+        $('.fecha2').removeClass('active')
+        $('.fecha1').addClass('active')
+    }
+
+    function changePageChart(e) {
+        $('.pagination .page-item').removeClass("active")
+        const item = e.getAttribute('data-target')
+        const chart1 = $('#div_areas1')
+        const chart2 = $('#div_areas2')
+        const chart3 = $('#div_dim1')
+        const chart4 = $('#div_dim2')
+        if (item == 1) {
+            chart1.show()
+            chart1.addClass("active")
+            chart2.hide()
+            chart2.removeClass("active")
+        } else if (item == 2) {
+            chart1.removeClass("active")
+            chart1.hide()
+            chart2.addClass("active")
+            chart2.show()
+        } else if (item == 3) {
+            chart3.show()
+            chart3.addClass("active")
+            chart4.hide()
+            chart4.removeClass("active")
+        } else {
+            chart3.removeClass("active")
+            chart3.hide()
+            chart4.addClass("active")
+            chart4.show()
+        }
+        const listItem = $(e).parent();
+        listItem.addClass('active');
+    }
+
     function agregarConclusion(etapa){
         let conclusion = 0
         if(etapa == 1) {conclusion = $("#conclusion_diagnostico").val()}

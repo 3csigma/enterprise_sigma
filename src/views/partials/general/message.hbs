@@ -26,3 +26,12 @@
     {{registro}}
 </div>
 {{/if}}
+
+{{#if error}}
+<div class="alert alert-danger alert-dismissible alert-alt fade show">
+    <button type="button" class="close h-100" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+    <strong>Atención!</strong> {{error}}
+</div>
+{{/if}}

@@ -66,6 +66,7 @@ app.use((req, res, next) => {
   res.locals.success = req.flash('success');
   res.locals.message = req.flash('message');
   res.locals.registro = req.flash('registro');
+  res.locals.error = req.flash('error');
   res.locals.user = req.user; //Variable local para Empresas
   res.locals.session = req.session;
   global.urlPropuestaNegocio = '';

@@ -646,62 +646,135 @@
                                     <div class="profile-tab mb-2">
                                         <div class="custom-tab-1">
                                             <ul class="nav nav-pills d-flex justify-content-center items-align-center mb-3">
-                                                <li class="nav-item"><a href="#vitales" data-toggle="tab" class="nav-link active show btnIndicadoresAll"
-                                                        style="width: 168.83px;">Áreas Vitales</a>
+                                                <li class="nav-item"><a href="#vitales" data-toggle="tab" onclick="cambiarIndicadores(1)" 
+                                                    class="nav-link active show btnIndicadoresAll" 
+                                                    style="width: 168.83px;">Áreas Vitales</a>
                                                 </li>
-                                                <li class="nav-item"><a href="#dimensiones" data-toggle="tab" class="nav-link btnIndicadoresAll">Por Dimensiones</a>
+                                                <li class="nav-item"><a href="#dimensiones" data-toggle="tab" onclick="cambiarIndicadores(2)"
+                                                    class="nav-link btnIndicadoresAll">Por Dimensiones</a>
                                                 </li>
                                             </ul>
                                         </div>
                                     </div>
                                     <!-- ./ Fin de pestañas -->
                                 
+                                    {{!-- CONTENIDO DE LAS GRÁFICAS POR INDICADORES --}}
                                     <div class="tab-content">
-                                
+                                        
+                                        {{!-- GRÁFICA DE ÁREAS VITALES --}}
                                         <div id="vitales" class="tab-pane fade active show">
                                             <div class="card-body">
-                                                <canvas id="chartEmpresaAdm1"></canvas>
-                                
-                                                <div class="row d-flex justify-content-center align-items-center mt-2">
-                                                    <div class="col-sm-3">
+                                                
+                                                {{!-- GRÁFICA FECHA INICIO --}}
+                                                <div id="div_areas1">
+                                                    <canvas id="chartEmpresaAdm_areas1"></canvas>
+
+                                                    {{#if rendimiento.op}}
+                                                    <div class="d-flex justify-content-center align-items-center mb-3 mt-4">
+                                                        <span>Rendimiento Operativo del Negocio: <strong>{{rendimiento.op}}% </strong></span>
+                                                    </div>
+                                                    {{/if}}
+                                                </div>
+
+                                                {{!-- GRÁFICA FECHA FIN --}}
+                                                <div id="div_areas2">
+                                                    <canvas id="chartEmpresaAdm_areas2"></canvas>
+
+                                                    {{#if rendimiento.op}}
+                                                    <div class="d-flex justify-content-center align-items-center mb-3 mt-4">
+                                                        <span>Rendimiento Operativo del Negocio: <strong>{{rendimiento.op2}}% </strong></span>
+                                                    </div>
+                                                    {{/if}}
+                                                </div>
+
+                                                {{!-- COLORES INFORMATIVOS --}}
+                                                <div class="row d-flex justify-content-center align-items-center mt-4 mb-4">
+                                                    <div class="pl-2">
                                                         <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
                                                     </div>
+                                                    {{#if rendimiento.pe1}}
+                                                    <div class="pl-2">
+                                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Percepción Estadística</span>
+                                                    </div>
+                                                    {{/if}}
                                                 </div>
+
+
+                                                {{#if etapa1.fecha2}}
+                                                {{!-- NAVEGACIÓN POR FECHAS --}}
+                                                <nav class="d-flex justify-content-center items-align-center mt-4">
+                                                    <ul class="pagination">
+                                                        {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
+                                                        <li class="page-item fecha1 active"><a class="page-link" data-target="1" onclick="changePageChart(this)">{{etapa1.fecha1}}</a>
+                                                        </li>
+                                                        <li class="page-item fecha2"><a class="page-link" data-target="2" onclick="changePageChart(this)">{{etapa1.fecha2}}</a></li>
+                                                        {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
+                                                    </ul>
+                                                </nav>
+                                                {{/if}}
+
                                             </div>
-                                
-                                            {{#if rendimiento.op}}
-                                            <div class="d-flex justify-content-center align-items-center mb-3">
-                                                <span>Rendimiento Operativo del Negocio: <strong>{{rendimiento.op}}% </strong></span>
-                                            </div>
-                                            {{/if}}
-                                
+                                            
                                         </div>
-                                
+                                        
+                                        {{!-- GRÁFICA POR DIMENSIONES --}}
                                         <div id="dimensiones" class="tab-pane fade">
                                             <div class="card-body">
-                                                <canvas id="chartEmpresaAdm2"></canvas>
-                                
+
+                                                {{!-- GRÁFICA FECHA INICIO --}}
+                                                <div id="div_dim1">
+                                                    <canvas id="chartEmpresaAdm_dim1"></canvas>
+
+                                                    {{#if rendimiento.num}}
+                                                    <div class="d-flex justify-content-center align-items-center mb-3 mt-2">
+                                                        <span style="font-weight: 800;">Rendimento del proyecto: {{rendimiento.num}}% </span>
+                                                        <span class="badge light {{rendimiento.color}}">{{rendimiento.txt}}</span>
+                                                    </div>
+                                                    {{/if}}
+                                                </div>
+
+                                                {{!-- GRÁFICA FECHA FIN --}}
+                                                <div id="div_dim2">
+                                                    <canvas id="chartEmpresaAdm_dim2"></canvas>
+
+                                                    {{#if rendimiento.num2}}
+                                                    <div class="d-flex justify-content-center align-items-center mb-3 mt-2">
+                                                        <span style="font-weight: 800;">Rendimento del proyecto: {{rendimiento.num2}}% </span>
+                                                        <span class="badge light {{rendimiento.color2}}">{{rendimiento.txt2}}</span>
+                                                    </div>
+                                                    {{/if}}
+                                                </div>
+
+                                                {{!-- COLORES INFORMATIVOS --}}
                                                 <div class="row d-flex justify-content-center align-items-center mt-4">
-                                                    <div class="col-sm-3">
+                                                    <div class="pl-2">
                                                         <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Cliente</span>
                                                     </div>
-                                                    {{#if rendimiento.pe}}
-                                                    <div class="col-sm-3">
+                                                    {{#if rendimiento.pe1}} 
+                                                    <div class="pl-2">
                                                         <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Percepción Estadística</span>
                                                     </div>
                                                     {{/if}}
                                                 </div>
                                             </div>
-                                
-                                            {{#if rendimiento.num}}
-                                            <div class="d-flex justify-content-center align-items-center mb-3">
-                                                <span style="font-weight: 800;">Rendimento del proyecto: {{rendimiento.num}}% </span>
-                                                <span class="badge light {{rendimiento.color}}">{{rendimiento.txt}}</span>
-                                            </div>
-                                            {{/if}}
-                                        </div>
-                                
-                                    </div>
+
+
+                                            {{#if etapa1.fecha2}}
+                                            {{!-- NAVEGACIÓN POR FECHAS --}}
+                                            <nav class="d-flex justify-content-center items-align-center">
+                                                <ul class="pagination">
+                                                    {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
+                                                    <li class="page-item fecha1 active"><a class="page-link" data-target="3" onclick="changePageChart(this)">{{etapa1.fecha1}}</a>
+                                                    </li>
+                                                    <li class="page-item fecha2"><a class="page-link" data-target="4" onclick="changePageChart(this)">{{etapa1.fecha2}}</a></li>
+                                                    {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
+                                                </ul>
+                                            </nav>
+                            {{/if}}
+                            
+                        </div>
+
+                    </div>
                                 
                                     <input type="hidden" id="jsonIndicadores" value="{{jsonIndicadores}}" />
                                     <input type="hidden" id="nuevosProyectos" value="{{nuevosProyectos}}" />
@@ -835,7 +908,7 @@
                                     </div>
                                 </div>
 
-                                {{#if datos.cuestionarios}} {{!-- // Inicio resDiag --}}
+                                {{#unless cuestionario.diagnostico.btnEdit}} {{!-- // Inicio resDiag --}}
                                 <!-- ======================== INFORME DE DIAGNÓSTICO ======================== -->
                                 {{!-- <div class="card">
                                     <div class="card-body">
@@ -932,7 +1005,7 @@
                                     </div>
                                 </div>
                                 <!-- ========================================================================== -->
-                                {{/if}} {{!-- // Fin resDiag --}}
+                                {{/unless}} {{!-- // Fin resDiag --}}
 
                                 {{!-- {{/if}}  --}}
                                 {{!-- // Fin de pagoDg_Realizado --}}

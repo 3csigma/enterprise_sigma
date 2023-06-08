@@ -13,7 +13,7 @@ let aprobarConsultor = false;
 // Dashboard Administrativo
 dashboardController.admin = async (req, res) => {
     const consultores = await pool.query('SELECT * FROM consultores WHERE id_consultores != 1 ORDER BY id_consultores DESC LIMIT 2')
-    const empresas = await pool.query('SELECT * FROM empresas ORDER BY id_empresas DESC LIMIT 2')
+    const empresas = await pool.query('SELECT * FROM empresas WHERE fecha_creacion != "" ORDER BY id_empresas DESC LIMIT 2')
 
     /** Acceso directo para Consultores pendientes por aprobar */
     aprobarConsultor = false;
@@ -274,15 +274,12 @@ dashboardController.mostrarEmpresas = async (req, res) => {
 dashboardController.editarEmpresa = async (req, res) => {
     const codigo = req.params.codigo, datos = {};
     const fechaActual = new Date().toLocaleDateString('fr-CA');
-    let userEmpresa = await consultarDatos('users')
-    userEmpresa = userEmpresa.find(x => x.codigo == codigo && x.rol == 'Empresa')
+    const userEmpresa = (await consultarDatos('users')).find(x => x.codigo == codigo && x.rol == 'Empresa')
     // Empresa tabla Usuarios
-    let datosEmpresa = await consultarDatos('empresas')
-    datosEmpresa = datosEmpresa.find(x => x.codigo == codigo)
+    const datosEmpresa = (await consultarDatos('empresas')).find(x => x.codigo == codigo)
     const idEmpresa = datosEmpresa.id_empresas;
     // Empresa tabla Ficha Cliente
-    let empresa = await consultarDatos('ficha_cliente')
-    empresa = empresa.find(x => x.id_empresa == idEmpresa)
+    const empresa = (await consultarDatos('ficha_cliente')).find(x => x.id_empresa == idEmpresa)
     const pago_diagnostico = {
         color : 'badge-warning',
         texto : 'Pendiente',
@@ -423,22 +420,23 @@ dashboardController.editarEmpresa = async (req, res) => {
 
     /************************************************************************************************************* */
     // Tabla de Diagnóstico - Empresas Nuevas & Establecidas
-    const frmDiag = {}
-    let diagnostico = await consultarDatos('dg_empresa_establecida')
-    diagnostico = diagnostico.find(x => x.id_empresa == idEmpresa)
-    let dgNuevasEmpresas = await consultarDatos('dg_empresa_nueva')
-    dgNuevasEmpresas = dgNuevasEmpresas.find(x => x.id_empresa == idEmpresa)
+    const frmDiag = {}, cuestionario = { diagnostico: { respuestas: {} }, diagnostico2: { respuestas: {} } };
+    const diagnostico = (await consultarDatos('dg_empresa_establecida')).find(x => x.id_empresa == idEmpresa)
+    const dgNuevasEmpresas = (await consultarDatos('dg_empresa_nueva')).find(x => x.id_empresa == idEmpresa)
     
     if (!diagnostico && !dgNuevasEmpresas) {
         frmDiag.color = 'badge-danger'
         frmDiag.texto = 'Pendiente'
         frmDiag.fechaLocal = true;
         frmDiag.tablasVacias = true;
+        cuestionario.diagnostico = false;
+        cuestionario.diagnostico2 = false;
     } else {        
         frmDiag.color = 'badge-success'
         frmDiag.estilo = 'linear-gradient(189.55deg, #FED061 -131.52%, #812082 -11.9%, #50368C 129.46%); color: #FFFF'
         frmDiag.texto = 'Completado'
         frmDiag.estado = true;
+        cuestionario.diagnostico.ver = true;
 
         if (diagnostico) {
             datos.etapa = 'Cuestionario empresa establecida'
@@ -452,49 +450,210 @@ dashboardController.editarEmpresa = async (req, res) => {
             frmDiag.tabla2 = true;
             datos.nueva = true;
         }
-    }
 
-    // Respuestas del Cuestionario Diagnóstico Empresa Establecida
-    const resDiag = {}
-    datos.cuestionarios = false;
-    if (frmDiag.tabla1) {
-        datos.cuestionarios = true;
-        const r = diagnostico
-        resDiag.producto = JSON.parse(r.productos_servicios)
-        resDiag.administracion = JSON.parse(r.administracion)
-        resDiag.talento = JSON.parse(r.talento_humano)
-        resDiag.finanzas = JSON.parse(r.finanzas)
-        resDiag.servicio = JSON.parse(r.servicio_alcliente)
-        resDiag.operaciones = JSON.parse(r.operaciones)
-        resDiag.ambiente = JSON.parse(r.ambiente_laboral)
-        resDiag.innovacion = JSON.parse(r.innovacion)
-        resDiag.marketing = JSON.parse(r.marketing)
-        resDiag.ventas = JSON.parse(r.ventas)
-        resDiag.fortalezas = JSON.parse(r.fortalezas)
-        resDiag.oportunidades = JSON.parse(r.oportunidades_mejoras)
-        resDiag.metas = JSON.parse(r.metas_corto_plazo)
+        if (empresa.diagnostico_fecha2 > 0) {
+            cuestionario.diagnostico2.ver = true;
+        }
+
+        if (empresa.tipo_empresa == 1) {
+            cuestionario.diagnostico.color = 'badge-danger'
+            cuestionario.diagnostico.texto = 'Pendiente'
+            cuestionario.diagnostico.btnEdit = true;
+            cuestionario.diagnostico.link = '/empresas/'+datosEmpresa.codigo
+
+            if (cuestionario.diagnostico2.ver) {
+                cuestionario.diagnostico2.color = 'badge-danger'
+                cuestionario.diagnostico2.texto = 'Pendiente'
+                cuestionario.diagnostico2.btnEdit = true;
+            }
+
+            const data = (await consultarDatos('dg_empresa_nueva')).filter(x => x.id_empresa == idEmpresa)
+            // Ordenando el Array para asegurar usar el 1ero y último
+            data.sort((a, b) => { return a.id_ - b.id_ });
+            if (data.length > 0) {
+                const datos = data[0]
+                cuestionario.diagnostico.fecha = datos.fecha;
+                cuestionario.diagnostico.btnEdit = false;
+                cuestionario.diagnostico.color = 'badge-success'
+                cuestionario.diagnostico.texto = 'Completado'
+                cuestionario.diagnostico.modal = '#modalNuevosProyectos';
+                cuestionario.nuevo = true;
+
+                // Respuestas del Cuestionario Diagnóstico Empresa Nueva
+                cuestionario.diagnostico.respuestas.rubro = datos.rubro
+                const obj = JSON.parse(datos.empresa_ofrece);
+                let ofrece_ = "";
+                for (let x in obj) { ofrece_ += obj[x]+". "; }
+                cuestionario.diagnostico.respuestas.ofrece = ofrece_;
+                cuestionario.diagnostico.respuestas.exp_rubro = JSON.parse(datos.exp_rubro)
+                cuestionario.diagnostico.respuestas.mentalidad = JSON.parse(datos.mentalidad_empresarial)
+                cuestionario.diagnostico.respuestas.viabilidad = JSON.parse(datos.viabilidad)
+                cuestionario.diagnostico.respuestas.producto = JSON.parse(datos.productos_servicios)
+                cuestionario.diagnostico.respuestas.administracion = JSON.parse(datos.administracion)
+                cuestionario.diagnostico.respuestas.talento = JSON.parse(datos.talento_humano)
+                cuestionario.diagnostico.respuestas.finanzas = JSON.parse(datos.finanzas)
+                cuestionario.diagnostico.respuestas.servicio = JSON.parse(datos.servicio_cliente)
+                cuestionario.diagnostico.respuestas.operaciones = JSON.parse(datos.operaciones)
+                cuestionario.diagnostico.respuestas.ambiente = JSON.parse(datos.ambiente_laboral)
+                cuestionario.diagnostico.respuestas.innovacion = JSON.parse(datos.innovacion)
+                cuestionario.diagnostico.respuestas.marketing = JSON.parse(datos.marketing)
+                cuestionario.diagnostico.respuestas.ventas = JSON.parse(datos.ventas)
+                cuestionario.diagnostico.respuestas.metas = JSON.parse(datos.metas)
+
+                // ÚLTIMA FILA DE LA TABLA
+                if (data.length > 1) {
+                    const dato = data[data.length - 1];
+                    cuestionario.diagnostico2.fecha = dato.fecha;
+                    cuestionario.diagnostico2.btnEdit = false;
+                    cuestionario.diagnostico2.color = 'badge-success'
+                    cuestionario.diagnostico2.texto = 'Completado'
+                    cuestionario.diagnostico2.modal = '#modalNuevosProyectos2';
+                    cuestionario.nuevo2 = true;
+
+                    // Respuestas del 2do Cuestionario Diagnóstico Empresa Nueva
+                    cuestionario.diagnostico2.respuestas.rubro = dato.rubro
+                    const obj = JSON.parse(dato.empresa_ofrece);
+                    let ofrece_ = "";
+                    for (let x in obj) { ofrece_ += obj[x]+". "; }
+                    cuestionario.diagnostico2.respuestas.ofrece = ofrece_;
+                    cuestionario.diagnostico2.respuestas.exp_rubro = JSON.parse(dato.exp_rubro)
+                    cuestionario.diagnostico2.respuestas.mentalidad = JSON.parse(dato.mentalidad_empresarial)
+                    cuestionario.diagnostico2.respuestas.viabilidad = JSON.parse(dato.viabilidad)
+                    cuestionario.diagnostico2.respuestas.producto = JSON.parse(dato.productos_servicios)
+                    cuestionario.diagnostico2.respuestas.administracion = JSON.parse(dato.administracion)
+                    cuestionario.diagnostico2.respuestas.talento = JSON.parse(dato.talento_humano)
+                    cuestionario.diagnostico2.respuestas.finanzas = JSON.parse(dato.finanzas)
+                    cuestionario.diagnostico2.respuestas.servicio = JSON.parse(dato.servicio_cliente)
+                    cuestionario.diagnostico2.respuestas.operaciones = JSON.parse(dato.operaciones)
+                    cuestionario.diagnostico2.respuestas.ambiente = JSON.parse(dato.ambiente_laboral)
+                    cuestionario.diagnostico2.respuestas.innovacion = JSON.parse(dato.innovacion)
+                    cuestionario.diagnostico2.respuestas.marketing = JSON.parse(dato.marketing)
+                    cuestionario.diagnostico2.respuestas.ventas = JSON.parse(dato.ventas)
+                    cuestionario.diagnostico2.respuestas.metas = JSON.parse(dato.metas)
+                }
+            }
+        } else {
+            cuestionario.diagnostico.color = 'badge-danger'
+            cuestionario.diagnostico.texto = 'Pendiente'
+            cuestionario.diagnostico.btnEdit = true;
+            cuestionario.diagnostico.link = '/empresas/'+datosEmpresa.codigo
+
+            if (cuestionario.diagnostico2.ver) {
+                cuestionario.diagnostico2.dos = true;
+                cuestionario.diagnostico2.color = 'badge-danger'
+                cuestionario.diagnostico2.texto = 'Pendiente'
+                cuestionario.diagnostico2.btnEdit = true;
+            }
+            let data = await consultarDatos('dg_empresa_establecida')
+            data = data.filter(x => x.id_empresa == idEmpresa)
+            if (data.length > 0) {
+                const datos = data[0];
+                cuestionario.diagnostico.fecha = datos.fecha;
+                cuestionario.diagnostico.btnEdit = false;
+                cuestionario.diagnostico.color = 'badge-success'
+                cuestionario.diagnostico.texto = 'Completado'
+                cuestionario.diagnostico.modal = '#modalEmpresasEstablecidas';
+                cuestionario.establecido = true;
+
+                // Respuestas del Cuestionario Diagnóstico Empresa Establecida
+                cuestionario.diagnostico.respuestas.rubro = datos.rubro
+                const obj = JSON.parse(datos.empresa_ofrece);
+                let ofrece_ = "";
+                for (let x in obj) { ofrece_ += obj[x]+". "; }
+                cuestionario.diagnostico.respuestas.ofrece = ofrece_;
+                cuestionario.diagnostico.respuestas.producto = JSON.parse(datos.productos_servicios)
+                cuestionario.diagnostico.respuestas.administracion = JSON.parse(datos.administracion)
+                cuestionario.diagnostico.respuestas.talento = JSON.parse(datos.talento_humano)
+                cuestionario.diagnostico.respuestas.finanzas = JSON.parse(datos.finanzas)
+                cuestionario.diagnostico.respuestas.servicio = JSON.parse(datos.servicio_alcliente)
+                cuestionario.diagnostico.respuestas.operaciones = JSON.parse(datos.operaciones)
+                cuestionario.diagnostico.respuestas.ambiente = JSON.parse(datos.ambiente_laboral)
+                cuestionario.diagnostico.respuestas.innovacion = JSON.parse(datos.innovacion)
+                cuestionario.diagnostico.respuestas.marketing = JSON.parse(datos.marketing)
+                cuestionario.diagnostico.respuestas.ventas = JSON.parse(datos.ventas)
+                cuestionario.diagnostico.respuestas.fortalezas = JSON.parse(datos.fortalezas)
+                cuestionario.diagnostico.respuestas.oportunidades = JSON.parse(datos.oportunidades_mejoras)
+                cuestionario.diagnostico.respuestas.metas = JSON.parse(datos.metas_corto_plazo)
+
+                // ÚLTIMA FILA DE LA TABLA
+                if (data.length > 1) {
+                    const dato = data[data.length - 1];
+                    cuestionario.diagnostico2.fecha = dato.fecha;
+                    cuestionario.diagnostico2.btnEdit = false;
+                    cuestionario.diagnostico2.color = 'badge-success'
+                    cuestionario.diagnostico2.texto = 'Completado'
+                    cuestionario.diagnostico2.modal = '#modalEmpresasEstablecidas2';
+                    cuestionario.establecido2 = true;
+
+                    // Respuestas del 2do Cuestionario Diagnóstico Empresa Establecida
+                    cuestionario.diagnostico2.respuestas.rubro = dato.rubro
+                    const obj = JSON.parse(dato.empresa_ofrece);
+                    let ofrece_ = "";
+                    for (let x in obj) { ofrece_ += obj[x]+". "; }
+                    cuestionario.diagnostico2.respuestas.ofrece = ofrece_;
+                    cuestionario.diagnostico2.respuestas.producto = JSON.parse(dato.productos_servicios)
+                    cuestionario.diagnostico2.respuestas.administracion = JSON.parse(dato.administracion)
+                    cuestionario.diagnostico2.respuestas.talento = JSON.parse(dato.talento_humano)
+                    cuestionario.diagnostico2.respuestas.finanzas = JSON.parse(dato.finanzas)
+                    cuestionario.diagnostico2.respuestas.servicio = JSON.parse(dato.servicio_alcliente)
+                    cuestionario.diagnostico2.respuestas.operaciones = JSON.parse(dato.operaciones)
+                    cuestionario.diagnostico2.respuestas.ambiente = JSON.parse(dato.ambiente_laboral)
+                    cuestionario.diagnostico2.respuestas.innovacion = JSON.parse(dato.innovacion)
+                    cuestionario.diagnostico2.respuestas.marketing = JSON.parse(dato.marketing)
+                    cuestionario.diagnostico2.respuestas.ventas = JSON.parse(dato.ventas)
+                    cuestionario.diagnostico2.respuestas.fortalezas = JSON.parse(dato.fortalezas)
+                    cuestionario.diagnostico2.respuestas.oportunidades = JSON.parse(dato.oportunidades_mejoras)
+                    cuestionario.diagnostico2.respuestas.metas = JSON.parse(dato.metas_corto_plazo)
+                    
+                }
+
+            }
+        }
+
+        // // Respuestas del Cuestionario Diagnóstico Empresa Establecida
+        // const resDiag = {}
+        // datos.cuestionarios = false;
+        // if (frmDiag.tabla1) {
+        //     datos.cuestionarios = true;
+        //     const r = diagnostico
+        //     resDiag.producto = JSON.parse(r.productos_servicios)
+        //     resDiag.administracion = JSON.parse(r.administracion)
+        //     resDiag.talento = JSON.parse(r.talento_humano)
+        //     resDiag.finanzas = JSON.parse(r.finanzas)
+        //     resDiag.servicio = JSON.parse(r.servicio_alcliente)
+        //     resDiag.operaciones = JSON.parse(r.operaciones)
+        //     resDiag.ambiente = JSON.parse(r.ambiente_laboral)
+        //     resDiag.innovacion = JSON.parse(r.innovacion)
+        //     resDiag.marketing = JSON.parse(r.marketing)
+        //     resDiag.ventas = JSON.parse(r.ventas)
+        //     resDiag.fortalezas = JSON.parse(r.fortalezas)
+        //     resDiag.oportunidades = JSON.parse(r.oportunidades_mejoras)
+        //     resDiag.metas = JSON.parse(r.metas_corto_plazo)
+        // }
+        // // Respuestas del Cuestionario Diagnóstico Empresa Nueva
+        // if (frmDiag.tabla2) {
+        //     console.log("Info para Diagnóstico empresa nueva")
+        //     datos.cuestionarios = true;
+        //     const r = dgNuevasEmpresas
+        //     resDiag.rubro = r.rubro
+        //     resDiag.exp_rubro = JSON.parse(r.exp_rubro)
+        //     resDiag.mentalidad = JSON.parse(r.mentalidad_empresarial)
+        //     resDiag.viabilidad = JSON.parse(r.viabilidad)
+        //     resDiag.producto = JSON.parse(r.productos_servicios)
+        //     resDiag.administracion = JSON.parse(r.administracion)
+        //     resDiag.talento = JSON.parse(r.talento_humano)
+        //     resDiag.finanzas = JSON.parse(r.finanzas)
+        //     resDiag.servicio = JSON.parse(r.servicio_cliente)
+        //     resDiag.operaciones = JSON.parse(r.operaciones)
+        //     resDiag.ambiente = JSON.parse(r.ambiente_laboral)
+        //     resDiag.innovacion = JSON.parse(r.innovacion)
+        //     resDiag.marketing = JSON.parse(r.marketing)
+        //     resDiag.ventas = JSON.parse(r.ventas)
+        //     resDiag.metas = JSON.parse(r.metas)
+        // }
+
     }
-    // Respuestas del Cuestionario Diagnóstico Empresa Nueva
-    if (frmDiag.tabla2) {
-        console.log("Info para Diagnóstico empresa nueva")
-        datos.cuestionarios = true;
-        const r = dgNuevasEmpresas
-        resDiag.rubro = r.rubro
-        resDiag.exp_rubro = JSON.parse(r.exp_rubro)
-        resDiag.mentalidad = JSON.parse(r.mentalidad_empresarial)
-        resDiag.viabilidad = JSON.parse(r.viabilidad)
-        resDiag.producto = JSON.parse(r.productos_servicios)
-        resDiag.administracion = JSON.parse(r.administracion)
-        resDiag.talento = JSON.parse(r.talento_humano)
-        resDiag.finanzas = JSON.parse(r.finanzas)
-        resDiag.servicio = JSON.parse(r.servicio_cliente)
-        resDiag.operaciones = JSON.parse(r.operaciones)
-        resDiag.ambiente = JSON.parse(r.ambiente_laboral)
-        resDiag.innovacion = JSON.parse(r.innovacion)
-        resDiag.marketing = JSON.parse(r.marketing)
-        resDiag.ventas = JSON.parse(r.ventas)
-        resDiag.metas = JSON.parse(r.metas)
-    }
+    
 
     /***************** Tabla de Informes ******************* */
     const frmInfo = {}
@@ -646,30 +805,36 @@ dashboardController.editarEmpresa = async (req, res) => {
      * PE => Percepción Estadística
     */
     let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
-    let areasVitales = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ ASC')
-    areasVitales = areasVitales.find(x => x.id_empresa == idEmpresa)
-    let areasVitales2 = await consultarDatos('indicadores_areasvitales', 'ORDER BY id_ DESC')
-    areasVitales2 = areasVitales2.find(x => x.id_empresa == idEmpresa)
-    if (areasVitales) {
+    const areasVitales_ = (await consultarDatos('indicadores_areasvitales')).filter(x => x.id_empresa == idEmpresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    areasVitales_.sort((a, b) => { return a.id_ - b.id_ });
+    if (areasVitales_.length > 0) {
+        const areasVitales = areasVitales_[0];
         rendimiento.ok = true;
         jsonIndicadores.areasVitales1 = areasVitales;
-        jsonIndicadores.areasVitales2 = areasVitales2;
         if (areasVitales.rendimiento_op >= 1) {
             rendimiento.op = areasVitales.rendimiento_op
         } else {
             rendimiento.op = false;
         }
-    }
+        // ÚLTIMA FILA DE LA TABLA
+        if (areasVitales_.length > 1) {
+            const lastElement = areasVitales_[areasVitales_.length - 1];
+            rendimiento.op2 = false;
+            if (lastElement.rendimiento_op >= 1)  rendimiento.op2 = lastElement.rendimiento_op
+            jsonIndicadores.areasVitales2 = lastElement;
+        }
 
+    }
+    
     // Empresas Nuevas
-    let resulCateg = await consultarDatos('resultado_categorias')
-    resulCateg = resulCateg.find(x => x.id_empresa == idEmpresa)
-    if (resulCateg) {
+    const resulCateg = (await consultarDatos('resultado_categorias')).filter(x => x.id_empresa == idEmpresa)
+    if (resulCateg.length > 0) {
         rendimiento.ok = true;
-        jsonIndicadores.dimensiones1 = resulCateg
+        jsonIndicadores.dimensiones1 = resulCateg[0]
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
-        rendimiento.num = resulCateg.rendimiento
+        rendimiento.num = resulCateg[0].rendimiento
         if (rendimiento.num < 50) {
             rendimiento.txt = "Mejorable"
             rendimiento.color = "badge-danger"
@@ -680,47 +845,75 @@ dashboardController.editarEmpresa = async (req, res) => {
             rendimiento.txt = "Óptimo"
             rendimiento.color = "badge-success"
         }
+
+        if (resulCateg.length > 1) {
+            const lastElement = resulCateg[resulCateg.length - 1];
+            jsonIndicadores.dimensiones2 = lastElement;
+            // Rendimiento del Proyecto
+            rendimiento.num2 = lastElement.rendimiento
+            if (rendimiento.num2 < 50) {
+                rendimiento.txt2 = "Mejorable"
+                rendimiento.color2 = "badge-danger"
+            } else if (rendimiento.num2 > 51 && rendimiento.num2 < 74) {
+                rendimiento.txt2 = "Satisfactorio"
+                rendimiento.color2 = "badge-warning"
+            } else {
+                rendimiento.txt2 = "Óptimo"
+                rendimiento.color2 = "badge-success"
+            }
+        }
+
     }
 
     /*************************************************************************************** */
     // Empresas Establecidas
-    let xDimensiones = await consultarDatos('indicadores_dimensiones', 'ORDER BY id ASC')
-    xDimensiones = xDimensiones.find(x => x.id_empresa == idEmpresa)
-    let xDimensiones2 = await consultarDatos('indicadores_dimensiones', 'ORDER BY id DESC')
-    xDimensiones2 = xDimensiones2.find(x => x.id_empresa == idEmpresa)
-    if (xDimensiones) {
+    const xDimensiones_ = (await consultarDatos('indicadores_dimensiones')).filter(x => x.id_empresa == idEmpresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    xDimensiones_.sort((a, b) => { return a.id_ - b.id_ });
+    if (xDimensiones_.length > 0) {
+        const xDimensiones = xDimensiones_[0];
         jsonIndicadores.ok = true;
         jsonIndicadores.dimensiones1 = xDimensiones
-        jsonIndicadores.dimensiones2 = xDimensiones2
         nuevosProyectos = 0;
+        
+        if (xDimensiones_.length > 1) {
+            const lastElement = xDimensiones_[xDimensiones_.length - 1];
+            jsonIndicadores.dimensiones2 = lastElement;
+        }
     }
 
     // Percepción Estadística
-    let pe_areasVitales1 = await consultarDatos('percepcion_estadistica_areas', 'ORDER BY id ASC')
-    pe_areasVitales1 = pe_areasVitales1.find(x => x.empresa == idEmpresa)
-    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica_dimensiones', 'ORDER BY id DESC')
-    // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
-    if (pe_areasVitales1) {
+    const pe_areasVitales_ = (await consultarDatos('percepcion_estadistica_areas')).filter(x => x.empresa == idEmpresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    pe_areasVitales_.sort((a, b) => { return a.id_ - b.id_ });
+    if (pe_areasVitales_.length > 0) {
         rendimiento.pe1 = true;
-        jsonIndicadores.pe_Areas1 = pe_areasVitales1
+        jsonIndicadores.pe_Areas1 = pe_areasVitales_[0]
         nuevosProyectos = 0;
+        // ÚLTIMA FILA DE LA TABLA
+        if (pe_areasVitales_.length > 1) {
+            const lastElement = pe_areasVitales_[pe_areasVitales_.length - 1];
+            jsonIndicadores.pe_Areas2 = lastElement;
+        }
     }
-    let pe_dimensiones1 = await consultarDatos('percepcion_estadistica_dimensiones', 'ORDER BY id ASC')
-    pe_dimensiones1 = pe_dimensiones1.find(x => x.empresa == idEmpresa)
-    // let pe_dimensiones2 = await consultarDatos('percepcion_estadistica_dimensiones', 'ORDER BY id DESC')
-    // pe_dimensiones2 = pe_dimensiones2.find(x => x.EMPRESA == idEmpresa)
-    if (pe_dimensiones1) {
-        rendimiento.pe2 = true;
-        jsonIndicadores.pe_Dimensiones1 = pe_dimensiones1
-        // jsonIndicadores.pe2 = pe_dimensiones2
+
+    const pe_dimensiones_ = (await consultarDatos('percepcion_estadistica_dimensiones')).filter(x => x.empresa == idEmpresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    pe_dimensiones_.sort((a, b) => { return a.id_ - b.id_ });
+    if (pe_dimensiones_.length > 0) {
+        jsonIndicadores.pe_Dimensiones1 = pe_dimensiones_[0]
         nuevosProyectos = 0;
+        // ÚLTIMA FILA DE LA TABLA
+        if (pe_dimensiones_.length > 1) {
+            const lastElement = pe_dimensiones_[pe_dimensiones_.length - 1];
+            jsonIndicadores.pe_Dimensiones2 = lastElement;
+        }
     }
 
     /************************************************************************************* */
     /** ANÁLISIS DE NEGOCIO POR DIMENSIONES - RESPUESTAS DE CUESTIONARIOS */
     let dimProducto = false, dimAdmin = false, dimOperacion = false, dimMarketing = false;
-    const analisis_empresa = await consultarDatos('analisis_empresa')
-    const analisisDimensiones = analisis_empresa.find(x => x.id_empresa == idEmpresa)
+    const analisisDimensiones = (await consultarDatos('analisis_empresa')).find(x => x.id_empresa == idEmpresa)
     if (analisisDimensiones) {
         const dimension = analisisDimensiones
         if (dimension.producto) {
@@ -1129,7 +1322,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     res.render('admin/editarEmpresa', {
         adminDash, consultorDash, itemActivo, empresa, formEdit: true, datos, consultores,
         aprobarConsultor, frmDiag, frmInfo, consultores_asignados, divConsultores,
-        jsonIndicadores: JSON.stringify(jsonIndicadores), resDiag, nuevosProyectos, rendimiento,
+        jsonIndicadores: JSON.stringify(jsonIndicadores), cuestionario, nuevosProyectos, rendimiento,
         graficas2: true, propuesta, pagos_analisis, divInformes, filaInforme,
         pagoEstrategico, info, dimProducto, dimAdmin, dimOperacion, dimMarketing,
         tareas, jsonDim, jsonRendimiento, fechaActual, pagoDg_Realizado,

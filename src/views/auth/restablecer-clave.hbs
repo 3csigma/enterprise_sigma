@@ -21,8 +21,12 @@
                 <div class="form-items">
                     {{> general/message }}
                     <h3 class="tituH3">{{tituloH3}}</h3>
+                    {{#if resetUser}}
                     <p class="msg-Login-Top">¡Bienvenido de nuevo!</p>
                     <p class="msg-Login-Top">Ingresa tu correo registrado en la platforma!</p>
+                    {{else}}
+                    <p class="msg-Login-Top">¡Bienvenido!</p>
+                    {{/if}}
                     <br>
                     <form action="/reset-password-email" method="post">
                         <input type="hidden" name="_csrf" value="{{csrfToken}}">
@@ -44,26 +48,6 @@
                         </div>
                         <input type="hidden" name="resetUser" value="{{resetUser}}">
                     </form>
-                    {{#if messages.error}}
-                    <div class="alert alert-danger alert-border-left alert-dismissible fade show" style="width: 102%;"
-                        role="alert"><i class="mdi mdi-block-helper me-3 align-middle"></i><strong>Error:</strong>
-                        {{messages.error}}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    {{/if}}
-                    {{#if messages.success}}
-                    <div class="alert alert-success alert-border-left alert-dismissible fade show" role="alert"
-                        style="width: 116%; margin-left: -7%;"> - {{messages.error}}
-                        <a href="/login"><strong>Iniciar sesión</strong></a>
-                    </div>
-                    {{/if}}
-
-                    {{!-- <div class="other-links d-flex align-items-center my-4">
-                        <span class="text-center fw-bold mx-auto" style="color:#000;font-weight: bold !important;">¿No
-                            estas registrado?<a href="/registro"><span
-                                    style="color:#812082;font-weight: bold !important;"> Crea una cuenta hoy</span>
-                        </span></a>
-                    </div> --}}
 
                     {{!-- Copyright --}}
                     <div class="d-flex align-items-center my-4">
