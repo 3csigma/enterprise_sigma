@@ -852,18 +852,22 @@ empresaController.recursos = async (req, res) => {
 
     const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ?', [id_empresa]);
     if (resultado.length > 0) {
+      const contador = {t1:0, t2:0, t3:0, t4:0, t5:0}
       resultado.forEach(r => {
         const recursoArmado = JSON.parse(r.recurso_armado);
         let cuerpoHTML = '';
         recursoArmado.forEach(recurso => {
-         
-          if (recurso.tipo === '1') {
+          if(recurso.tipo === '1') {
+            contador.t1++
             cuerpoHTML += `<input type="" style="font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
-        } else if (recurso.tipo === '2') {
+          }else if (recurso.tipo === '2') {
+            contador.t2++
             cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
-          } else if (recurso.tipo === '3') {
+          }else if (recurso.tipo === '3') {
+            contador.t3++
             cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
           }else if (recurso.tipo === '4') {
+            contador.t4++
             cuerpoHTML += `
               <table class="table header-border">
                 <tbody>
@@ -875,7 +879,8 @@ empresaController.recursos = async (req, res) => {
                   </tr>
                 </tbody>
               </table>`;
-          } else if (recurso.tipo === '5') {
+          }else if (recurso.tipo === '5') {
+            contador.t5++
             cuerpoHTML += `
               <table class="table header-border">
                 <tbody>
@@ -899,7 +904,8 @@ empresaController.recursos = async (req, res) => {
           descrip_grupo: r.descrip_grupo,
           color_grupo: r.color_grupo,
           recurso_armado: r.recurso_armado,
-          cuerpoHTML: cuerpoHTML
+          cuerpoHTML: cuerpoHTML,
+          contador: JSON.stringify(contador)
         });
       });
     }
@@ -929,10 +935,10 @@ empresaController.recursos = async (req, res) => {
             });
         }
 
-        console.log("--->>> recurso:1 " + idRecurso);
-        console.log("--->>> recurso:2 " + campoId);
-        console.log("--->>> recurso:3 " + valorCampo);
-        console.log("--->>> recurso:4 " + tipo);
+        console.log("--->>> idRecurso " + idRecurso);
+        console.log("--->>> campoId " + campoId);
+        console.log("--->>> valorCampo " + valorCampo);
+        console.log("--->>> tipo:4 " + tipo);
       
         let recursos
 

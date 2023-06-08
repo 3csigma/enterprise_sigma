@@ -3,16 +3,27 @@ const selectorEdit = document.getElementById("opcionesEdit");
 const contenidosEdit = document.getElementById("contenidoEdit");
 
 // Variables de contador para cada tipo de campo
-let ctitulo= 1, cdescrip = 1, cHr = 1, cUrl =1, cFile = 1
+let contador = document.getElementById("contador").value;
+contador = JSON.parse(contador)
+
+const contadores = { c1:1, c2:1, c3:1, c4:1}
+const banderas = { b1:false, b2:false, b3:false, b4:false}
 
 // Función para crear el campo de titulo
-function crearCampoTituloEdit() {
+function crearCampoTituloEdit(edit=false) {
   const aggTitulo = document.createElement("input");
   aggTitulo.type = "text";
   aggTitulo.classList.add("form-control", "campo");
   aggTitulo.style.color = "black";
   aggTitulo.placeholder = "Ingrese el título aquí";
-  aggTitulo.id = "tituEdit" +  ctitulo
+  
+  if (edit) { 
+    if(!banderas.b1) { 
+      contadores.c1 = contador.t1 + 1
+      banderas.b1 = true
+    }
+  }
+  aggTitulo.id = "titulo" + contadores.c1
 
   const campoContainer = document.createElement("div");
   campoContainer.classList.add("campo-container");
@@ -34,17 +45,25 @@ function crearCampoTituloEdit() {
   contenidosEdit.appendChild(campoContainer);
   
   aggTitulo.addEventListener('blur', handleCampoBlur2);
-  ctitulo++
+  contadores.c1++
 }
 
 // Función para crear el campo de descripción
-function crearCampoDescripcionEdit() {
+function crearCampoDescripcionEdit(edit=false) {
   const textDes = document.createElement("textarea");
   textDes.classList.add("form-control", "campo_descrip");
   textDes.placeholder = "Agrega algo de texto";
   textDes.style.color = "black";
   textDes.style.resize = "none"; // Quitar la capacidad de redimensionar
-  textDes.id = "textoEdit" + cdescrip
+
+  if (edit) { 
+    if(!banderas.b2) { 
+      contadores.c2 = contador.t2 + 1
+      banderas.b2 = true
+    }
+  }
+
+  textDes.id = "descripcion" +  contadores.c2
 
   const descripContainer = document.createElement("div");
   descripContainer.classList.add("campo-container");
@@ -60,7 +79,7 @@ function crearCampoDescripcionEdit() {
   descripContainer.appendChild(iconBorrarDescrip);
 
   contenidosEdit.appendChild(descripContainer);
-  cdescrip++
+  contadores.c2 ++
   // Ajustar la altura del textarea en función de su contenido
   textDes.addEventListener("input", function() {
     this.style.height = "auto";
@@ -71,13 +90,27 @@ function crearCampoDescripcionEdit() {
 }
 
 // Función para crear el separador
-function crearSeparadorEdit() {
+function crearSeparadorEdit(edit=false) {
   const hrAgg = document.createElement("hr");
   hrAgg.style.border = "1px solid #5c5c5c";
   hrAgg.classList.add("separador");
-  hrAgg.id = "separadorEdit" + cHr;
+
+  if (edit) { 
+    if(!banderas.b3) { 
+      contadores.c3 = contador.t3 + 1
+      banderas.b3 = true
+    }
+  }
+
+
+  hrAgg.id = "separador" + contadores.c3;
 
   // Agregar los valores al separador
+
+  // Obtener el id del grupo correspondiente
+  const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
+  const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
+
   const campoId = hrAgg.id;
   const valorCampo = "hr";
   const tipoCampo = "3";
@@ -85,7 +118,7 @@ function crearSeparadorEdit() {
  // Ejemplo: enviar el valor del separador al controlador mediante fetch
   fetch('/actualizarRecurso', {
     method: 'POST',
-    body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo }),
+    body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, idRecurso }),
     headers: { 'Content-Type': 'application/json' }
   })
     .then(response => response.json())
@@ -110,17 +143,26 @@ function crearSeparadorEdit() {
   hrContainer.appendChild(iconBorrarHr);
 
   contenidosEdit.appendChild(hrContainer);
-  cHr++;
+  contadores.c3++;
 }
 
 // Función para crear el campo de URL
-function crearCampoUrlEdit() {
+function crearCampoUrlEdit(edit=false) {
   const urlAgg = document.createElement("input");
   urlAgg.type = "text";
   urlAgg.placeholder = "Ingrese la URL";
   urlAgg.classList.add("form-control","campo_url");
   urlAgg.style.color = "black"; // Cambiar el color del icono a rojo
-  urlAgg.id = "urlEdit" + cUrl
+
+  if (edit) { 
+    if(!banderas.b4) { 
+      contadores.c4 = contador.t4 + 1
+      banderas.b4 = true
+    }
+  }
+
+
+  urlAgg.id = "url" + contadores.c4
 
   const urlContainer = document.createElement("div");
   urlContainer.classList.add("campo-container");
@@ -136,16 +178,24 @@ function crearCampoUrlEdit() {
   urlContainer.appendChild(iconBorrarUrl);
 
   contenidosEdit.appendChild(urlContainer);
-  cUrl++
+  contadores.c4++
   urlAgg.addEventListener('blur', handleCampoBlur2);
 }
 
 // Función para crear el campo de archivo
-function crearCampoArchivoEdit() {
+function crearCampoArchivoEdit(edit=false) {
   const fileAgg = document.createElement("input");
   fileAgg.type = "file";
-  fileAgg.name = "fileEdit" + cFile;
-  console.log(".................111..........................:", fileAgg.name);
+
+
+  if (edit) { 
+    if(!banderas.b5) { 
+      contadores.c5 = contador.t5 + 1
+      banderas.b5 = true
+    }
+  }
+
+  fileAgg.name = "file" + contadores.c5;
 
   const fileContainer = document.createElement("div");
   fileContainer.classList.add("campo-container");
@@ -160,19 +210,16 @@ function crearCampoArchivoEdit() {
 
   fileContainer.appendChild(iconBorrarFile);
   contenidosEdit.appendChild(fileContainer); 
-  cFile++;
+  contadores.c5++;
 
   fileAgg.addEventListener('change', function(event) {
     const archivos = event.target.files;
-
+    
+    // Obtener el id del grupo correspondiente
+    const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
+    const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
+    
     // Crear un objeto FormData para enviar los datos y los archivos al controlador
-
-      // Obtener el id del grupo correspondiente
-      const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
-      const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
-  
-      console.log("...........................................:", fileAgg.name);
-
     const formData = new FormData();
     formData.append('id', fileAgg.name);
     formData.append('valor', archivos[0].name);
@@ -204,19 +251,19 @@ selectorEdit.addEventListener("change", function() {
   const opcionSeleccionada = selectorEdit.value;
   switch (opcionSeleccionada) {
     case "titulo":
-        crearCampoTituloEdit();
+        crearCampoTituloEdit(true);
       break;
     case "descripcion":
-      crearCampoDescripcionEdit();
+      crearCampoDescripcionEdit(true);
       break;
     case "separador":
-      crearSeparadorEdit();
+      crearSeparadorEdit(true);
       break;
     case "url":
-      crearCampoUrlEdit();
+      crearCampoUrlEdit(true);
       break;
     case "archivo":
-      crearCampoArchivoEdit();
+      crearCampoArchivoEdit(true);
       break;
   }
 });
@@ -229,17 +276,14 @@ function handleCampoBlur2(event) {
     const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
 
-    console.log("idRecurso:", idRecurso);
-
-
     let tipoCampo;
   
     // Determinar el tipo de campo según su ID
-    if (campoId.startsWith('tituEdit')) {
+    if (campoId.startsWith('titulo')) {
         tipoCampo = '1'; // Tipo 1 para títulos
-    } else if (campoId.startsWith('textoEdit')) {
+    } else if (campoId.startsWith('descripcion')) {
         tipoCampo = '2'; // Tipo 2 para descripcion
-    } else if (campoId.startsWith('urlEdit')) {
+    } else if (campoId.startsWith('url')) {
         tipoCampo = '4'; // Tipo 4 para url
     }
 
