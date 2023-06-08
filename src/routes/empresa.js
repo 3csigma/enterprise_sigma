@@ -64,7 +64,7 @@ router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
 router.post('/guardar-grupo', checkLogin, subirRecurso.array('archivos'), empresaController.guardar_grupo);
 router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)
 
-// Configurar el almacenamiento de Multer
+//Configurar el almacenamiento de Multer
 const ruta = multer.diskStorage({
   destination: function (req, file, callback) {
     const rutaGrupo = path.join(__dirname, '../public/grupo_recursos');
@@ -72,17 +72,25 @@ const ruta = multer.diskStorage({
   },
   filename: function (req, file, callback) {
     const fechaActual = Math.floor(Date.now() / 1000);
-    urlGrupo = "Recurso_" + fechaActual +"_" + file.originalname;
+    const recursoId = file.fieldname; // Obtener el nombre del campo que contiene el recurso.id
+    const urlGrupo = `Recurso_${recursoId}_${fechaActual}_${file.originalname}`;
     console.log(urlGrupo);
     callback(null, urlGrupo);
   }
 });
 
 // Crear el middleware de Multer
-const actualizarArchivo = multer({ storage: ruta });
+const actualizarArchivo = multer({
+  storage: ruta,
+  fileFilter: function (req, file, callback) {
+    const recursoId = file.fieldname; // Obtener el nombre del campo que contiene el recurso.id
+    if (recursoId) {
+      callback(null, true);
+    } else {
+      callback(new Error("Archivo no válido"));
+    }
+  },
+});
 
-router.post('/actualizarRecurso', checkLogin, actualizarArchivo.array('archivos'), empresaController.actualizarRecurso)
-  
-
-
+router.post('/actualizarRecurso', checkLogin, actualizarArchivo.any(), empresaController.actualizarRecurso);
 module.exports = router

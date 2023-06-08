@@ -442,38 +442,35 @@
 <script src="../js/editarRecursos.js"></script>
 
 <script>
-
 const camposArchivo = document.querySelectorAll('.campo_archivo');
 camposArchivo.forEach(campo => {
   campo.addEventListener('change', () => {
-    const archivo = campo.files[0];
-    const id = campo.id.split('-')[1]; // Obtener el ID del recurso
-    console.log("bb" , archivo)
-    console.log("xx" , id)
-   
+
+    // Obtener el id del grupo correspondiente
+    const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
+    const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
+    const recursoId = campo.id; // Obtener el recurso.id del campo
+
     // Crear una instancia de FormData y agregar el archivo seleccionado
     const formData = new FormData();
-    formData.append('archivo', archivo);
-    formData.append('id', id);
+    formData.append('archivo', campo.files[0]);
+    formData.append('id', recursoId);
+    formData.append('valor', campo.files[0].name);
+    formData.append('idRecurso', idRecurso);
     
-    // Realizar las acciones necesarias con el archivo y el ID del recurso
-    // Ejemplo: enviar el archivo al controlador mediante fetch
-   fetch('/actualizarRecurso', {
+    fetch('/actualizarRecurso', {
       method: 'POST',
       body: formData,
       headers: { 'enctype': 'multipart/form-data'}
-
     })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Archivo subido:', data);
-      })
-      .catch(error => {
-        console.error('Error al subir archivo:', error);
-      }); 
+    .then(response => response.json())
+    .then(data => {
+      console.log('Archivo subido:', data);
+    })
+    .catch(error => {
+      console.error('Error al subir archivo:', error);
+    });
   });
 });
-
-
 
 </script>

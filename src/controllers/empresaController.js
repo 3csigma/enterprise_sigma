@@ -887,7 +887,7 @@ empresaController.recursos = async (req, res) => {
                   <tr class="text-black">
                     <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="../logos_recursos/Documento_Word.svg" class="icono-svg" alt="IconoDocs"></a></td>
                     <td>
-                    <input type="file" class="campo_archivo camposD" name="archivos" id="archivo-${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png">
+                    <input type="file" class="campo_archivo " name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png">
                     </td>
                     <td>
                         <p style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" id="${recurso.id}">${recurso.valor}</p>
@@ -917,57 +917,57 @@ empresaController.recursos = async (req, res) => {
     }
 
     empresaController.actualizarRecurso = async (req, res) => {
-
-         // Acceder a los archivos subidos en req.files
-        const archivos = req.files;
-        let valor
-
-        let campoId = req.body.id;
-        let valorCampo = req.body.valor;
-        let idRecurso = req.body.idRecurso;
-        let tipo = req.body.tipo;
-            
-        // Recorrer los archivos y obtener sus nombres
-        if (archivos && archivos.length > 0) {
+       
+          const archivos = req.files;
+          let valor
+          let campoId = req.body.id;
+          let valorCampo = req.body.valor;
+          let idRecurso = req.body.idRecurso;
+          let tipo = req.body.tipo;
+      
+          if (archivos && archivos.length > 0) {
             archivos.forEach((archivo) => {
-            valor = '../grupo_recursos/' + archivo.filename
-            valorCampo = valor;
+              valor = '../grupo_recursos/' + archivo.filename;
+              valorCampo = valor;
             });
-        }
-
-        console.log("--->>> idRecurso " + idRecurso);
-        console.log("--->>> campoId " + campoId);
-        console.log("--->>> valorCampo " + valorCampo);
-        console.log("--->>> tipo:4 " + tipo);
-      
-        let recursos
-
-        const infoRecursos = await pool.query("SELECT recurso_armado FROM grupo_recursos WHERE id = ?", [idRecurso]);
-        recursos = JSON.parse(infoRecursos[0].recurso_armado);
-      
-        let campoEncontrado = false;
-      
-        recursos.forEach(recurso => {
-          if (recurso.id === campoId) {
-            recurso.valor = valorCampo;
-            campoEncontrado = true;
           }
-        });
+
+          console.log("archivos" , archivos);
       
-        if (!campoEncontrado) {
-          const nuevoCampo = {
-            id: campoId,
-            valor: valorCampo,
-            tipo: tipo
-          };
-          recursos.push(nuevoCampo);
-        }
-    
+          console.log("--->>> idRecurso " + idRecurso);
+          console.log("--->>> campoId " + campoId);
+          console.log("--->>> valores " +valorCampo);
+          console.log("--->>> tipo " + tipo);
+      
+          let recursos;
+      
+          const infoRecursos = await pool.query("SELECT recurso_armado FROM grupo_recursos WHERE id = ?", [idRecurso]);
+          recursos = JSON.parse(infoRecursos[0].recurso_armado);
+      
+          let campoEncontrado = false;
+      
+          recursos.forEach((recurso) => {
+            if (recurso.id === campoId) {
+              recurso.valor = valorCampo;
+              campoEncontrado = true;
+            }
+          });
+      
+          if (!campoEncontrado) {
+            const nuevoCampo = {
+              id: campoId,
+              valor: valorCampo,
+              tipo: tipo,
+            };
+            console.log(".....2.." , nuevoCampo);
+            recursos.push(nuevoCampo);
+          }
+      
+            console.log("...." , recursos);
+          await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
+      
+          res.redirect('/recursos/');
         
-            await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
-          
-      
-        res.redirect('/recursos/');
       }
       
   

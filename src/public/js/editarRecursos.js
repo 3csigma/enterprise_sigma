@@ -301,3 +301,34 @@ function handleCampoBlur2(event) {
        // console.log("TODO MAL");
         });
 }
+
+const camposDinamicos = document.querySelectorAll('.camposD');
+camposDinamicos.forEach(campo => {
+  campo.addEventListener('blur', () => {
+    const id = campo.id; // Obtener el ID del recurso
+    const valor = campo.value; // Obtener el valor actualizado del campo
+
+    // Obtener el id del grupo correspondiente
+    const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
+    const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
+    
+    console.log(id);
+    console.log(valor);
+    console.log(idRecurso);
+
+    // Realizar las acciones necesarias con el ID y el valor del campo
+    // Ejemplo: enviar el valor actualizado al controlador mediante fetch
+    fetch('/actualizarRecurso', {
+      method: 'POST',
+      body: JSON.stringify({ id: id, valor: valor, idRecurso: idRecurso }),
+      headers: { 'Content-Type': 'application/json' }
+    })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Campo actualizado:', data);
+      })
+      .catch(error => {
+        console.error('Error al actualizar campo:', error);
+      });
+  });
+});
