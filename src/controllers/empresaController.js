@@ -787,7 +787,6 @@ empresaController.guardar_grupo = async (req, res) => {
   
     res.redirect('/recursos/');
   };
-
   
 // ELIMINAR GRUPOS
 empresaController.eliminarGrupo = async (req, res) => {
@@ -837,6 +836,8 @@ empresaController.recursos = async (req, res) => {
             iconoSVG = "../logos_recursos/Video_Youtube.svg"
         }else if(i.tipo_archivo == "Video de Vimeo")  {
             iconoSVG = "../logos_recursos/Video_Vimeo.svg"
+        }else if(i.tipo_archivo == "Notion")  {
+            iconoSVG = "../logos_recursos/notion.svg"
         }
 
         datos.push({
@@ -855,14 +856,40 @@ empresaController.recursos = async (req, res) => {
         const recursoArmado = JSON.parse(r.recurso_armado);
         let cuerpoHTML = '';
         recursoArmado.forEach(recurso => {
+         
           if (recurso.tipo === '1') {
-            cuerpoHTML += `<input type="" style="font-size: 1.2em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos epale" required id="${recurso.id}" value="${recurso.valor}">`;
-          } else if (recurso.tipo === '2') {
-            cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100; resize: none;" class="epale" id="${recurso.id}">${recurso.valor}</textarea>`;
+            cuerpoHTML += `<input type="" style="font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
+        } else if (recurso.tipo === '2') {
+            cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
           } else if (recurso.tipo === '3') {
             cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
           }else if (recurso.tipo === '4') {
-            cuerpoHTML += `<input type="" style=" color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control input-recursos epale" required id="${recurso.id}" value="${recurso.valor}">`;
+            cuerpoHTML += `
+              <table class="table header-border">
+                <tbody>
+                  <tr class="text-black">
+                    <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="../logos_recursos/Pagina_Web.svg" class="icono-svg" alt="Icono"></a></td>
+                    <td>
+                      <input type="" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="${recurso.id}" value="${recurso.valor}">
+                    </td>
+                  </tr>
+                </tbody>
+              </table>`;
+          } else if (recurso.tipo === '5') {
+            cuerpoHTML += `
+              <table class="table header-border">
+                <tbody>
+                  <tr class="text-black">
+                    <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="../logos_recursos/Documento_Word.svg" class="icono-svg" alt="IconoDocs"></a></td>
+                    <td>
+                    <input type="file" class="campo_archivo camposD" name="archivos" id="archivo-${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png">
+                    </td>
+                    <td>
+                        <p style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" id="${recurso.id}">${recurso.valor}</p>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>`;
           }
         });
     
@@ -879,19 +906,67 @@ empresaController.recursos = async (req, res) => {
 
 
       res.render('empresa/recursos', {
-        user_dash: true, id_empresa, categorias,
-        recurso, datos, grupos
-
+        user_dash: true, id_empresa, categorias, recurso, datos, grupos
       });
     }
 
-// empresaController.actualizarRecurso = async (req, res) => {
-//     const campoId = req.body.id;
-//     const valorCampo = req.body.valor;
-//     console.log(campoId, valorCampo);
+    empresaController.actualizarRecurso = async (req, res) => {
+
+         // Acceder a los archivos subidos en req.files
+        const archivos = req.files;
+        let valor
+
+        let campoId = req.body.id;
+        let valorCampo = req.body.valor;
+        let idRecurso = req.body.idRecurso;
+        let tipo = req.body.tipo;
+            
+        // Recorrer los archivos y obtener sus nombres
+        if (archivos && archivos.length > 0) {
+            archivos.forEach((archivo) => {
+            valor = '../grupo_recursos/' + archivo.filename
+            valorCampo = valor;
+            });
+        }
+
+        console.log("--->>> recurso:1 " + idRecurso);
+        console.log("--->>> recurso:2 " + campoId);
+        console.log("--->>> recurso:3 " + valorCampo);
+        console.log("--->>> recurso:4 " + tipo);
+      
+        let recursos
+
+        const infoRecursos = await pool.query("SELECT recurso_armado FROM grupo_recursos WHERE id = ?", [idRecurso]);
+        recursos = JSON.parse(infoRecursos[0].recurso_armado);
+      
+        let campoEncontrado = false;
+      
+        recursos.forEach(recurso => {
+          if (recurso.id === campoId) {
+            recurso.valor = valorCampo;
+            campoEncontrado = true;
+          }
+        });
+      
+        if (!campoEncontrado) {
+          const nuevoCampo = {
+            id: campoId,
+            valor: valorCampo,
+            tipo: tipo
+          };
+          recursos.push(nuevoCampo);
+        }
+    
+        
+            await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
+          
+      
+        res.redirect('/recursos/');
+      }
+      
   
-  
-// }
+
+
 empresaController.ejemplo2 = async (req, res) => {
  
     res.render('empresa/ejemplo2', {
