@@ -267,28 +267,34 @@ function crearCampoUrl() {
   inputUrl.addEventListener('blur', handleCampoBlur);
 }
 
-// Función para crear el campo de Archivo
 function crearCampoArchivo() {
   const inputFile = document.createElement("input");
   inputFile.type = "file";
   inputFile.name = "file" + contadorFile;
+  inputFile.style.display = "none";
 
-  const campoArchivoContainer = document.createElement("div");
-  campoArchivoContainer.classList.add("campo-container");
-  campoArchivoContainer.appendChild(inputFile);
+  const campoArchivoContainer = document.createElement("tr");
 
-  const archivoIcono = document.createElement("img");
-  archivoIcono.classList.add("icono-svg");
+  const archivoIcono = document.createElement("td");
+  archivoIcono.innerHTML = `<img src="../logos_recursos/cargar_Archivo.svg" style="margin-left: 19px;" class="icono-cargar-archivo">`;
 
-  const botonBorrarArchivo = document.createElement("i");
-  botonBorrarArchivo.classList.add("fas", "fa-trash-alt", "icono-borrar");
-  botonBorrarArchivo.style.color = "red"; // Cambiar el color del icono a rojo
-  botonBorrarArchivo.addEventListener("click", function() {
-    contenido.removeChild(campoArchivoContainer);
+  archivoIcono.addEventListener("click", function() {
+    inputFile.click();
   });
 
-  campoArchivoContainer.appendChild(archivoIcono);
+  const nombreArchivo = document.createElement("td");
+  nombreArchivo.classList.add("nombre-archivo");
+
+  const botonBorrarArchivo = document.createElement("td");
+  botonBorrarArchivo.innerHTML = `<i class="fas fa-trash-alt icono-borrar" style="color: red;"></i>`;
+
+  botonBorrarArchivo.addEventListener("click", function() {
+    campoArchivoContainer.remove();
+  });
+
   campoArchivoContainer.appendChild(botonBorrarArchivo);
+  campoArchivoContainer.appendChild(archivoIcono);
+  campoArchivoContainer.appendChild(nombreArchivo);
   contenido.appendChild(campoArchivoContainer); 
   contadorFile++;
 
@@ -296,7 +302,10 @@ function crearCampoArchivo() {
     const archivo = event.target.files[0];
     const extension = obtenerExtensionArchivo(archivo.name);
     const icono = obtenerIcono(extension);
-    archivoIcono.src = icono
+    archivoIcono.innerHTML = `<img src="${icono}" style="margin:15px" class="icono-cargar-archivo">`;
+
+    nombreArchivo.textContent = archivo.name;
+
     console.log("...", icono);
 
     let numeroIcono;
@@ -355,6 +364,7 @@ function crearCampoArchivo() {
       });
   });
 }
+
 
 // Función para obtener la extensión de un archivo
 function obtenerExtensionArchivo(nombreArchivo) {

@@ -899,21 +899,28 @@ empresaController.recursos = async (req, res) => {
                 }
               
                 cuerpoHTML += `
-                  <table class="table header-border">
-                    <tbody>
-                      <tr class="text-black">
-                        <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="IconoDocs"></a></td>
-                        <td>
-                          <input type="file" class="campo_archivo " name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png">
-                        </td>
-                        <td>
-                          <p style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" id="${recurso.id}">${recurso.valor}</p>
-                        </td>
-                      </tr>
-                    </tbody>
-                  </table>`;
+                <table class="table header-border">
+                <tbody>
+                  <tr class="text-black">
+                    <td style="width: 0px;">
+                      <a href="${recurso.valor}" target="_blank">
+                        <img src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                      </a>
+                    </td>
+                    <td>
+                      <label for="${recurso.id}" class="campo_archivo_btn">
+                        <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
+                      </label>
+                      <input type="file" class="campo_archivo" name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
+                    </td>
+                    <td>
+
+                      <span style="color: black !important;text-decoration:none;border: 0px solid;text-align: left;" id="${recurso.id}">${recurso.valor.split('/').pop()}</span>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>`;
               }
-              
         });
     
         grupos.push({
@@ -942,13 +949,14 @@ empresaController.recursos = async (req, res) => {
           let valorCampo = req.body.valor;
           let idRecurso = req.body.idRecurso;
           let tipo = req.body.tipo;
-          let numeroIcono = req.body.numeroIcono;
+          let numeroIconico = ''
+          numeroIconico = req.body.numeroIcono;
 
-          console.log(campoId);
-          console.log(valorCampo);
-          console.log(idRecurso);
-          console.log(tipo);
-          console.log(numeroIcono);
+          console.log("campoID>",campoId);
+          console.log("Valor>",valorCampo);
+          console.log("IdRecurso",idRecurso);
+          console.log("Tipo>",tipo);
+          console.log("NumeroIcono>",numeroIconico);
 
           if (archivos && archivos.length > 0) {
             archivos.forEach((archivo) => {
@@ -964,6 +972,7 @@ empresaController.recursos = async (req, res) => {
           recursos.forEach((recurso) => {
             if (recurso.id === campoId) {
               recurso.valor = valorCampo;
+              recurso.numeroIcono = numeroIconico; // Asignar el valor de numeroIconico al campo correspondiente
               campoEncontrado = true;
             }
           });
@@ -973,10 +982,11 @@ empresaController.recursos = async (req, res) => {
               id: campoId,
               valor: valorCampo,
               tipo: tipo,
-              numeroIcono: numeroIcono,
+              numeroIcono: numeroIconico,
             };
             recursos.push(nuevoCampo);
           }
+          console.log(recursos);
           await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
       
           res.redirect('/recursos/');
