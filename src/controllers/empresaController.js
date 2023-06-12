@@ -799,7 +799,14 @@ empresaController.recursos = async (req, res) => {
           let valorCampo = req.body.valor;
           let idRecurso = req.body.idRecurso;
           let tipo = req.body.tipo;
-      
+          let numeroIcono = req.body.numeroIcono;
+
+          console.log(campoId);
+          console.log(valorCampo);
+          console.log(idRecurso);
+          console.log(tipo);
+          console.log(numeroIcono);
+
           if (archivos && archivos.length > 0) {
             archivos.forEach((archivo) => {
               valor = '../grupo_recursos/' + archivo.filename;
@@ -823,6 +830,7 @@ empresaController.recursos = async (req, res) => {
               id: campoId,
               valor: valorCampo,
               tipo: tipo,
+              numeroIcono: numeroIcono,
             };
             recursos.push(nuevoCampo);
           }

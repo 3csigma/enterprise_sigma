@@ -201,6 +201,10 @@ function crearCampoArchivoEdit(edit=false) {
   fileContainer.classList.add("campo-container");
   fileContainer.appendChild(fileAgg);
 
+  
+  const archivoIcon = document.createElement("img");
+  archivoIcon.classList.add("icono-svg");
+
   const iconBorrarFile = document.createElement("i");
   iconBorrarFile.classList.add("fas", "fa-trash-alt", "icono-borrar");
   iconBorrarFile.style.color = "red"; // Cambiar el color del icono a rojo
@@ -208,13 +212,48 @@ function crearCampoArchivoEdit(edit=false) {
     contenidosEdit.removeChild(fileContainer);
   });
 
+  fileContainer.appendChild(archivoIcon);
   fileContainer.appendChild(iconBorrarFile);
   contenidosEdit.appendChild(fileContainer); 
   contadores.c5++;
 
   fileAgg.addEventListener('change', function(event) {
+    const archivo = event.target.files[0];
+
+    const extensiones = obtenerExt(archivo.name);
+    console.log(".........." , extensiones);
+     const icon = obtenerIcon(extensiones);
+     console.log("TIPO DE DOCUMENTO?>>>" , icon);
+    archivoIcon.src = icon
+
+    let numeroIcon;
+
+    switch (extensiones) {
+      case 'doc':
+      case 'docx':
+        numeroIcon = 1;
+        break;
+      case 'pdf':
+        numeroIcon = 2;
+        break;
+      case 'ppt':
+      case 'pptx':
+        numeroIcon = 3;
+        break;
+      case 'xls':
+      case 'xlsx':
+        numeroIcon = 4;
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+        numeroIcon = 5;
+        break;
+      default:
+        numeroIcon = 6;
+    }
     const archivos = event.target.files;
-    
+
     // Obtener el id del grupo correspondiente
     const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
@@ -225,11 +264,13 @@ function crearCampoArchivoEdit(edit=false) {
     formData.append('valor', archivos[0].name);
     formData.append('tipo', '5'); // Tipo 5 para archivos
     formData.append('idRecurso', idRecurso); // Tipo 5 para archivos
+    formData.append('numeroIcono', numeroIcon.toString()); // Número de icono
 
     // Agregar los archivos al FormData
     for (let i = 0; i < archivos.length; i++) {
       formData.append('archivos', archivos[i]);
     }
+
 
     // Ejemplo: enviar el FormData al controlador mediante fetch
     fetch('/actualizarRecurso', {
@@ -244,6 +285,34 @@ function crearCampoArchivoEdit(edit=false) {
         // ...
       });
   });
+}
+
+// Función para obtener la extensión de un archivo
+function obtenerExt(nombreFiles) {
+  return nombreFiles.split('.').pop();
+}
+
+// Función para obtener el icono correspondiente a una extensión de archivo
+function obtenerIcon(ext) {
+  switch (ext) {
+    case 'doc':
+    case 'docx':
+      return "../logos_recursos/Documento_Word.svg";
+    case 'pdf':
+      return "../logos_recursos/Documento_PDF.svg";
+    case 'ppt':
+    case 'pptx':
+      return "../logos_recursos/Documento_PowePoint.svg";
+    case 'xls':
+    case 'xlsx':
+      return "../logos_recursos/Documento_Excel.svg";
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      return "../logos_recursos/Archivo_imagen.svg";
+    default:
+      return "../logos_recursos/Otro.svg";
+  }
 }
 
 // Evento change del selector de opciones
