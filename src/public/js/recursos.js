@@ -1,7 +1,4 @@
-
-
 // :: CONECTAR LINK ::
-
 (function () {
     // ATRAPAR LA OPCION CREADA EN EL SELECTOR Y MANDARLO A UN INPUT HIDDEN 
     $(document).ready(function () {
@@ -133,14 +130,14 @@ const contenido = document.getElementById("contenido");
 let contadorTitulo = 1, contadorDescripcion = 1;
 let contadorUrl = 1, contadorHr = 1, contadorFile = 1
 
-// Función para crear el campo de titulo
+// Función para crear el campo de título
 function crearCampoTitulo() {
   const inputTitulo = document.createElement("input");
   inputTitulo.type = "text";
   inputTitulo.classList.add("form-control", "campo");
   inputTitulo.style.color = "black";
   inputTitulo.placeholder = "Ingrese el título aquí";
-  inputTitulo.id = "titulo" +  contadorTitulo
+  inputTitulo.id = "titulo" + contadorTitulo;
 
   const campoTituloContainer = document.createElement("div");
   campoTituloContainer.classList.add("campo-container");
@@ -152,16 +149,27 @@ function crearCampoTitulo() {
   const botonBorrarTitulo = document.createElement("i");
   botonBorrarTitulo.classList.add("fas", "fa-trash-alt", "icono-borrar");
   botonBorrarTitulo.style.color = "red";
-  botonBorrarTitulo.addEventListener("click", function() {
-    contenido.removeChild(campoTituloContainer);
+  botonBorrarTitulo.style.opacity = "0"; // Establecer la opacidad inicialmente a 0
+  botonBorrarTitulo.style.transition = "opacity 0.3s"; // Agregar la transición de opacidad
+  botonBorrarTitulo.addEventListener("click", function () {
+    campoTituloContainer.remove();
+    borrarCampo(inputTitulo.id); // Llamada a la función para eliminar el campo en el controlador
+  });
+
+  campoTituloContainer.addEventListener("mouseover", function () {
+    botonBorrarTitulo.style.opacity = "1"; // Mostrar el ícono de borrar
+  });
+
+  campoTituloContainer.addEventListener("mouseout", function () {
+    botonBorrarTitulo.style.opacity = "0"; // Ocultar el ícono de borrar
   });
 
   campoTituloContainer.appendChild(tituloContainer);
   campoTituloContainer.appendChild(botonBorrarTitulo);
 
   contenido.appendChild(campoTituloContainer);
-  inputTitulo.addEventListener('blur', handleCampoBlur);
-  contadorTitulo++
+  inputTitulo.addEventListener("blur", handleCampoBlur);
+  contadorTitulo++;
 }
 
 // Función para crear el campo de descripción
@@ -171,7 +179,7 @@ function crearCampoDescripcion() {
   textarea.placeholder = "Agrega algo de texto";
   textarea.style.color = "black";
   textarea.style.resize = "none"; // Quitar la capacidad de redimensionar
-  textarea.id = "descripcion" + contadorDescripcion
+  textarea.id = "descripcion" + contadorDescripcion;
 
   const campoDescripcionContainer = document.createElement("div");
   campoDescripcionContainer.classList.add("campo-container");
@@ -180,21 +188,32 @@ function crearCampoDescripcion() {
   const botonBorrarDescripcion = document.createElement("i");
   botonBorrarDescripcion.classList.add("fas", "fa-trash-alt", "icono-borrar");
   botonBorrarDescripcion.style.color = "red";
-  botonBorrarDescripcion.addEventListener("click", function() {
-    contenido.removeChild(campoDescripcionContainer);
+  botonBorrarDescripcion.style.opacity = "0"; // Establecer la opacidad inicialmente a 0
+  botonBorrarDescripcion.style.transition = "opacity 0.3s"; // Agregar la transición de opacidad
+  botonBorrarDescripcion.addEventListener("click", function () {
+    campoDescripcionContainer.remove();
+    borrarCampo(textarea.id); // Llamada a la función para eliminar el campo en el controlador
   });
 
   campoDescripcionContainer.appendChild(botonBorrarDescripcion);
 
   contenido.appendChild(campoDescripcionContainer);
-  contadorDescripcion++
+  contadorDescripcion++;
   // Ajustar la altura del textarea en función de su contenido
-  textarea.addEventListener("input", function() {
+  textarea.addEventListener("input", function () {
     this.style.height = "auto";
     this.style.height = this.scrollHeight + "px";
   });
 
-    textarea.addEventListener('blur', handleCampoBlur);
+  campoDescripcionContainer.addEventListener("mouseover", function () {
+    botonBorrarDescripcion.style.opacity = "1"; // Mostrar el ícono de borrar
+  });
+
+  campoDescripcionContainer.addEventListener("mouseout", function () {
+    botonBorrarDescripcion.style.opacity = "0"; // Ocultar el ícono de borrar
+  });
+
+  textarea.addEventListener('blur', handleCampoBlur);
 }
 
 // Función para crear el separador
@@ -230,10 +249,22 @@ function crearSeparador() {
   const botonBorrarSeparador = document.createElement("i");
   botonBorrarSeparador.classList.add("fas", "fa-trash-alt", "icono-borrar");
   botonBorrarSeparador.style.color = "red"; // Cambiar el color del icono a rojo
-  botonBorrarSeparador.addEventListener("click", function() {
-    contenido.removeChild(separadorContainer);
+  botonBorrarSeparador.style.visibility = "hidden"; // Inicialmente oculto
+
+  // Mostrar el ícono de borrar al pasar el cursor sobre el separador
+  separadorContainer.addEventListener("mouseenter", function() {
+    botonBorrarSeparador.style.visibility = "visible";
   });
 
+  // Ocultar el ícono de borrar al sacar el cursor del separador
+  separadorContainer.addEventListener("mouseleave", function() {
+    botonBorrarSeparador.style.visibility = "hidden";
+  });
+
+  botonBorrarSeparador.addEventListener("click", function () {
+    contenido.removeChild(separadorContainer);
+    borrarCampo(hr.id); // Llamada a la función para eliminar el campo en el controlador
+  });
   separadorContainer.appendChild(botonBorrarSeparador);
 
   contenido.appendChild(separadorContainer);
@@ -245,28 +276,117 @@ function crearCampoUrl() {
   const inputUrl = document.createElement("input");
   inputUrl.type = "text";
   inputUrl.placeholder = "Ingrese la URL";
-  inputUrl.classList.add("form-control","campo_url");
-  inputUrl.style.color = "black"; // Cambiar el color del icono a rojo
-  inputUrl.id = "url" + contadorUrl
+  inputUrl.classList.add("form-control", "campo_url");
+  inputUrl.style.color = "black";
+  inputUrl.id = "url" + contadorUrl;
 
-  const campoUrlContainer = document.createElement("div");
-  campoUrlContainer.classList.add("campo-container");
-  campoUrlContainer.appendChild(inputUrl);
+  const fila = document.createElement("tr");
 
+  const columnaBorrar = document.createElement("td");
   const botonBorrarUrl = document.createElement("i");
   botonBorrarUrl.classList.add("fas", "fa-trash-alt", "icono-borrar");
-  botonBorrarUrl.style.color = "red"; // Cambiar el color del icono a rojo
-  botonBorrarUrl.addEventListener("click", function() {
-    contenido.removeChild(campoUrlContainer);
+  botonBorrarUrl.style.color = "red";
+  botonBorrarUrl.style.visibility = "hidden"; // Inicialmente oculto
+
+  // Mostrar el ícono de borrar al pasar el cursor sobre la fila
+  fila.addEventListener("mouseenter", function () {
+    botonBorrarUrl.style.visibility = "visible";
   });
 
-  campoUrlContainer.appendChild(botonBorrarUrl);
+  // Ocultar el ícono de borrar al sacar el cursor de la fila
+  fila.addEventListener("mouseleave", function () {
+    botonBorrarUrl.style.visibility = "hidden";
+  });
 
-  contenido.appendChild(campoUrlContainer);
-  contadorUrl++
-  inputUrl.addEventListener('blur', handleCampoBlur);
+  botonBorrarUrl.addEventListener("click", function () {
+    fila.remove();
+    borrarCampo(inputUrl.id); // Llamada a la función para eliminar el campo en el controlador
+  });
+  columnaBorrar.appendChild(botonBorrarUrl);
+
+  const columnaIcono = document.createElement("td");
+  const iconoUrl = document.createElement("img");
+  iconoUrl.style.margin = "15px";
+  iconoUrl.classList.add("icono-url");
+  columnaIcono.appendChild(iconoUrl);
+
+  const columnaUrl = document.createElement("td");
+  columnaUrl.style.width = "100%";
+  columnaUrl.appendChild(inputUrl);
+
+  fila.appendChild(columnaBorrar);
+  fila.appendChild(columnaIcono);
+  fila.appendChild(columnaUrl);
+
+  inputUrl.addEventListener("input", function () {
+    const url = inputUrl.value;
+    const domain = obtenerDominio(url);
+    const icono = obtenerIconoPorDominio(domain);
+    let numeroIcono = obtenerNumeroIconoPorDominio(domain);
+
+    // Mostrar el icono correspondiente
+    if (icono) {
+      iconoUrl.src = icono;
+      iconoUrl.style.display = "inline-block";
+    } else {
+      iconoUrl.src = "";
+      iconoUrl.style.display = "none";
+    }
+
+    // Almacenar el número de icono en el atributo data del inputUrl
+    inputUrl.setAttribute("data-numero-icono", numeroIcono);
+  });
+
+  contenido.appendChild(fila);
+  contadorUrl++;
+  inputUrl.addEventListener("blur", handleCampoBlur);
 }
 
+// Función para obtener el dominio de una URL
+function obtenerDominio(url) {
+  const parser = document.createElement("a");
+  parser.href = url;
+  return parser.hostname;
+}
+
+// Función para obtener el icono correspondiente según el dominio
+function obtenerIconoPorDominio(domain) {
+  const dominios = {
+    "drive.google.com": "../logos_recursos/Archivo_Google_Drive.svg",
+    "www.youtube.com": "../logos_recursos/Video_Youtube.svg",
+    "vimeo.com": "../logos_recursos/Video_Vimeo.svg",
+    "www.notion.so": "../logos_recursos/notion.svg"
+  };
+
+  return dominios[domain] || "../logos_recursos/Pagina_Web.svg";
+}
+
+// Obtener el número correcto de cada url ingresado
+function obtenerNumeroIconoPorDominio(domain) {
+  let numeroIcono;
+
+  switch (domain) {
+    case "www.youtube.com":
+      numeroIcono = 1;
+      break;
+    case "vimeo.com":
+      numeroIcono = 2;
+      break;
+    case "www.notion.so":
+      numeroIcono = 3;
+      break;
+    case "drive.google.com":
+      numeroIcono = 4;
+      break;
+    default:
+      numeroIcono = 5;
+      break;
+  }
+
+  return numeroIcono;
+}
+
+// Función para crear el campo de file
 function crearCampoArchivo() {
   const inputFile = document.createElement("input");
   inputFile.type = "file";
@@ -278,6 +398,14 @@ function crearCampoArchivo() {
   const archivoIcono = document.createElement("td");
   archivoIcono.innerHTML = `<img src="../logos_recursos/cargar_Archivo.svg" style="margin-left: 19px;" class="icono-cargar-archivo">`;
 
+  campoArchivoContainer.addEventListener("mouseenter", function() {
+    botonBorrarArchivo.style.visibility = "visible";
+  });
+
+  campoArchivoContainer.addEventListener("mouseleave", function() {
+    botonBorrarArchivo.style.visibility = "hidden";
+  });
+
   archivoIcono.addEventListener("click", function() {
     inputFile.click();
   });
@@ -287,72 +415,65 @@ function crearCampoArchivo() {
 
   const botonBorrarArchivo = document.createElement("td");
   botonBorrarArchivo.innerHTML = `<i class="fas fa-trash-alt icono-borrar" style="color: red;"></i>`;
+  botonBorrarArchivo.style.visibility = "hidden";
 
-  botonBorrarArchivo.addEventListener("click", function() {
+  botonBorrarArchivo.addEventListener("click", function () {
     campoArchivoContainer.remove();
+    borrarCampo(inputFile.name); // Llamada a la función para eliminar el campo en el controlador
   });
 
   campoArchivoContainer.appendChild(botonBorrarArchivo);
   campoArchivoContainer.appendChild(archivoIcono);
   campoArchivoContainer.appendChild(nombreArchivo);
-  contenido.appendChild(campoArchivoContainer); 
+  contenido.appendChild(campoArchivoContainer);
   contadorFile++;
 
-  inputFile.addEventListener('change', function(event) {
+  inputFile.addEventListener("change", function(event) {
     const archivo = event.target.files[0];
     const extension = obtenerExtensionArchivo(archivo.name);
     const icono = obtenerIcono(extension);
     archivoIcono.innerHTML = `<img src="${icono}" style="margin:15px" class="icono-cargar-archivo">`;
-
     nombreArchivo.textContent = archivo.name;
 
-    console.log("...", icono);
-
     let numeroIcono;
-
     switch (extension) {
-      case 'doc':
-      case 'docx':
+      case "doc":
+      case "docx":
         numeroIcono = 1;
         break;
-      case 'pdf':
+      case "pdf":
         numeroIcono = 2;
         break;
-      case 'ppt':
-      case 'pptx':
+      case "ppt":
+      case "pptx":
         numeroIcono = 3;
         break;
-      case 'xls':
-      case 'xlsx':
+      case "xls":
+      case "xlsx":
         numeroIcono = 4;
         break;
-      case 'jpg':
-      case 'jpeg':
-      case 'png':
+      case "jpg":
+      case "jpeg":
+      case "png":
         numeroIcono = 5;
         break;
       default:
         numeroIcono = 6;
     }
-
     const archivos = event.target.files;
 
-    // Crear un objeto FormData para enviar los datos y los archivos al controlador
     const formData = new FormData();
-    formData.append('id', inputFile.name);
-    formData.append('valor', archivos[0].name);
-    formData.append('tipo', '5'); // Tipo 5 para archivos
-    formData.append('numeroIcono', numeroIcono.toString()); // Número de icono
+    formData.append("id", inputFile.name);
+    formData.append("valor", archivos[0].name);
+    formData.append("tipo", "5");
+    formData.append("numeroIcono", numeroIcono.toString());
 
-    // Agregar los archivos al FormData
     for (let i = 0; i < archivos.length; i++) {
-      formData.append('archivos', archivos[i]);
+      formData.append("archivos", archivos[i]);
     }
-    console.log(numeroIcono);
 
-    // Ejemplo: enviar el FormData al controlador mediante fetch
-    fetch('/guardar-grupo', {
-      method: 'POST',
+    fetch("/guardar-grupo", {
+      method: "POST",
       body: formData,
     })
       .then(response => response.json())
@@ -364,7 +485,6 @@ function crearCampoArchivo() {
       });
   });
 }
-
 
 // Función para obtener la extensión de un archivo
 function obtenerExtensionArchivo(nombreArchivo) {
@@ -393,7 +513,6 @@ function obtenerIcono(extension) {
       return "../logos_recursos/Otro.svg";
   }
 }
-
 
 // Evento change del selector de opciones
 select.addEventListener("change", function() {
@@ -431,11 +550,15 @@ function handleCampoBlur(event) {
     } else if (campoId.startsWith('url')) {
         tipoCampo = '4'; // Tipo 4 para url
     }
+  // Obtener el número de icono desde el atributo data del inputUrl
+  let numeroIcono = event.target.getAttribute("data-numero-icono");
+  console.log("Número de icono:", numeroIcono);
+  console.log("campoId:", campoId);
 
     // Ejemplo: enviar el valor del campo al controlador mediante fetch
     fetch('/guardar-grupo', {
         method: 'POST',
-        body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo }),
+        body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono:numeroIcono }),
         headers: { 'Content-Type': 'application/json'}
       })
         .then(response => response.json())

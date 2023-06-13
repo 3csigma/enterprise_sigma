@@ -436,10 +436,12 @@
 {{!-- SELECTOR CON BUSCADOR --}}
 <script src="https://cdnjs.cloudflare.com/ajax/libs/chosen/1.8.7/chosen.jquery.min.js"></script>
 <script src="../js/recursos.js"></script>
-
+<script src="../js/deleteCampos.js"></script>
 <script src="../js/editarRecursos.js"></script>
 
 <script>
+
+// Actualizar campo arhivos una vez creados en grupo recursos
 const camposArchivo = document.querySelectorAll('.campo_archivo');
 camposArchivo.forEach(campo => {
   campo.addEventListener('change', () => {
@@ -532,7 +534,5 @@ function obtenerI(e) {
       return "../logos_recursos/Otro.svg";
   }
 }
-
-
 
 </script>

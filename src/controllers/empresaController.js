@@ -727,7 +727,7 @@ empresaController.cargar_link = async (req, res) => {
   
 };
 
-// ELIMINAR RECURSOS
+// ELIMINAR LINK DE RECURSOS
 empresaController.eliminarRecurso = async (req, res) => {
     const { id } = req.body;
     const recurso = await eliminarDatos('recursos', `WHERE id = ${id}`)
@@ -741,9 +741,11 @@ empresaController.eliminarRecurso = async (req, res) => {
     res.send(respu)
 };
 
-// GUARDAR GRUPO DE DOCUMENTOS - RECURSOS ::
+// GUARDAR GRUPO DE RECURSOS ::
 empresaController.guardar_grupo = async (req, res) => {
-    const { idEmpresa, nombre_grupo, descrip_grupo, color_grupo, esFormulario } = req.body;
+    const { idEmpresa, nombre_grupo, descrip_grupo, esFormulario } = req.body;
+    let color_grupo = req.body.color_grupo
+    if (!color_grupo) {color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"}
 
     // Obtener los datos acumulados de la variable de sesión
     let datosAcumulados = req.session.datosAcumulados || [];
@@ -751,11 +753,11 @@ empresaController.guardar_grupo = async (req, res) => {
      // Acceder a los archivos subidos en req.files
     const archivos = req.files;
     let valor
-
     const campoId = req.body.id;
     let valorCampo = req.body.valor;
     const tipoCampo = req.body.tipo;
     const numeroIcono = req.body.numeroIcono;
+
     // Recorrer los archivos y obtener sus nombres
     if (archivos && archivos.length > 0) {
         archivos.forEach((archivo) => {
@@ -770,6 +772,7 @@ empresaController.guardar_grupo = async (req, res) => {
       // Si el campo existe, actualizar su valor y tipo
       campoExistente.valor = valorCampo;
       campoExistente.tipo = tipoCampo;
+      campoExistente.numeroIcono=numeroIcono
     } else {
       // Si el campo no existe, agregarlo a los datos acumulados con su valor y tipo
       datosAcumulados.push({ id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: numeroIcono  });
@@ -786,9 +789,28 @@ empresaController.guardar_grupo = async (req, res) => {
     }
   
     res.redirect('/recursos/');
-  };
+};
   
-// ELIMINAR GRUPOS
+// ELIMINAR CAMPOS EN EL MOMENTO DE CREAR GRUPO
+empresaController.eliminarcampos = async (req, res) => {
+    const { id } = req.body;
+  
+    // Obtener los datos acumulados de la variable de sesión
+    let datosAcumulados = req.session.datosAcumulados || [];
+  
+    // Filtrar los datos acumulados para eliminar el campo con el ID especificado
+    datosAcumulados = datosAcumulados.filter(dato => dato.id !== id);
+  
+    // Actualizar los datos acumulados en la variable de sesión
+    req.session.datosAcumulados = datosAcumulados;
+    console.log(datosAcumulados);
+  
+    // Realizar otras operaciones necesarias, como eliminar el campo de título de la base de datos si es necesario
+  
+    res.json({ success: true });
+};
+
+// ELIMINAR EL GRUPO COMO TAL UNA VEZ CREADO
 empresaController.eliminarGrupo = async (req, res) => {
     const { id } = req.body;
     const recurso = await eliminarDatos('grupo_recursos', `WHERE id = ${id}`)
@@ -801,7 +823,7 @@ empresaController.eliminarGrupo = async (req, res) => {
     }
     res.send(respu)
 };
-  
+
 // RENDERIZADO DE RECURSOS ::
 empresaController.recursos = async (req, res) => {
     const emailEmpresa = req.user.email;
@@ -859,68 +881,79 @@ empresaController.recursos = async (req, res) => {
         const recursoArmado = JSON.parse(r.recurso_armado);
         let cuerpoHTML = '';
         recursoArmado.forEach(recurso => {
-          if(recurso.tipo === '1') {
-            contador.t1++
-            cuerpoHTML += `<input type="" style="font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
-          }else if (recurso.tipo === '2') {
-            contador.t2++
-            cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
-          }else if (recurso.tipo === '3') {
-            contador.t3++
-            cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
-          }else if (recurso.tipo === '4') {
-            contador.t4++
-            cuerpoHTML += `
-              <table class="table header-border">
-                <tbody>
-                  <tr class="text-black">
-                    <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="../logos_recursos/Pagina_Web.svg" class="icono-svg" alt="Icono"></a></td>
-                    <td>
-                      <input type="" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="${recurso.id}" value="${recurso.valor}">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>`;
-            } else if (recurso.tipo === '5') {
-                contador.t5++;
+            if(recurso.tipo === '1') {
+                contador.t1++
+                cuerpoHTML += `<input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
+            }else if (recurso.tipo === '2') {
+                contador.t2++
+                cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
+            }else if (recurso.tipo === '3') {
+                contador.t3++
+                cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
+            }else if (recurso.tipo === '4') {
+                contador.t4++
                 let iconoUrl;
                 if (recurso.numeroIcono === '1') {
-                  iconoUrl = "../logos_recursos/Documento_Word.svg";
+                iconoUrl = "../logos_recursos/Video_Youtube.svg";
                 } else if (recurso.numeroIcono === '2') {
-                  iconoUrl = "../logos_recursos/Documento_PDF.svg";
+                iconoUrl = "../logos_recursos/Video_Vimeo.svg";
                 } else if (recurso.numeroIcono === '3') {
-                  iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
+                iconoUrl = "../logos_recursos/notion.svg";
                 } else if (recurso.numeroIcono === '4') {
-                  iconoUrl = "../logos_recursos/Documento_Excel.svg";
+                iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
                 } else if (recurso.numeroIcono === '5') {
-                  iconoUrl = "../logos_recursos/Archivo_imagen.svg";
-                } else {
-                  iconoUrl = "../logos_recursos/Otro.svg";
-                }
-              
+                iconoUrl = "../logos_recursos/Pagina_Web.svg";
+                } 
                 cuerpoHTML += `
                 <table class="table header-border">
-                <tbody>
-                  <tr class="text-black">
-                    <td style="width: 0px;">
-                      <a href="${recurso.valor}" target="_blank">
-                        <img src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
-                      </a>
-                    </td>
-                    <td>
-                      <label for="${recurso.id}" class="campo_archivo_btn">
-                        <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
-                      </label>
-                      <input type="file" class="campo_archivo" name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
-                    </td>
-                    <td>
-
-                      <span style="color: black !important;text-decoration:none;border: 0px solid;text-align: left;" id="${recurso.id}">${recurso.valor.split('/').pop()}</span>
-                    </td>
-                  </tr>
-                </tbody>
-              </table>`;
-              }
+                    <tbody>
+                    <tr class="text-black">
+                        <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
+                        <td>
+                        <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="${recurso.id}" value="${recurso.valor}">
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>`;
+            } else if (recurso.tipo === '5') {
+                    contador.t5++;
+                    let iconoUrl;
+                    if (recurso.numeroIcono === '1') {
+                    iconoUrl = "../logos_recursos/Documento_Word.svg";
+                    } else if (recurso.numeroIcono === '2') {
+                    iconoUrl = "../logos_recursos/Documento_PDF.svg";
+                    } else if (recurso.numeroIcono === '3') {
+                    iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
+                    } else if (recurso.numeroIcono === '4') {
+                    iconoUrl = "../logos_recursos/Documento_Excel.svg";
+                    } else if (recurso.numeroIcono === '5') {
+                    iconoUrl = "../logos_recursos/Archivo_imagen.svg";
+                    } else {
+                    iconoUrl = "../logos_recursos/Otro.svg";
+                    }
+                
+                    cuerpoHTML += `
+                    <table class="table header-border">
+                    <tbody>
+                    <tr class="text-black">
+                        <td style="width: 0px;">
+                        <a href="${recurso.valor}" target="_blank">
+                            <img src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                        </a>
+                        </td>
+                        <td>
+                        <label for="${recurso.id}" class="campo_archivo_btn">
+                            <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
+                        </label>
+                        <input type="file" class="campo_archivo" name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
+                        </td>
+                        <td>
+                        <span style="color: black !important;text-decoration:none;border: 0px solid;text-align: left;" id="${recurso.id}">${recurso.valor.split('/').pop()}</span>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>`;
+            }
         });
     
         grupos.push({
@@ -939,65 +972,63 @@ empresaController.recursos = async (req, res) => {
       res.render('empresa/recursos', {
         user_dash: true, id_empresa, categorias, recurso, datos, grupos
       });
+};
+
+// ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
+empresaController.actualizarRecurso = async (req, res) => {
+
+    const archivos = req.files;
+    let valor, recursos
+    let campoId = req.body.id;
+    let valorCampo = req.body.valor;
+    let idRecurso = req.body.idRecurso;
+    let tipo = req.body.tipo;
+    let numeroIconico = req.body.numeroIcono;
+    
+    console.log("campoID>",campoId);
+    console.log("Valor>",valorCampo);
+    console.log("IdRecurso",idRecurso);
+    console.log("Tipo>",tipo);
+    console.log("NumeroIcono>",numeroIconico);
+
+    if (archivos && archivos.length > 0) {
+    archivos.forEach((archivo) => {
+        valor = '../grupo_recursos/' + archivo.filename;
+        valorCampo = valor;
+    });
     }
+    const infoRecursos = await pool.query("SELECT recurso_armado FROM grupo_recursos WHERE id = ?", [idRecurso]);
+    recursos = JSON.parse(infoRecursos[0].recurso_armado);
 
-    empresaController.actualizarRecurso = async (req, res) => {
-       
-          const archivos = req.files;
-          let valor, recursos
-          let campoId = req.body.id;
-          let valorCampo = req.body.valor;
-          let idRecurso = req.body.idRecurso;
-          let tipo = req.body.tipo;
-          let numeroIconico = ''
-          numeroIconico = req.body.numeroIcono;
+    let campoEncontrado = false;
 
-          console.log("campoID>",campoId);
-          console.log("Valor>",valorCampo);
-          console.log("IdRecurso",idRecurso);
-          console.log("Tipo>",tipo);
-          console.log("NumeroIcono>",numeroIconico);
+    recursos.forEach((recurso) => {
+    if (recurso.id === campoId) {
+        recurso.valor = valorCampo;
+        recurso.numeroIcono =  numeroIconico = JSON.stringify(numeroIconico);
+        campoEncontrado = true;
+    }
+    });
 
-          if (archivos && archivos.length > 0) {
-            archivos.forEach((archivo) => {
-              valor = '../grupo_recursos/' + archivo.filename;
-              valorCampo = valor;
-            });
-          }
-          const infoRecursos = await pool.query("SELECT recurso_armado FROM grupo_recursos WHERE id = ?", [idRecurso]);
-          recursos = JSON.parse(infoRecursos[0].recurso_armado);
-      
-          let campoEncontrado = false;
-      
-          recursos.forEach((recurso) => {
-            if (recurso.id === campoId) {
-              recurso.valor = valorCampo;
-              recurso.numeroIcono = numeroIconico; // Asignar el valor de numeroIconico al campo correspondiente
-              campoEncontrado = true;
-            }
-          });
-      
-          if (!campoEncontrado) {
-            const nuevoCampo = {
-              id: campoId,
-              valor: valorCampo,
-              tipo: tipo,
-              numeroIcono: numeroIconico,
-            };
-            recursos.push(nuevoCampo);
-          }
-          console.log(recursos);
-          await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
-      
-          res.redirect('/recursos/');
+    if (!campoEncontrado) {
+    const nuevoCampo = {
+        id: campoId,
+        valor: valorCampo,
+        tipo: tipo,
+        numeroIcono: numeroIconico,
+    };
+    recursos.push(nuevoCampo);
+    }
+    console.log(recursos);
+    await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
+
+    res.redirect('/recursos/');
         
-      }
-      
+}
   
 
 
 empresaController.ejemplo2 = async (req, res) => {
- 
     res.render('empresa/ejemplo2', {
         user_dash: true
     })

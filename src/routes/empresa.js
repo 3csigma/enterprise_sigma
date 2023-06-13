@@ -56,12 +56,12 @@ const rutaAlmacen = multer.diskStorage({
   // Crear el middleware de Multer
   const subirRecurso = multer({ storage: rutaAlmacen });
   
-
 // Recursos
 router.post('/enviar-archivo', checkLogin, empresaController.enviar_archivo);
 router.post('/cargar-link', checkLogin, empresaController.cargar_link);
 router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
 router.post('/guardar-grupo', checkLogin, subirRecurso.array('archivos'), empresaController.guardar_grupo);
+router.post('/eliminarcampo', checkLogin, empresaController.eliminarcampos)
 router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)
 
 //Configurar el almacenamiento de Multer
@@ -91,6 +91,6 @@ const actualizarArchivo = multer({
     }
   },
 });
-
 router.post('/actualizarRecurso', checkLogin, actualizarArchivo.any(), empresaController.actualizarRecurso);
+
 module.exports = router
