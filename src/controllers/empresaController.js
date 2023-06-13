@@ -795,7 +795,7 @@ empresaController.recursos = async (req, res) => {
                     <tr class="text-black">
                         <td style="width: 0px;">
                         <a href="${recurso.valor}" target="_blank">
-                            <img src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                            <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
                         </a>
                         </td>
                         <td>
@@ -841,7 +841,7 @@ empresaController.actualizarRecurso = async (req, res) => {
     let idRecurso = req.body.idRecurso;
     let tipo = req.body.tipo;
     let numeroIconico = req.body.numeroIcono;
-    
+
     console.log("campoID>",campoId);
     console.log("Valor>",valorCampo);
     console.log("IdRecurso",idRecurso);
@@ -862,7 +862,7 @@ empresaController.actualizarRecurso = async (req, res) => {
     recursos.forEach((recurso) => {
     if (recurso.id === campoId) {
         recurso.valor = valorCampo;
-        recurso.numeroIcono =  numeroIconico = JSON.stringify(numeroIconico);
+        recurso.numeroIcono = numeroIconico
         campoEncontrado = true;
     }
     });
