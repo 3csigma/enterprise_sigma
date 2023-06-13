@@ -204,38 +204,58 @@ function crearCampoUrlEdit(edit = false) {
       banderas.b4 = true;
     }
   }
-
   urlAgg.id = "url" + contadores.c4;
 
-  const urlContainer = document.createElement("div");
-  urlContainer.classList.add("campo-container");
-  urlContainer.appendChild(urlAgg);
-
+  const filaE = document.createElement("tr");
+  const columnaDelete = document.createElement("td");
   const iconBorrarUrl = document.createElement("i");
   iconBorrarUrl.classList.add("fas", "fa-trash-alt", "icono-borrar");
   iconBorrarUrl.style.color = "red"; // Cambiar el color del icono a rojo
-  iconBorrarUrl.style.opacity = "0"; // Establecer la opacidad inicialmente en 0
+  iconBorrarUrl.style.visibility = "hidden"; // Inicialmente oculto
 
-  urlContainer.appendChild(iconBorrarUrl);
-
-  // Agregar la transición suave al ícono de borrar
-  iconBorrarUrl.style.transition = "opacity 0.3s";
-
-  // Agregar el evento de mouseover al campo para mostrar el ícono de borrar
-  urlContainer.addEventListener("mouseover", function () {
-    iconBorrarUrl.style.opacity = "1";
-  });
-
-  // Agregar el evento de mouseout al campo para ocultar el ícono de borrar
-  urlContainer.addEventListener("mouseout", function () {
-    iconBorrarUrl.style.opacity = "0";
-  });
-
+  // Mostrar el ícono de borrar al pasar el cursor sobre la fila
+  filaE.addEventListener("mouseenter", function () {iconBorrarUrl.style.visibility = "visible";});
+  // Ocultar el ícono de borrar al sacar el cursor de la fila
+  filaE.addEventListener("mouseleave", function () { iconBorrarUrl.style.visibility = "hidden"; });
   iconBorrarUrl.addEventListener("click", function () {
-    contenidosEdit.removeChild(urlContainer);
+    filaE.remove();
+    borrarCampo(urlAgg.id); // Llamada a la función para eliminar el campo en el controlador
   });
+  columnaDelete.appendChild(iconBorrarUrl);
 
-  contenidosEdit.appendChild(urlContainer);
+  const columnaIcon = document.createElement("td");
+  const iconUrl = document.createElement("img");
+  iconUrl.style.margin = "15px";
+  iconUrl.classList.add("icono-url");
+  columnaIcon.appendChild(iconUrl);
+
+  const columnaUrl = document.createElement("td");
+  columnaUrl.style.width = "100%";
+  columnaUrl.appendChild(urlAgg);
+
+  filaE.appendChild(columnaDelete);
+  filaE.appendChild(columnaIcon);
+  filaE.appendChild(columnaUrl);
+
+  urlAgg.addEventListener("input", function () {
+    const url = urlAgg.value;
+    const domain = obtenerDominio(url);
+    const icono = obtenerIconoPorDominio(domain);
+    let numeroIcono = obtenerNumeroIconoPorDominio(domain);
+
+    // Mostrar el icono correspondiente
+    if (icono) {
+      iconUrl.src = icono;
+      iconUrl.style.display = "inline-block";
+    } else {
+      iconUrl.src = "";
+      iconUrl.style.display = "none";
+    }
+
+    // Almacenar el número de icono en el atributo data del urlAgg
+    urlAgg.setAttribute("data-numero-icono", numeroIcono);
+  });
+  contenidosEdit.appendChild(filaE);
   contadores.c4++;
   urlAgg.addEventListener('blur', handleCampoBlur2);
 }
@@ -393,7 +413,6 @@ function obtenerIcon(ext) {
   }
 }
 
-
 // Evento change del selector de opciones
 selectorEdit.addEventListener("change", function() {
   const opcionSeleccionada = selectorEdit.value;
@@ -423,7 +442,8 @@ function handleCampoBlur2(event) {
     // Obtener el id del grupo correspondiente
     const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
-
+    // Obtener el número de icono desde el atributo data del inputUrl
+    let numeroIcono = event.target.getAttribute("data-numero-icono");
     let tipoCampo;
   
     // Determinar el tipo de campo según su ID
@@ -435,15 +455,10 @@ function handleCampoBlur2(event) {
         tipoCampo = '4'; // Tipo 4 para url
     }
 
-    console.log(campoId);
-    console.log(valorCampo);
-    console.log(valorCampo);
-    console.log(tipoCampo);
-    
     // Ejemplo: enviar el valor del campo al controlador mediante fetch
     fetch('/actualizarRecurso', {
         method: 'POST',
-        body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, idRecurso: idRecurso }),
+        body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, idRecurso: idRecurso, numeroIcono:numeroIcono }),
         headers: { 'Content-Type': 'application/json'}
       })
         .then(response => response.json())
@@ -456,6 +471,9 @@ function handleCampoBlur2(event) {
 }
 
 
+// ----------------------------------------------------------------
+  // PARA ACTUALIZAR EN VIVO EL CAMPO URL
+// ----------------------------------------------------------------
 // Función para mostrarel nuevo icono de la url
 function mostrarUrlNueva(campo) {
   const valor = campo.value;
@@ -517,7 +535,6 @@ function obtenerNumeroIconoPorDominio(domain) {
 
 // ACTUALIZAR CAMPOS DESDE EL MISMO GRUPO YA CREADO
 let numeroIcono; // Variable para almacenar el número de icono
-
 const camposDinamicos = document.querySelectorAll('.camposD');
 camposDinamicos.forEach(campo => {
   campo.addEventListener('input', () => {
@@ -528,7 +545,7 @@ camposDinamicos.forEach(campo => {
     // Obtener el id del grupo correspondiente
     const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
-
+    numeroIcono = JSON.stringify(numeroIcono);
     fetch('/actualizarRecurso', {
       method: 'POST',
       body: JSON.stringify({ id: id, valor: valor, idRecurso: idRecurso, numeroIcono: numeroIcono }),

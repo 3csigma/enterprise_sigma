@@ -281,7 +281,6 @@ function crearCampoUrl() {
   inputUrl.id = "url" + contadorUrl;
 
   const fila = document.createElement("tr");
-
   const columnaBorrar = document.createElement("td");
   const botonBorrarUrl = document.createElement("i");
   botonBorrarUrl.classList.add("fas", "fa-trash-alt", "icono-borrar");
@@ -289,15 +288,9 @@ function crearCampoUrl() {
   botonBorrarUrl.style.visibility = "hidden"; // Inicialmente oculto
 
   // Mostrar el ícono de borrar al pasar el cursor sobre la fila
-  fila.addEventListener("mouseenter", function () {
-    botonBorrarUrl.style.visibility = "visible";
-  });
-
+  fila.addEventListener("mouseenter", function () {botonBorrarUrl.style.visibility = "visible";});
   // Ocultar el ícono de borrar al sacar el cursor de la fila
-  fila.addEventListener("mouseleave", function () {
-    botonBorrarUrl.style.visibility = "hidden";
-  });
-
+  fila.addEventListener("mouseleave", function () {botonBorrarUrl.style.visibility = "hidden";});
   botonBorrarUrl.addEventListener("click", function () {
     fila.remove();
     borrarCampo(inputUrl.id); // Llamada a la función para eliminar el campo en el controlador
@@ -336,7 +329,6 @@ function crearCampoUrl() {
     // Almacenar el número de icono en el atributo data del inputUrl
     inputUrl.setAttribute("data-numero-icono", numeroIcono);
   });
-
   contenido.appendChild(fila);
   contadorUrl++;
   inputUrl.addEventListener("blur", handleCampoBlur);
