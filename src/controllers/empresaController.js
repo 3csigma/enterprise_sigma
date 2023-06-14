@@ -504,6 +504,12 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico.modal = '#modalNuevosProyectos';
                 cuestionario.nuevo = true;
 
+                if (req.user.programa == 1) {
+                    req.session.etapaCompleta.gratis = true;
+                    req.session.etapaCompleta.verAnalisis = req.session.etapaCompleta.verEstrategico = false;
+                    req.session.etapaCompleta.upgrade1 = true;
+                }
+
                 // Respuestas del Cuestionario Diagnóstico Empresa Nueva
                 cuestionario.diagnostico.respuestas.rubro = datos.rubro
                 const obj = JSON.parse(datos.empresa_ofrece);
@@ -579,7 +585,13 @@ empresaController.diagnostico = async (req, res) => {
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalEmpresasEstablecidas';
                 cuestionario.establecido = true;
-                etapaCompleta.verAnalisis = true;
+                req.session.etapaCompleta.verAnalisis = true;
+
+                if (req.user.programa == 1) {
+                    req.session.etapaCompleta.gratis = true;
+                    req.session.etapaCompleta.verAnalisis = req.session.etapaCompleta.verEstrategico = false;
+                    req.session.etapaCompleta.upgrade2 = true;
+                }
 
                 // Respuestas del Cuestionario Diagnóstico Empresa Establecida
                 cuestionario.diagnostico.respuestas.rubro = datos.rubro
@@ -1291,7 +1303,7 @@ empresaController.informeEstrategico = async (req, res) => {
     let informe1_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Diagnóstico')
     if (informe1_IA) informe1_IA = informe1_IA.informe;
     let obj_respuestas = { 'Diagnóstico de Negocio': { informe1_IA } }
-    let txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas."
+    let txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas, que no supere los 3000 caracteres."
     
     if (req.session.etapaCompleta.verAnalisis) {
         let informe2_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis producto')
@@ -1306,7 +1318,7 @@ empresaController.informeEstrategico = async (req, res) => {
         obj_respuestas['Análisis de Negocio - Dimensión Administración'] = { informe3_IA };
         obj_respuestas['Análisis de Negocio - Dimensión Operación'] = { informe4_IA };
         obj_respuestas['Análisis de Negocio - Dimensión Marketing'] = { informe5_IA };
-        txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología"
+        txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, que no supere los 3000 caracteres."
     }
 
     const prompt = (JSON.stringify(obj_respuestas)+ txtGPT)

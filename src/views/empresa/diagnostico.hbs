@@ -152,9 +152,9 @@
             Scripts
 ***********************************-->
 <script>
+  document.addEventListener("DOMContentLoaded", () => {
   {{#unless tutoriales.etapa}}
   // POPUP CON TUTORIAL
-  document.addEventListener("DOMContentLoaded", () => {
     Swal.fire({
       title: '<strong>TUTORIAL <u>example</u></strong>',
       icon: 'info',
@@ -169,8 +169,47 @@
       cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
       cancelButtonAriaLabel: 'Thumbs down'
     })
-  });
   {{/unless}}
+    
+  // POPUPS PARA HACER UPGRADE
+  {{#if etapaCompleta.upgrade1}}
+    Swal.fire({
+        title: '<strong>Diagnóstico finalizado</strong>',
+          icon: 'info',
+          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
+          <div class="d-flex justify-content-center align-items-center mt-2">
+            <a type="button" href="https://3csigma.com/programa-entrepreneur/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Entrepreneur</a>
+          </div>`,
+        showConfirmButton: false,
+        showCloseButton: false,
+        showCancelButton: true,
+        focusCancel: true,
+        cancelButtonText: 'Cerrar',
+    })
+    $('.swal2-popup').width('50em');
+  {{/if}}
+
+  {{#if etapaCompleta.upgrade2}}
+    Swal.fire({
+        title: '<strong>Diagnóstico finalizado</strong>',
+          icon: 'info',
+          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
+          <div class="d-flex justify-content-center align-items-center mt-2">
+            <a type="button" href="https://3csigma.com/programa-business/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Business</a>
+            <a type="button" href="https://3csigma.com/programa-enterprise/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Enterprise</a>
+          </div>`,
+        showConfirmButton: false,
+        showCloseButton: false,
+        showCancelButton: true,
+        focusCancel: true,
+        cancelButtonText: 'Cerrar',
+    })
+
+    $('.swal2-popup').width('50em');
+  {{/if}}
+
+  });
+
   
   {{#if cuestionario.fichaCliente.fechaLocal}}
   const tzLocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
