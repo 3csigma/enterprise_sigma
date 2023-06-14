@@ -324,11 +324,22 @@ function crearCampoArchivoEdit(edit = false) {
 
   fileAgg.addEventListener("change", function (event) {
     const archivo = event.target.files[0];
-
     const extensiones = obtenerExt(archivo.name);
     const icon = obtenerIcon(extensiones);
     archivoIcon.innerHTML = `<img src="${icon}" style="margin:15px" class="icono-cargar-archivo">`;
-    nameArchivo.textContent = archivo.name;
+  
+    // Limitar la longitud del nombre del archivo a mostrar
+    const MAX_LONGITUD_NOMBRE = 20;
+    let nombreArchivoMostrado = archivo.name;
+    let nombreSinExtension = archivo.name.substr(0, archivo.name.lastIndexOf('.'));
+    let extensionArchivo = archivo.name.substr(archivo.name.lastIndexOf('.'));
+    
+    if (nombreSinExtension.length > MAX_LONGITUD_NOMBRE) {
+      nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
+      nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
+    }
+    
+    nameArchivo.textContent = nombreArchivoMostrado;
 
     let numeroIcon;
 

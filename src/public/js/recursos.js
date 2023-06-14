@@ -425,7 +425,19 @@ function crearCampoArchivo() {
     const extension = obtenerExtensionArchivo(archivo.name);
     const icono = obtenerIcono(extension);
     archivoIcono.innerHTML = `<img src="${icono}" style="margin:15px" class="icono-cargar-archivo">`;
-    nombreArchivo.textContent = archivo.name;
+  
+    // Limitar la longitud del nombre del archivo a mostrar
+    const MAX_LONGITUD_NOMBRE = 20;
+    let nombreArchivoMostrado = archivo.name;
+    let nombreSinExtension = archivo.name.substr(0, archivo.name.lastIndexOf('.'));
+    let extensionArchivo = archivo.name.substr(archivo.name.lastIndexOf('.'));
+    
+    if (nombreSinExtension.length > MAX_LONGITUD_NOMBRE) {
+      nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
+      nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
+    }
+    
+    nombreArchivo.textContent = nombreArchivoMostrado;
 
     let numeroIcono;
     switch (extension) {

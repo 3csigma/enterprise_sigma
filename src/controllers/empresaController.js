@@ -873,105 +873,164 @@ empresaController.recursos = async (req, res) => {
       });
     }
 
-    // MOSTRAR LOS GRUPO DE RECURSOS
-    const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ?', [id_empresa]);
-    if (resultado.length > 0) {
-      const contador = {t1:0, t2:0, t3:0, t4:0, t5:0}
-      resultado.forEach(r => {
-        const recursoArmado = JSON.parse(r.recurso_armado);
-        let cuerpoHTML = '';
-        recursoArmado.forEach(recurso => {
-            if(recurso.tipo === '1') {
-                contador.t1++
-                cuerpoHTML += `<input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
-            }else if (recurso.tipo === '2') {
-                contador.t2++
-                cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
-            }else if (recurso.tipo === '3') {
-                contador.t3++
-                cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
-            }else if (recurso.tipo === '4') {
-                contador.t4++
-                let iconoUrl;
-                if (recurso.numeroIcono === '1') {
-                iconoUrl = "../logos_recursos/Video_Youtube.svg";
-                } else if (recurso.numeroIcono === '2') {
-                iconoUrl = "../logos_recursos/Video_Vimeo.svg";
-                } else if (recurso.numeroIcono === '3') {
-                iconoUrl = "../logos_recursos/notion.svg";
-                } else if (recurso.numeroIcono === '4') {
-                iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
-                } else if (recurso.numeroIcono === '5') {
-                iconoUrl = "../logos_recursos/Pagina_Web.svg";
-                } 
-                cuerpoHTML += `
-                <table class="table header-border">
-                    <tbody>
-                    <tr class="text-black">
-                        <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
-                        <td>
-                        <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="${recurso.id}" value="${recurso.valor}">
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>`;
-            } else if (recurso.tipo === '5') {
-                    contador.t5++;
-                    let iconoUrl;
-                    if (recurso.numeroIcono === '1') {
-                    iconoUrl = "../logos_recursos/Documento_Word.svg";
-                    } else if (recurso.numeroIcono === '2') {
-                    iconoUrl = "../logos_recursos/Documento_PDF.svg";
-                    } else if (recurso.numeroIcono === '3') {
-                    iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
-                    } else if (recurso.numeroIcono === '4') {
-                    iconoUrl = "../logos_recursos/Documento_Excel.svg";
-                    } else if (recurso.numeroIcono === '5') {
-                    iconoUrl = "../logos_recursos/Archivo_imagen.svg";
-                    } else {
-                    iconoUrl = "../logos_recursos/Otro.svg";
-                    }
-                
-                    cuerpoHTML += `
-                    <table class="table header-border">
-                    <tbody>
-                    <tr class="text-black">
-                        <td style="width: 0px;">
-                        <a href="${recurso.valor}" target="_blank">
-                            <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
-                        </a>
-                        </td>
-                        <td>
-                        <label for="${recurso.id}" class="campo_archivo_btn">
-                            <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
-                        </label>
-                        <input type="file" class="campo_archivo" name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
-                        </td>
-                        <td>
-                        <span style="color: black !important;text-decoration:none;border: 0px solid;text-align: left;" id="${recurso.id}">${recurso.valor.split('/').pop()}</span>
-                        </td>
-                    </tr>
-                    </tbody>
-                </table>`;
-            }
-        });
-    
-        grupos.push({
-          idGrupo: r.id,
-          nombre_grupo: r.nombre_grupo,
-          descrip_grupo: r.descrip_grupo,
-          color_grupo: r.color_grupo,
-          recurso_armado: r.recurso_armado,
-          cuerpoHTML: cuerpoHTML,
-          contador: JSON.stringify(contador)
-        });
-      });
-    }
+// MOSTRAR LOS GRUPOS DE RECURSOS
+const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ?', [id_empresa]);
+if (resultado.length > 0) {
+  const contador = { t1: 0, t2: 0, t3: 0, t4: 0, t5: 0 };
+  let grupos = [];
 
+  resultado.forEach(r => {
+    const recursoArmado = JSON.parse(r.recurso_armado);
+    let iconos = [];
+    let ruta = '';
+    let cuerpoHTML = '';
 
-      res.render('empresa/recursos', {
-        user_dash: true, id_empresa, categorias, recurso, datos, grupos
-      });
+    recursoArmado.forEach(recurso => {
+      if (recurso.tipo === '4') {
+        switch (recurso.numeroIcono) {
+          case '1':
+            ruta = "../logos_recursos/Video_Youtube.svg";
+            break;
+          case '2':
+            ruta = "../logos_recursos/Video_Vimeo.svg";
+            break;
+          case '3':
+            ruta = "../logos_recursos/notion.svg";
+            break;
+          case '4':
+            ruta = "../logos_recursos/Archivo_Google_Drive.svg";
+            break;
+          case '5':
+            ruta = "../logos_recursos/Pagina_Web.svg";
+            break;
+        }
+        iconos.push({ ruta: ruta });
+      }
+      if (recurso.tipo === '5') {
+        switch (recurso.numeroIcono) {
+          case '1':
+            ruta = "../logos_recursos/Documento_Word.svg";
+            break;
+          case '2':
+            ruta = "../logos_recursos/Documento_PDF.svg";
+            break;
+          case '3':
+            ruta = "../logos_recursos/Documento_PowePoint.svg";
+            break;
+          case '4':
+            ruta = "../logos_recursos/Documento_Excel.svg";
+            break;
+          case '5':
+            ruta = "../logos_recursos/Archivo_imagen.svg";
+            break;
+          case '6':
+            ruta = "../logos_recursos/Otro.svg";
+            break;
+        }
+        iconos.push({ ruta: ruta });
+      }
+
+      if (recurso.tipo === '1') {
+        contador.t1++;
+        cuerpoHTML += `<input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
+      } else if (recurso.tipo === '2') {
+        contador.t2++;
+        cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
+      } else if (recurso.tipo === '3') {
+        contador.t3++;
+        cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
+      } else if (recurso.tipo === '4') {
+        contador.t4++;
+        let iconoUrl;
+        if (recurso.numeroIcono === '1') {
+          iconoUrl = "../logos_recursos/Video_Youtube.svg";
+        } else if (recurso.numeroIcono === '2') {
+          iconoUrl = "../logos_recursos/Video_Vimeo.svg";
+        } else if (recurso.numeroIcono === '3') {
+          iconoUrl = "../logos_recursos/notion.svg";
+        } else if (recurso.numeroIcono === '4') {
+          iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
+        } else if (recurso.numeroIcono === '5') {
+          iconoUrl = "../logos_recursos/Pagina_Web.svg";
+        }
+        cuerpoHTML += `
+        <table class="table header-border">
+          <tbody>
+            <tr class="text-black">
+              <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
+              <td>
+                <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="${recurso.id}" value="${recurso.valor}">
+              </td>
+            </tr>
+          </tbody>
+        </table>`;
+      } else if (recurso.tipo === '5') {
+        contador.t5++;
+        let iconoUrl;
+        if (recurso.numeroIcono === '1') {
+          iconoUrl = "../logos_recursos/Documento_Word.svg";
+        } else if (recurso.numeroIcono === '2') {
+          iconoUrl = "../logos_recursos/Documento_PDF.svg";
+        } else if (recurso.numeroIcono === '3') {
+          iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
+        } else if (recurso.numeroIcono === '4') {
+          iconoUrl = "../logos_recursos/Documento_Excel.svg";
+        } else if (recurso.numeroIcono === '5') {
+          iconoUrl = "../logos_recursos/Archivo_imagen.svg";
+        } else {
+          iconoUrl = "../logos_recursos/Otro.svg";
+        }
+
+        cuerpoHTML += `
+        <table class="table header-border">
+          <tbody>
+            <tr class="text-black">
+              <td style="width: 0px;">
+                <a href="${recurso.valor}" target="_blank">
+                  <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                </a>
+              </td>
+              <td>
+                <label for="${recurso.id}" class="campo_archivo_btn">
+                  <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
+                </label>
+                <input type="file" class="campo_archivo" name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
+              </td>
+              <td>
+                <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="${recurso.id}" class="nombre-archivo">${recurso.valor.split('/').pop()}</span>
+              </td>
+            </tr>
+          </tbody>
+        </table>`;
+      }
+    });
+
+    iconos = iconos.filter((valor, indice, self) => {
+      return !self.slice(indice + 1).some(objeto => objeto.ruta === valor.ruta);
+    });
+
+    grupos.push({
+      idGrupo: r.id,
+      nombre_grupo: r.nombre_grupo,
+      descrip_grupo: r.descrip_grupo,
+      color_grupo: r.color_grupo,
+      recurso_armado: r.recurso_armado,
+      cuerpoHTML: cuerpoHTML,
+      iconos,
+      contador: JSON.stringify(contador)
+    });
+  });
+
+  res.render('empresa/recursos', {
+    user_dash: true,
+    id_empresa,
+    categorias,
+    recurso,
+    datos,
+    grupos
+  });
+}
+
 };
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
