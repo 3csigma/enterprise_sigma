@@ -284,26 +284,11 @@
                                         <br>
                                         <div class="widget-media">
                                         <div class="timeline d-flex flex-row">
-                                            <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-word"></i>
-                                            </div>
-                                            </div>
-                                            <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-regular fa-file-excel"></i>
-                                            </div>
-                                            </div>
-                                            <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-file-pdf"></i>
-                                            </div>
-                                            </div>
-                                            <div class="timeline-panel">
-                                            <div class="media mr-2 media-success">
-                                                <i class="fa-solid fa-image"></i>
-                                            </div>
-                                            </div>
+                                            {{#each iconos}}
+                                                <div class="timeline-panel">
+                                                    <img src="{{ruta}}" alt="Icono"/>
+                                                </div>
+                                            {{/each}}
                                         </div>
                                         <h3 class="card-footer bg-transparent border-0 text-white" style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">{{nombre_grupo}}</h3>
                                         <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">{{descrip_grupo}}</div>
@@ -331,56 +316,30 @@
                                             <p style="font-weight: 265;font-size: 15px;">Crea grupos de recursos pertenecientes a una misma temática, seleccionando los elementos</p>
                                         </div>        
                                         <div class="modal-body">
-                                              <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Información del grupo de recursos</h3>
-                                                {{!-- <div class="row opera">
-                                                    <div class="col-4">
-                                                        <input type="text" class="form-control input-recursos" required name="nombre_grupo" placeholder="Introduce el nombre del grupo de recursos">
-                                                    </div>
-                                                    <div class="col-4">
-                                                        <textarea name="descrip_grupo" class="form-control input-recursos" required maxlength="120" cols="30" rows="10" placeholder="Introduce la descripcion del grupo de recurso"></textarea>
-                                                    </div>
-                                                </div> --}}
-                                                    {{!-- <br> --}}
-                                                {{!-- <div class="row opera">
-                                                    <div class="col-6">
-                                                        <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
-                                                        <div class="colorButtons">
-                                                            <button type="button" class="colorButton" data-color="#D74040"></button>
-                                                            <button type="button" class="colorButton" data-color="#739232"></button>
-                                                            <button type="button" class="colorButton" data-color="#58B57D"></button>
-                                                            <button type="button" class="colorButton" data-color="#407CD7"></button>
-                                                            <button type="button" class="colorButton" data-color="#4085D7"></button>
-                                                            <button type="button" class="colorButton" data-color="#9540D7"></button>
-                                                            <button type="button" class="colorButton" data-color="#812082"></button>
-                                                            <button type="button" class="colorButton" data-color="#FED061"></button>
-                                                        </div>
-                                                        <input type="hidden" id="colorGrupoInput" name="color_grupo">
-                                                    </div>
-                                                </div> --}}
-                                                <div class="row opera flex-column">
-                                                    <div class="col-3" style="margin-bottom: 25px;">
-                                                        <select id="opcionesEdit" class="form-control-sm default-select btnTypeArchivo text-white">
-                                                            <option value="">Agregar Elemento</option>
-                                                            <option value="titulo">Título</option>
-                                                            <option value="descripcion">Bloque de texto</option>
-                                                            <option value="separador">Separador</option>
-                                                            <option value="url">URL</option>
-                                                            <option value="archivo">Subir Archivo</option>
-                                                        </select>
-                                                    </div>
-                                                    
+                                            <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Información del grupo de recursos</h3>
+                                            <div class="row opera flex-column">
+                                                <div class="col-3" style="margin-bottom: 25px;">
+                                                    <select id="opcionesEdit" class="form-control-sm default-select btnTypeArchivo text-white">
+                                                        <option value="">Agregar Elemento</option>
+                                                        <option value="titulo">Título</option>
+                                                        <option value="descripcion">Bloque de texto</option>
+                                                        <option value="separador">Separador</option>
+                                                        <option value="url">URL</option>
+                                                        <option value="archivo">Subir Archivo</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <br>
+                                            <div class="row opera">
+                                                <div class="col-10">
+                                                    {{{cuerpoHTML}}}
                                                 </div>
                                                 <br>
-                                                <div class="row opera">
-                                                    <div class="col-10">
-                                                        {{{cuerpoHTML}}}
-                                                    </div>
-                                                    <br>
-                                                    <div class="col-10">
-                                                        <div id="contenidoEdit"></div>
-                                                    </div>
+                                                <div class="col-10">
+                                                    <div id="contenidoEdit"></div>
                                                 </div>
-                                                <br>
+                                            </div>
+                                            <br>
                                         </div>
                                         <div class="modal-footer justify-content-center">
                                             <button type="submit" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
@@ -446,14 +405,40 @@ function mostrarFilesNuevos(campo) {
   const extension = obtenerExtension(valor);
   const numeroIcono = obtenerNumeroIconoPorExtension(extension); // Asignar el número de icono
   const icono = obtenerIconoPorNumero(numeroIcono); // Obtener el icono correspondiente
-  
+
   // Actualizar el icono correspondiente
   const iconoElemento = campo.closest('tr').querySelector('.icono-svg');
   iconoElemento.src = icono;
 
+  // Obtener el elemento del nombre del archivo
+  const nombreArchivoElemento = campo.closest('tr').querySelector('.nombre-archivo');
+
+  // Obtener el nombre del archivo sin la extensión
+  const nombreArchivo = valor.substr(0, valor.lastIndexOf('.'));
+
+  // Obtener la extensión del archivo
+  const extensionArchivo = valor.substr(valor.lastIndexOf('.'));
+
+  // Acortar el nombre del archivo si es necesario
+  const MAX_LONGITUD_NOMBRE = 20;
+  let nombreArchivoMostrado = nombreArchivo;
+  if (nombreArchivo.length > MAX_LONGITUD_NOMBRE) {
+    nombreArchivoMostrado = nombreArchivo.substr(0, MAX_LONGITUD_NOMBRE) + '...';
+  }
+
+  // Actualizar el texto del nombre del archivo
+  nombreArchivoElemento.textContent = nombreArchivoMostrado + extensionArchivo;
+
+  // Almacenar el nombre completo del archivo en un atributo de datos
+  campo.setAttribute('data-nombre-completo', valor);
+
+  // Almacenar el nombre abreviado del archivo en un atributo de datos
+  campo.setAttribute('data-nombre-abreviado', nombreArchivoMostrado + extensionArchivo);
+
   // Guardar el número de icono en el atributo 'data-numero-icono' del campo
   campo.setAttribute('data-numerofile-icono', numeroIcono);
 }
+
 
 // Función para obtener la extensión de un archivo
 function obtenerExtension(nombreArchivo) {
