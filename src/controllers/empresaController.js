@@ -701,9 +701,13 @@ empresaController.diagnostico = async (req, res) => {
 
 empresaController.enviar_archivo = async (req, res, next) => {
       const { categoria, tipo_archivo, nombre_archivo } = req.body;
-  
+
+
+
+
+
+
       res.redirect('/recursos/');
-    
 };
 
 // GUARDAR LINK DE RECURSOS ::
@@ -1004,7 +1008,7 @@ if (resultado.length > 0) {
         </table>`;
       }
     });
-
+  
     iconos = iconos.filter((valor, indice, self) => {
       return !self.slice(indice + 1).some(objeto => objeto.ruta === valor.ruta);
     });
@@ -1020,6 +1024,7 @@ if (resultado.length > 0) {
       contador: JSON.stringify(contador)
     });
   });
+}
 
   res.render('empresa/recursos', {
     user_dash: true,
@@ -1030,8 +1035,6 @@ if (resultado.length > 0) {
     grupos
   });
 }
-
-};
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
