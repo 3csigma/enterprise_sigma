@@ -65,13 +65,6 @@
                                                                                     <option>Documento PDF</option>
                                                                                     <option>Archivo de imagen</option>
                                                                                 </select>
-                                                                                    {{!-- <div class="basic-dropdown">
-                                                                                    <div class="dropdown">
-                                                                                        <button class="btn dropdown-toggle btnTypeArchivo text-white" data-toggle="dropdown">
-                                                                                            Elije un tipo de recurso
-                                                                                        </button>
-                                                                                    </div>
-                                                                                </div> --}}
                                                                             </div>
                                                                         </div>
                                                                         <br>
@@ -86,14 +79,14 @@
                                                                             <center>
                                                                                 <button id="btnfile">Examinar archivos</button>
                                                                             </center>
-                                                                            <input type="file" name="recursoEmpresa" id="input-file" hidden>
+                                                                            <input type="file" id="inputt-file" hidden>
                                                                         </div>
                                                                         <div id="preview"></div>
                                                                     </div>
                                                                 </div>
-                                                                {{!-- <div class="modal-footer justify-content-center">
+                                                                <div class="modal-footer justify-content-center">
                                                                     <button type="submit" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
-                                                                </div> --}}
+                                                                </div>
                                                             </div>
                                                         </form>
                                                     </div>
@@ -399,6 +392,8 @@
 <script src="../js/editarRecursos.js"></script>
 
 <script>
+
+    
 // Función para mostrar el nuevo icono del archivo
 function mostrarFilesNuevos(campo) {
   const valor = campo.files[0].name;
@@ -438,7 +433,6 @@ function mostrarFilesNuevos(campo) {
   // Guardar el número de icono en el atributo 'data-numero-icono' del campo
   campo.setAttribute('data-numerofile-icono', numeroIcono);
 }
-
 
 // Función para obtener la extensión de un archivo
 function obtenerExtension(nombreArchivo) {

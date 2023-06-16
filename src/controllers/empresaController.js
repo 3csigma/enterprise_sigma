@@ -5,15 +5,13 @@ const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
 const portalClientes = process.env.PORTAL_CLIENTES;
-const multer = require('multer');
-const path = require('path');
+const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
 
-let pagoPendiente = true, diagnosticoPagado = false, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
+let pagoPendiente = true, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
 let modalAcuerdo = false;
 
 /** Función para mostrar Dashboard de Empresas */
 empresaController.index = async (req, res) => {
-    diagnosticoPagado = false;
     etapaCompleta = {};
     consulAsignado = {};
     modalAcuerdo = false;
@@ -40,87 +38,51 @@ empresaController.index = async (req, res) => {
         c4 ? consulAsignado.c4 = c4 : consulAsignado.c4 = false;
     }
 
-    /** Consultando que pagos ha realizado el usuario */
-    const pagos = await consultarDatos('pagos')
-    let pago_empresa = pagos.find(i => i.id_empresa == id_empresa);
-    if (!pago_empresa) {
-        diagnosticoPagado = false;
-        const estado = JSON.stringify({ estado: 0 })
-        const nuevoPago = {
-            id_empresa,
-            diagnostico_negocio: estado,
-            analisis_negocio: estado,
-            analisis_negocio1: JSON.stringify({ estado: 1 }),
-            analisis_negocio2: estado,
-            analisis_negocio3: estado,
-            estrategico: estado,
-            empresarial0: estado,
-            empresarial1: JSON.stringify({ estado: 1 }),
-            empresarial2: estado,
-            empresarial3: estado,
-        }
-        await insertarDatos('pagos', nuevoPago)
-    } else {
-        const objDiagnostico = JSON.parse(pago_empresa.diagnostico_negocio)
-        if (objDiagnostico.estado == 1) {
-            // PAGÓ EL DIAGNOSTICO
-            diagnosticoPagado = objDiagnostico;
-            /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
-            let acuerdo = await consultarDatos('acuerdo_confidencial')
-            acuerdo = acuerdo.find(x => x.id_empresa == id_empresa);
-            if (!acuerdo) {
-                modalAcuerdo = true;
-            }
-        }
-
-    }
-
     /** ETAPAS DEL DIAGNOSTICO EN LA EMPRESA */
     const dataEmpresa = await pool.query('SELECT e.*, u.codigo, u.estadoAdm, f.telefono, f.id_empresa, p.*, a.id_empresa, a.estadoAcuerdo FROM empresas e LEFT OUTER JOIN ficha_cliente f ON f.id_empresa = ? LEFT OUTER JOIN pagos p ON p.id_empresa = ? LEFT OUTER JOIN acuerdo_confidencial a ON a.id_empresa = ? INNER JOIN users u ON u.codigo = ? AND rol = "Empresa" LIMIT 1', [id_empresa, id_empresa, id_empresa, empresa.codigo])
-    const diagEmpresa = await pool.query('SELECT * FROM dg_empresa_establecida WHERE id_empresa = ? LIMIT 1', [id_empresa])
-    const diagEmpresa2 = await pool.query('SELECT * FROM dg_empresa_nueva WHERE id_empresa = ? LIMIT 1', [id_empresa])
+    const diagEmpresa = await pool.query('SELECT * FROM dg_empresa_establecida WHERE id_empresa = ? LIMIT 2', [id_empresa])
+    const diagEmpresa2 = await pool.query('SELECT * FROM dg_empresa_nueva WHERE id_empresa = ? LIMIT 2', [id_empresa])
 
     /**
      * diagEmpresa -> EMPRESA ESTABLECIDA
      * diagEmpresa2 -> EMPRESA NUEVA
-     */
-
-    // INFORMES DE LA EMPRESA
-    const informes_empresa = await consultarDatos('informes')
-
-    /**************************************************************************** */
+    */
+    
     // PORCENTAJE ETAPA 1
-    let porcentaje = 100 / 6, porcentajeEtapa1 = 0;
-    porcentaje = Math.round(porcentaje)
+    let porcentaje = 100 / 4, porcentajeEtapa1 = 0;
+    // porcentaje = Math.round(porcentaje)
     const diagPorcentaje = { num: 0 }
 
     const e = dataEmpresa[0];
-    const diagnosticoPago = JSON.parse(e.diagnostico_negocio)
-    if (diagnosticoPago.estado == 1) {
-        diagPorcentaje.txt = 'Diagnóstico pagado'
-        porcentajeEtapa1 = porcentaje
-    }
-    if (e.estadoAcuerdo == 1) {
-        diagPorcentaje.txt = 'Acuerdo enviado'
-        porcentajeEtapa1 = porcentaje * 2
-    }
+    // const diagnosticoPago = JSON.parse(e.diagnostico_negocio)
+    // if (diagnosticoPago.estado == 1) {
+    //     diagPorcentaje.txt = 'Diagnóstico pagado'
+    //     porcentajeEtapa1 = porcentaje
+    // }
+    // if (e.estadoAcuerdo == 1) {
+    //     diagPorcentaje.txt = 'Acuerdo enviado'
+    //     porcentajeEtapa1 = porcentaje * 2
+    // }
     if (e.estadoAcuerdo == 2) {
-        diagPorcentaje.txt = 'Acuerdo firmado'
-        porcentajeEtapa1 = porcentaje * 3
+        diagPorcentaje.txt = 'Acuerdo aceptado'
+        porcentajeEtapa1 = porcentaje
     }
     if (e.telefono) {
         diagPorcentaje.txt = 'Ficha Cliente'
-        porcentajeEtapa1 = porcentaje * 4
+        porcentajeEtapa1 = porcentaje * 2
     }
 
     if (diagEmpresa.length > 0 || diagEmpresa2.length > 0) {
         diagPorcentaje.txt = 'Cuestionario diagnóstico'
-        porcentajeEtapa1 = porcentaje * 5
+        porcentajeEtapa1 = porcentaje * 3
     }
 
+    // INFORMES GENERADOS POR CHATGPT
+    const informesIA = await consultarDatos('informes_ia')
+
     // VERIFICACIÓN DE ETAPAS FINALIZADAS (Estapa 1)
-    const informeEtapa1 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe diagnóstico')
-    if (informeEtapa1) {
+    const informe1_IA = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Diagnóstico')
+    if (informe1_IA) {
         porcentajeEtapa1 = 100;
         etapaCompleta.e1 = true
 
@@ -131,24 +93,25 @@ empresaController.index = async (req, res) => {
         if (diagEmpresa.length > 0) {
             etapaCompleta.verAnalisis = true;
             etapaCompleta.verEmpresarial = true;
-            // Empresa Nueva
+            etapa1.fecha1 = new Date(diagEmpresa[0].fecha).toLocaleDateString('en-US')
+            // Activando Páginación paa gráficas de Indicadores
+            if (diagEmpresa.length > 1) {
+                const lastElement = diagEmpresa[diagEmpresa.length - 1];
+                etapa1.fecha2 = new Date(lastElement.fecha).toLocaleDateString('en-US');
+            }
+
+        // Empresa Nueva
         } else if (diagEmpresa2.length > 0) {
             etapaCompleta.verAnalisis = false;
-            etapaCompleta.verEmpresarial = true;
-        }
-    }
-
-    // Informe de diagnóstico de empresa subido
-    let ultimosInformes = await consultarDatos('informes', 'ORDER BY id_informes DESC LIMIT 2')
-    ultimosInformes = ultimosInformes.filter(x => x.id_empresa == id_empresa)
-    if (ultimosInformes.length > 0) {
-        ultimosInformes.forEach(x => {
-            if (x.nombre == 'Informe diagnóstico') {
-                x.etapa = 'Diagnóstico'
+            // etapaCompleta.verEmpresarial = true;
+            etapaCompleta.verEstrategico = true;
+            etapa1.fecha1 = new Date(diagEmpresa2[0].fecha).toLocaleDateString('en-US')
+            // Activando Páginación para gráficas de Indicadores
+            if (diagEmpresa2.length > 1) {
+                const lastElement = diagEmpresa2[diagEmpresa2.length - 1];
+                etapa1.fecha2 = new Date(lastElement.fecha).toLocaleDateString('en-US');
             }
-            if (x.nombre == 'Informe de dimensión producto' || x.nombre == 'Informe de dimensión administración' || x.nombre == 'Informe de dimensión operaciones' || x.nombre == 'Informe de dimensión marketing' || x.nombre == 'Informe de análisis') { x.etapa = 'Análisis' }
-            if (x.nombre == 'Informe de plan estratégico') { x.etapa = 'Plan estratégico' }
-        })
+        }
     }
 
     /****************************************************************************** */
@@ -165,40 +128,18 @@ empresaController.index = async (req, res) => {
         if (analisisEmpresa.marketing) { porcentajeEtapa2 = porcentajeEtapa2 + 12.5 }
     }
 
-    const informeProducto = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión producto')
+    const informeProducto = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis producto')
     if (informeProducto) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
-    const informeAdministracion = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión administración')
+    const informeAdministracion = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis administración')
     if (informeAdministracion) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
-    const informeOperaciones = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión operaciones')
+    const informeOperaciones = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis operación')
     if (informeOperaciones) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
-    const informeMarketing = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de dimensión marketing')
+    const informeMarketing = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Análisis marketing')
     if (informeMarketing) porcentajeEtapa2 = porcentajeEtapa2 + 12.5;
 
-    const informeEtapa2 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de análisis')
-    if (informeEtapa2) {
-        porcentajeEtapa2 = 100;
+    if (porcentajeEtapa2 == 100) {
         etapaCompleta.e2 = true;
         etapaCompleta.verEstrategico = true;
-    }
-
-    /************************************************************************** */
-    // PORCENTAJE ETAPA 3
-    let porcentajeEtapa3 = 0
-    let tareas_plan_empresarial = await consultarDatos('tareas_plan_empresarial')
-    tareas_plan_empresarial = tareas_plan_empresarial.filter(x => x.empresa == id_empresa)
-    const totalTareas_empresarial = tareas_plan_empresarial.length;
-    let tareasCompletadas_empresarial = tareas_plan_empresarial.filter(x => x.estado == 2)
-    tareasCompletadas_empresarial = tareasCompletadas_empresarial.length
-    if (totalTareas_empresarial > 0) {
-        porcentajeEtapa3 = ((tareasCompletadas_empresarial / totalTareas_empresarial) * 100) * 0.75
-        porcentajeEtapa3 = Math.round(porcentajeEtapa3)
-    }
-    if (empresa.etapa_empresarial == 1) {
-        porcentajeEtapa3 = 100;
-        etapaCompleta.e3 = true;
-        if (etapaCompleta.verEmpresarial) {
-            etapaCompleta.verEstrategico = true;
-        }
     }
 
     /************************************************************************** */
@@ -211,59 +152,65 @@ empresaController.index = async (req, res) => {
     tareasCompletadas = tareasCompletadas.length
     let verGraficasCircular = false;
     if (totalTareas > 0) {
-        porcentajeEtapa4 = ((tareasCompletadas / totalTareas) * 100) * 0.75
+        porcentajeEtapa4 = ((tareasCompletadas / totalTareas) * 100)
         porcentajeEtapa4 = Math.round(porcentajeEtapa4)
         verGraficasCircular = true;
     }
-    const informeEtapa4 = informes_empresa.find(x => x.id_empresa == id_empresa && x.nombre == 'Informe de plan estratégico')
-    if (informeEtapa4) {
-        porcentajeEtapa4 = 100;
-        etapaCompleta.e4 = true;
-    }
+    if (porcentajeEtapa4 == 100) etapaCompleta.e4 = true;
+    // const informeEtapa4 = informesIA.find(x => x.empresa == id_empresa && x.tipo == 'Estratégico')
+    // if (informeEtapa4) {
+    //     porcentajeEtapa4 = 100;
+    //     etapaCompleta.e4 = true;
+    // }
 
-    /************************************************************************** */
     /**************************************
      * PORCENTAJE GENERAL DE LA EMPRESA
     */
     // Empresa Establecida
-    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa3 + porcentajeEtapa4) / 4)
+    let porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa2 + porcentajeEtapa4) / 3)
     // Empresa Nueva
     if (diagEmpresa2.length > 0) {
-        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa3 + porcentajeEtapa4) / 3)
+        porcentajeTotal = Math.round((porcentajeEtapa1 + porcentajeEtapa4) / 2)
     }
 
-
-    /************** DATOS PARA LAS GRÁFICAS AREAS VITALES & POR DIMENSIONES ****************/
-    let jsonDimensiones1, jsonDimensiones2, nuevosProyectos = 0, rendimiento = {};
-    let jsonAnalisis1, jsonAnalisis2;
-
-    let areasVitales = await pool.query('SELECT * FROM indicadores_areasvitales WHERE id_empresa = ? ORDER BY id_ LIMIT 2', [empresa.id_empresas])
-
-    if (areasVitales.length > 0) {
-        jsonAnalisis1 = JSON.stringify(areasVitales[0]);
-        jsonAnalisis2 = JSON.stringify(areasVitales[1]);
-        if (areasVitales[0].rendimiento_op >= 1) {
-            rendimiento.op = areasVitales[0].rendimiento_op
+    /************** DATOS PARA LAS GRÁFICAS AREAS VITALES & POR DIMENSIONES & PERCEPCIÓN ESTADÍSTICA ****************/
+    /**
+     * PC => Percepción Cliente
+     * PE => Percepción Estadística
+    */
+    let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
+    let areasVitales_ = await consultarDatos('indicadores_areasvitales')
+    areasVitales_ = areasVitales_.filter(x => x.id_empresa == id_empresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    areasVitales_.sort((a, b) => { return a.id_ - b.id_ });
+    if (areasVitales_.length > 0) {
+        const areasVitales = areasVitales_[0];
+        rendimiento.ok = true;
+        jsonIndicadores.areasVitales1 = areasVitales;
+        if (areasVitales.rendimiento_op >= 1) {
+            rendimiento.op = areasVitales.rendimiento_op
         } else {
             rendimiento.op = false;
         }
-    }
+        // ÚLTIMA FILA DE LA TABLA
+        if (areasVitales_.length > 1) {
+            const lastElement = areasVitales_[areasVitales_.length - 1];
+            rendimiento.op2 = false;
+            if (lastElement.rendimiento_op >= 1)  rendimiento.op2 = lastElement.rendimiento_op
+            jsonIndicadores.areasVitales2 = lastElement;
+        }
 
-    // Si la empresa está Establecida
-    let xDimensiones = await pool.query('SELECT * FROM indicadores_dimensiones WHERE id_empresa = ? ORDER BY id ASC LIMIT 1', [id_empresa])
-    let xDimensiones2 = await pool.query('SELECT * FROM indicadores_dimensiones WHERE id_empresa = ? ORDER BY id DESC LIMIT 1', [id_empresa])
-    if (xDimensiones.length > 0) {
-        jsonDimensiones1 = JSON.stringify(xDimensiones[0]);
-        jsonDimensiones2 = JSON.stringify(xDimensiones2[0]);
     }
-
-    // Si la empresa es Nueva
-    let resCategorias = await pool.query('SELECT * FROM resultado_categorias WHERE id_empresa = ? LIMIT 1', [id_empresa])
-    if (resCategorias.length > 0) {
-        jsonDimensiones1 = JSON.stringify(resCategorias[0]);
+    
+    // Empresas Nuevas
+    let resulCateg = await consultarDatos('resultado_categorias')
+    resulCateg = resulCateg.filter(x => x.id_empresa == id_empresa)
+    if (resulCateg.length > 0) {
+        rendimiento.ok = true;
+        jsonIndicadores.dimensiones1 = resulCateg[0]
         nuevosProyectos = 1;
         // Rendimiento del Proyecto
-        rendimiento.num = resCategorias[0].rendimiento
+        rendimiento.num = resulCateg[0].rendimiento
         if (rendimiento.num < 50) {
             rendimiento.txt = "Mejorable"
             rendimiento.color = "badge-danger"
@@ -274,6 +221,72 @@ empresaController.index = async (req, res) => {
             rendimiento.txt = "Óptimo"
             rendimiento.color = "badge-success"
         }
+
+        if (resulCateg.length > 1) {
+            const lastElement = resulCateg[resulCateg.length - 1];
+            jsonIndicadores.dimensiones2 = lastElement;
+            // Rendimiento del Proyecto
+            rendimiento.num2 = lastElement.rendimiento
+            if (rendimiento.num2 < 50) {
+                rendimiento.txt2 = "Mejorable"
+                rendimiento.color2 = "badge-danger"
+            } else if (rendimiento.num2 > 51 && rendimiento.num2 < 74) {
+                rendimiento.txt2 = "Satisfactorio"
+                rendimiento.color2 = "badge-warning"
+            } else {
+                rendimiento.txt2 = "Óptimo"
+                rendimiento.color2 = "badge-success"
+            }
+        }
+
+    }
+
+    /*************************************************************************************** */
+    // Empresas Establecidas
+    let xDimensiones_ = await consultarDatos('indicadores_dimensiones')
+    xDimensiones_ = xDimensiones_.filter(x => x.id_empresa == id_empresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    xDimensiones_.sort((a, b) => { return a.id_ - b.id_ });
+    if (xDimensiones_.length > 0) {
+        const xDimensiones = xDimensiones_[0];
+        jsonIndicadores.ok = true;
+        jsonIndicadores.dimensiones1 = xDimensiones
+        nuevosProyectos = 0;
+        
+        if (xDimensiones_.length > 1) {
+            const lastElement = xDimensiones_[xDimensiones_.length - 1];
+            jsonIndicadores.dimensiones2 = lastElement;
+        }
+    }
+
+    // Percepción Estadística
+    let pe_areasVitales_ = await consultarDatos('percepcion_estadistica_areas')
+    pe_areasVitales_ = pe_areasVitales_.filter(x => x.empresa == id_empresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    pe_areasVitales_.sort((a, b) => { return a.id_ - b.id_ });
+    if (pe_areasVitales_.length > 0) {
+        rendimiento.pe1 = true;
+        jsonIndicadores.pe_Areas1 = pe_areasVitales_[0]
+        nuevosProyectos = 0;
+        // ÚLTIMA FILA DE LA TABLA
+        if (pe_areasVitales_.length > 1) {
+            const lastElement = pe_areasVitales_[pe_areasVitales_.length - 1];
+            jsonIndicadores.pe_Areas2 = lastElement;
+        }
+    }
+
+    let pe_dimensiones_ = await consultarDatos('percepcion_estadistica_dimensiones')
+    pe_dimensiones_ = pe_dimensiones_.filter(x => x.empresa == id_empresa)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    pe_dimensiones_.sort((a, b) => { return a.id_ - b.id_ });
+    if (pe_dimensiones_.length > 0) {
+        jsonIndicadores.pe_Dimensiones1 = pe_dimensiones_[0]
+        nuevosProyectos = 0;
+        // ÚLTIMA FILA DE LA TABLA
+        if (pe_dimensiones_.length > 1) {
+            const lastElement = pe_dimensiones_[pe_dimensiones_.length - 1];
+            jsonIndicadores.pe_Dimensiones2 = lastElement;
+        }
     }
 
     /************************************************************************************* */
@@ -282,6 +295,11 @@ empresaController.index = async (req, res) => {
     tareas = tareas.filter(x => x.empresa == id_empresa)
     tareas.forEach(x => {
         x.fecha_entrega = new Date(x.fecha_entrega).toLocaleDateString('en-US')
+        if (x.prioridad == 0) x.prioridad = 'Sin especificar';
+        else if (x.prioridad == 1) x.prioridad = 'Baja';
+        else if (x.prioridad == 2) x.prioridad = 'Media';
+        else if (x.prioridad == 3) x.prioridad = 'Alta';
+        else if (x.prioridad == 4) x.prioridad = 'Crítica';
     })
 
     /************************************************************************************* */
@@ -296,6 +314,12 @@ empresaController.index = async (req, res) => {
             { ok: (listo[2]), pendiente: (100 - listo[2]) },
             { ok: (listo[3]), pendiente: (100 - listo[3]) }
         ])
+    }
+
+    if (req.user.programa == 1) {
+        etapaCompleta.gratis = true;
+        porcentajeTotal = porcentajeEtapa1;
+        etapaCompleta.verAnalisis = etapaCompleta.verEstrategico = false;
     }
 
     req.session.etapaCompleta = etapaCompleta;
@@ -314,18 +338,25 @@ empresaController.index = async (req, res) => {
         await insertarDatos('registro_tutoriales', data)
     }
 
+    // RENDIMIENTO DE LA EMRPESA
+    let datosTabla = await consultarDatos('rendimiento_empresa')
+    datosTabla = datosTabla.filter(x => x.empresa == id_empresa)
+    if (datosTabla.length == 3) {
+        rendimiento.btnDisabled = true;
+    }
+    let jsonRendimiento = false;
+    if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
+
     res.render('empresa/dashboard', {
         user_dash: true,
         pagoPendiente,
-        diagnosticoPagado,
         itemDashboard: true,
         consulAsignado,
         etapa1,
-        porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa3, porcentajeEtapa4, porcentajeTotal,
-        jsonAnalisis1, jsonAnalisis2, jsonDimensiones1, jsonDimensiones2,
-        tareas, ultimosInformes, verGraficasCircular,
+        porcentajeEtapa1, porcentajeEtapa2, porcentajeEtapa4, porcentajeTotal,
+        tareas, verGraficasCircular,
         nuevosProyectos, rendimiento, jsonDim_empresa, etapaCompleta, modalAcuerdo,
-        tutoriales
+        tutoriales, jsonRendimiento, jsonIndicadores: JSON.stringify(jsonIndicadores)
     })
 }
 
@@ -370,7 +401,6 @@ empresaController.perfilUsuarios = async (req, res) => {
     res.render('pages/profile', {
         rol, adminDash, user_dash, consultorDash, consultor, empresa,
         pagoPendiente,
-        diagnosticoPagado,
         etapa1, modalAcuerdo,
         consulAsignado: req.session.consulAsignado, etapaCompleta: req.session.etapaCompleta,
     })
@@ -391,7 +421,6 @@ empresaController.acuerdoCheck = async (req, res) => {
     // Efectuando firma del acuerdo
     console.log("\nEfectuando firma del acuerdo.....")
     const insertarAcuerdo = {id_empresa: datosEmpresa.id_empresas, estadoAcuerdo: estado}
-    // await pool.query('INSERT INTO acuerdo_confidencial SET ?', [insertarAcuerdo])
     await insertarDatos('acuerdo_confidencial', insertarAcuerdo)
     objRes.ok = true;
     objRes.txt = '/diagnostico-de-negocio'
@@ -401,39 +430,7 @@ empresaController.acuerdoCheck = async (req, res) => {
 /** Mostrar vista del Panel Diagnóstico de Negocio */
 empresaController.diagnostico = async (req, res) => {
     // ID Empresa Global => id_empresa
-    // Pago Diagnóstico => diagnosticoPagado
     // Consultor Asignado => consulAsignado
-    const estadoPago = {
-        color : 'badge-warning',
-        texto : 'Pendiente',
-        btn : 'background: #85bb65; color: white',
-        fecha : false
-    }
-
-    let infoConsul = await consultarDatos('consultores')
-    infoConsul = infoConsul.find(x => x.id_consultores == consulAsignado.c1.consultor)
-    let costo = process.env.PRECIO_NIVEL1;
-    if (infoConsul.nivel == '2'){
-        costo = process.env.PRECIO_NIVEL2;
-    } else if (infoConsul.nivel == '3') {
-        costo = process.env.PRECIO_NIVEL3;
-    } else if (infoConsul.nivel == '4') {
-        if (consulAsignado.c1.sede == 1)
-            costo = process.env.PRECIO_NIVEL4_SEDE1
-        else if (consulAsignado.c1.sede == 2)
-            costo = process.env.PRECIO_NIVEL4_SEDE2
-        else if (consulAsignado.c1.sede == 3)
-            costo = process.env.PRECIO_NIVEL4_SEDE3
-    }
-
-    // Validando Diagnóstico de negocio ha sido pagado
-    if (diagnosticoPagado.estado == 1) {
-        estadoPago.color = 'badge-success'
-        estadoPago.texto = 'Pagado'
-        estadoPago.btn = 'background: #656c73; color: white; disabled= "true" '
-        costo = diagnosticoPagado.precio;
-        estadoPago.fecha = diagnosticoPagado.fecha
-    }
 
     /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
     let acuerdo = await consultarDatos('acuerdo_confidencial')
@@ -444,23 +441,26 @@ empresaController.diagnostico = async (req, res) => {
         }
     }
 
-    const cuestionario = {fichaCliente: {}, diagnostico: {}}, resDiag = {};
+    const cuestionario = { fichaCliente: {}, diagnostico: { respuestas: {} }, diagnostico2: { respuestas: {} } };
     cuestionario.fichaCliente.id = id_empresa;
     cuestionario.fichaCliente.usuario = encriptarTxt('' + id_empresa)
     cuestionario.fichaCliente.estado = false;
-    const fichaCliente = await consultarDatos('ficha_cliente', `WHERE id_empresa = ${id_empresa}`)
+    // const fichaCliente = await consultarDatos('ficha_cliente', `WHERE id_empresa = ${id_empresa}`)
+    const dataEmpresa_ = await pool.query(`SELECT e.diagnostico_fecha2, f.redes_sociales, f.tipo_empresa, f.fecha_modificacion FROM empresas e JOIN ficha_cliente f ON e.id_empresas = ${id_empresa}`)
 
-    if (fichaCliente.length == 0) {
+    if (dataEmpresa_.length == 0) {
         cuestionario.fichaCliente.color = 'badge-danger'
         cuestionario.fichaCliente.texto = 'Pendiente'
         cuestionario.fichaCliente.fechaLocal = true;
         cuestionario.diagnostico = false;
+        cuestionario.diagnostico2 = false;
     } else {
-        const ficha = fichaCliente[0]
+        const ficha = dataEmpresa_[0]
         const redes_sociales = JSON.parse(ficha.redes_sociales)
         cuestionario.fichaCliente.fecha = ficha.fecha_modificacion
+        cuestionario.diagnostico.ver = true;
 
-        if (fichaCliente.page_web == '' || redes_sociales.twitter == '' || redes_sociales.facebook == '' || redes_sociales.instagram == '') {
+        if (ficha.page_web == '' || redes_sociales.twitter == '' || redes_sociales.facebook == '' || redes_sociales.instagram == '') {
             cuestionario.fichaCliente.color = 'badge-warning'
             cuestionario.fichaCliente.texto = 'Incompleto'
             cuestionario.fichaCliente.estado = true;
@@ -471,42 +471,184 @@ empresaController.diagnostico = async (req, res) => {
             cuestionario.fichaCliente.estado = true;
         }
 
+        if (!checkGPT3Connectivity()) {
+            cuestionario.diagnostico.btnDisabled = true;
+        }
+
+        if (ficha.diagnostico_fecha2 > 0) {
+            cuestionario.diagnostico2.ver = true;
+        }
+
         if (ficha.tipo_empresa == 1) {
-            cuestionario.diagnostico.uno = true;
             cuestionario.diagnostico.color = 'badge-danger'
             cuestionario.diagnostico.texto = 'Pendiente'
             cuestionario.diagnostico.btnEdit = true;
             cuestionario.diagnostico.link = '/diagnostico-proyecto/'+req.user.codigo
-            let datos = await consultarDatos('dg_empresa_nueva')
-            datos = datos.find(x => x.id_empresa == id_empresa)
-            if (datos) {
+
+            if (cuestionario.diagnostico2.ver) {
+                cuestionario.diagnostico2.color = 'badge-danger'
+                cuestionario.diagnostico2.texto = 'Pendiente'
+                cuestionario.diagnostico2.btnEdit = true;
+            }
+
+            let data = await consultarDatos('dg_empresa_nueva')
+            data = data.filter(x => x.id_empresa == id_empresa)
+            // Ordenando el Array para asegurar usar el 1ero y último
+            data.sort((a, b) => { return a.id_ - b.id_ });
+            if (data.length > 0) {
+                const datos = data[0]
                 cuestionario.diagnostico.fecha = datos.fecha;
                 cuestionario.diagnostico.btnEdit = false;
                 cuestionario.diagnostico.color = 'badge-success'
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalNuevosProyectos';
+                cuestionario.nuevo = true;
+
+                if (req.user.programa == 1) {
+                    req.session.etapaCompleta.gratis = true;
+                    req.session.etapaCompleta.verAnalisis = req.session.etapaCompleta.verEstrategico = false;
+                    req.session.etapaCompleta.upgrade1 = true;
+                }
+
+                // Respuestas del Cuestionario Diagnóstico Empresa Nueva
+                cuestionario.diagnostico.respuestas.rubro = datos.rubro
+                const obj = JSON.parse(datos.empresa_ofrece);
+                let ofrece_ = "";
+                for (let x in obj) { ofrece_ += obj[x]+". "; }
+                cuestionario.diagnostico.respuestas.ofrece = ofrece_;
+                cuestionario.diagnostico.respuestas.exp_rubro = JSON.parse(datos.exp_rubro)
+                cuestionario.diagnostico.respuestas.mentalidad = JSON.parse(datos.mentalidad_empresarial)
+                cuestionario.diagnostico.respuestas.viabilidad = JSON.parse(datos.viabilidad)
+                cuestionario.diagnostico.respuestas.producto = JSON.parse(datos.productos_servicios)
+                cuestionario.diagnostico.respuestas.administracion = JSON.parse(datos.administracion)
+                cuestionario.diagnostico.respuestas.talento = JSON.parse(datos.talento_humano)
+                cuestionario.diagnostico.respuestas.finanzas = JSON.parse(datos.finanzas)
+                cuestionario.diagnostico.respuestas.servicio = JSON.parse(datos.servicio_cliente)
+                cuestionario.diagnostico.respuestas.operaciones = JSON.parse(datos.operaciones)
+                cuestionario.diagnostico.respuestas.ambiente = JSON.parse(datos.ambiente_laboral)
+                cuestionario.diagnostico.respuestas.innovacion = JSON.parse(datos.innovacion)
+                cuestionario.diagnostico.respuestas.marketing = JSON.parse(datos.marketing)
+                cuestionario.diagnostico.respuestas.ventas = JSON.parse(datos.ventas)
+                cuestionario.diagnostico.respuestas.metas = JSON.parse(datos.metas)
+
+                // ÚLTIMA FILA DE LA TABLA
+                if (data.length > 1) {
+                    const dato = data[data.length - 1];
+                    cuestionario.diagnostico2.fecha = dato.fecha;
+                    cuestionario.diagnostico2.btnEdit = false;
+                    cuestionario.diagnostico2.color = 'badge-success'
+                    cuestionario.diagnostico2.texto = 'Completado'
+                    cuestionario.diagnostico2.modal = '#modalNuevosProyectos2';
+                    cuestionario.nuevo2 = true;
+
+                    // Respuestas del 2do Cuestionario Diagnóstico Empresa Nueva
+                    cuestionario.diagnostico2.respuestas.rubro = dato.rubro
+                    const obj = JSON.parse(dato.empresa_ofrece);
+                    let ofrece_ = "";
+                    for (let x in obj) { ofrece_ += obj[x]+". "; }
+                    cuestionario.diagnostico2.respuestas.ofrece = ofrece_;
+                    cuestionario.diagnostico2.respuestas.exp_rubro = JSON.parse(dato.exp_rubro)
+                    cuestionario.diagnostico2.respuestas.mentalidad = JSON.parse(dato.mentalidad_empresarial)
+                    cuestionario.diagnostico2.respuestas.viabilidad = JSON.parse(dato.viabilidad)
+                    cuestionario.diagnostico2.respuestas.producto = JSON.parse(dato.productos_servicios)
+                    cuestionario.diagnostico2.respuestas.administracion = JSON.parse(dato.administracion)
+                    cuestionario.diagnostico2.respuestas.talento = JSON.parse(dato.talento_humano)
+                    cuestionario.diagnostico2.respuestas.finanzas = JSON.parse(dato.finanzas)
+                    cuestionario.diagnostico2.respuestas.servicio = JSON.parse(dato.servicio_cliente)
+                    cuestionario.diagnostico2.respuestas.operaciones = JSON.parse(dato.operaciones)
+                    cuestionario.diagnostico2.respuestas.ambiente = JSON.parse(dato.ambiente_laboral)
+                    cuestionario.diagnostico2.respuestas.innovacion = JSON.parse(dato.innovacion)
+                    cuestionario.diagnostico2.respuestas.marketing = JSON.parse(dato.marketing)
+                    cuestionario.diagnostico2.respuestas.ventas = JSON.parse(dato.ventas)
+                    cuestionario.diagnostico2.respuestas.metas = JSON.parse(dato.metas)
+                }
             }
         } else {
-            cuestionario.diagnostico.dos = true;
             cuestionario.diagnostico.color = 'badge-danger'
             cuestionario.diagnostico.texto = 'Pendiente'
             cuestionario.diagnostico.btnEdit = true;
             cuestionario.diagnostico.link = '/cuestionario-diagnostico/'+req.user.codigo
-            let datos = await consultarDatos('dg_empresa_establecida')
-            datos = datos.find(x => x.id_empresa == id_empresa)
-            if (datos) {
+
+            if (cuestionario.diagnostico2.ver) {
+                cuestionario.diagnostico2.dos = true;
+                cuestionario.diagnostico2.color = 'badge-danger'
+                cuestionario.diagnostico2.texto = 'Pendiente'
+                cuestionario.diagnostico2.btnEdit = true;
+            }
+            let data = await consultarDatos('dg_empresa_establecida')
+            data = data.filter(x => x.id_empresa == id_empresa)
+            if (data.length > 0) {
+                const datos = data[0];
                 cuestionario.diagnostico.fecha = datos.fecha;
                 cuestionario.diagnostico.btnEdit = false;
                 cuestionario.diagnostico.color = 'badge-success'
                 cuestionario.diagnostico.texto = 'Completado'
                 cuestionario.diagnostico.modal = '#modalEmpresasEstablecidas';
+                cuestionario.establecido = true;
+                req.session.etapaCompleta.verAnalisis = true;
+
+                if (req.user.programa == 1) {
+                    req.session.etapaCompleta.gratis = true;
+                    req.session.etapaCompleta.verAnalisis = req.session.etapaCompleta.verEstrategico = false;
+                    req.session.etapaCompleta.upgrade2 = true;
+                }
+
+                // Respuestas del Cuestionario Diagnóstico Empresa Establecida
+                cuestionario.diagnostico.respuestas.rubro = datos.rubro
+                const obj = JSON.parse(datos.empresa_ofrece);
+                let ofrece_ = "";
+                for (let x in obj) { ofrece_ += obj[x]+". "; }
+                cuestionario.diagnostico.respuestas.ofrece = ofrece_;
+                cuestionario.diagnostico.respuestas.producto = JSON.parse(datos.productos_servicios)
+                cuestionario.diagnostico.respuestas.administracion = JSON.parse(datos.administracion)
+                cuestionario.diagnostico.respuestas.talento = JSON.parse(datos.talento_humano)
+                cuestionario.diagnostico.respuestas.finanzas = JSON.parse(datos.finanzas)
+                cuestionario.diagnostico.respuestas.servicio = JSON.parse(datos.servicio_alcliente)
+                cuestionario.diagnostico.respuestas.operaciones = JSON.parse(datos.operaciones)
+                cuestionario.diagnostico.respuestas.ambiente = JSON.parse(datos.ambiente_laboral)
+                cuestionario.diagnostico.respuestas.innovacion = JSON.parse(datos.innovacion)
+                cuestionario.diagnostico.respuestas.marketing = JSON.parse(datos.marketing)
+                cuestionario.diagnostico.respuestas.ventas = JSON.parse(datos.ventas)
+                cuestionario.diagnostico.respuestas.fortalezas = JSON.parse(datos.fortalezas)
+                cuestionario.diagnostico.respuestas.oportunidades = JSON.parse(datos.oportunidades_mejoras)
+                cuestionario.diagnostico.respuestas.metas = JSON.parse(datos.metas_corto_plazo)
+
+                // ÚLTIMA FILA DE LA TABLA
+                if (data.length > 1) {
+                    const dato = data[data.length - 1];
+                    cuestionario.diagnostico2.fecha = dato.fecha;
+                    cuestionario.diagnostico2.btnEdit = false;
+                    cuestionario.diagnostico2.color = 'badge-success'
+                    cuestionario.diagnostico2.texto = 'Completado'
+                    cuestionario.diagnostico2.modal = '#modalEmpresasEstablecidas2';
+                    cuestionario.establecido2 = true;
+
+                    // Respuestas del 2do Cuestionario Diagnóstico Empresa Establecida
+                    cuestionario.diagnostico2.respuestas.rubro = dato.rubro
+                    const obj = JSON.parse(dato.empresa_ofrece);
+                    let ofrece_ = "";
+                    for (let x in obj) { ofrece_ += obj[x]+". "; }
+                    cuestionario.diagnostico2.respuestas.ofrece = ofrece_;
+                    cuestionario.diagnostico2.respuestas.producto = JSON.parse(dato.productos_servicios)
+                    cuestionario.diagnostico2.respuestas.administracion = JSON.parse(dato.administracion)
+                    cuestionario.diagnostico2.respuestas.talento = JSON.parse(dato.talento_humano)
+                    cuestionario.diagnostico2.respuestas.finanzas = JSON.parse(dato.finanzas)
+                    cuestionario.diagnostico2.respuestas.servicio = JSON.parse(dato.servicio_alcliente)
+                    cuestionario.diagnostico2.respuestas.operaciones = JSON.parse(dato.operaciones)
+                    cuestionario.diagnostico2.respuestas.ambiente = JSON.parse(dato.ambiente_laboral)
+                    cuestionario.diagnostico2.respuestas.innovacion = JSON.parse(dato.innovacion)
+                    cuestionario.diagnostico2.respuestas.marketing = JSON.parse(dato.marketing)
+                    cuestionario.diagnostico2.respuestas.ventas = JSON.parse(dato.ventas)
+                    cuestionario.diagnostico2.respuestas.fortalezas = JSON.parse(dato.fortalezas)
+                    cuestionario.diagnostico2.respuestas.oportunidades = JSON.parse(dato.oportunidades_mejoras)
+                    cuestionario.diagnostico2.respuestas.metas = JSON.parse(dato.metas_corto_plazo)
+                    
+                }
+
             }
         }
 
     }
-
-    // Informe de la empresa subido
-    let informeEmpresa = await consultarDatos('informes', `WHERE id_empresa = "${id_empresa}" LIMIT 1`)
 
     /**
      * VIDEOS TURIALES ACTIVAR o DESACTIVAR
@@ -525,9 +667,8 @@ empresaController.diagnostico = async (req, res) => {
 
     res.render('empresa/diagnostico', {
         user_dash: true, cuestionario,
-        costo, estadoPago,
         actualYear: req.actualYear,
-        etapa1, informe: informeEmpresa[0],
+        etapa1,
         itemDiagnostico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta, modalAcuerdo,
@@ -558,9 +699,13 @@ empresaController.diagnostico = async (req, res) => {
 
 empresaController.enviar_archivo = async (req, res, next) => {
       const { categoria, tipo_archivo, nombre_archivo } = req.body;
-  
+
+
+
+
+
+
       res.redirect('/recursos/');
-    
 };
 
 // GUARDAR LINK DE RECURSOS ::
@@ -861,7 +1006,7 @@ if (resultado.length > 0) {
         </table>`;
       }
     });
-
+  
     iconos = iconos.filter((valor, indice, self) => {
       return !self.slice(indice + 1).some(objeto => objeto.ruta === valor.ruta);
     });
@@ -877,6 +1022,7 @@ if (resultado.length > 0) {
       contador: JSON.stringify(contador)
     });
   });
+}
 
   res.render('empresa/recursos', {
     user_dash: true,
@@ -887,8 +1033,6 @@ if (resultado.length > 0) {
     grupos
   });
 }
-
-};
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
@@ -954,7 +1098,6 @@ empresaController.ejemplo2 = async (req, res) => {
 /** Mostrar vista del formulario Ficha Cliente */
 empresaController.validarFichaCliente = async (req, res) => {
     const { id } = req.params;
-    // let row = await pool.query('SELECT * FROM empresas WHERE email = ? LIMIT 1', [req.user.email])
     let row = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
     row = row[0]
     const id_empresa = desencriptarTxt(id)
@@ -976,10 +1119,15 @@ empresaController.fichaCliente = async (req, res) => {
     if (fichaCliente.length > 0) {
         ficha.es_propietario === "Si" ? datos.prop1 = 'checked' : datos.prop2 = 'checked';
         ficha.socios === 'Si' ? datos.socio1 = 'checked' : datos.socio2 = 'checked';
-        ficha.etapa_actual === 'En Proyecto' ? datos.etapa1 = 'checked' : datos.etapa1 = ''
+        ficha.etapa_actual === 'En proyecto' ? datos.etapa1 = 'checked' : datos.etapa1 = ''
         ficha.etapa_actual === 'Operativo' ? datos.etapa2 = 'checked' : datos.etapa2 = ''
         ficha.etapa_actual === 'En expansión' ? datos.etapa3 = 'checked' : datos.etapa3 = ''
-        ficha.etapa_actual === 'Otro' ? datos.etapa4 = 'checked' : datos.etapa4 = ''
+
+        if (etapaCompleta.e1) {
+            datos.etapa1 = datos.etapa1 + ' disabled'
+            datos.etapa2 = datos.etapa2 + ' disabled'
+            datos.etapa3 = datos.etapa3 + ' disabled'
+        }
 
         datos.redes_sociales = JSON.parse(ficha.redes_sociales)
         datos.objetivos = JSON.parse(ficha.objetivos)
@@ -1011,12 +1159,15 @@ empresaController.fichaCliente = async (req, res) => {
 }
 
 empresaController.addFichaCliente = async (req, res) => {
-    let { nombres, apellidos, email, countryCode, telFicha, fecha_nacimiento, pais, twitter, facebook, instagram, otra, es_propietario, socios, nombre_empresa, cantidad_socios, porcentaje_accionario, tiempo_fundacion, tipo_empresa, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivo1, objetivo2, objetivo3, fortaleza1, fortaleza2, fortaleza3, problema1, problema2, problema3, motivo_consultoria, fecha_zh } = req.body
+    let { nombres, apellidos, email, countryCode, telFicha, fecha_nacimiento, pais, twitter, facebook, instagram, otra, es_propietario, socios, nombre_empresa, cantidad_socios, porcentaje_accionario, tiempo_fundacion, promedio_ingreso_anual, num_empleados, page_web, descripcion, etapa_actual, objetivo1, objetivo2, objetivo3, fortaleza1, fortaleza2, fortaleza3, problema1, problema2, problema3, motivo_consultoria, fecha_zh } = req.body
     let redes_sociales = JSON.stringify({ twitter, facebook, instagram, otra })
     let objetivos = JSON.stringify({ objetivo1, objetivo2, objetivo3 })
     let fortalezas = JSON.stringify({ fortaleza1, fortaleza2, fortaleza3 })
     let problemas = JSON.stringify({ problema1, problema2, problema3 })
     const telefono = "+" + countryCode + " " + telFicha;
+    let tipo_empresa = 1;
+
+    etapa_actual == 'En proyecto' ? tiempo_fundacion = 'Proyecto nuevo' : tipo_empresa = 2;
 
     es_propietario != undefined ? es_propietario : es_propietario = 'No'
     socios != undefined ? socios : socios = 'No'
@@ -1042,7 +1193,6 @@ empresaController.addFichaCliente = async (req, res) => {
     if (ficha.length > 0) {
         await pool.query('UPDATE ficha_cliente SET ? WHERE id_empresa = ?', [nuevaFichaCliente, id_empresa])
     } else {
-        // await pool.query('INSERT INTO ficha_cliente SET ?', [nuevaFichaCliente])
         await insertarDatos('ficha_cliente', nuevaFichaCliente)
     }
     // JSON.parse(redes_sociales) // CONVERTIR  JSON A UN OBJETO
@@ -1066,127 +1216,86 @@ empresaController.eliminarFicha = async (req, res) => {
 
 /** Mostrar vista del Panel Análisis de Negocio */
 empresaController.analisis = async (req, res) => {
-    const btnPagar = {};
-    const row = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
-    const id_empresa = row[0].id_empresas;
-    const propuestas = await consultarDatos('propuestas')
-    const propuesta = propuestas.find(i => i.empresa == id_empresa && i.tipo_propuesta == 'Análisis de negocio')
-    const pagos = await consultarDatos('pagos')
-    const pago_empresa = pagos.find(i => i.id_empresa == id_empresa)
+    let empresa = await consultarDatos('empresas')
+    empresa = empresa.find(e => e.email == req.user.email)
+    const id_empresa = empresa.id_empresas;
     const etapa1 = { lista: true }
-    let tienePropuesta = false
-
-    let escena1 = false, escena2 = false, escena3 = false, escena4 = false, escena5 = false, escena6 = false, activarPagoUnico = true,
-        msgActivo, msgDesactivo, msgDesactivo2 = true, msgDesactivo3 = true,
-        btnActivo = "background: #85bb65;margin: 0 auto;border-color: #85bb65;",
-        btnDesactivo = "background: #656c73;margin: 0 auto;border-color: #656c73;"
+    const cuestionario = {producto: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'},
+    administracion: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'},
+    operacion: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'}, 
+    marketing: {btnEdit: true, color: 'badge-warning', texto: 'Pendiente'}};
+    let dimProducto = false, dimAdmin = false, dimOperacion = false, dimMarketing = false;
     /************************************************************************************* */
-    // PROPUESTA DE ANÁLISIS DE NEGOCIO -- VALIDANDO PAGOS DE ANÁLISIS DE NEGOCIO
-    if (propuesta) {
-        tienePropuesta = true
-        btnPagar.etapa1 = false;
-        btnPagar.activar1 = false;
-        btnPagar.etapa2 = true;
-        btnPagar.activar2 = true;
-        propuesta.porcentaje = "0%";
+    // Verificando conexión estable a la API de OPEN AI
+    if (!checkGPT3Connectivity()) {
+        cuestionario.producto.btnDisabled = true;
+        cuestionario.administracion.btnDisabled = true;
+        cuestionario.operacion.btnDisabled = true;
+        cuestionario.marketing.btnDisabled = true;
+    }
 
-        /************************************************************************************* */
-        const objAnalisis = JSON.parse(pago_empresa.analisis_negocio)
-        const objAnalisis1 = JSON.parse(pago_empresa.analisis_negocio1)
-        const objAnalisis2 = JSON.parse(pago_empresa.analisis_negocio2)
-        const objAnalisis3 = JSON.parse(pago_empresa.analisis_negocio3)
-
-        // PAGÓ EL ANÁLISIS
-        if (objAnalisis.estado == 1) {
-            btnPagar.etapa1 = false;
-            btnPagar.activar1 = false;
-            btnPagar.etapa2 = true;
-            btnPagar.activar2 = false;
-            propuesta.porcentaje = "100%";
-            btnPagar.analisisPer = true
-            propuesta.precio_total = objAnalisis.precio;
+    let analisis_empresa = await consultarDatos('analisis_empresa')
+    analisis_empresa = analisis_empresa.find(a => a.id_empresa == id_empresa)
+    if (analisis_empresa) {
+        // DIMENSIÓN PRODUCTO
+        if (analisis_empresa.producto) {
+            const a = JSON.parse(analisis_empresa.producto)
+            cuestionario.producto.fecha = a.fecha
+            cuestionario.producto.color = 'badge-success'
+            cuestionario.producto.texto = 'Completado'
+            cuestionario.producto.btnEdit = false;
+            dimProducto = a;
         }
-
-        btnPagar.obj1 = parseInt(objAnalisis1.estado)
-        btnPagar.obj2 = parseInt(objAnalisis2.estado)
-        btnPagar.obj3 = parseInt(objAnalisis3.estado)
-
-        if (objAnalisis1.estado == 2) {
-            btnPagar.etapa1 = false;
-            btnPagar.activar1 = false;
-            btnPagar.etapa2 = true;
-            btnPagar.activar2 = true;
-            btnPagar.analisisPer = true;
-            propuesta.porcentaje = "60%";
+        // DIMENSIÓN ADMINISTRACIÓN
+        if (analisis_empresa.administracion) {
+            const admin = JSON.parse(analisis_empresa.administracion)
+            cuestionario.administracion.fecha = admin.fecha
+            cuestionario.administracion.color = 'badge-success'
+            cuestionario.administracion.texto = 'Completado'
+            cuestionario.administracion.btnEdit = false;
+            dimAdmin = {
+                fecha: admin.fecha,
+                v: admin.vision,
+                mision: admin.mision,
+                valores: admin.valores,
+                f: admin.foda,
+                estructura_organizativa: admin.estructura_organizativa,
+                tipo_sistema: admin.tipo_sistema,
+                sistema_facturacion: admin.sistema_facturacion,
+                av_th: admin.av_talento_humano,
+                av_fz: admin.av_finanzas,
+            }
         }
-        if (objAnalisis2.estado == 2) { propuesta.porcentaje = "80%"; }
-        if (objAnalisis3.estado == 2) { propuesta.porcentaje = "100%"; }
-
-        let fechaDB = new Date(objAnalisis1.fecha)
-        let fechaDB2 = new Date(objAnalisis1.fecha)
-
-        if (msgDesactivo2) {
-            fechaDB.setDate(fechaDB2.getDate() + 30);
-            fechaDB = fechaDB.toLocaleDateString("en-US")
-            msgDesactivo2 = "Pago disponible apartir de: " + fechaDB + ""
+        // DIMENSIÓN OPERACIÓN
+        if (analisis_empresa.operacion) {
+            const op = JSON.parse(analisis_empresa.operacion)
+            cuestionario.operacion.fecha = op.fecha
+            cuestionario.operacion.color = 'badge-success'
+            cuestionario.operacion.texto = 'Completado'
+            cuestionario.operacion.btnEdit = false;
+            dimOperacion = {
+                fecha: op.fecha,
+                info_productos: op.info_productos,
+                satisfaccion: op.satisfaccion,
+                encuesta_clientes: op.encuesta_clientes,
+                informacion_deClientes: op.informacion_deClientes,
+                utilidad_libro_quejas: op.utilidad_libro_quejas,
+                beneficio_libro_quejas: op.beneficio_libro_quejas,
+                estrategia__libro_quejas: op.estrategia__libro_quejas,
+                fidelizacion_clientes: op.fidelizacion_clientes,
+                av_op: op.av_operaciones,
+                av_ambiente: op.av_ambiente_laboral,
+                av_innovacion: op.av_innovacion,
+            }
         }
-
-        if (msgDesactivo3) {
-            fechaDB2.setDate(fechaDB2.getDate() + 60);
-            fechaDB2 = fechaDB2.toLocaleDateString("en-US")
-            msgDesactivo3 = "Pago disponible apartir de: " + fechaDB2 + ""
-        }
-
-        if (objAnalisis.estado == 1) {
-            escena6 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Análisis de negocio pagado"
-            msgDesactivo2 = "Análisis de negocio pagado"
-            msgDesactivo3 = "Análisis de negocio pagado"
-        } else if (btnPagar.obj1 == 1 && btnPagar.obj2 == 0 && btnPagar.obj3 == 0) {
-            escena1 = true
-            msgActivo = "Primera cuota lista para pagarse"
-            btnActivo
-            msgDesactivo = "Pago no disponible aun"
-            btnDesactivo
-        } else if (btnPagar.obj1 != 1 && btnPagar.obj2 == 0 && btnPagar.obj3 == 0) {
-            escena2 = true
-            activarPagoUnico = false
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2
-            msgDesactivo3
-            btnDesactivo
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 1 && btnPagar.obj3 == 0) {
-            escena3 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgActivo = "Segunda cuota lista para pagarse"
-            btnActivo
-            msgDesactivo3
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 2 && btnPagar.obj3 == 0) {
-            escena4 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2 = "Segunda cuota pagada"
-            msgDesactivo3
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 2 && btnPagar.obj3 == 1) {
-            escena5 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2 = "Segunda cuota pagada"
-            msgActivo = "Tercera cuota lista para pagarse"
-            btnActivo
-        } else if (btnPagar.obj1 == 2 && btnPagar.obj2 == 2 && btnPagar.obj3 == 2) {
-            escena6 = true
-            activarPagoUnico = false
-            btnDesactivo
-            msgDesactivo = "Primera cuota pagada"
-            msgDesactivo2 = "Segunda cuota pagada"
-            msgDesactivo3 = "Tercera cuota pagada"
+        // DIMENSIÓN MARKETING
+        if (analisis_empresa.marketing) {
+            const a = JSON.parse(analisis_empresa.marketing)
+            cuestionario.marketing.fecha = a.fecha
+            cuestionario.marketing.color = 'badge-success'
+            cuestionario.marketing.texto = 'Completado'
+            cuestionario.marketing.btnEdit = false;
+            dimMarketing = a;
         }
     }
 
@@ -1208,20 +1317,8 @@ empresaController.analisis = async (req, res) => {
     } else {
         archivos = false;
     }
+
     /************************************************************************************* */
-
-    const informesAnalisis = []
-    const info0Analisis = await consultarInformes(id_empresa, "Informe de análisis")
-    const info1Analisis = await consultarInformes(id_empresa, "Informe de dimensión producto")
-    const info2Analisis = await consultarInformes(id_empresa, "Informe de dimensión administración")
-    const info3Analisis = await consultarInformes(id_empresa, "Informe de dimensión operaciones")
-    const info4Analisis = await consultarInformes(id_empresa, "Informe de dimensión marketing")
-    info0Analisis ? informesAnalisis.push(info0Analisis) : false;
-    info1Analisis ? informesAnalisis.push(info1Analisis) : false;
-    info2Analisis ? informesAnalisis.push(info2Analisis) : false;
-    info3Analisis ? informesAnalisis.push(info3Analisis) : false;
-    info4Analisis ? informesAnalisis.push(info4Analisis) : false;
-
     /**
      * VIDEOS TURIALES ACTIVAR o DESACTIVAR
     */
@@ -1240,18 +1337,13 @@ empresaController.analisis = async (req, res) => {
     res.render('empresa/analisis', {
         user_dash: true,
         actualYear: req.actualYear,
-        informe: false, propuesta, btnPagar,
-        etapa1, archivos,
-        informesAnalisis,
-        escena1, escena2,
-        escena3, escena4,
-        escena5, escena6,
-        msgActivo, msgDesactivo, msgDesactivo2, msgDesactivo3, activarPagoUnico,
-        btnActivo, btnDesactivo, tienePropuesta,
+        id_empresa,
+        codigo: empresa.codigo,
         itemAnalisis: true,
-        consulAsignado: req.session.consulAsignado,
-        etapaCompleta: req.session.etapaCompleta, modalAcuerdo, id_empresa,
-        tutoriales
+        etapa1, archivos,
+        etapaCompleta: req.session.etapaCompleta,
+        tutoriales, cuestionario,
+        dimProducto, dimAdmin, dimOperacion, dimMarketing
     })
 }
 
@@ -1494,81 +1586,27 @@ empresaController.planEmpresarial = async (req, res) => {
 
 /** PLAN ESTRATÉGICO DE NEGOCIO - LISTADOD DE TAREAS + GRÁFICAS */
 empresaController.planEstrategico = async (req, res) => {
-    let empresa = await consultarDatos('empresas', `WHERE email = "${req.user.email}" LIMIT 1`)
-    empresa = empresa[0].id_empresas
+    let empresa = await consultarDatos('empresas')
+    empresa = empresa.find(x => x.email == req.user.email)
     const fechaActual = new Date().toLocaleDateString('fr-CA');
-    let subCancelada = false;
 
-    const dimObj = await tareasGenerales(empresa, fechaActual)
+    const dimObj = await tareasGenerales(empresa.id_empresas, fechaActual)
     const tareas = dimObj.tareas;
 
-    const informePlan = await consultarInformes(empresa, "Informe de plan estratégico")
-    let datosTabla = await consultarDatos('rendimiento_empresa')
-    datosTabla = datosTabla.filter(x => x.empresa == empresa)
-    const jsonRendimiento = JSON.stringify(datosTabla)
-
-    // PROPUESTA DE PLAN ESTRATÉGICO
-    const botones = {}
-    let propuesta = await consultarDatos('propuestas')
-    propuesta = propuesta.find(i => i.empresa == empresa && i.tipo_propuesta == 'Plan estratégico')
-    let pagos = await consultarDatos('pagos')
-    pagos = pagos.find(i => i.id_empresa == empresa)
-    let tienePropuesta = false
-    if (propuesta) {
-        tienePropuesta = true
-        botones.pagar = true;
-        botones.editSub = false;
-        propuesta.color = 'warning';
-        propuesta.texto = 'Pendiente';
-        propuesta.pagada = false;
-        const objEstrategico = JSON.parse(pagos.estrategico)
-
-        /** VALIDANDO ESTADO DE LA SUBSCRIPCIÓN - POR SI RENUEVA O NO LA SUB */
-        let id_sub = null;
-        let subscription = null;
-        if (objEstrategico.subscription) {
-            id_sub = objEstrategico.subscription;
-            subscription = await stripe.subscriptions.retrieve(id_sub);
-            if (subscription.cancel_at != null) {
-                propuesta.fechaCancelacion = new Date(subscription.cancel_at*1000).toLocaleDateString('en-US');
-            } else {
-                propuesta.fechaCancelacion = false;
-            }
-            console.log("\n>>> DATA SUBSCRIPTION: ", subscription)
-            console.log('\n*******************\n');
-            if (subscription.status == 'active' && !subscription.cancel_at_period_end && subscription.cancel_at != null) {
-                propuesta.color = 'success';
-                propuesta.texto = 'Activa';
-                botones.pagar = false;
-                botones.editSub = true;
-                propuesta.pagada = true;
-            } else if (subscription.status == 'active' && subscription.cancel_at_period_end && subscription.cancel_at != null) {
-                propuesta.color = 'secondary';
-                propuesta.texto = 'Pendiente por cancelar';
-                botones.pagar = false;
-                botones.editSub = true;
-                propuesta.pagada = true;
-            } else if (subscription.status == 'active' && !subscription.cancel_at_period_end && subscription.cancel_at == null) {
-                propuesta.color = 'info';
-                propuesta.texto = 'Pendiente por renovar';
-                botones.pagar = false;
-                botones.editSub = true;
-                propuesta.pagada = true;
-            } else {
-                propuesta.color = 'danger';
-                propuesta.texto = 'Cancelada';
-                botones.pagar = false;
-                botones.editSub = false;
-                subCancelada = true;
-            }
-        }
-        
+    if (tareas.completadas.cant == tareas.todas.length) {
+        req.session.etapaCompleta.e4 = true;
+    } else {
+        req.session.etapaCompleta.e4 = false;
     }
+
+    let datosTabla = await consultarDatos('rendimiento_empresa')
+    datosTabla = datosTabla.filter(x => x.empresa == empresa.id_empresas)
+    const jsonRendimiento = JSON.stringify(datosTabla)
 
     /************************************************************************************* */
     // ARCHIVOS CARGADOS
     let archivos = await consultarDatos('archivos_estrategico')
-    archivos = archivos.filter(i => i.empresa == empresa)
+    archivos = archivos.filter(i => i.empresa == empresa.id_empresas)
     if (archivos.length > 0) {
         archivos.forEach(x => {
             x.estado = 'Pendiente';
@@ -1589,25 +1627,35 @@ empresaController.planEstrategico = async (req, res) => {
     */
     const tutoriales = {};
     let registros = await consultarDatos('registro_tutoriales')
-    registros = registros.find(x => x.empresa == id_empresa)
+    registros = registros.find(x => x.empresa == empresa.id_empresas)
     if (registros) {
         if (registros.etapa4 == 1) {
             tutoriales.etapa = true;
         } else {
             const data = { etapa4: 1 }
-            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${id_empresa}`)
+            await actualizarDatos('registro_tutoriales', data, `WHERE empresa = ${empresa.id_empresas}`)
         }
     }
 
+    /************************************************************************************* */
+    /**
+     * CONSULTAR Y/O GENERAR INFORME POR CHATGPT
+    */
+    let verInforme = false;
+    let informeIA = await consultarDatos('informes_ia')
+    informeIA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Estratégico')
+    if (informeIA) {
+        verInforme = true;
+    }
+
     res.render('empresa/planEstrategico', {
-        user_dash: true, actualYear: req.actualYear, botones,
-        tareas, informePlan, propuesta,
-        dimObj, jsonRendimiento, tienePropuesta,
+        user_dash: true, actualYear: req.actualYear,
+        tareas, dimObj, jsonRendimiento,
         itemEstrategico: true,
         consulAsignado: req.session.consulAsignado,
         etapaCompleta: req.session.etapaCompleta,
-        subCancelada, modalAcuerdo, portalClientes, archivos, empresa,
-        tutoriales
+        modalAcuerdo, archivos, empresa: JSON.stringify(empresa),
+        tutoriales, fechaActual, verInforme
     })
 }
 
@@ -1617,25 +1665,90 @@ empresaController.planEstrategico = async (req, res) => {
 */
 empresaController.informeAutoGenerado = async (req, res) => {
     const { tipo } = req.params;
-    let tituloInforme = tipo, tipoInforme = 'de negocio';
-    if (tipo == 'dimension producto') {
+    let tituloInforme = tipo + ' de', tipoInforme = 'negocio';
+    let tipoDB = 'Diagnóstico';
+    
+    if (tipo == 'dimensión_producto') {
         tituloInforme = 'dimensión';
-        tipoInforme = 'producto'
-    } else if (tipo == 'dimension administracion') {
+        tipoInforme = 'producto';
+        tipoDB = 'Análisis producto'
+    } else if (tipo == 'dimensión_administración') {
         tituloInforme = 'dimensión';
         tipoInforme = 'administración'
-    } else if (tipo == 'dimension operacion') {
+        tipoDB = 'Análisis administración'
+    } else if (tipo == 'dimensión_operación') {
         tituloInforme = 'dimensión';
         tipoInforme = 'operación'
-    } else if (tipo == 'dimension marketing') {
+        tipoDB = 'Análisis operación'
+    } else if (tipo == 'dimensión_marketing') {
         tituloInforme = 'dimensión';
         tipoInforme = 'marketing'
+        tipoDB = 'Análisis marketing'
+    } else if (tipo == 'estratégico') {
+        tituloInforme = 'Plan Estratégico de'
+        tipoDB = 'Estratégico'
     }
+
+    let codigo = req.user.codigo;
+    if (req.user.rol != 'Empresa') {
+        const referer = req.headers.referer;
+        codigo = referer.split('/').pop()
+    }
+
     let empresa = await consultarDatos('empresas')
-    empresa = empresa.find(e => e.id_empresas == id)
-    empresa = empresa.nombre_empresa;
+    empresa = empresa.find(e => e.codigo == codigo)
     let data = await consultarDatos('informes_ia')
-    data = data.find(x => x.empresa == id)
-    const textoGPT = data.informe;
-    res.render('pages/informeAutoGenerado', { empresa, tituloInforme, tipoInforme, textoGPT })
+    data = data.filter(x => x.empresa == empresa.id_empresas && x.tipo == tipoDB)
+    // Ordenando el Array para asegurar usar el 1ero y último
+    data.sort((a, b) => { return a.id_ - b.id_ });
+    if (tipo == 'Diagnóstico_2') {
+        tituloInforme = 'Diagnóstico de';
+        tipoInforme = 'negocio #2';
+        data = data[data.length - 1];
+    } else {
+        data = data[0]
+    }
+    const textoGPT = data.informe
+    res.render('pages/informeAutoGenerado', { empresa: empresa.nombre_empresa, tituloInforme, tipoInforme, textoGPT })
+}
+
+empresaController.informeEstrategico = async (req, res) => {
+    let empresa = await consultarDatos('empresas')
+    empresa = empresa.find(x => x.email == req.user.email)
+    /**
+     * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
+    */
+    const informeIA = await consultarDatos('informes_ia')
+    let informe1_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Diagnóstico')
+    if (informe1_IA) informe1_IA = informe1_IA.informe;
+    let obj_respuestas = { 'Diagnóstico de Negocio': { informe1_IA } }
+    let txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas, que no supere los 3000 caracteres."
+    
+    if (req.session.etapaCompleta.verAnalisis) {
+        let informe2_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis producto')
+        if (informe2_IA) informe2_IA = informe2_IA.informe;
+        let informe3_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis administración')
+        if (informe3_IA) informe3_IA = informe3_IA.informe;
+        let informe4_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis operación')
+        if (informe4_IA) informe4_IA = informe4_IA.informe;
+        let informe5_IA = informeIA.find(x => x.empresa == empresa.id_empresas && x.tipo == 'Análisis marketing')
+        if (informe5_IA) informe5_IA = informe5_IA.informe;
+        obj_respuestas['Análisis de Negocio - Dimensión Producto'] = { informe2_IA };
+        obj_respuestas['Análisis de Negocio - Dimensión Administración'] = { informe3_IA };
+        obj_respuestas['Análisis de Negocio - Dimensión Operación'] = { informe4_IA };
+        obj_respuestas['Análisis de Negocio - Dimensión Marketing'] = { informe5_IA };
+        txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, que no supere los 3000 caracteres."
+    }
+
+    const prompt = (JSON.stringify(obj_respuestas)+ txtGPT)
+    console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT INFORME ESTRATÉGICO ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+    let resultAI = await getResponseChatGPT(prompt)
+    const resp = resultAI.content.replaceAll('\n', '<br>');
+    const informeAI = { empresa: empresa.id_empresas, tipo: 'Estratégico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
+    const insertResult = await insertarDatos('informes_ia', informeAI)
+    if (insertResult.affectedRows > 0) {
+        res.send(true)
+    } else {
+        res.send(false)
+    }
 }
