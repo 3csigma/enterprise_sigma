@@ -35,69 +35,8 @@
                                                 <div class="modal fade" id="cargar_archivo">
                                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                                         <form action="/enviar-archivo" method="post" enctype="multipart/form-data">
-                                                            <div class="modal-content">
-                                                                <div class="modal-header justify-content-center">
-                                                                    <h5 class="modal-title text-black" style="font-weight: 800;font-size: 30px;">Carga de recursos</h5>
-                                                                    <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
-                                                                    </button>
-                                                                </div>
-                                                                <div class="modal-body">
-                                                                        <div class="row">
-                                                                            <div class="col-4">
-                                                                                <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Nombre del recurso</label>
-                                                                                <input type="text" class="form-control input-recursos" required name="nombre_archivo" id="nombre_archivo2" placeholder="Introduce un nombre para el archivo">
-                                                                            </div>
-                                                                            <div class="col-4">
-                                                                                <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Categoria</label>
-                                                                                <select name="categoria" id="categoria2" class="form-control input-recursos chosen-container chosen-container-single required">
-                                                                                        <option value="N/A">Escoge o crea una categoría para tu recurso</option>
-                                                                                        <option value="{{valor}}">{{valor}}</option>
-                                                                                        <option value="hh">hh</option>
-                                                                                        <option value="hh">hh</option>
-                                                                                        <option value="hh">hh</option>
-                                                                                </select>
-                                                                            </div>
-                                                                            <div class="col-2">
-                                                                                <select name="tipo_archivo" class="form-control form-control-sm default-select btnTypeArchivo text-white">
-                                                                                    <option>Elije un tipo de recurso</option>
-                                                                                    <option>Documento de Word</option>
-                                                                                    <option>Documento de Excel</option>
-                                                                                    <option>Documento PDF</option>
-                                                                                    <option>Archivo de imagen</option>
-                                                                                </select>
-                                                                            </div>
-                                                                        </div>
-                                                                        <br>
-                                                                    <div class="row opera">
-                                                                        <div class="drop-area">
-                                                                            <center>
-                                                                                <img src="../img/upload.png" alt="" style="width: 66px;">
-                                                                            </center>
-                                                                            <br>
-                                                                            <h2>Organiza tus archivos</h2>
-                                                                            <p class="text-black" style="font-weight: 265;font-size: 15px;">Arrastra o carga un archivo para empezar</p>
-                                                                            <center>
-                                                                                <button id="btnfile">Examinar archivos</button>
-                                                                            </center>
-                                                                            <input type="file" id="inputt-file" hidden>
-                                                                        </div>
-                                                                        <div id="preview"></div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="modal-footer justify-content-center">
-                                                                    <button type="submit" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
-                                                                </div>
-                                                            </div>
-                                                        </form>
-                                                    </div>
-                                                </div>
-                                                <!-- Modal -->
-
-                                                <!-- Modal CONECTAR LINK -->
-                                                <div class="modal fade" id="conectar_link">
-                                                    <div class="modal-dialog modal-dialog-centered" role="document">
-                                                        <form action="/cargar-link" method="post" >
                                                         <input type="hidden" name="idEmpresa" value="{{id_empresa}}">
+                                                        <input type="hidden" name="activeForm" value="true">
                                                             <div class="modal-content">
                                                                 <div class="modal-header justify-content-center">
                                                                     <h5 class="modal-title text-black" style="font-weight: 800;font-size: 30px;">Carga de recursos</h5>
@@ -112,32 +51,40 @@
                                                                             </div>
                                                                             <div class="col-4">
                                                                                 <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Categoria</label>
-                                                                                <select id="categoriaSelect" class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
+                                                                                 <select id="categoriaSelectCargar" class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
                                                                                     <option value="N/A">Escoge o crea una categoría para tu recurso</option>
                                                                                         {{#each categorias}}
-                                                                                        <option value="{{this}}">{{this}}</option>
-                                                                                    {{/each}}
+                                                                                            <option value="{{this}}">{{this}}</option>
+                                                                                        {{/each}}
                                                                                 </select>
-                                                                                <input type="hidden" id="categoriaHidden" name="categoria">
+                                                                                <input type="hidden" id="categoriaHiddenCargar" name="categoria">
                                                                             </div>
                                                                             <div class="col-2">
-                                                                                    <select name="tipo_archivo" class="form-control form-control-sm default-select btnTypeArchivo text-white">
-                                                                                    <option>Elije un tipo de recurso</option>
-                                                                                    <option value="Google Drive"> Archivo en Google Drive</option>
-                                                                                    <option value="Pagina web">Pagina web</option>
-                                                                                    <option value="Video de YouTube">Video de YouTube</option>
-                                                                                    <option value="Video de Vimeo">Video de Vimeo</option>
-                                                                                    <option value="Notion">Notion</option>
+                                                                                <select name="tipo_archivo" class="form-control form-control-sm default-select btnTypeArchivo text-white">
+                                                                                    <option value="">Elije un tipo de recurso</option>
+                                                                                    <option value="word">Documento de Word</option>
+                                                                                    <option value="excel">Documento de Excel</option>
+                                                                                    <option value="pdf">Documento PDF</option>
+                                                                                    <option value="imagen">Archivo de imagen</option>
                                                                                 </select>
                                                                             </div>
                                                                         </div>
                                                                         <br>
-                                                                        <div class="row">
-                                                                            <div class="col-11">
-                                                                                <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Link del recurso</label>
-                                                                                <input type="url" class="form-control input-recursos2" required name="link_recurso" placeholder="Introduce aqui la URL del recurso">
-                                                                            </div>
+                                                                    <div class="row opera">
+                                                                        <div class="drag-area">
+                                                                            <center>
+                                                                                <img src="../img/upload.png" alt="" style="width: 66px;">
+                                                                            </center>
+                                                                            <br>
+                                                                            <h2>Organiza tus archivos</h2>
+                                                                            <p class="text-black" style="font-weight: 265;font-size: 15px;">Arrastra o carga un archivo para empezar</p>
+                                                                            <center>
+                                                                                <button id="btnfile">Examinar archivos</button>
+                                                                            </center>
+                                                                            <input type="file" name="file" id="input-file" hidden>
                                                                         </div>
+                                                                        <div id="preview"></div>
+                                                                    </div>
                                                                 </div>
                                                                 <div class="modal-footer justify-content-center">
                                                                     <button type="submit" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
@@ -147,6 +94,60 @@
                                                     </div>
                                                 </div>
                                                 <!-- Modal -->
+                                           <!-- Modal CONECTAR LINK -->
+                                        <div class="modal fade" id="conectar_link">
+                                            <div class="modal-dialog modal-dialog-centered" role="document">
+                                                <form action="/cargar-link" method="post">
+                                                    <input type="hidden" name="idEmpresa" value="{{id_empresa}}">
+                                                    <input type="hidden" name="activeForm" value="true">
+                                                    <div class="modal-content">
+                                                        <div class="modal-header justify-content-center">
+                                                            <h5 class="modal-title text-black" style="font-weight: 800;font-size: 30px;">Carga de recursos</h5>
+                                                            <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="row">
+                                                                <div class="col-4">
+                                                                    <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Nombre del recurso</label>
+                                                                    <input type="text" class="form-control input-recursos" required name="nombre_recurso" placeholder="Introduce un nombre para el archivo">
+                                                                </div>
+                                                                <div class="col-4">
+                                                                    <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Categoria</label>
+                                                                    <select id="categoriaSelectConectar" class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
+                                                                        <option value="N/A">Escoge o crea una categoría para tu recurso</option>
+                                                                        {{#each categorias}}
+                                                                        <option value="{{this}}">{{this}}</option>
+                                                                        {{/each}}
+                                                                    </select>
+                                                                    <input type="hidden" id="categoriaHiddenConectar" name="categoria">
+                                                                </div>
+                                                                <div class="col-2">
+                                                                    <select name="tipo_archivo" class="form-control form-control-sm default-select btnTypeArchivo text-white">
+                                                                        <option>Elije un tipo de recurso</option>
+                                                                        <option value="Google Drive">Archivo en Google Drive</option>
+                                                                        <option value="Pagina web">Pagina web</option>
+                                                                        <option value="Video de YouTube">Video de YouTube</option>
+                                                                        <option value="Video de Vimeo">Video de Vimeo</option>
+                                                                        <option value="Notion">Notion</option>
+                                                                    </select>
+                                                                </div>
+                                                            </div>
+                                                            <br>
+                                                            <div class="row">
+                                                                <div class="col-11">
+                                                                    <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Link del recurso</label>
+                                                                    <input type="url" class="form-control input-recursos2" required name="recurso" placeholder="Introduce aqui la URL del recurso">
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer justify-content-center">
+                                                            <button type="submit" class="btn text-black" style="background-color: #FED061;border-radius: 8px;width: 187px;height: 48px;font-weight: 600;font-size: 20px;">Guardar</button>
+                                                        </div>
+                                                    </div>
+                                                </form>
+                                            </div>
+                                        </div>
+                                    <!-- Modal -->
                                             </div>
                                         </div>
                                         {{!-- SUBIR GRUPOS --}}
@@ -361,12 +362,12 @@
                                         <tr class="table-active text-black">
                                             <td class="truncated-cell"><img src="{{ iconoSVG }}" alt="Icono SVG"></td>
                                             <td class="truncated-link">
-                                                <a class="text-black" href="{{link_recurso}}" title="{{link_recurso}}" target="_blank">{{nombre_recurso}}</a>
+                                                <a class="text-black" href="{{recurso}}" title="{{recurso}}" target="_blank">{{nombre_recurso}}</a>
                                             </td>
                                             <td class="truncated-cell">{{fecha}}</td>
                                             <td class="truncated-cell">
                                                 <div style="margin: 0 auto">
-                                                    <a href="{{link_recurso}}" title="{{link_recurso}}" target="_blank" class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa-solid fa-cloud-arrow-down"></i></a>
+                                                    <a href="{{recurso}}" title="{{recurso}}" target="_blank" class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa-solid fa-cloud-arrow-down"></i></a>
                                                     <a onclick="eliminarRecurso({{idRecurso}})" class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
                                                 </div>
                                             </td>
