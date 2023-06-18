@@ -10,7 +10,6 @@ const { uploadFiles } = require('../lib/helpers')
 // Diagnóstico de Negocio
 router.get('/diagnostico-de-negocio', checkLogin, empresaController.diagnostico)
 router.get('/recursos', checkLogin, empresaController.recursos)
-router.get('/ejemplo2', checkLogin, empresaController.ejemplo2)
 
 // Ficha de Cliente
 router.get('/ficha-cliente/:id', checkLogin, empresaController.validarFichaCliente)
@@ -38,28 +37,46 @@ router.post('/guardar-archivos-estrategico', checkLogin, uploadFiles('Plan-estra
 router.get('/generar-informe/:tipo', checkLogin, empresaController.informeAutoGenerado)
 router.post('/informe-estrategico', checkLogin, empresaController.informeEstrategico)
 
+// Configurar el almacenamiento de Multer
+const rutaDeAlmacen = multer.diskStorage({
+  destination: function (req, file, callback) {
+    const rutaGrupo = path.join(__dirname, '../public/recurso_empresa');
+    callback(null, rutaGrupo);
+  },
+  filename: function (req, file, callback) {
+    //const fechaActual = Math.floor(Date.now() / 1000);
+    urlGrupo = "_" + file.originalname;
+    console.log(urlGrupo);
+    callback(null, urlGrupo);
+  }
+});
+
+// Crear el middleware de Multer
+const subirRecursoSuelto = multer({ storage: rutaDeAlmacen }).single('file');
+
+// Recursos
+// Ruta para enviar el archivo
+router.post('/enviar-archivo', checkLogin, subirRecursoSuelto, empresaController.cargar_recurso);
+router.post('/cargar-link', checkLogin, empresaController.cargar_link);
+router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
 
 // Configurar el almacenamiento de Multer
 const rutaAlmacen = multer.diskStorage({
-    destination: function (req, file, callback) {
-      const rutaGrupo = path.join(__dirname, '../public/grupo_recursos');
-      callback(null, rutaGrupo);
-    },
-    filename: function (req, file, callback) {
-      //const fechaActual = Math.floor(Date.now() / 1000);
-      urlGrupo = "Recurso_" + "_" + file.originalname;
-      console.log(urlGrupo);
-      callback(null, urlGrupo);
-    }
-  });
-  
-  // Crear el middleware de Multer
-  const subirRecurso = multer({ storage: rutaAlmacen });
-  
-// Recursos
-router.post('/enviar-archivo', checkLogin, empresaController.enviar_archivo);
-router.post('/cargar-link', checkLogin, empresaController.cargar_link);
-router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
+  destination: function (req, file, callback) {
+    const rutaGrupo = path.join(__dirname, '../public/grupo_recursos');
+    callback(null, rutaGrupo);
+  },
+  filename: function (req, file, callback) {
+    //const fechaActual = Math.floor(Date.now() / 1000);
+    urlGrupo = "Recurso_" + "_" + file.originalname;
+    console.log(urlGrupo);
+    callback(null, urlGrupo);
+  }
+});
+
+// Crear el middleware de Multer
+const subirRecurso = multer({ storage: rutaAlmacen });
+
 router.post('/guardar-grupo', checkLogin, subirRecurso.array('archivos'), empresaController.guardar_grupo);
 router.post('/eliminarcampo', checkLogin, empresaController.eliminarcampos)
 router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)

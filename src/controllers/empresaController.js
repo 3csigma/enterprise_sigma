@@ -678,54 +678,47 @@ empresaController.diagnostico = async (req, res) => {
     })
 }
 
-    // const rutaCarpeta = multer.diskStorage({
-    //   destination: function (req, file, callback) {
-    //     const rutaRecursos = path.join(__dirname, '../public/recurso_empresa');
-    //     callback(null, rutaRecursos);
-    //   },
-    //   filename: function (req, file, callback) {
-    //     const nombre_archivo = req.body.nombre_archivo;
-    //     const extension = path.extname(file.originalname);
-    //     const urlRecurso = nombre_archivo + extension;
-    //     callback(null, urlRecurso);
-    //   }
-    // });
-  
-    // const cargarRecurso = multer({ storage: rutaCarpeta });
-  
-    // cargarRecurso.single('recursoEmpresa')(req, res, function (err) {
-    //   if (err) {
-    //     // Maneja el error de la subida de archivos
-    //     return next(err);
-    //   }
+// GUARDAR RECURSOS SUELTOS ::
+empresaController.cargar_recurso = async (req, res) => {
+    const { nombre_recurso, categoria, tipo_archivo, idEmpresa, activeForm } = req.body;
 
-empresaController.enviar_archivo = async (req, res, next) => {
-      const { categoria, tipo_archivo, nombre_archivo } = req.body;
-
-
-
-
-
-
-      res.redirect('/recursos/');
-};
-
-// GUARDAR LINK DE RECURSOS ::
-empresaController.cargar_link = async (req, res) => {
-    const { nombre_recurso, categoria, tipo_archivo, link_recurso, idEmpresa } = req.body;
     // Obtener la fecha actual
     let fechaActual = new Date();
-    
     // Obtener el día, el mes y el año
     let dia = fechaActual.getDate();
     let mes = fechaActual.toLocaleString('default', { month: 'short' });
     let año = fechaActual.getFullYear();
-    
     // Formatear la fecha en el formato deseado
     let fecha= dia + '/' + mes + '/' + año;
-    const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, link_recurso, validar_link: 1}
 
-    await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
+    if (req.file) {
+        const archivo = req.file;
+        recurso = '../recurso_empresa/' + archivo.filename
+      } 
+
+    const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, recurso}
+    if (activeForm == 'true') {
+        await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
+    }
+
+      res.redirect('/recursos/');
+  
+};
+// GUARDAR LINK DE RECURSOS::
+empresaController.cargar_link = async (req, res) => {
+    const { nombre_recurso, categoria, tipo_archivo, recurso, idEmpresa } = req.body;
+
+    // Obtener la fecha actual
+    let fechaActual = new Date();
+    // Obtener el día, el mes y el año
+    let dia = fechaActual.getDate();
+    let mes = fechaActual.toLocaleString('default', { month: 'short' });
+    let año = fechaActual.getFullYear();
+    // Formatear la fecha en el formato deseado
+    let fecha= dia + '/' + mes + '/' + año;
+
+    const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, recurso}
+        await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
 
       res.redirect('/recursos/');
   
@@ -755,12 +748,9 @@ empresaController.guardar_grupo = async (req, res) => {
     let datosAcumulados = req.session.datosAcumulados || [];
 
      // Acceder a los archivos subidos en req.files
-    const archivos = req.files;
-    let valor
-    const campoId = req.body.id;
-    let valorCampo = req.body.valor;
-    const tipoCampo = req.body.tipo;
-    const numeroIcono = req.body.numeroIcono;
+    const archivos = req.files, tipoCampo = req.body.tipo, numeroIcono = req.body.numeroIcono, campoId = req.body.id;
+    let valor,valorCampo = req.body.valor;
+
 
     // Recorrer los archivos y obtener sus nombres
     if (archivos && archivos.length > 0) {
@@ -770,28 +760,31 @@ empresaController.guardar_grupo = async (req, res) => {
         });
     }
 
-    // Verificar si el campo ya existe en los datos acumulados
-    const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
-    if (campoExistente) {
-      // Si el campo existe, actualizar su valor y tipo
-      campoExistente.valor = valorCampo;
-      campoExistente.tipo = tipoCampo;
-      campoExistente.numeroIcono=numeroIcono
-    } else {
-      // Si el campo no existe, agregarlo a los datos acumulados con su valor y tipo
-      datosAcumulados.push({ id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: numeroIcono  });
-    }
+  // Verificar si el campo ya existe en los datos acumulados
+const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
+if (campoExistente) {
+  // Si el campo existe, actualizar su valor y tipo
+  campoExistente.valor = valorCampo;
+  campoExistente.tipo = tipoCampo;
+  campoExistente.numeroIcono = numeroIcono;
+} else if (valorCampo) {
+  // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
+  const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: numeroIcono };
+  datosAcumulados.push(nuevoCampo);
+}
+
   
     // Guardar los datos acumulados en la variable de sesión
-    req.session.datosAcumulados = datosAcumulados;
+   req.session.datosAcumulados = datosAcumulados;
     console.log(datosAcumulados);
     const recurso_armado = JSON.stringify(datosAcumulados);
-  
+   
     if (esFormulario === 'true') {
       // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
       await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
+      req.session.datosAcumulados = null;
     }
-  
+
     res.redirect('/recursos/');
 };
   
@@ -850,7 +843,7 @@ empresaController.recursos = async (req, res) => {
     let iconoSVG
 
     // MOSTRAR LOS LINK 
-    const infoRecursos = await pool.query("SELECT id, nombre_recurso, tipo_archivo, categoria, fecha, link_recurso FROM recursos ORDER BY categoria;");
+    const infoRecursos = await pool.query("SELECT id, nombre_recurso, tipo_archivo, categoria, fecha, recurso FROM recursos ORDER BY categoria;");
     if (infoRecursos) {
       infoRecursos.forEach(i => {
 
@@ -866,12 +859,20 @@ empresaController.recursos = async (req, res) => {
             iconoSVG = "../logos_recursos/Video_Vimeo.svg"
         }else if(i.tipo_archivo == "Notion")  {
             iconoSVG = "../logos_recursos/notion.svg"
+        }else if(i.tipo_archivo == "word")  {
+            iconoSVG = "../logos_recursos/Documento_Word.svg"
+        }else if(i.tipo_archivo == "excel")  {
+            iconoSVG = "../logos_recursos/Documento_Excel.svg"
+        }else if(i.tipo_archivo == "pdf")  {
+            iconoSVG = "../logos_recursos/Documento_PDF.svg"
+        }else if(i.tipo_archivo == "imagen")  {
+            iconoSVG = "../logos_recursos/Archivo_imagen.svg"
         }
 
         datos.push({
           iconoSVG,
           idRecurso: i.id,fecha: i.fecha,
-          nombre_recurso: i.nombre_recurso, link_recurso: i.link_recurso,
+          nombre_recurso: i.nombre_recurso, recurso: i.recurso,
           tipo_archivo: i.tipo_archivo.split(',')
         });
       });
@@ -881,11 +882,9 @@ empresaController.recursos = async (req, res) => {
 const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ?', [id_empresa]);
 if (resultado.length > 0) {
   const contador = { t1: 0, t2: 0, t3: 0, t4: 0, t5: 0 };
-  let grupos = [];
-
+  let iconos = [];
   resultado.forEach(r => {
     const recursoArmado = JSON.parse(r.recurso_armado);
-    let iconos = [];
     let ruta = '';
     let cuerpoHTML = '';
 
@@ -908,7 +907,7 @@ if (resultado.length > 0) {
             ruta = "../logos_recursos/Pagina_Web.svg";
             break;
         }
-        iconos.push({ ruta: ruta });
+        iconos.push({ ruta: ruta, grupo: r.id });
       }
       if (recurso.tipo === '5') {
         switch (recurso.numeroIcono) {
@@ -931,7 +930,7 @@ if (resultado.length > 0) {
             ruta = "../logos_recursos/Otro.svg";
             break;
         }
-        iconos.push({ ruta: ruta });
+        iconos.push({ ruta: ruta, grupo: r.id });
       }
 
       if (recurso.tipo === '1') {
@@ -1020,7 +1019,7 @@ if (resultado.length > 0) {
       color_grupo: r.color_grupo,
       recurso_armado: r.recurso_armado,
       cuerpoHTML: cuerpoHTML,
-      iconos,
+      iconos: iconos.filter(icono => icono.grupo === r.id),
       contador: JSON.stringify(contador)
     });
   });
@@ -1087,15 +1086,6 @@ empresaController.actualizarRecurso = async (req, res) => {
     res.redirect('/recursos/');
         
 }
-  
-
-
-empresaController.ejemplo2 = async (req, res) => {
-    res.render('empresa/ejemplo2', {
-        user_dash: true
-    })
-}
-
 
 /** Mostrar vista del formulario Ficha Cliente */
 empresaController.validarFichaCliente = async (req, res) => {

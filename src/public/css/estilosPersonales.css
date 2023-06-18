@@ -95,7 +95,7 @@ a.text-secondary:focus {
 /*  => ESTILOS DE LA VISTA RECURSOS*/
 /* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 
-.drop-area {
+.drag-area {
     background: #FFFAFF;
     border: 1px dashed #812082;
     border-radius: 25px;
@@ -107,24 +107,24 @@ a.text-secondary:focus {
     text-align: center;
 }
 
-.drop-area.active {
+.drag-area.active {
     background-color: #b8d4fe;
     color: #812082;
     border: 2px dashed #618ac9;
 }
 
-.drop-area h2 {
+.drag-area h2 {
     font-size: 25px;
     font-weight: 500;
     color: #000000;
 }
 
-.drop-area span {
+.drag-area span {
     font-size: 25px;
     color: #000000;
 }
 
-.drop-area button {
+.drag-area button {
     background: #FFFFFF;
     border: 1px solid #812082;
     border-radius: 5px;
