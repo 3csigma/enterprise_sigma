@@ -645,3 +645,128 @@ camposDinamicos.forEach(campo => {
       });
   });
 });
+
+// Función para mostrar el nuevo icono del archivo
+function mostrarFilesNuevos(campo) {
+  const valor = campo.files[0].name;
+  const extension = obtenerExtension(valor);
+  const numeroIcono = obtenerNumeroIconoPorExtension(extension); // Asignar el número de icono
+  const icono = obtenerIconoPorNumero(numeroIcono); // Obtener el icono correspondiente
+
+  // Actualizar el icono correspondiente
+  const iconoElemento = campo.closest('tr').querySelector('.icono-svg');
+  iconoElemento.src = icono;
+
+  // Obtener el elemento del nombre del archivo
+  const nombreArchivoElemento = campo.closest('tr').querySelector('.nombre-archivo');
+
+  // Obtener el nombre del archivo sin la extensión
+  const nombreArchivo = valor.substr(0, valor.lastIndexOf('.'));
+
+  // Obtener la extensión del archivo
+  const extensionArchivo = valor.substr(valor.lastIndexOf('.'));
+
+  // Acortar el nombre del archivo si es necesario
+  const MAX_LONGITUD_NOMBRE = 20;
+  let nombreArchivoMostrado = nombreArchivo;
+  if (nombreArchivo.length > MAX_LONGITUD_NOMBRE) {
+    nombreArchivoMostrado = nombreArchivo.substr(0, MAX_LONGITUD_NOMBRE) + '...';
+  }
+
+  // Actualizar el texto del nombre del archivo
+  nombreArchivoElemento.textContent = nombreArchivoMostrado + extensionArchivo;
+
+  // Almacenar el nombre completo del archivo en un atributo de datos
+  campo.setAttribute('data-nombre-completo', valor);
+
+  // Almacenar el nombre abreviado del archivo en un atributo de datos
+  campo.setAttribute('data-nombre-abreviado', nombreArchivoMostrado + extensionArchivo);
+
+  // Guardar el número de icono en el atributo 'data-numero-icono' del campo
+  campo.setAttribute('data-numerofile-icono', numeroIcono);
+}
+
+// Función para obtener la extensión de un archivo
+function obtenerExtension(nombreArchivo) {
+  const extension = nombreArchivo.split('.').pop();
+  return extension.toLowerCase();
+}
+
+// Función para obtener el número de icono correspondiente a una extensión de archivo
+function obtenerNumeroIconoPorExtension(extension) {
+  switch (extension) {
+    case 'doc':
+    case 'docx':
+      return 1;
+    case 'pdf':
+      return 2;
+    case 'ppt':
+    case 'pptx':
+      return 3;
+    case 'xls':
+    case 'xlsx':
+      return 4;
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+      return 5;
+    default:
+      return 6;
+  }
+}
+
+// Función para obtener el icono correspondiente según el número de icono
+function obtenerIconoPorNumero(numeroIcono) {
+  switch (numeroIcono) {
+    case 1:
+      return "../logos_recursos/Documento_Word.svg";
+    case 2:
+      return "../logos_recursos/Documento_PDF.svg";
+    case 3:
+      return "../logos_recursos/Documento_PowePoint.svg";
+    case 4:
+      return "../logos_recursos/Documento_Excel.svg";
+    case 5:
+      return "../logos_recursos/Archivo_imagen.svg";
+    default:
+      return "../logos_recursos/Otro.svg";
+  }
+}
+
+// Actualizar campo archivos una vez creados en grupo recursos
+const camposArchivo = document.querySelectorAll('.campo_archivo');
+camposArchivo.forEach(campo => {
+  campo.addEventListener('input', () => {
+    mostrarFilesNuevos(campo);
+
+    // Obtener el id del grupo correspondiente
+    const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
+    const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
+    const recursoId = campo.id; // Obtener el recurso.id del campo
+
+    // Crear una instancia de FormData y agregar el archivo seleccionado
+    const formData = new FormData();
+    formData.append('archivo', campo.files[0]);
+    formData.append('id', recursoId);
+    formData.append('valor', campo.files[0].name);
+    formData.append('idRecurso', idRecurso);
+    
+    const extension = obtenerExtension(campo.files[0].name);
+    const numIcono = obtenerNumeroIconoPorExtension(extension);
+
+    formData.append('numeroIcono', numIcono.toString());
+
+    fetch('/actualizarRecurso', {
+      method: 'POST',
+      body: formData,
+      headers: { 'enctype': 'multipart/form-data'}
+    })
+    .then(response => response.json())
+    .then(data => {
+      console.log('Archivo subido:', data);
+    })
+    .catch(error => {
+      console.error('Error al subir archivo:', error);
+    });
+  });
+});

@@ -216,10 +216,9 @@ a.text-secondary:focus {
     position: absolute;
     width: 541px;
     margin-left: -108px;
-    font-family: 'Oblivian';
     font-style: normal;
     font-weight: 300;
-    font-size: 15px;
+    font-size: 13px;
     line-height: 27px;
     color: #FFFFFF;
 }
