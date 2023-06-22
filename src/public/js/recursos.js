@@ -150,7 +150,7 @@ function crearCampoTitulo() {
   tituloContainer.appendChild(inputTitulo);
 
   const botonBorrarTitulo = document.createElement("i");
-  botonBorrarTitulo.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarTitulo.classList.add("fas", "fa-trash-alt");
   botonBorrarTitulo.style.color = "red";
   botonBorrarTitulo.style.opacity = "0"; // Establecer la opacidad inicialmente a 0
   botonBorrarTitulo.style.transition = "opacity 0.3s"; // Agregar la transición de opacidad
@@ -189,7 +189,7 @@ function crearCampoDescripcion() {
   campoDescripcionContainer.appendChild(textarea);
 
   const botonBorrarDescripcion = document.createElement("i");
-  botonBorrarDescripcion.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarDescripcion.classList.add("fas", "fa-trash-alt");
   botonBorrarDescripcion.style.color = "red";
   botonBorrarDescripcion.style.opacity = "0"; // Establecer la opacidad inicialmente a 0
   botonBorrarDescripcion.style.transition = "opacity 0.3s"; // Agregar la transición de opacidad
@@ -250,7 +250,7 @@ function crearSeparador() {
   separadorContainer.appendChild(hr);
 
   const botonBorrarSeparador = document.createElement("i");
-  botonBorrarSeparador.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarSeparador.classList.add("fas", "fa-trash-alt");
   botonBorrarSeparador.style.color = "red"; // Cambiar el color del icono a rojo
   botonBorrarSeparador.style.visibility = "hidden"; // Inicialmente oculto
 
@@ -286,7 +286,7 @@ function crearCampoUrl() {
   const fila = document.createElement("tr");
   const columnaBorrar = document.createElement("td");
   const botonBorrarUrl = document.createElement("i");
-  botonBorrarUrl.classList.add("fas", "fa-trash-alt", "icono-borrar");
+  botonBorrarUrl.classList.add("fas", "fa-trash-alt");
   botonBorrarUrl.style.color = "red";
   botonBorrarUrl.style.visibility = "hidden"; // Inicialmente oculto
 
@@ -409,7 +409,7 @@ function crearCampoArchivo() {
   nombreArchivo.classList.add("nombre-archivo");
 
   const botonBorrarArchivo = document.createElement("td");
-  botonBorrarArchivo.innerHTML = `<i class="fas fa-trash-alt icono-borrar" style="color: red;"></i>`;
+  botonBorrarArchivo.innerHTML = `<i class="fas fa-trash-alt" style="color: red;"></i>`;
   botonBorrarArchivo.style.visibility = "hidden";
 
   botonBorrarArchivo.addEventListener("click", function () {
@@ -541,6 +541,7 @@ select.addEventListener("change", function() {
       crearCampoArchivo();
       break;
   }
+  select.selectedIndex = 0;
 });
 
 function handleCampoBlur(event) {
