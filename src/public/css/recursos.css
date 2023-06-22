@@ -1,33 +1,33 @@
 /* ESTILOS DEL BANNER ENTRE OTROS */
 .bootstrap-select.form-control-sm .dropdown-toggle {
-    padding: 8px 25px;
-    height: 35px;
+  padding: 8px 25px;
+  height: 35px;
 }
 .bootstrap-select .dropdown-toggle .filter-option-inner-inner {
-    color: white;
-    font-size: 11px;
+  color: white;
+  font-size: 11px;
 }
-.bootstrap-select>.dropdown-toggle:after {
-    margin-top: -1px;
-    color: white;
+.bootstrap-select > .dropdown-toggle:after {
+  margin-top: -1px;
+  color: white;
 }
 .chosen-container-single .chosen-single span {
-    font-size: 11px;
-    font-weight: 500;
+  font-size: 11px;
+  font-weight: 500;
 }
 
 a:not([href]):not([tabindex]) {
-    padding-top: 2px;
+  padding-top: 2px;
 }
 .chosen-container-single .chosen-single div b {
-    margin-top: 3px;
+  margin-top: 3px;
 }
 
-.chosen-container.chosen-with-drop .chosen-drop{
-        width: 106%;
+.chosen-container.chosen-with-drop .chosen-drop {
+  width: 106%;
 }
 .chosen-container .chosen-single {
-    min-width: 217px; /* Establece el ancho mínimo deseado */
+  min-width: 217px; /* Establece el ancho mínimo deseado */
 }
 
 .truncated-cell {
@@ -37,7 +37,7 @@ a:not([href]):not([tabindex]) {
   max-width: 150px; /* Ajusta el valor según tus necesidades */
   padding: 21px !important;
   background-color: white !important;
-}   
+}
 
 .truncated-link {
   white-space: nowrap;
@@ -46,66 +46,63 @@ a:not([href]):not([tabindex]) {
   max-width: 150px; /* Ajusta el valor según tus necesidades */
   padding: 21px !important;
   background-color: white !important;
-
 }
 
-
-.tituloRecurso{
-    color:#000000;font-weight: 600;
-    text-transform: lowercase;
-    margin: 25px 0px 28px;
+.tituloRecurso {
+  color: #000000;
+  font-weight: 600;
+  text-transform: lowercase;
+  margin: 25px 0px 28px;
 }
 .tituloRecurso:first-letter {
-    text-transform: uppercase;
+  text-transform: uppercase;
 }
 
- table.header-border td {
-        padding: 5px 10px; /* Ajusta los valores según tus necesidades */
-    }
+table.header-border td {
+  padding: 5px 10px; /* Ajusta los valores según tus necesidades */
+}
 
-
-
-
-
-
+.icono-borrar {
+  position: absolute;
+  left: 0;
+  margin-top: 5px;
+  opacity: 0;
+  transition: opacity 0.3s ease 0s;
+}
 
 /* PARA LOS CAMPOS DINAMICOS */
 .campo {
-    font-size: 1.2em;
-    font-weight: 700;
-    color: black !important;
-    border: 0px solid #000000;
-    text-align: left;
+  font-size: 1.2em;
+  font-weight: 700;
+  color: black !important;
+  border: 0px solid #000000;
+  text-align: left;
 }
 
 .campo_descrip {
-    color: black !important ;
-    border:0px solid;
-    text-align: left;
-    font-weight: 100;
+  color: black !important ;
+  border: 0px solid;
+  text-align: left;
+  font-weight: 100;
 }
 .campo_url {
-    color: black !important;
-    border: 0px solid;
-    text-align: left;
-    text-decoration-line: underline;
+  color: black !important;
+  border: 0px solid;
+  text-align: left;
+  text-decoration-line: underline;
 }
 .campo-container {
-    display: flex;
-    align-items: baseline;
-    justify-content: left;
-    flex-direction: row-reverse;
+  display: flex;
+  align-items: baseline;
+  justify-content: left;
+  flex-direction: row-reverse;
 }
 
 .titulo-container {
   flex-grow: 1;
 }
 
-.separador{
-    width: 100%;
-    margin-left: 5px;
+.separador {
+  width: 100%;
+  margin-left: 5px;
 }
-
-
-
-

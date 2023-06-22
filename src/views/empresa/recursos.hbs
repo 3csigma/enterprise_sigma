@@ -31,7 +31,7 @@
                                                         <button class="dropdown-item" data-toggle="modal" data-target="#conectar_link" aria-disabled="true">Conectar link</button>
                                                     </div>
                                                 </div>
-                                                <!-- Modal CARGAR ARCHIVOS -->
+                                                <!-- Modal CARGAR ARCHIVOS SUELTOS-->
                                                 <div class="modal fade" id="cargar_archivo">
                                                     <div class="modal-dialog modal-dialog-centered" role="document">
                                                         <form action="/enviar-archivo" method="post" enctype="multipart/form-data">
@@ -150,7 +150,7 @@
                                     <!-- Modal -->
                                             </div>
                                         </div>
-                                        {{!-- SUBIR GRUPOS --}}
+                                    {{!-- SUBIR GRUPOS --}}
                                         <div class="col-6">
                                             <button class="btnGrupo" data-toggle="modal" data-target="#subir_grupo" aria-disabled="true">Subir grupo</button>
                                         </div>
@@ -222,7 +222,7 @@
                                                 </form>
                                             </div>
                                         </div>
-                                        <!-- Modal -->
+                                    <!-- Modal -->
                                     </div>
                                 </div>
                             </div>
@@ -267,13 +267,15 @@
                     </div>
                 </div>
                 <div class="row" style="margin-top: 15%;">
+                {{#if grupos}}
                     <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Mis documentos</h3>
                     <h3 style="position: absolute; margin-top: -35px;margin-left: 16px;color:#000000;font-weight: 300;">Grupos</h3>
+                {{/if}}    
                     {{#each grupos}}
                         <div class="col-xl-3">
                             <div class="card text-white" style="background:{{color_grupo}};border-radius: 11px;width: 240px; height: 215px;">
                             <a onclick="eliminarGrupo({{idGrupo}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 5px;right: 5px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
-                              <a href="#" data-toggle="modal" data-target="#modal-{{idGrupo}}">
+                              <a href="#" data-toggle="modal" data-target="#modal-{{idGrupo}}" onclick="verGrupo('{{idGrupo}}')">
                                     <div class="card-body mb-0">
                                         <br>
                                         <div class="widget-media">
@@ -292,13 +294,14 @@
                             </div>
                         </div>
                    <!-- Modal GRUPOS CREADOS  -->
-                        <div class="modal fade" id="modal-{{idGrupo}}">
+                        <div class="modal fade grupo" id="modal-{{idGrupo}}" >
                             <div class="modal-dialog" role="document">
                                 <form action="/actualizarRecurso" method="post">
                                  <!-- Campo oculto para indicar que la solicitud proviene del formulario -->
                                     <input type="hidden" name="formuario" value="true" />
                                     <input type="hidden" name="idRecurso" value="{{idGrupo}}" id="idRecurso-{{idGrupo}}">
-                                    <input type="hidden" value="{{contador}}" id="contador">
+                                    <input type="hidden" value="{{contador}}" id="contador_{{idGrupo}}">
+                                    
                                     <div class="modal-content">
                                         <div class="modal-header justify-content-center">
                                             <h5 class="modal-title text-black" style="font-weight: 800;font-size: 30px;">Grupo de recursos</h5>
@@ -313,7 +316,7 @@
                                             <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Información del grupo de recursos</h3>
                                             <div class="row opera flex-column">
                                                 <div class="col-3" style="margin-bottom: 25px;">
-                                                    <select id="opcionesEdit" class="form-control-sm default-select btnTypeArchivo text-white">
+                                                    <select data-id="{{idGrupo}}" class="form-control-sm default-select btnTypeArchivo text-white opcionesEdit">
                                                         <option value="">Agregar Elemento</option>
                                                         <option value="titulo">Título</option>
                                                         <option value="descripcion">Bloque de texto</option>
@@ -330,7 +333,7 @@
                                                 </div>
                                                 <br>
                                                 <div class="col-10">
-                                                    <div id="contenidoEdit"></div>
+                                                    <div id="contenidoEdit{{idGrupo}}"></div>
                                                 </div>
                                             </div>
                                             <br>

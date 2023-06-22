@@ -1,6 +1,6 @@
 const pool = require('../database');
 const empresaController = exports;
-const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarInformes, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers');
+const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers');
 const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
@@ -694,11 +694,12 @@ empresaController.cargar_recurso = async (req, res) => {
     if (req.file) {
         const archivo = req.file;
         recurso = '../recurso_empresa/' + archivo.filename
-      } 
+    } 
 
     const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, recurso}
     if (activeForm == 'true') {
-        await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
+        await insertarDatos('recursos', dataRecurso)
+        // await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
     }
 
       res.redirect('/recursos/');
@@ -708,20 +709,15 @@ empresaController.cargar_recurso = async (req, res) => {
 empresaController.cargar_link = async (req, res) => {
     const { nombre_recurso, categoria, tipo_archivo, recurso, idEmpresa } = req.body;
 
-    // Obtener la fecha actual
-    let fechaActual = new Date();
-    // Obtener el día, el mes y el año
-    let dia = fechaActual.getDate();
+    const fechaActual = new Date();
     let mes = fechaActual.toLocaleString('default', { month: 'short' });
-    let año = fechaActual.getFullYear();
+    mes = mes.charAt(0).toUpperCase() + mes.slice(1);
     // Formatear la fecha en el formato deseado
-    let fecha= dia + '/' + mes + '/' + año;
-
+    let fecha= fechaActual.getDate() + '/' + mes + '/' + fechaActual.getFullYear();
     const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, recurso}
-        await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
-
-      res.redirect('/recursos/');
-  
+    await insertarDatos('recursos', dataRecurso)
+    // await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
+    res.redirect('/recursos/');
 };
 
 // ELIMINAR LINK DE RECURSOS
@@ -745,66 +741,88 @@ empresaController.guardar_grupo = async (req, res) => {
     if (!color_grupo) {color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"}
 
     // Obtener los datos acumulados de la variable de sesión
-    let datosAcumulados = req.session.datosAcumulados || [];
+    const datosAcumulados = req.session.datosAcumulados || [];
 
-     // Acceder a los archivos subidos en req.files
+    // Acceder a los archivos subidos en req.files
     const archivos = req.files, tipoCampo = req.body.tipo, numeroIcono = req.body.numeroIcono, campoId = req.body.id;
-    let valor,valorCampo = req.body.valor;
-
+    let valor, valorCampo = req.body.valor;
 
     // Recorrer los archivos y obtener sus nombres
     if (archivos && archivos.length > 0) {
         archivos.forEach((archivo) => {
-        valor = '../grupo_recursos/' + archivo.filename
-        valorCampo = valor;
+            valor = '../grupo_recursos/' + archivo.filename
+            valorCampo = valor;
         });
     }
 
-  // Verificar si el campo ya existe en los datos acumulados
-const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
-if (campoExistente) {
-  // Si el campo existe, actualizar su valor y tipo
-  campoExistente.valor = valorCampo;
-  campoExistente.tipo = tipoCampo;
-  campoExistente.numeroIcono = numeroIcono;
-} else if (valorCampo) {
-  // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
-  const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: numeroIcono };
-  datosAcumulados.push(nuevoCampo);
-}
+    // Verificar si el campo ya existe en los datos acumulados
+    const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
+    if (campoExistente) {
+        // Si el campo existe, actualizar su valor y tipo
+        campoExistente.valor = valorCampo;
+        campoExistente.tipo = tipoCampo;
+        campoExistente.numeroIcono = numeroIcono;
+    } else if (valorCampo) {
+        // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
+        const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: numeroIcono };
+        datosAcumulados.push(nuevoCampo);
+    }
 
-  
     // Guardar los datos acumulados en la variable de sesión
-   req.session.datosAcumulados = datosAcumulados;
+    req.session.datosAcumulados = datosAcumulados;
     console.log(datosAcumulados);
     const recurso_armado = JSON.stringify(datosAcumulados);
    
     if (esFormulario === 'true') {
-      // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
-      await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
-      req.session.datosAcumulados = null;
+        // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
+        await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
+        req.session.datosAcumulados = null;
     }
 
     res.redirect('/recursos/');
 };
   
 // ELIMINAR CAMPOS EN EL MOMENTO DE CREAR GRUPO
-empresaController.eliminarcampos = async (req, res) => {
-    const { id } = req.body;
-  
-    // Obtener los datos acumulados de la variable de sesión
-    let datosAcumulados = req.session.datosAcumulados || [];
-  
-    // Filtrar los datos acumulados para eliminar el campo con el ID especificado
-    datosAcumulados = datosAcumulados.filter(dato => dato.id !== id);
-  
-    // Actualizar los datos acumulados en la variable de sesión
-    req.session.datosAcumulados = datosAcumulados;
-    console.log(datosAcumulados);
-  
-    // Realizar otras operaciones necesarias, como eliminar el campo de título de la base de datos si es necesario
-  
-    res.json({ success: true });
+empresaController.eliminarCampo = async (req, res) => {
+    const { idCampo, idGrupo } = req.body;
+    if (!idGrupo) {
+        // Obtener los datos acumulados de la variable de sesión
+        let datosAcumulados = req.session.datosAcumulados || [];
+    
+        // Filtrar los datos acumulados para eliminar el campo con el ID especificado
+        datosAcumulados = datosAcumulados.filter(dato => dato.id !== idCampo);
+    
+        // Actualizar los datos acumulados en la variable de sesión
+        req.session.datosAcumulados = datosAcumulados;
+        console.log("--- Array para ELIMINAR CAMPOS EN EL MOMENTO DE CREAR GRUPO ---")
+        console.log(datosAcumulados);
+    
+        // Realizar otras operaciones necesarias, como eliminar el campo de título de la base de datos si es necesario
+        // res.json({ success: true });
+        res.send({ success: true })
+    } else {
+        console.log("Entrando en modo Editar >> ")
+        console.log(idGrupo)
+        console.log(idCampo)
+        const grupo = (await consultarDatos('grupo_recursos')).find(x => x.id == idGrupo)
+        if (grupo) {
+            console.log("Grupo DB =>>")
+            console.log(grupo);
+            let objRecurso = JSON.parse(grupo.recurso_armado)
+            console.log("Recurso DB =>>")
+            console.log(objRecurso)
+            objRecurso = objRecurso.filter(obj => obj.id !== idCampo);
+            console.log("Recurso DB ACTUALIZADO =>>")
+            console.log(objRecurso)
+
+            const data = { recurso_armado: JSON.stringify(objRecurso) }
+            await actualizarDatos('grupo_recursos', data, `WHERE id = ${idGrupo}`)
+
+            res.send(true)
+        } else {
+            res.send(false)
+        }        
+    }
 };
 
 // ELIMINAR EL GRUPO COMO TAL UNA VEZ CREADO
@@ -824,268 +842,245 @@ empresaController.eliminarGrupo = async (req, res) => {
 // RENDERIZADO DE RECURSOS ::
 empresaController.recursos = async (req, res) => {
     const emailEmpresa = req.user.email;
-    let row = await consultarDatos('empresas');
-    const info = row.find(x => x.email === emailEmpresa);
-    let id_empresa;
-    if (info) {
-      id_empresa = info.id_empresas;
-    }
+    let info = (await consultarDatos("empresas")).find((x) => x.email === emailEmpresa);
+    const id_empresa = info.id_empresas;
+    let categorias = [], datos = [], grupos = [];
     let recurso = await pool.query("SELECT DISTINCT categoria FROM recursos WHERE idEmpresa = ?", [id_empresa]);
-    let categorias = [];
-    if (recurso) {
-      recurso.forEach(r => {
-        categorias.push(r.categoria);
-      });
+    if (recurso.length > 0) {
+        recurso.forEach((r) => categorias.push(r.categoria) );
     }
-    
-    const datos = [], grupos = [];
-    let categoriaAnterior = null;
-    let iconoSVG
 
-    // MOSTRAR LOS LINK 
-    const infoRecursos = await pool.query("SELECT id, nombre_recurso, tipo_archivo, categoria, fecha, recurso FROM recursos ORDER BY categoria;");
-    if (infoRecursos) {
-      infoRecursos.forEach(i => {
+    let categoriaAnterior = null, iconoSVG;
 
-        if (i.categoria !== categoriaAnterior) {datos.push({categoria: i.categoria}); categoriaAnterior = i.categoria;}
+    // MOSTRAR LOS LINK
+    const infoRecursos = await pool.query("SELECT * FROM recursos ORDER BY categoria;");
+    if (infoRecursos.length > 0) {
+        infoRecursos.forEach((i) => {
+            if (i.categoria !== categoriaAnterior) {
+                datos.push({ categoria: i.categoria });
+                categoriaAnterior = i.categoria;
+            }
 
-        if (i.tipo_archivo == "Google Drive") {
-            iconoSVG = "../logos_recursos/Archivo_Google_Drive.svg"
-        }else if(i.tipo_archivo == "Pagina web") {
-            iconoSVG = "../logos_recursos/Pagina_Web.svg"
-        }else if(i.tipo_archivo == "Video de YouTube")  {
-            iconoSVG = "../logos_recursos/Video_Youtube.svg"
-        }else if(i.tipo_archivo == "Video de Vimeo")  {
-            iconoSVG = "../logos_recursos/Video_Vimeo.svg"
-        }else if(i.tipo_archivo == "Notion")  {
-            iconoSVG = "../logos_recursos/notion.svg"
-        }else if(i.tipo_archivo == "word")  {
-            iconoSVG = "../logos_recursos/Documento_Word.svg"
-        }else if(i.tipo_archivo == "excel")  {
-            iconoSVG = "../logos_recursos/Documento_Excel.svg"
-        }else if(i.tipo_archivo == "pdf")  {
-            iconoSVG = "../logos_recursos/Documento_PDF.svg"
-        }else if(i.tipo_archivo == "imagen")  {
-            iconoSVG = "../logos_recursos/Archivo_imagen.svg"
-        }
+            if (i.tipo_archivo == "Google Drive") {
+                iconoSVG = "../logos_recursos/Archivo_Google_Drive.svg";
+            } else if (i.tipo_archivo == "Pagina web") {
+                iconoSVG = "../logos_recursos/Pagina_Web.svg";
+            } else if (i.tipo_archivo == "Video de YouTube") {
+                iconoSVG = "../logos_recursos/Video_Youtube.svg";
+            } else if (i.tipo_archivo == "Video de Vimeo") {
+                iconoSVG = "../logos_recursos/Video_Vimeo.svg";
+            } else if (i.tipo_archivo == "Notion") {
+                iconoSVG = "../logos_recursos/notion.svg";
+            } else if (i.tipo_archivo == "word") {
+                iconoSVG = "../logos_recursos/Documento_Word.svg";
+            } else if (i.tipo_archivo == "excel") {
+                iconoSVG = "../logos_recursos/Documento_Excel.svg";
+            } else if (i.tipo_archivo == "pdf") {
+                iconoSVG = "../logos_recursos/Documento_PDF.svg";
+            } else if (i.tipo_archivo == "imagen") {
+                iconoSVG = "../logos_recursos/Archivo_imagen.svg";
+            }
 
-        datos.push({
-          iconoSVG,
-          idRecurso: i.id,fecha: i.fecha,
-          nombre_recurso: i.nombre_recurso, recurso: i.recurso,
-          tipo_archivo: i.tipo_archivo.split(',')
+            datos.push({
+                iconoSVG,
+                idRecurso: i.id,
+                fecha: i.fecha,
+                nombre_recurso: i.nombre_recurso,
+                recurso: i.recurso,
+                tipo_archivo: i.tipo_archivo.split(","),
+            });
         });
-      });
     }
 
-// MOSTRAR LOS GRUPOS DE RECURSOS
-const resultado = await pool.query('SELECT * FROM grupo_recursos WHERE idEmpresa = ?', [id_empresa]);
-if (resultado.length > 0) {
-  const contador = { t1: 0, t2: 0, t3: 0, t4: 0, t5: 0 };
-  let iconos = [];
-  resultado.forEach(r => {
-    const recursoArmado = JSON.parse(r.recurso_armado);
-    let ruta = '';
-    let cuerpoHTML = '';
+    // MOSTRAR LOS GRUPOS DE RECURSOS
+    const resultado = (await pool.query("SELECT * FROM grupo_recursos ")).filter((x) => x.idEmpresa == id_empresa);
 
-    recursoArmado.forEach(recurso => {
-      if (recurso.tipo === '4') {
-        switch (recurso.numeroIcono) {
-          case '1':
-            ruta = "../logos_recursos/Video_Youtube.svg";
-            break;
-          case '2':
-            ruta = "../logos_recursos/Video_Vimeo.svg";
-            break;
-          case '3':
-            ruta = "../logos_recursos/notion.svg";
-            break;
-          case '4':
-            ruta = "../logos_recursos/Archivo_Google_Drive.svg";
-            break;
-          case '5':
-            ruta = "../logos_recursos/Pagina_Web.svg";
-            break;
-        }
-        iconos.push({ ruta: ruta, grupo: r.id });
-      }
-      if (recurso.tipo === '5') {
-        switch (recurso.numeroIcono) {
-          case '1':
-            ruta = "../logos_recursos/Documento_Word.svg";
-            break;
-          case '2':
-            ruta = "../logos_recursos/Documento_PDF.svg";
-            break;
-          case '3':
-            ruta = "../logos_recursos/Documento_PowePoint.svg";
-            break;
-          case '4':
-            ruta = "../logos_recursos/Documento_Excel.svg";
-            break;
-          case '5':
-            ruta = "../logos_recursos/Archivo_imagen.svg";
-            break;
-          case '6':
-            ruta = "../logos_recursos/Otro.svg";
-            break;
-        }
-        iconos.push({ ruta: ruta, grupo: r.id });
-      }
+    if (resultado.length > 0) {
+        resultado.forEach((r) => {
+            let iconos = [], cuerpoHTML = "";
+            const recursoArmado = JSON.parse(r.recurso_armado);
+            const contador = { t1: 0, t2: 0, t3: 0, t4: 0, t5: 0 };
 
-      if (recurso.tipo === '1') {
-        contador.t1++;
-        cuerpoHTML += `<input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="${recurso.id}" value="${recurso.valor}">`;
-      } else if (recurso.tipo === '2') {
-        contador.t2++;
-        cuerpoHTML += `<textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="${recurso.id}">${recurso.valor}</textarea>`;
-      } else if (recurso.tipo === '3') {
-        contador.t3++;
-        cuerpoHTML += `<${recurso.valor} id="${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
-      } else if (recurso.tipo === '4') {
-        contador.t4++;
-        let iconoUrl;
-        if (recurso.numeroIcono === '1') {
-          iconoUrl = "../logos_recursos/Video_Youtube.svg";
-        } else if (recurso.numeroIcono === '2') {
-          iconoUrl = "../logos_recursos/Video_Vimeo.svg";
-        } else if (recurso.numeroIcono === '3') {
-          iconoUrl = "../logos_recursos/notion.svg";
-        } else if (recurso.numeroIcono === '4') {
-          iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
-        } else if (recurso.numeroIcono === '5') {
-          iconoUrl = "../logos_recursos/Pagina_Web.svg";
-        }
-        cuerpoHTML += `
-        <table class="table header-border">
-          <tbody>
-            <tr class="text-black">
-              <td style="width: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
-              <td>
-                <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="${recurso.id}" value="${recurso.valor}">
-              </td>
-            </tr>
-          </tbody>
-        </table>`;
-      } else if (recurso.tipo === '5') {
-        contador.t5++;
-        let iconoUrl;
-        if (recurso.numeroIcono === '1') {
-          iconoUrl = "../logos_recursos/Documento_Word.svg";
-        } else if (recurso.numeroIcono === '2') {
-          iconoUrl = "../logos_recursos/Documento_PDF.svg";
-        } else if (recurso.numeroIcono === '3') {
-          iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
-        } else if (recurso.numeroIcono === '4') {
-          iconoUrl = "../logos_recursos/Documento_Excel.svg";
-        } else if (recurso.numeroIcono === '5') {
-          iconoUrl = "../logos_recursos/Archivo_imagen.svg";
-        } else {
-          iconoUrl = "../logos_recursos/Otro.svg";
-        }
+            recursoArmado.forEach((recurso) => {
+                if (recurso.tipo === "1") {
+                    contador.t1++;
+                    cuerpoHTML += `
+                    <div id="divElemento_${recurso.id}">
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}">
+                    </div>`;
+                } else if (recurso.tipo === "2") {
+                    contador.t2++;
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top:6px" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="grupo${r.id}_${recurso.id}">${recurso.valor}</textarea>`;
+                } else if (recurso.tipo === "3") {
+                    contador.t3++;
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <${recurso.valor} id="grupo${r.id}_${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
+                } else if (recurso.tipo === "4") {
+                    contador.t4++;
+                    let iconoUrl;
+                    if (recurso.numeroIcono === "1") {
+                        iconoUrl = "../logos_recursos/Video_Youtube.svg";
+                    } else if (recurso.numeroIcono === "2") {
+                        iconoUrl = "../logos_recursos/Video_Vimeo.svg";
+                    } else if (recurso.numeroIcono === "3") {
+                        iconoUrl = "../logos_recursos/notion.svg";
+                    } else if (recurso.numeroIcono === "4") {
+                        iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
+                    } else if (recurso.numeroIcono === "5") {
+                        iconoUrl = "../logos_recursos/Pagina_Web.svg";
+                    }
+                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 20px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <table class="table header-border" id="tablaUrl_g${r.id}_${recurso.id}">
+                    <tbody>
+                        <tr class="text-black">
+                        <td style="width: 0px;padding-right: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
+                        <td>
+                            <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}">
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>`;
+                } else if (recurso.tipo === "5") {
+                    contador.t5++;
+                    let iconoUrl;
+                    if (recurso.numeroIcono === "1") {
+                        iconoUrl = "../logos_recursos/Documento_Word.svg";
+                    } else if (recurso.numeroIcono === "2") {
+                        iconoUrl = "../logos_recursos/Documento_PDF.svg";
+                    } else if (recurso.numeroIcono === "3") {
+                        iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
+                    } else if (recurso.numeroIcono === "4") {
+                        iconoUrl = "../logos_recursos/Documento_Excel.svg";
+                    } else if (recurso.numeroIcono === "5") {
+                        iconoUrl = "../logos_recursos/Archivo_imagen.svg";
+                    } else {
+                        iconoUrl = "../logos_recursos/Otro.svg";
+                    }
+                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 10px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <table class="table header-border" id="tablaFile_g${r.id}_${recurso.id}">
+                    <tbody>
+                        <tr class="text-black">
+                        <td style="width: 0px; padding: 2px;">
+                            <a href="${recurso.valor}" target="_blank">
+                            <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                            </a>
+                        </td>
+                        <td style="width: 20px">
+                            <label for="grupo${r.id}_${recurso.id}">
+                            <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
+                            </label>
+                            <input type="file" class="campo_archivo" name="${
+                            recurso.id
+                            }" id="grupo${r.id}_${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
+                        </td>
+                        <td>
+                            <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="grupo${r.id}_${recurso.id}" class="nombre-archivo">${recurso.valor
+                        .split("/")
+                        .pop()}</span>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>`;
+                }
+            });
 
-        cuerpoHTML += `
-        <table class="table header-border">
-          <tbody>
-            <tr class="text-black">
-              <td style="width: 0px;">
-                <a href="${recurso.valor}" target="_blank">
-                  <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
-                </a>
-              </td>
-              <td>
-                <label for="${recurso.id}" class="campo_archivo_btn">
-                  <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
-                </label>
-                <input type="file" class="campo_archivo" name="${recurso.id}" id="${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
-              </td>
-              <td>
-                <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="${recurso.id}" class="nombre-archivo">${recurso.valor.split('/').pop()}</span>
-              </td>
-            </tr>
-          </tbody>
-        </table>`;
-      }
-    });
-  
-    iconos = iconos.filter((valor, indice, self) => {
-      return !self.slice(indice + 1).some(objeto => objeto.ruta === valor.ruta);
-    });
+            iconos = iconos.filter((valor, indice, self) => {
+                return !self
+                .slice(indice + 1)
+                .some((objeto) => objeto.ruta === valor.ruta);
+            });
 
-    grupos.push({
-      idGrupo: r.id,
-      nombre_grupo: r.nombre_grupo,
-      descrip_grupo: r.descrip_grupo,
-      color_grupo: r.color_grupo,
-      recurso_armado: r.recurso_armado,
-      cuerpoHTML: cuerpoHTML,
-      iconos: iconos.filter(icono => icono.grupo === r.id),
-      contador: JSON.stringify(contador)
-    });
-  });
-}
+            r.contadorElementos = contador;
 
-  res.render('empresa/recursos', {
+            grupos.push({
+                idGrupo: r.id,
+                nombre_grupo: r.nombre_grupo,
+                descrip_grupo: r.descrip_grupo,
+                color_grupo: r.color_grupo,
+                recurso_armado: r.recurso_armado,
+                cuerpoHTML: cuerpoHTML,
+                iconos: iconos.filter((icono) => icono.grupo === r.id),
+                contador: JSON.stringify(r.contadorElementos),
+            });
+        });
+    }
+
+  res.render("empresa/recursos", {
     user_dash: true,
     id_empresa,
     categorias,
     recurso,
     datos,
-    grupos
+    grupos,
   });
 }
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
-
     const archivos = req.files;
-    let valor, recursos
+    let recursos;
     let campoId = req.body.id;
-    let valorCampo = req.body.valor;
     let idRecurso = req.body.idRecurso;
     let tipo = req.body.tipo;
     let numeroIconico = req.body.numeroIcono;
 
-    console.log("campoID>",campoId);
-    console.log("Valor>",valorCampo);
-    console.log("IdRecurso",idRecurso);
-    console.log("Tipo>",tipo);
-    console.log("NumeroIcono>",numeroIconico);
-
+    console.log(".....................");
+    console.log("campoID>", campoId);
+    console.log("IdRecurso", idRecurso);
+    console.log("Tipo>", tipo);
+    console.log("NumeroIcono>", numeroIconico);
+  
     if (archivos && archivos.length > 0) {
-    archivos.forEach((archivo) => {
-        valor = '../grupo_recursos/' + archivo.filename;
-        valorCampo = valor;
-    });
+      archivos.forEach((archivo) => {
+        let valor = "../grupo_recursos/" + archivo.filename;
+        req.body.valor = valor; // Asignar el valor actualizado al body
+      });
     }
-    const infoRecursos = await pool.query("SELECT recurso_armado FROM grupo_recursos WHERE id = ?", [idRecurso]);
-    recursos = JSON.parse(infoRecursos[0].recurso_armado);
-
+  
+    const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
+    recursos = JSON.parse(infoRecursos.recurso_armado);
+  
     let campoEncontrado = false;
+    
+    console.log("----> 1",recursos);
+    if (campoId) {
+        if (campoId.includes('_'))
+            campoId = campoId.split('_')[1];
+    }
 
     recursos.forEach((recurso) => {
-    if (recurso.id === campoId) {
-        recurso.valor = valorCampo;
-        recurso.numeroIcono = numeroIconico
+      if (recurso.id == campoId) {
+        console.log("hola - >");
+        recurso.valor = req.body.valor; // Usar el valor actualizado del body
+        recurso.numeroIcono = numeroIconico;
         campoEncontrado = true;
-    }
+      }
     });
-
-    if (!campoEncontrado) {
-    const nuevoCampo = {
+  
+    if (!campoEncontrado && req.body.valor) { // Agregar validación para evitar valores en blanco
+      const nuevoCampo = {
         id: campoId,
-        valor: valorCampo,
+        valor: req.body.valor, // Usar el valor actualizado del body
         tipo: tipo,
         numeroIcono: numeroIconico,
-    };
-    recursos.push(nuevoCampo);
+      };
+      recursos.push(nuevoCampo);
     }
-    console.log(recursos);
-    await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
 
-    res.redirect('/recursos/');
-        
-}
+    await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
+   
+    res.redirect("/recursos/");
+  };
+  
+  
 
 /** Mostrar vista del formulario Ficha Cliente */
 empresaController.validarFichaCliente = async (req, res) => {

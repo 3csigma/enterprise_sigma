@@ -78,7 +78,7 @@ const rutaAlmacen = multer.diskStorage({
 const subirRecurso = multer({ storage: rutaAlmacen });
 
 router.post('/guardar-grupo', checkLogin, subirRecurso.array('archivos'), empresaController.guardar_grupo);
-router.post('/eliminarcampo', checkLogin, empresaController.eliminarcampos)
+router.post('/eliminarCampo', checkLogin, empresaController.eliminarCampo)
 router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)
 
 //Configurar el almacenamiento de Multer
