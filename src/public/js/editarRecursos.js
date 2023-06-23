@@ -288,6 +288,9 @@ function obtenerIconoPorDominio(domain) {
     "notion.so": "../logos_recursos/notion.svg"
   };
 
+  if (domain.includes('www.'))
+    domain = domain.split('www.')[1]
+
   return dominios[domain] || "../logos_recursos/Pagina_Web.svg";
 }
 

@@ -2455,3 +2455,7 @@ dashboardController.finalizarEtapa = async (req, res) => {
     }
     res.send(result)
 }
+
+dashboardController.recursosCompartidos = async (req, res) => {
+    res.render('admin/recursosCompartidos', { adminDash: true })
+}

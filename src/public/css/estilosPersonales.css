@@ -165,13 +165,6 @@ a.text-secondary:focus {
     color: #ff0000;
 }
 
-.opera {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-}
-
-
 .iconoDatos {
     font-size: 19px;
     background: #0e2222;
@@ -205,17 +198,13 @@ a.text-secondary:focus {
 }
 
 .titulo {
-    position: absolute;
-    margin-left: -109px;
     font-weight: 600;
     font-size: 25px;
     color: #FFFFFF;
 }
 
 .texto {
-    position: absolute;
     width: 541px;
-    margin-left: -108px;
     font-style: normal;
     font-weight: 300;
     font-size: 13px;
@@ -226,8 +215,6 @@ a.text-secondary:focus {
 .btnArchivo {
     width: 172px !important;
     height: 45px !important;
-    margin-left: -108px !important;
-    margin-top: 86px !important;
     background-color: #FED061 !important;
     box-shadow: 6px 27px 11px rgba(0, 0, 0, 0.03), 3px 15px 9px rgba(0, 0, 0, 0.09), 1px 7px 7px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.18), 0px 0px 0px rgba(0, 0, 0, 0.18) !important;
     border-radius: 22.5px !important;
@@ -240,8 +227,6 @@ a.text-secondary:focus {
 .btnGrupo {
     width: 172px !important;
     height: 45px !important;
-    margin-left: -103px !important;
-    margin-top: 86px !important;
     background: #000000;
     box-shadow: 6px 27px 11px rgba(0, 0, 0, 0.03), 3px 15px 9px rgba(0, 0, 0, 0.09), 1px 7px 7px rgba(0, 0, 0, 0.15), 0px 2px 4px rgba(0, 0, 0, 0.18), 0px 0px 0px rgba(0, 0, 0, 0.18) !important;
     border-radius: 22.5px !important;

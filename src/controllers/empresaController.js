@@ -3,11 +3,7 @@ const empresaController = exports;
 const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers');
 const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
-const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
-const portalClientes = process.env.PORTAL_CLIENTES;
 const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
-const multer = require('multer');
-const path = require('path');
 
 let pagoPendiente = true, etapa1, consulAsignado = {}, id_empresa = false, etapaCompleta = {};
 let modalAcuerdo = false;
@@ -968,7 +964,7 @@ empresaController.recursos = async (req, res) => {
                     <table class="table header-border" id="tablaFile_g${r.id}_${recurso.id}">
                     <tbody>
                         <tr class="text-black">
-                        <td style="width: 0px; padding: 2px;">
+                        <td style="width: 0px;">
                             <a href="${recurso.valor}" target="_blank">
                             <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
                             </a>

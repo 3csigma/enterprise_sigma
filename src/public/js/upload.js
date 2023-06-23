@@ -36,28 +36,11 @@ dropArea.addEventListener("drop", (e) => {
 });
 
 function showFile(file) {
-  const docType = file.type;
   const extension = file.name.split('.').pop().toLowerCase();
 
-  const validExtensions = {
-    pdf: 'application/pdf',
-    word: ['application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
-    powerpoint: ['application/vnd.ms-powerpoint', 'application/vnd.openxmlformats-officedocument.presentationml.presentation', 'application/vnd.openxmlformats-officedocument.presentationml.slideshow', 'application/vnd.openxmlformats-officedocument.presentationml.slide', 'application/pptx'],
-    excel: ['application/vnd.ms-excel', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'],
-    image: ['image/jpeg', 'image/jpg', 'image/png', 'image/gif']
-  };
-
-  let fileType = '';
   let logoUrl = '';
 
-  for (const key in validExtensions) {
-    if (validExtensions[key].includes(docType) || validExtensions[key].includes(extension)) {
-      fileType = key;
-      break;
-    }
-  }
-
-  switch (fileType) {
+  switch (extension) {
     case 'pdf':
       logoUrl = '../logos_recursos/Documento_PDF.svg';
       break;
@@ -74,16 +57,8 @@ function showFile(file) {
       logoUrl = '../logos_recursos/Archivo_imagen.svg';
       break;
     default:
-      Swal.fire({
-        title: 'Archivo no permnitido',
-        text: "",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#50368C',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'ok'
-    })
-      return;
+      logoUrl = '../logos_recursos/Otro.svg';
+      break;
   }
 
   const fileReader = new FileReader();

@@ -96,6 +96,11 @@ router.post('/website-empresarial', checkLogin, dashboardController.websiteEmpre
 // FINALIZAR ETAPA DE PLAN EMPRESARIAL
 router.post('/finalizarEtapa', checkLogin, dashboardController.finalizarEtapa)
 
+/********************************************************************************
+ * RECURSOS
+ */
+router.post('/recursos-compartidos', checkLogin, dashboardController.recursosCompartidos)
+
 /*******************************************************************************************************/
 // Ejecución Diaria (12pm)
 cron.schedule('0 12 * * 0-6',() => {
