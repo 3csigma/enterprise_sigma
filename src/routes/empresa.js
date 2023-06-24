@@ -23,15 +23,15 @@ router.post('/acuerdo-de-confidencialidad', checkLogin, empresaController.acuerd
 
 // Análisis de Negocio
 router.get('/analisis-de-negocio', checkLogin, empresaController.analisis)
-router.post('/guardar-archivos-analisis', checkLogin, uploadFiles('Análisis-de-negocio_', false, 'archivos_analisis_empresa', false), empresaController.guardarArchivos)
+router.post('/guardar-archivos-analisis', checkLogin, uploadFiles('Análisis-de-negocio_', 'archivos_analisis_empresa'), empresaController.guardarArchivos)
 
 // Plan Empresarial
 router.get('/plan-empresarial', checkLogin, empresaController.planEmpresarial)
-router.post('/guardar-archivos-empresarial', checkLogin, uploadFiles('Plan-empresarial_', false, 'archivos_empresarial_empresa', false), empresaController.guardarArchivos)
+router.post('/guardar-archivos-empresarial', checkLogin, uploadFiles('Plan-empresarial_', 'archivos_empresarial_empresa'), empresaController.guardarArchivos)
 
 // Plan Estratégico de Negocio
 router.get('/plan-estrategico', checkLogin, empresaController.planEstrategico)
-router.post('/guardar-archivos-estrategico', checkLogin, uploadFiles('Plan-estratégico_', false, 'archivos_estrategico_empresa', false), empresaController.guardarArchivos)
+router.post('/guardar-archivos-estrategico', checkLogin, uploadFiles('Plan-estratégico_', 'archivos_estrategico_empresa'), empresaController.guardarArchivos)
 
 // Informes Autogenerados
 router.get('/generar-informe/:tipo', checkLogin, empresaController.informeAutoGenerado)
@@ -44,8 +44,8 @@ const rutaDeAlmacen = multer.diskStorage({
     callback(null, rutaGrupo);
   },
   filename: function (req, file, callback) {
-    //const fechaActual = Math.floor(Date.now() / 1000);
-    urlGrupo = "_" + file.originalname;
+    const fechaActual = Math.floor(Date.now() / 1000);
+    urlGrupo = "Recurso_" + fechaActual + '_' + file.originalname;
     console.log(urlGrupo);
     callback(null, urlGrupo);
   }
@@ -57,27 +57,11 @@ const subirRecursoSuelto = multer({ storage: rutaDeAlmacen }).single('file');
 // Recursos
 // Ruta para enviar el archivo
 router.post('/enviar-archivo', checkLogin, subirRecursoSuelto, empresaController.cargar_recurso);
+// router.post('/enviar-archivo', checkLogin, uploadFiles('Recurso_', ''grupo_recursos', true), empresaController.cargar_recurso);
 router.post('/cargar-link', checkLogin, empresaController.cargar_link);
 router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
 
-// Configurar el almacenamiento de Multer
-const rutaAlmacen = multer.diskStorage({
-  destination: function (req, file, callback) {
-    const rutaGrupo = path.join(__dirname, '../public/grupo_recursos');
-    callback(null, rutaGrupo);
-  },
-  filename: function (req, file, callback) {
-    //const fechaActual = Math.floor(Date.now() / 1000);
-    urlGrupo = "Recurso_" + "_" + file.originalname;
-    console.log(urlGrupo);
-    callback(null, urlGrupo);
-  }
-});
-
-// Crear el middleware de Multer
-const subirRecurso = multer({ storage: rutaAlmacen });
-
-router.post('/guardar-grupo', checkLogin, subirRecurso.array('archivos'), empresaController.guardar_grupo);
+router.post('/guardar-grupo', checkLogin, uploadFiles('Recurso_', 'archivos', 'grupo_recursos', true), empresaController.guardar_grupo);
 router.post('/eliminarCampo', checkLogin, empresaController.eliminarCampo)
 router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)
 

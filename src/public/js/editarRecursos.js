@@ -102,7 +102,7 @@ function agregarCampoTitulo(select) {
   const nuevoCampo = document.createElement('input');
   nuevoCampo.type = 'text';
   nuevoCampo.name = 'titulo';
-  nuevoCampo.placeholder = 'Título';
+  nuevoCampo.placeholder = 'Ingrese el título aquí';
   nuevoCampo.id = `grupo${idGrupo}_titulo${contadores.c1}`;
   nuevoCampo.classList.add("form-control", "campo");
   nuevoCampo.style.cssText = 'width: 100% !important; font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;';

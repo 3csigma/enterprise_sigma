@@ -106,3 +106,7 @@ table.header-border td {
   width: 100%;
   margin-left: 5px;
 }
+
+#categoriaSelectConectar_chosen {
+  margin-left: -14px;
+}

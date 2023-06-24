@@ -44,16 +44,31 @@ function showFile(file) {
     case 'pdf':
       logoUrl = '../logos_recursos/Documento_PDF.svg';
       break;
-    case 'word':
+    case 'doc':
+    case 'docx':
+    case 'docm':
       logoUrl = '../logos_recursos/Documento_Word.svg';
       break;
-    case 'powerpoint':
+    case 'ppt':
+    case 'pptx':
+    case 'pptm':
+    case 'potx':
       logoUrl = '../logos_recursos/Documento_PowerPoint.svg';
       break;
-    case 'excel':
+    case 'xls':
+    case 'xlsx':
+    case 'xlsm':
+    case 'xltx':
       logoUrl = '../logos_recursos/Documento_Excel.svg';
       break;
-    case 'image':
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'svg':
+    case 'psd':
+    case 'ai':
+    case 'tiff':
       logoUrl = '../logos_recursos/Archivo_imagen.svg';
       break;
     default:

@@ -56,7 +56,7 @@ helpers.delDuplicados = (array) => {
 
 /************************************************************************************************************** */
 /** CARGA DE ARCHIVOS */
-helpers.uploadFiles = (preNombre, inputName, carpeta, fecha) => {
+helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false) => {
     const rutaAlmacen = multer.diskStorage({
         destination: (_req, file, cb) => {
             const ruta = path.join(__dirname, '../public/'+carpeta)
@@ -837,6 +837,13 @@ helpers.tareasGenerales = async (empresa, fechaActual) => {
     ]
 
     return { tareas, d1, d2, d3, d4, listo };
+}
+
+/****************************************************************************************************** */
+helpers.obtenerColorAlAzar = () => {
+    const colores = ['#D74040', '#739232', '#58B57D', '#407CD7', '#4085D7', '#9540D7', '#812082', '#FED061', 'linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% )'];
+    const indice = Math.floor(Math.random() * colores.length);
+    return colores[indice];
 }
 
 module.exports = helpers;

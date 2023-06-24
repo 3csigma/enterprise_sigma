@@ -1,6 +1,6 @@
 const pool = require('../database');
 const empresaController = exports;
-const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo } = require('../lib/helpers');
+const { encriptarTxt, desencriptarTxt, consultarTareasEmpresarial, consultarDatos, tareasGenerales, eliminarDatos, actualizarDatos, insertarDatos, cargarArchivo, obtenerColorAlAzar } = require('../lib/helpers');
 const { sendEmail, archivosCargadosHTML } = require('../lib/mail.config');
 const { Country } = require('country-state-city');
 const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
@@ -676,7 +676,7 @@ empresaController.diagnostico = async (req, res) => {
 
 // GUARDAR RECURSOS SUELTOS ::
 empresaController.cargar_recurso = async (req, res) => {
-    const { nombre_recurso, categoria, tipo_archivo, idEmpresa, activeForm } = req.body;
+    const { nombre_recurso, categoria, idEmpresa, activeForm } = req.body;
 
     // Obtener la fecha actual
     let fechaActual = new Date();
@@ -686,30 +686,67 @@ empresaController.cargar_recurso = async (req, res) => {
     let año = fechaActual.getFullYear();
     // Formatear la fecha en el formato deseado
     let fecha= dia + '/' + mes + '/' + año;
-
+    let tipo_archivo = null;
     if (req.file) {
         const archivo = req.file;
         recurso = '../recurso_empresa/' + archivo.filename
+        const ext = archivo.filename.split('.').pop().toLowerCase();
+
+        const extensionesMap = {
+            'doc': 'word',
+            'docx': 'word',
+            'docm': 'word',
+            'xls': 'excel',
+            'xlsx': 'excel',
+            'xlsm': 'excel',
+            'xltx': 'excel',
+            'jpg': 'imagen',
+            'jpeg': 'imagen',
+            'png': 'imagen',
+            'gif': 'imagen',
+            'svg': 'imagen',
+            'psd': 'imagen',
+            'ai': 'imagen',
+            'tiff': 'imagen',
+            'pdf': 'pdf'
+        };
+          
+        tipo_archivo = extensionesMap.hasOwnProperty(ext) ? extensionesMap[ext] : 'Otro';
+
     } 
 
     const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, recurso}
     if (activeForm == 'true') {
         await insertarDatos('recursos', dataRecurso)
-        // await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
     }
 
-      res.redirect('/recursos/');
+    res.redirect('/recursos/');
   
 };
 // GUARDAR LINK DE RECURSOS::
 empresaController.cargar_link = async (req, res) => {
-    const { nombre_recurso, categoria, tipo_archivo, recurso, idEmpresa } = req.body;
+    const { nombre_recurso, categoria, recurso, idEmpresa } = req.body;
 
     const fechaActual = new Date();
     let mes = fechaActual.toLocaleString('default', { month: 'short' });
     mes = mes.charAt(0).toUpperCase() + mes.slice(1);
     // Formatear la fecha en el formato deseado
     let fecha= fechaActual.getDate() + '/' + mes + '/' + fechaActual.getFullYear();
+    let tipo_archivo = "Pagina web";
+    const tipos = {
+        'drive.google': 'Google Drive',
+        'youtube': 'Youtube',
+        'vimeo': 'Vimeo',
+        'notion': 'Notion'
+    };
+
+    for (const x in tipos) {
+        if (recurso.includes(x)) {
+            tipo_archivo = tipos[x];
+            break;
+        }
+    }
+
     const dataRecurso = {idEmpresa, nombre_recurso, categoria, fecha, tipo_archivo, recurso}
     await insertarDatos('recursos', dataRecurso)
     // await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
@@ -733,8 +770,14 @@ empresaController.eliminarRecurso = async (req, res) => {
 // GUARDAR GRUPO DE RECURSOS ::
 empresaController.guardar_grupo = async (req, res) => {
     const { idEmpresa, nombre_grupo, descrip_grupo, esFormulario } = req.body;
-    let color_grupo = req.body.color_grupo
-    if (!color_grupo) {color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"}
+    let { color_grupo } = req.body
+    if (!color_grupo) {
+        color_grupo = obtenerColorAlAzar();
+        // color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"
+    }
+
+    console.log("ID DEL ELEMENTO AGREGADO ===> ", req.body.id);
+    console.log(req.body);
 
     // Obtener los datos acumulados de la variable de sesión
     const datosAcumulados = req.session.datosAcumulados || [];
@@ -753,20 +796,25 @@ empresaController.guardar_grupo = async (req, res) => {
 
     // Verificar si el campo ya existe en los datos acumulados
     const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
+    console.log("CAMPO EXISTENTE ===> ", campoExistente);
     if (campoExistente) {
         // Si el campo existe, actualizar su valor y tipo
         campoExistente.valor = valorCampo;
         campoExistente.tipo = tipoCampo;
         campoExistente.numeroIcono = numeroIcono;
-    } else if (valorCampo) {
+    } else {
         // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
-        const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: numeroIcono };
+        const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: '5' };
         datosAcumulados.push(nuevoCampo);
     }
 
     // Guardar los datos acumulados en la variable de sesión
     req.session.datosAcumulados = datosAcumulados;
+    console.log("--------");
+    console.group("DATOS ACUMULADOS");
     console.log(datosAcumulados);
+    console.groupEnd();
+    console.log("--------");
     const recurso_armado = JSON.stringify(datosAcumulados);
    
     if (esFormulario === 'true') {
@@ -861,9 +909,9 @@ empresaController.recursos = async (req, res) => {
                 iconoSVG = "../logos_recursos/Archivo_Google_Drive.svg";
             } else if (i.tipo_archivo == "Pagina web") {
                 iconoSVG = "../logos_recursos/Pagina_Web.svg";
-            } else if (i.tipo_archivo == "Video de YouTube") {
+            } else if (i.tipo_archivo == "Youtube") {
                 iconoSVG = "../logos_recursos/Video_Youtube.svg";
-            } else if (i.tipo_archivo == "Video de Vimeo") {
+            } else if (i.tipo_archivo == "Vimeo") {
                 iconoSVG = "../logos_recursos/Video_Vimeo.svg";
             } else if (i.tipo_archivo == "Notion") {
                 iconoSVG = "../logos_recursos/notion.svg";
@@ -875,6 +923,8 @@ empresaController.recursos = async (req, res) => {
                 iconoSVG = "../logos_recursos/Documento_PDF.svg";
             } else if (i.tipo_archivo == "imagen") {
                 iconoSVG = "../logos_recursos/Archivo_imagen.svg";
+            } else {
+                iconoSVG = "../logos_recursos/Otro.svg";
             }
 
             datos.push({
@@ -883,7 +933,7 @@ empresaController.recursos = async (req, res) => {
                 fecha: i.fecha,
                 nombre_recurso: i.nombre_recurso,
                 recurso: i.recurso,
-                tipo_archivo: i.tipo_archivo.split(","),
+                tipo_archivo: i.tipo_archivo,
             });
         });
     }
@@ -903,13 +953,13 @@ empresaController.recursos = async (req, res) => {
                     cuerpoHTML += `
                     <div id="divElemento_${recurso.id}">
                     <i class="fas fa-trash-alt icono-borrar" style="color: red;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
-                    <input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}">
+                    <input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}" placeholder="Ingrese el título aquí">
                     </div>`;
                 } else if (recurso.tipo === "2") {
                     contador.t2++;
                     cuerpoHTML += `
                     <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top:6px" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
-                    <textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="grupo${r.id}_${recurso.id}">${recurso.valor}</textarea>`;
+                    <textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="grupo${r.id}_${recurso.id}" placeholder="Agrega algo de texto">${recurso.valor}</textarea>`;
                 } else if (recurso.tipo === "3") {
                     contador.t3++;
                     cuerpoHTML += `
@@ -937,14 +987,14 @@ empresaController.recursos = async (req, res) => {
                         <tr class="text-black">
                         <td style="width: 0px;padding-right: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
                         <td>
-                            <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}">
+                            <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}" placeholder="Ingrese la URL">
                         </td>
                         </tr>
                     </tbody>
                     </table>`;
                 } else if (recurso.tipo === "5") {
                     contador.t5++;
-                    let iconoUrl;
+                    let iconoUrl = "../logos_recursos/Otro.svg";
                     if (recurso.numeroIcono === "1") {
                         iconoUrl = "../logos_recursos/Documento_Word.svg";
                     } else if (recurso.numeroIcono === "2") {
@@ -955,8 +1005,6 @@ empresaController.recursos = async (req, res) => {
                         iconoUrl = "../logos_recursos/Documento_Excel.svg";
                     } else if (recurso.numeroIcono === "5") {
                         iconoUrl = "../logos_recursos/Archivo_imagen.svg";
-                    } else {
-                        iconoUrl = "../logos_recursos/Otro.svg";
                     }
                     iconos.push({ ruta: iconoUrl, grupo: r.id });
                     cuerpoHTML += `
