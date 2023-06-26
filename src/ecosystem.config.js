@@ -11,6 +11,8 @@ module.exports = {
             "**/*/foto_profile",
             "**/*/informes_empresas",
             "**/*/propuestas_empresa",
+            "**/*/recurso_empresa",
+            "**/*/grupo_recursos",
         ],
         env_production: {
             NODE_ENV: "production"
