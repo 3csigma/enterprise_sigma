@@ -71,6 +71,11 @@ function showFile(file) {
     case 'tiff':
       logoUrl = '../logos_recursos/Archivo_imagen.svg';
       break;
+    case 'mov':
+    case 'mp4':
+    case 'avi':
+      logoUrl = '../logos_recursos/icon_Video.svg';
+      break;
     default:
       logoUrl = '../logos_recursos/Otro.svg';
       break;

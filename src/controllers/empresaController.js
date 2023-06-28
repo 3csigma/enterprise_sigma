@@ -708,7 +708,10 @@ empresaController.cargar_recurso = async (req, res) => {
             'psd': 'imagen',
             'ai': 'imagen',
             'tiff': 'imagen',
-            'pdf': 'pdf'
+            'pdf': 'pdf',
+            'mov': 'video',
+            'mp4': 'video',
+            'avi': 'video'
         };
           
         tipo_archivo = extensionesMap.hasOwnProperty(ext) ? extensionesMap[ext] : 'Otro';
@@ -923,6 +926,8 @@ empresaController.recursos = async (req, res) => {
                 iconoSVG = "../logos_recursos/Documento_PDF.svg";
             } else if (i.tipo_archivo == "imagen") {
                 iconoSVG = "../logos_recursos/Archivo_imagen.svg";
+            } else if (i.tipo_archivo == "video") {
+                iconoSVG = "../logos_recursos/icon_Video.svg";
             } else {
                 iconoSVG = "../logos_recursos/Otro.svg";
             }
@@ -1005,6 +1010,8 @@ empresaController.recursos = async (req, res) => {
                         iconoUrl = "../logos_recursos/Documento_Excel.svg";
                     } else if (recurso.numeroIcono === "5") {
                         iconoUrl = "../logos_recursos/Archivo_imagen.svg";
+                    } else if (recurso.numeroIcono === "6") {
+                        iconoUrl = "../logos_recursos/icon_Video.svg";
                     }
                     iconos.push({ ruta: iconoUrl, grupo: r.id });
                     cuerpoHTML += `
@@ -1070,56 +1077,61 @@ empresaController.recursos = async (req, res) => {
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
     const archivos = req.files;
-    let recursos;
-    let campoId = req.body.id;
-    let idRecurso = req.body.idRecurso;
-    let tipo = req.body.tipo;
-    let numeroIconico = req.body.numeroIcono;
+    let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
+
+    console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
 
     console.log(".....................");
-    console.log("campoID>", campoId);
+    console.log("campo ID>", idCampo);
     console.log("IdRecurso", idRecurso);
     console.log("Tipo>", tipo);
-    console.log("NumeroIcono>", numeroIconico);
+    console.log("NumeroIcono>", numeroIcono);
   
     if (archivos && archivos.length > 0) {
-      archivos.forEach((archivo) => {
-        let valor = "../grupo_recursos/" + archivo.filename;
-        req.body.valor = valor; // Asignar el valor actualizado al body
-      });
+        valor = archivos.map(archivo => "../grupo_recursos/" + archivo.filename);
     }
   
-    const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
-    recursos = JSON.parse(infoRecursos.recurso_armado);
-  
-    let campoEncontrado = false;
+    if (idCampo && idCampo.includes('_')) {
+        idCampo = idCampo.split('_')[1];
+    }
     
-    console.log("----> 1",recursos);
-    if (campoId) {
-        if (campoId.includes('_'))
-            campoId = campoId.split('_')[1];
-    }
+    const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
+    nombre_grupo = infoRecursos.nombre_grupo != nombre_grupo ? nombre_grupo : infoRecursos.nombre_grupo;
+    descrip_grupo = infoRecursos.descrip_grupo != descrip_grupo ? descrip_grupo : infoRecursos.descrip_grupo;
+    color_grupo = infoRecursos.color_grupo != color_grupo ? color_grupo : infoRecursos.color_grupo;
+    let recursos = JSON.parse(infoRecursos.recurso_armado);
+    console.log("\n**** DATOS DEL GRUPO DATABASE ==> ", recursos);
 
+    let campoEncontrado = false;
     recursos.forEach((recurso) => {
-      if (recurso.id == campoId) {
-        console.log("hola - >");
-        recurso.valor = req.body.valor; // Usar el valor actualizado del body
-        recurso.numeroIcono = numeroIconico;
-        campoEncontrado = true;
-      }
+        if (recurso.id == idCampo) {
+            recurso.valor = valor; // Usar el valor actualizado del body
+            recurso.numeroIcono = numeroIcono;
+            campoEncontrado = true;
+        }
     });
   
-    if (!campoEncontrado && req.body.valor) { // Agregar validación para evitar valores en blanco
-      const nuevoCampo = {
-        id: campoId,
-        valor: req.body.valor, // Usar el valor actualizado del body
-        tipo: tipo,
-        numeroIcono: numeroIconico,
-      };
-      recursos.push(nuevoCampo);
+    if (!campoEncontrado && valor) { // Agregar validación para evitar valores en blanco
+        recursos.push({
+            id: idCampo,
+            valor: valor,
+            tipo: tipo,
+            numeroIcono: numeroIcono,
+        });
     }
 
-    await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [JSON.stringify(recursos), idRecurso]);
+    console.log("Recurso armado nuevo para DB ==>");
+    console.log(recursos);
+
+    const data = {
+        nombre_grupo,
+        descrip_grupo,
+        color_grupo,
+        recurso_armado: JSON.stringify(recursos),
+    }
+    await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
+
+    // await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [, idRecurso]);
    
     res.redirect("/recursos/");
   };

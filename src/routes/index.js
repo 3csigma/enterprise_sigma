@@ -8,7 +8,7 @@ const csrfProtection = csrf({ cookie: true })
 const multer = require('multer');
 const path = require('path');
 const cron = require('node-cron');
-const { habilitar_siguientePago, historial_consultores_admin, historial_empresas_admin, historial_informes_admin, historial_informes_consultor, historial_empresas_consultor, consultar_tiempo_tareas, uploadFiles, habilitar_sgteDiagnostico } = require('../lib/helpers')
+const helpers = require('../lib/helpers')
 
 /** SUBIR CERTIFICADOS CONSULTORES */
 const rutaAlmacen = multer.diskStorage({
@@ -90,48 +90,49 @@ router.post('/guardarInforme', checkLogin, dashboardController.subirInforme, das
  * PLAN EMPRESARIAL
  */
 // SUBIR ARCHIVOS PARA PLAN EMPRESARIAL
-router.post('/guardar-archivos-empresarial', checkLogin, uploadFiles('Plan-Empresarial_', false, 'archivos_plan_empresarial', false), dashboardController.guardarArchivo_Empresarial)
+router.post('/guardar-archivos-empresarial', checkLogin, helpers.uploadFiles('Plan-Empresarial_', false, 'archivos_plan_empresarial', false, false), dashboardController.guardarArchivo_Empresarial)
 // SUBIR ARCHIVOS PARA PLAN EMPRESARIAL
 router.post('/website-empresarial', checkLogin, dashboardController.websiteEmpresarial)
 // FINALIZAR ETAPA DE PLAN EMPRESARIAL
 router.post('/finalizarEtapa', checkLogin, dashboardController.finalizarEtapa)
 
 /********************************************************************************
- * RECURSOS
- */
-router.post('/recursos-compartidos', checkLogin, dashboardController.recursosCompartidos)
+ * RECURSOS COMPARTIDOS
+*/
+router.get('/recursos-compartidos', checkLogin, dashboardController.recursosCompartidos)
+router.post('/add-grupos-compartidos', checkLogin, helpers.uploadFiles('Recurso_', 'archivos', 'grupo_recursos', true, false), dashboardController.addRecursos_Compartidos);
 
 /*******************************************************************************************************/
 // Ejecución Diaria (12pm)
 cron.schedule('0 12 * * 0-6',() => {
-    habilitar_siguientePago()
+    helpers.habilitar_siguientePago()
 });
 
 // Ejecución Mensual
 cron.schedule('0 1 1 * *',() => {
-    historial_empresas_admin();
-    historial_consultores_admin();
-    historial_informes_admin();
-    historial_empresas_consultor();
-    historial_informes_consultor();
-    habilitar_sgteDiagnostico();
+    helpers.historial_consultores_admin();
+    helpers.historial_consultores_admin();
+    helpers.historial_informes_admin();
+    helpers.historial_empresas_consultor();
+    helpers.historial_informes_consultor();
+    helpers.habilitar_sgteDiagnostico();
 });
 
-router.post('/historial_empresas_admin', historial_empresas_admin)
-router.post('/habilitardiagnostico', habilitar_sgteDiagnostico)
+router.post('/historial_empresas_admin', helpers.historial_empresas_admin)
+router.post('/habilitardiagnostico', helpers.habilitar_sgteDiagnostico)
 
 // Ejecución Semanal
 cron.schedule('0 10 * * Mon',() => {
-    consultar_tiempo_tareas();
+    helpers.consultar_tiempo_tareas();
 });
 
 router.get('/retrasadas', (req, res) => {
-    consultar_tiempo_tareas()
+    helpers.consultar_tiempo_tareas()
     res.send("TODO OK -> END consultar_tiempo_tareas")
 });
 
 router.get('/consultarPagos', (req, res) => {
-    habilitar_siguientePago()
+    helpers.habilitar_siguientePago()
     res.send("Consulta de pagos pendientes (ANÁLISIS Y EMPRESARIAL) finalizada.. -> Todo Ok")
 });
 
