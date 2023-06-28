@@ -1,15 +1,14 @@
-require("dotenv").config();
 const express = require('express');
+const path = require('path');
+const cookieParser = require('cookie-parser');
+const flash = require('connect-flash')
 const session = require('express-session')
+require("dotenv").config();
+const morgan = require('morgan'); // Registra las solicitudes + otra información & la muestra por consola
 const { engine } = require('express-handlebars');
 const bodyParser = require('body-parser')
-const morgan = require('morgan'); // Registra las solicitudes + otra información & la muestra por consola
 const passport = require('passport')
-const path = require('path');
-const flash = require('connect-flash')
-const cookieParser = require('cookie-parser');
 const MemoryStore = require('memorystore')(session);
-const multer = require('multer');
 
 // Inicializaciones
 const app = express();
@@ -18,25 +17,28 @@ require('./lib/passport')
 // Configuraciones
 app.set('port', process.env.PORT);
 
-app.set('views', __dirname + '/views');
 app.engine('hbs', engine({
   extname: '.hbs',
   defaultLayout: 'main',
   helpers: require('./lib/handlebars')
 }));
 app.set('view engine', 'hbs');
+app.set('views', __dirname + '/views');
 
-// app.set('trust proxy', 1) // Proxy de confianza
+app.set('trust proxy', 1) // Proxy de confianza
 
 /******* Middlewares *******/
 app.use(morgan('dev'))
+app.use(flash())
 // parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: true }))
+app.use(bodyParser.json())
 // Carpeta de archivos publicos
 app.use(express.static(path.join(__dirname, 'public')))
-app.use(bodyParser.urlencoded({ extended: true }))
-// parse application/json
-app.use(bodyParser.json())
+// Para poder trabajar con las cookies
 app.use(cookieParser())
+
+// Configurar sesión
 app.use(session({
   secret: 'secretNegocio_3CSigma',
   name: '3C-launcher-session',
@@ -48,7 +50,7 @@ app.use(session({
     checkPeriod: 86400000 // eliminar las entradas caducadas cada 24 horas
   })
 }))
-app.use(flash())
+
 app.use(passport.initialize());
 app.use(passport.session()); // Inicio de sesiones persistentes
 // app.use(csrf()) //Protección contra los ataques csrf
@@ -99,3 +101,5 @@ app.get('*', (req, res) => {
 app.listen(app.get('port'), () => {
   console.log('\nCORRIENDO DESDE http://localhost:'+app.get('port'));
 });
+
+module.exports = app;

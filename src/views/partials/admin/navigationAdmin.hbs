@@ -72,7 +72,7 @@
               {{#comparar itemActivo '==' 1}}Dashboard{{/comparar}}
               {{#comparar itemActivo '==' 2}}Consultores registrados{{/comparar}}
               {{#comparar itemActivo '==' 3}}Empresas registradas{{/comparar}}
-              {{!-- {{#comparar itemActivo '==' 4}}Informes generales{{/comparar}} --}}
+              {{#comparar itemActivo '==' 4}}Recursos{{/comparar}}
               {{#if consultor.foto}}Perfil{{/if}}
             </div>
           </div>
@@ -266,17 +266,17 @@
             <span class="nav-text">Empresas registradas</span>
           </a>
         </li>
-        {{!-- {{#comparar itemActivo '==' 4}}
+        {{#comparar itemActivo '==' 4}}
         <li class="mm-active">
           {{/comparar}}
           {{#comparar itemActivo '!=' 4}}
         <li>
           {{/comparar}}
-          <a href="#informes" aria-expanded="false">
-            <i class="fas fa-file-invoice"></i>
-            <span class="nav-text">Informes generales</span>
+          <a href="/recursos-compartidos" aria-expanded="false">
+            <i class="fa-solid fa-photo-film"></i>
+            <span class="nav-text">Recursos</span>
           </a>
-        </li> --}}
+        </li>
       </ul>
 
       {{#if aprobarConsultor}}

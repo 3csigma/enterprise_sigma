@@ -102,28 +102,33 @@ function eliminarRecurso(id) {
 
   // :: GRUPO RECURSOS ::
 // :: PARA CAPTURAR EL COLOR DEL GRUPO ::
-// Obtener los botones de selección de color
-let colorButtons = document.querySelectorAll('.colorButton');
-let colorGrupoInput = document.getElementById("colorGrupoInput");
+// Obtener los botones de selección de color (Modal Subir & Editar Grupo)
+const colorButtons = document.querySelectorAll('.colorBtnAdd');
+const colorGrupoInput = document.getElementById("colorGrupoInput");
+capturarColor_Grupo(colorButtons, colorGrupoInput)
 
+const colorButtons_edit = document.querySelectorAll('.colorBtnEdit');
+const colorGrupoInput_edit = document.getElementById("colorGrupoInput_edit");
+capturarColor_Grupo(colorButtons_edit, colorGrupoInput_edit)
+
+/*************************************************
+ * FUNCIÓN PARA EL PROCESO DE SELECCIÓN DE COLORES
+*/
 // Agregar evento de clic a los botones de color
-colorButtons.forEach(function(button) {
-  button.addEventListener("click", function() {
-    // Remover la clase 'selected' de todos los botones
-    colorButtons.forEach(function(btn) {
-      btn.classList.remove('selected');
+function capturarColor_Grupo(colorButtons_, grupoInput) {
+  colorButtons_.forEach((button) => {
+    button.addEventListener("click", function() {
+      // Remover la clase 'selected' de todos los botones
+      colorButtons.forEach(btn => btn.classList.remove('selected') );
+  
+      // Agregar la clase 'selected' al botón clicado
+      this.classList.add('selected');
+  
+      // Guardar el color seleccionado en el campo de entrada oculto
+      grupoInput.value = this.getAttribute('data-color');
     });
-
-    // Agregar la clase 'selected' al botón clicado
-    this.classList.add('selected');
-
-    // Obtener el color seleccionado
-    let selectedColor = this.getAttribute('data-color');
-
-    // Guardar el color seleccionado en el campo de entrada oculto
-    colorGrupoInput.value = selectedColor;
   });
-});
+}
 
 // Obtener elementos del DOM
 const select = document.getElementById("opciones");
@@ -397,25 +402,39 @@ function crearCampoArchivo() {
     nombreArchivo.textContent = nombreArchivoMostrado;
 
     const extensiones = {
-      'doc': 1,
-      'docx': 1,
-      'pdf': 2,
-      'ppt': 3,
-      'pptx': 3,
-      'xls': 4,
-      'xlsx': 4,
-      'jpg': 5,
-      'jpeg': 5,
-      'png': 5
+      'doc': '1',
+      'docx': '1',
+      'docm': '1',
+      'pdf': '2',
+      'ppt': '3',
+      'pptx': '3',
+      'pptm': '3',
+      'potx': '3',
+      'pptx': '3',
+      'xls': '4',
+      'xlsx': '4',
+      'xlsm': '4',
+      'xltx': '4',
+      'jpg': '5',
+      'jpeg': '5',
+      'png': '5',
+      'gif': '5',
+      'svg': '5',
+      'psd': '5',
+      'ai': '5',
+      'tiff': '5',
+      'mov' : '6',
+      'mp4' : '6',
+      'avi' : '6',
     };
-    const numeroIcono = extensiones[extension] || 6;
+    const numeroIcono = extensiones[extension] || '7|';
     
     const archivos = event.target.files;
     const formData = new FormData();
     formData.append("id", inputFile.name);
     formData.append("valor", archivos[0].name);
     formData.append("tipo", "5");
-    formData.append("numeroIcono", numeroIcono.toString());
+    formData.append("numeroIcono", numeroIcono);
 
     for (let i = 0; i < archivos.length; i++) {
       formData.append("archivos", archivos[i]);
@@ -427,6 +446,8 @@ function crearCampoArchivo() {
     })
       .then(response => response.json())
       .then(data => {
+        console.log("Respuesta desde /guardar-grupo")
+        console.log(data);
         // ...
       })
       .catch(error => {
@@ -443,22 +464,22 @@ function obtenerExtensionArchivo(nombreArchivo) {
 // Función para obtener el icono correspondiente a una extensión de archivo
 function obtenerIcono(extension) {
   switch (extension) {
+    case 'pdf':
+      return '../logos_recursos/Documento_PDF.svg';
     case 'doc':
     case 'docx':
     case 'docm':
-      return "../logos_recursos/Documento_Word.svg";
-    case 'pdf':
-      return "../logos_recursos/Documento_PDF.svg";
+      return '../logos_recursos/Documento_Word.svg';
     case 'ppt':
     case 'pptx':
     case 'pptm':
     case 'potx':
-      return "../logos_recursos/Documento_PowePoint.svg";
+      return '../logos_recursos/Documento_PowerPoint.svg';
     case 'xls':
     case 'xlsx':
     case 'xlsm':
     case 'xltx':
-      return "../logos_recursos/Documento_Excel.svg";
+      return '../logos_recursos/Documento_Excel.svg';
     case 'jpg':
     case 'jpeg':
     case 'png':
@@ -467,9 +488,13 @@ function obtenerIcono(extension) {
     case 'psd':
     case 'ai':
     case 'tiff':
-      return "../logos_recursos/Archivo_imagen.svg";
+      return '../logos_recursos/Archivo_imagen.svg';
+    case 'mov':
+    case 'mp4':
+    case 'avi':
+      return '../logos_recursos/icon_Video.svg';
     default:
-      return "../logos_recursos/Otro.svg";
+      return '../logos_recursos/Otro.svg';
   }
 }
 

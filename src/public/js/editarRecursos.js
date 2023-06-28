@@ -177,7 +177,7 @@ function agregarSeparador(select) {
 
   // Creando Datos del Formulario para enviar al Fetch
   const formData = new FormData();
-  formData.append("id", campoId);
+  formData.append("idCampo", campoId);
   formData.append("valor", valorCampo);
   formData.append("tipo", tipoCampo);
   formData.append("idRecurso", idGrupo);
@@ -441,29 +441,30 @@ function agregarArhivo(select) {
     const numeroIcono = numero_Icon_(extensiones);
     // Crear un objeto FormData para enviar los datos y los archivos al controlador
     const formData = new FormData();
-    formData.append("id", nuevoCampo.name);
+    formData.append("idCampo", nuevoCampo.name);
     formData.append("valor", archivos[0].name);
     formData.append("tipo", "5"); // Tipo 5 para archivos
     formData.append("idRecurso", idGrupo); // Tipo 5 para archivos
     formData.append("numeroIcono", numeroIcono); // Número de icono
 
     // Agregar los archivos al FormData
-    for (let i = 0; i < archivos.length; i++) {
-      formData.append("archivos", archivos[i]);
-    }
+    archivos.forEach(archivo => {
+      formData.append("archivos", archivo);
+    });
+    
+    actualizarRecurso(formData)
+    // fetch("/actualizarRecurso", {
+    //   method: "POST",
+    //   body: formData,
+    // })
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     // ...
+    //   })
+    //   .catch((error) => {
+    //     // ...
+    //   });
 
-    // Ejemplo: enviar el FormData al controlador mediante fetch
-    fetch("/actualizarRecurso", {
-      method: "POST",
-      body: formData,
-    })
-      .then((response) => response.json())
-      .then((data) => {
-        // ...
-      })
-      .catch((error) => {
-        // ...
-      });
   });
 }
 
@@ -475,23 +476,37 @@ function obtenerExt(nombreFiles) {
 // Función para obtener el icono correspondiente a una extensión de archivo
 function obtenerIcon(ext) {
   switch (ext) {
-    case "doc":
-    case "docx":
-      return "../logos_recursos/Documento_Word.svg";
-    case "pdf":
-      return "../logos_recursos/Documento_PDF.svg";
-    case "ppt":
-    case "pptx":
-      return "../logos_recursos/Documento_PowePoint.svg";
-    case "xls":
-    case "xlsx":
-      return "../logos_recursos/Documento_Excel.svg";
-    case "jpg":
-    case "jpeg":
-    case "png":
-      return "../logos_recursos/Archivo_imagen.svg";
+    case 'pdf':
+      return '../logos_recursos/Documento_PDF.svg';
+    case 'doc':
+    case 'docx':
+    case 'docm':
+      return '../logos_recursos/Documento_Word.svg';
+    case 'ppt':
+    case 'pptx':
+    case 'pptm':
+    case 'potx':
+      return '../logos_recursos/Documento_PowerPoint.svg';
+    case 'xls':
+    case 'xlsx':
+    case 'xlsm':
+    case 'xltx':
+      return '../logos_recursos/Documento_Excel.svg';
+    case 'jpg':
+    case 'jpeg':
+    case 'png':
+    case 'gif':
+    case 'svg':
+    case 'psd':
+    case 'ai':
+    case 'tiff':
+      return '../logos_recursos/Archivo_imagen.svg';
+    case 'mov':
+    case 'mp4':
+    case 'avi':
+      return '../logos_recursos/icon_Video.svg';
     default:
-      return "../logos_recursos/Otro.svg";
+      return '../logos_recursos/Otro.svg';
   }
 }
 
@@ -557,42 +572,46 @@ function verGrupo(idGrupo){
 }
 
 function handleCampoBlur2(event) {
-  const valorCampo = event.target.value;
-  const campoId = event.target.id;
+  const idCampo = event.target.id;
+  const valor = event.target.value;
   // Obtener el id del grupo correspondiente
   const idGrupo = event.target.closest('.modal').getAttribute('id').split('-')[1];
   const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
   // Obtener el número de icono desde el atributo data del inputUrl
   let numeroIcono = event.target.getAttribute("data-numero-icono");
-  let tipoCampo;
+  let tipo;
 
   // Determinar el tipo de campo según su ID
-  if (campoId.includes('titulo')) {
-      tipoCampo = '1'; // Tipo 1 para títulos
-  } else if (campoId.includes('descripcion')) {
-      tipoCampo = '2'; // Tipo 2 para descripcion
-  } else if (campoId.includes('url')) {
-      tipoCampo = '4'; // Tipo 4 para url
+  if (idCampo.includes('titulo')) {
+      tipo = '1'; // Tipo 1 para títulos
+  } else if (idCampo.includes('descripcion')) {
+      tipo = '2'; // Tipo 2 para descripcion
+  } else if (idCampo.includes('url')) {
+      tipo = '4'; // Tipo 4 para url
   }
 
-  console.log("valor" , valorCampo);
-  console.log("campoid" , campoId);
-  console.log("tipoCampo" , tipoCampo);
-  console.log("idRecurso" , idRecurso);
+  const formData = new FormData();
+  formData.append("idCampo", idCampo);
+  formData.append("valor", valor);
+  formData.append("tipo", tipo);
+  formData.append("idRecurso", idRecurso); // Tipo 5 para archivos
+  formData.append("numeroIcono", numeroIcono); // Número de icono
 
-  // Ejemplo: enviar el valor del campo al controlador mediante fetch
-  fetch('/actualizarRecurso', {
-      method: 'POST',
-      body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, idRecurso: idRecurso, numeroIcono:numeroIcono }),
-      headers: { 'Content-Type': 'application/json'}
-    })
-      .then(response => response.json())
-      .then(data => {
-      console.log("TODO BIEN", data);
-      })
-      .catch(error => {
-       console.log("TODO MAL", error);
-      });
+  console.log("FORM DATA - HANDLE CAMPO BLUR ==> ", formData)
+
+  actualizarRecurso(formData)
+  // fetch('/actualizarRecurso', {
+  //     method: 'POST',
+  //     body: JSON.stringify({ idCampo, valor, tipo, idRecurso, numeroIcono }),
+  //     headers: { 'Content-Type': 'application/json'}
+  //   })
+  //     .then(response => response.json())
+  //     .then(data => {
+  //     console.log("TODO BIEN", data);
+  //     })
+  //     .catch(error => {
+  //      console.log("TODO MAL", error);
+  //     });
 }
 
 
@@ -620,32 +639,42 @@ const camposDinamicos = document.querySelectorAll('.camposD');
 camposDinamicos.forEach(campo => {
   campo.addEventListener('input', () => {
 
-    const id = campo.id; // Obtener el ID del recurso
+    const idCampo = campo.id; // Obtener el ID del recurso
     const valor = campo.value; // Obtener el valor actualizado del campo
 
-    if (id.includes('url')) {
+    if (idCampo.includes('url')) {
       mostrarUrlNueva(campo);
     }
 
-    console.log(" id ->" , id);
+    console.log(" idCampo ->" , idCampo);
     console.log(" valor ->" , valor);
 
     // Obtener el id del grupo correspondiente
     const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
     numeroIcono = JSON.stringify(numeroIcono);
-    fetch('/actualizarRecurso', {
-      method: 'POST',
-      body: JSON.stringify({ id: id, valor: valor, idRecurso: idRecurso, numeroIcono: numeroIcono }),
-      headers: { 'Content-Type': 'application/json' }
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Campo actualizado:', data);
-      })
-      .catch(error => {
-       // console.error('Error al actualizar campo:', error);
-      });
+
+    const formData = new FormData();
+    formData.append("idCampo", idCampo);
+    formData.append("valor", valor);
+    formData.append("tipo", null); // Tipo 5 para archivos
+    formData.append("idRecurso", idRecurso); // Tipo 5 para archivos
+    formData.append("numeroIcono", numeroIcono); // Número de icono
+
+    actualizarRecurso(formData)
+
+    // fetch('/actualizarRecurso', {
+    //   method: 'POST',
+    //   body: JSON.stringify({ idCampo, valor, idRecurso, numeroIcono }),
+    //   headers: { 'Content-Type': 'application/json' }
+    // })
+    //   .then(response => response.json())
+    //   .then(data => {
+    //     console.log('Campo actualizado:', data);
+    //   })
+    //   .catch(error => {
+    //    // console.error('Error al actualizar campo:', error);
+    //   });
   });
 });
 
@@ -700,21 +729,35 @@ function obtenerNumeroIconoPorExtension(extension) {
   switch (extension) {
     case 'doc':
     case 'docx':
+    case 'docm':
       return 1;
     case 'pdf':
       return 2;
     case 'ppt':
     case 'pptx':
+    case 'pptm':
+    case 'potx':
       return 3;
     case 'xls':
     case 'xlsx':
+    case 'xlsm':
+    case 'xltx':
       return 4;
     case 'jpg':
     case 'jpeg':
     case 'png':
+    case 'gif':
+    case 'svg':
+    case 'psd':
+    case 'ai':
+    case 'tiff':
       return 5;
-    default:
+    case 'mov':
+    case 'mp4':
+    case 'avi':
       return 6;
+    default:
+      return 7;
   }
 }
 
@@ -731,6 +774,8 @@ function obtenerIconoPorNumero(numeroIcono) {
       return "../logos_recursos/Documento_Excel.svg";
     case 5:
       return "../logos_recursos/Archivo_imagen.svg";
+    case 6:
+      return "../logos_recursos/icon_Video.svg";
     default:
       return "../logos_recursos/Otro.svg";
   }
@@ -747,16 +792,14 @@ camposArchivo.forEach(campo => {
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
     const recursoId = campo.id; // Obtener el recurso.id del campo
 
+    const extension = obtenerExtension(campo.files[0].name);
+    const numIcono = obtenerNumeroIconoPorExtension(extension);
     // Crear una instancia de FormData y agregar el archivo seleccionado
     const formData = new FormData();
     formData.append('archivo', campo.files[0]);
-    formData.append('id', recursoId);
+    formData.append('idCampo', recursoId);
     formData.append('valor', campo.files[0].name);
     formData.append('idRecurso', idRecurso);
-    
-    const extension = obtenerExtension(campo.files[0].name);
-    const numIcono = obtenerNumeroIconoPorExtension(extension);
-
     formData.append('numeroIcono', numIcono.toString());
 
     fetch('/actualizarRecurso', {

@@ -3,7 +3,7 @@ const pool = require('../database')
 const passport = require('passport')
 const multer = require('multer');
 const path = require('path');
-const { consultarInformes, consultarDatos, tareasGenerales, consultarTareasEmpresarial, insertarDatos, eliminarDatos, consultarTareasConsultores } = require('../lib/helpers')
+const helpers = require('../lib/helpers')
 const { sendEmail, consultorAsignadoHTML, consultorAprobadoHTML, informesHTML, etapaFinalizadaHTML, consultor_AsignadoEtapa, archivosPlanEmpresarialHTML } = require('../lib/mail.config');
 const stripe = require('stripe')(process.env.CLIENT_SECRET_STRIPE);
 const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
@@ -20,8 +20,8 @@ dashboardController.admin = async (req, res) => {
     const pendientes = await pool.query('SELECT id_usuarios, codigo, estadoAdm FROM users WHERE rol = "Consultor" AND estadoAdm = 0 ORDER BY id_usuarios ASC;')
     pendientes.length > 0 ? aprobarConsultor = pendientes[0].codigo : aprobarConsultor = aprobarConsultor;
 
-    const consultorAsignado = await consultarDatos('consultores')
-    const ficha = await consultarDatos('ficha_cliente')
+    const consultorAsignado = await helpers.consultarDatos('consultores')
+    const ficha = await helpers.consultarDatos('ficha_cliente')
 
     empresas.forEach(e => {
         consultorAsignado.forEach(c => {
@@ -71,10 +71,10 @@ dashboardController.admin = async (req, res) => {
     /**
      * TAREAS ADMINISTRADOR
      */
-    let consultor = await consultarDatos('consultores')
+    let consultor = await helpers.consultarDatos('consultores')
     consultor = consultor.find(x => x.codigo == req.user.codigo)
     const fechaActual = new Date().toLocaleDateString('fr-CA');
-    const tareas = await consultarTareasConsultores(consultor.id_consultores, fechaActual)
+    const tareas = await helpers.consultarTareasConsultores(consultor.id_consultores, fechaActual)
 
     res.render('admin/panelAdmin', { 
         adminDash: true, itemActivo: 1, consultores, empresas, aprobarConsultor, graficas1: true, 
@@ -131,7 +131,7 @@ dashboardController.actualizarConsultor = async (req, res) => {
     const c1 = await pool.query('UPDATE users SET ? WHERE codigo = ? AND rol = "Consultor"', [nuevoEstado, codigo])
     const c2 = await pool.query('UPDATE consultores SET ? WHERE codigo = ?', [estadoNivel, codigo])
     // Capturando el Consultor Aprobado
-    let consultor = await consultarDatos('users')
+    let consultor = await helpers.consultarDatos('users')
     consultor = consultor.find(x => x.codigo == codigo && x.rol == 'Consultor')
 
     if (c1.changedRows > 0) {
@@ -182,12 +182,12 @@ dashboardController.bloquearConsultor = async (req, res) => {
 dashboardController.mostrarEmpresas = async (req, res) => {
     let empresas = await pool.query('SELECT e.*, u.codigo, u.estadoEmail, u.estadoAdm, f.telefono, f.id_empresa, p.*, a.id_empresa, a.estadoAcuerdo FROM empresas e LEFT OUTER JOIN ficha_cliente f ON f.id_empresa = e.id_empresas LEFT OUTER JOIN pagos p ON p.id_empresa = e.id_empresas LEFT OUTER JOIN acuerdo_confidencial a ON a.id_empresa = e.id_empresas INNER JOIN users u ON u.codigo = e.codigo AND rol = "Empresa"')
 
-    const dg_nueva = await consultarDatos('dg_empresa_nueva')
-    const dg_establecida = await consultarDatos('dg_empresa_establecida')
-    const dg_analisis = await consultarDatos('analisis_empresa')
-    const consultor = await consultarDatos('consultores')
-    const informe = await consultarDatos('informes')
-    const propuestas = await consultarDatos('propuestas')
+    const dg_nueva = await helpers.consultarDatos('dg_empresa_nueva')
+    const dg_establecida = await helpers.consultarDatos('dg_empresa_establecida')
+    const dg_analisis = await helpers.consultarDatos('analisis_empresa')
+    const consultor = await helpers.consultarDatos('consultores')
+    const informe = await helpers.consultarDatos('informes')
+    const propuestas = await helpers.consultarDatos('propuestas')
 
     empresas.forEach(e => {
         e.pagoEtapa1 = false;
@@ -274,12 +274,12 @@ dashboardController.mostrarEmpresas = async (req, res) => {
 dashboardController.editarEmpresa = async (req, res) => {
     const codigo = req.params.codigo, datos = {};
     const fechaActual = new Date().toLocaleDateString('fr-CA');
-    const userEmpresa = (await consultarDatos('users')).find(x => x.codigo == codigo && x.rol == 'Empresa')
+    const userEmpresa = (await helpers.consultarDatos('users')).find(x => x.codigo == codigo && x.rol == 'Empresa')
     // Empresa tabla Usuarios
-    const datosEmpresa = (await consultarDatos('empresas')).find(x => x.codigo == codigo)
+    const datosEmpresa = (await helpers.consultarDatos('empresas')).find(x => x.codigo == codigo)
     const idEmpresa = datosEmpresa.id_empresas;
     // Empresa tabla Ficha Cliente
-    const empresa = (await consultarDatos('ficha_cliente')).find(x => x.id_empresa == idEmpresa)
+    const empresa = (await helpers.consultarDatos('ficha_cliente')).find(x => x.id_empresa == idEmpresa)
     const pago_diagnostico = {
         color : 'badge-warning',
         texto : 'Pendiente',
@@ -303,7 +303,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     datos.consultor_diagnostico = false;
 
     // PAGOS DE LA EMPRESA
-    let pagos = await consultarDatos('pagos')
+    let pagos = await helpers.consultarDatos('pagos')
     let pay = pagos.find(i => i.id_empresa == idEmpresa)
     if (!pay) {
         const estado = JSON.stringify({estado:0})
@@ -320,7 +320,7 @@ dashboardController.editarEmpresa = async (req, res) => {
             empresarial2: estado,
             empresarial3: estado,
         }
-        await insertarDatos('pagos', nuevoPago)
+        await helpers.insertarDatos('pagos', nuevoPago)
     }
 
     // INFO DE LA EMPRESA HASTA LA FICHA CLIENTE
@@ -329,8 +329,8 @@ dashboardController.editarEmpresa = async (req, res) => {
         datosEmpresa.estadoEmail == 1 ? datos.etapa = 'Email confirmado' : datos.etapa = datos.etapa;
         // datosEmpresa.consultor != null ? datos.etapa = 'Consultor asignado' : datos.etapa = datos.etapa;
         
-        let consulDg = await consultarDatos('consultores_asignados')
-        let infoConsul = await consultarDatos('consultores')
+        let consulDg = await helpers.consultarDatos('consultores_asignados')
+        let infoConsul = await helpers.consultarDatos('consultores')
         if (consulDg.length > 0) {
             // Buscando el Consultor asignado en la Etapa Diagnóstico para la empresa actual
             consulDg = consulDg.find(x => x.empresa == datos.idEmpresa && x.orden == 1)
@@ -361,7 +361,7 @@ dashboardController.editarEmpresa = async (req, res) => {
         }
 
         // PAGOS DE LA EMPRESA
-        pagos = await consultarDatos('pagos')
+        pagos = await helpers.consultarDatos('pagos')
         pay = pagos.find(i => i.id_empresa == idEmpresa)
         // Validando Diagnóstico de negocio ha sido pagado
         if (pay) {
@@ -376,7 +376,7 @@ dashboardController.editarEmpresa = async (req, res) => {
             }
         }
 
-        let acuerdo = await consultarDatos('acuerdo_confidencial')
+        let acuerdo = await helpers.consultarDatos('acuerdo_confidencial')
         acuerdo = acuerdo.find(x => x.id_empresa == idEmpresa)
         if (acuerdo) acuerdo.estadoAcuerdo == 2 ? datos.etapa = 'Acuerdo firmado' : datos.etapa = datos.etapa;
 
@@ -406,7 +406,7 @@ dashboardController.editarEmpresa = async (req, res) => {
 
     // CAPTURANDO CONSULTORES ASIGNADOS A LA EMPRESA
     let divConsultores = 'none';
-    let consultores_asignados = await consultarDatos('consultores_asignados', 'ORDER BY orden ASC')
+    let consultores_asignados = await helpers.consultarDatos('consultores_asignados', 'ORDER BY orden ASC')
     consultores_asignados = consultores_asignados.filter(x => x.empresa == idEmpresa)
     if (consultores_asignados.length > 0) {
         divConsultores = 'contents';
@@ -421,8 +421,8 @@ dashboardController.editarEmpresa = async (req, res) => {
     /************************************************************************************************************* */
     // Tabla de Diagnóstico - Empresas Nuevas & Establecidas
     const frmDiag = {}, cuestionario = { diagnostico: { respuestas: {} }, diagnostico2: { respuestas: {} } };
-    const diagnostico = (await consultarDatos('dg_empresa_establecida')).find(x => x.id_empresa == idEmpresa)
-    const dgNuevasEmpresas = (await consultarDatos('dg_empresa_nueva')).find(x => x.id_empresa == idEmpresa)
+    const diagnostico = (await helpers.consultarDatos('dg_empresa_establecida')).find(x => x.id_empresa == idEmpresa)
+    const dgNuevasEmpresas = (await helpers.consultarDatos('dg_empresa_nueva')).find(x => x.id_empresa == idEmpresa)
     
     if (!diagnostico && !dgNuevasEmpresas) {
         frmDiag.color = 'badge-danger'
@@ -467,7 +467,7 @@ dashboardController.editarEmpresa = async (req, res) => {
                 cuestionario.diagnostico2.btnEdit = true;
             }
 
-            const data = (await consultarDatos('dg_empresa_nueva')).filter(x => x.id_empresa == idEmpresa)
+            const data = (await helpers.consultarDatos('dg_empresa_nueva')).filter(x => x.id_empresa == idEmpresa)
             // Ordenando el Array para asegurar usar el 1ero y último
             data.sort((a, b) => { return a.id_ - b.id_ });
             if (data.length > 0) {
@@ -544,7 +544,7 @@ dashboardController.editarEmpresa = async (req, res) => {
                 cuestionario.diagnostico2.texto = 'Pendiente'
                 cuestionario.diagnostico2.btnEdit = true;
             }
-            let data = await consultarDatos('dg_empresa_establecida')
+            let data = await helpers.consultarDatos('dg_empresa_establecida')
             data = data.filter(x => x.id_empresa == idEmpresa)
             if (data.length > 0) {
                 const datos = data[0];
@@ -665,7 +665,7 @@ dashboardController.editarEmpresa = async (req, res) => {
         analisis: { ver: 'none' },
         plan: { ver: 'none' }
     }
-    let tablaInformes = await consultarDatos('informes', 'ORDER BY id_informes DESC')
+    let tablaInformes = await helpers.consultarDatos('informes', 'ORDER BY id_informes DESC')
     tablaInformes = tablaInformes.find(x => x.id_empresa == idEmpresa)
     if (tablaInformes) {
         frmInfo.fecha = tablaInformes.fecha;
@@ -678,19 +678,19 @@ dashboardController.editarEmpresa = async (req, res) => {
 
     /** **************************************************************** */
     // Informe de diagnóstico
-    const informeDiag = await consultarInformes(idEmpresa, "Informe diagnóstico")
+    const informeDiag = await helpers.consultarInformes(idEmpresa, "Informe diagnóstico")
     // Informe de dimensión producto
-    const informeProd = await consultarInformes(idEmpresa, "Informe de dimensión producto")
+    const informeProd = await helpers.consultarInformes(idEmpresa, "Informe de dimensión producto")
     // Informe de dimensión administración
-    const informeAdmin = await consultarInformes(idEmpresa, "Informe de dimensión administración")
+    const informeAdmin = await helpers.consultarInformes(idEmpresa, "Informe de dimensión administración")
     // Informe de dimensión operaciones
-    const informeOperaciones = await consultarInformes(idEmpresa, "Informe de dimensión operaciones")
+    const informeOperaciones = await helpers.consultarInformes(idEmpresa, "Informe de dimensión operaciones")
     // Informe de dimensión marketing
-    const informeMarketing = await consultarInformes(idEmpresa, "Informe de dimensión marketing")
+    const informeMarketing = await helpers.consultarInformes(idEmpresa, "Informe de dimensión marketing")
     // Informe de análisis
-    const informeAnalisis = await consultarInformes(idEmpresa, "Informe de análisis")
+    const informeAnalisis = await helpers.consultarInformes(idEmpresa, "Informe de análisis")
     // Informe de Plan estratégico
-    const informePlan = await consultarInformes(idEmpresa, "Informe de plan estratégico")
+    const informePlan = await helpers.consultarInformes(idEmpresa, "Informe de plan estratégico")
 
     if (informeDiag) {
         frmInfo.fecha = informeDiag.fecha;
@@ -702,7 +702,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     /************************************************************************************* */
 
     /** PROPUESTA DE ANÁLISIS DE NEGOCIO - PDF */
-    const propuestas = await consultarDatos('propuestas')
+    const propuestas = await helpers.consultarDatos('propuestas')
     const propuesta = {}
     propuesta.analisis = propuestas.find(i => i.empresa == idEmpresa && i.tipo_propuesta == 'Análisis de negocio')
     let pagos_analisis = {};
@@ -805,7 +805,7 @@ dashboardController.editarEmpresa = async (req, res) => {
      * PE => Percepción Estadística
     */
     let jsonIndicadores = {}, nuevosProyectos = 0, rendimiento = {};
-    const areasVitales_ = (await consultarDatos('indicadores_areasvitales')).filter(x => x.id_empresa == idEmpresa)
+    const areasVitales_ = (await helpers.consultarDatos('indicadores_areasvitales')).filter(x => x.id_empresa == idEmpresa)
     // Ordenando el Array para asegurar usar el 1ero y último
     areasVitales_.sort((a, b) => { return a.id_ - b.id_ });
     if (areasVitales_.length > 0) {
@@ -828,7 +828,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     }
     
     // Empresas Nuevas
-    const resulCateg = (await consultarDatos('resultado_categorias')).filter(x => x.id_empresa == idEmpresa)
+    const resulCateg = (await helpers.consultarDatos('resultado_categorias')).filter(x => x.id_empresa == idEmpresa)
     if (resulCateg.length > 0) {
         rendimiento.ok = true;
         jsonIndicadores.dimensiones1 = resulCateg[0]
@@ -867,7 +867,7 @@ dashboardController.editarEmpresa = async (req, res) => {
 
     /*************************************************************************************** */
     // Empresas Establecidas
-    const xDimensiones_ = (await consultarDatos('indicadores_dimensiones')).filter(x => x.id_empresa == idEmpresa)
+    const xDimensiones_ = (await helpers.consultarDatos('indicadores_dimensiones')).filter(x => x.id_empresa == idEmpresa)
     // Ordenando el Array para asegurar usar el 1ero y último
     xDimensiones_.sort((a, b) => { return a.id_ - b.id_ });
     if (xDimensiones_.length > 0) {
@@ -883,7 +883,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     }
 
     // Percepción Estadística
-    const pe_areasVitales_ = (await consultarDatos('percepcion_estadistica_areas')).filter(x => x.empresa == idEmpresa)
+    const pe_areasVitales_ = (await helpers.consultarDatos('percepcion_estadistica_areas')).filter(x => x.empresa == idEmpresa)
     // Ordenando el Array para asegurar usar el 1ero y último
     pe_areasVitales_.sort((a, b) => { return a.id_ - b.id_ });
     if (pe_areasVitales_.length > 0) {
@@ -897,7 +897,7 @@ dashboardController.editarEmpresa = async (req, res) => {
         }
     }
 
-    const pe_dimensiones_ = (await consultarDatos('percepcion_estadistica_dimensiones')).filter(x => x.empresa == idEmpresa)
+    const pe_dimensiones_ = (await helpers.consultarDatos('percepcion_estadistica_dimensiones')).filter(x => x.empresa == idEmpresa)
     // Ordenando el Array para asegurar usar el 1ero y último
     pe_dimensiones_.sort((a, b) => { return a.id_ - b.id_ });
     if (pe_dimensiones_.length > 0) {
@@ -913,7 +913,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     /************************************************************************************* */
     /** ANÁLISIS DE NEGOCIO POR DIMENSIONES - RESPUESTAS DE CUESTIONARIOS */
     let dimProducto = false, dimAdmin = false, dimOperacion = false, dimMarketing = false;
-    const analisisDimensiones = (await consultarDatos('analisis_empresa')).find(x => x.id_empresa == idEmpresa)
+    const analisisDimensiones = (await helpers.consultarDatos('analisis_empresa')).find(x => x.id_empresa == idEmpresa)
     if (analisisDimensiones) {
         const dimension = analisisDimensiones
         if (dimension.producto) {
@@ -1062,7 +1062,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     //         pagos_empresarial.tres.btn = false;
     //     }
 
-    //     const archivosEmpresarial = await consultarDatos("archivos_plan_empresarial", `WHERE empresa = ${idEmpresa}`)
+    //     const archivosEmpresarial = await helpers.consultarDatos("archivos_plan_empresarial", `WHERE empresa = ${idEmpresa}`)
     //     // PLAN DE NEGOCIO
     //     let archivo = archivosEmpresarial.find(x => x.tipo == "Plan de negocio")
     //     if (archivo) {
@@ -1197,7 +1197,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     }
 
     // PROCESO PARA LAS TAREAS DE LA EMPRESA (PLAN ESTRATÉGICO)
-    const dimObj = await tareasGenerales(idEmpresa, fechaActual)
+    const dimObj = await helpers.tareasGenerales(idEmpresa, fechaActual)
     const tareas = dimObj.tareas;
     let jsonDim = false;
     if (tareas.todas.length > 0) {
@@ -1211,7 +1211,7 @@ dashboardController.editarEmpresa = async (req, res) => {
         ])
     }
 
-    let datosTabla = await consultarDatos('rendimiento_empresa')
+    let datosTabla = await helpers.consultarDatos('rendimiento_empresa')
     datosTabla = datosTabla.filter(x => x.empresa == idEmpresa)
     let jsonRendimiento = false;
     if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
@@ -1234,7 +1234,7 @@ dashboardController.editarEmpresa = async (req, res) => {
         adminDash = false;
         aprobarConsultor = false;
 
-        let cLogin = await consultarDatos('consultores'); // Consulta a la tabla de consultores
+        let cLogin = await helpers.consultarDatos('consultores'); // Consulta a la tabla de consultores
         cLogin = cLogin.find(i => i.codigo == req.user.codigo) // Buscando el código del consultor logueado
         // Filtro para saber a que etapas de la empresa está asignado el consultor
         const etapasAsignadas = consultores_asignados.filter(x => x.idConsultor == cLogin.id_consultores)
@@ -1276,7 +1276,7 @@ dashboardController.editarEmpresa = async (req, res) => {
         })
     }
 
-    let tblConclusiones = await consultarDatos('conclusiones');
+    let tblConclusiones = await helpers.consultarDatos('conclusiones');
     tblConclusiones = tblConclusiones.filter(x => x.id_empresa == idEmpresa)
     let objconclusion = {}
     
@@ -1299,19 +1299,19 @@ dashboardController.editarEmpresa = async (req, res) => {
      * SOLICITUD DE ARCHIVOS PARA LAS ETAPAS 2, 3 Y 4 
     */
     let archivos_solicitados = {};
-    archivos_solicitados.analisis = await consultarDatos('archivos_analisis')
+    archivos_solicitados.analisis = await helpers.consultarDatos('archivos_analisis')
     archivos_solicitados.analisis = archivos_solicitados.analisis.filter(x => x.empresa == idEmpresa);
     archivos_solicitados.analisis.forEach(x => {
         x.color = 'warning'; x.estado = 'Pendiente';
         if (x.link) { x.color = 'success'; x.estado = 'Cargado' }
     })
-    archivos_solicitados.empresarial = await consultarDatos('archivos_empresarial')
+    archivos_solicitados.empresarial = await helpers.consultarDatos('archivos_empresarial')
     archivos_solicitados.empresarial = archivos_solicitados.empresarial.filter(x => x.empresa == idEmpresa);
     archivos_solicitados.empresarial.forEach(x => {
         x.color = 'warning'; x.estado = 'Pendiente';
         if (x.link) { x.color = 'success'; x.estado = 'Cargado' }
     })
-    archivos_solicitados.estrategico = await consultarDatos('archivos_estrategico')
+    archivos_solicitados.estrategico = await helpers.consultarDatos('archivos_estrategico')
     archivos_solicitados.estrategico = archivos_solicitados.estrategico.filter(x => x.empresa == idEmpresa);
     archivos_solicitados.estrategico.forEach(x => {
         x.color = 'warning'; x.estado = 'Pendiente';
@@ -1334,7 +1334,7 @@ dashboardController.editarEmpresa = async (req, res) => {
 
 dashboardController.conclusiones = async (req, res) => {
     const {id_empresa, etapa, conclusion} = req.body
-    let row = await consultarDatos('conclusiones');
+    let row = await helpers.consultarDatos('conclusiones');
 
     row = row.find(x => x.id_empresa == id_empresa && x.etapa == etapa)
     console.log(" ROW ==>" ,  row);
@@ -1343,7 +1343,7 @@ dashboardController.conclusiones = async (req, res) => {
         await pool.query('UPDATE conclusiones SET ? WHERE id_empresa = ? AND etapa = ?', [obj, id_empresa, etapa])
     } else {
         const objConclusion = {id_empresa, etapa, conclusion}
-        await insertarDatos('conclusiones', objConclusion)
+        await helpers.insertarDatos('conclusiones', objConclusion)
     }
     res.send(true)
 }
@@ -1355,13 +1355,13 @@ dashboardController.actualizarEmpresa = async (req, res) => {
 
     const linkBase = 'https://3csigma.com/app_public_files/emails_consultor/'
     // Consultar Datos de la empresa
-    let empresa = await consultarDatos('empresas')
+    let empresa = await helpers.consultarDatos('empresas')
     
     empresa = empresa.find(x => x.codigo == codigo)
     console.log("Empresa Actual --> ", empresa)
 
     // Consultores Asignados
-    const asignados = await consultarDatos('consultores_asignados', `WHERE empresa = "${idEmpresa}"`)
+    const asignados = await helpers.consultarDatos('consultores_asignados', `WHERE empresa = "${idEmpresa}"`)
     for (const [key, value] of mapaConsultores) {
         const filtro = asignados.find(x => x.etapa == key)
         // console.log("\n FILTRO ---> ", filtro)
@@ -1391,7 +1391,7 @@ dashboardController.actualizarEmpresa = async (req, res) => {
         } else {
             const datos = {consultor: value.id, empresa: idEmpresa, etapa: key, orden}
             if (value.sede) { datos.sede = value.sede }
-            await insertarDatos('consultores_asignados', datos)
+            await helpers.insertarDatos('consultores_asignados', datos)
             
             /** INFO PARA ENVÍO DE EMAIL A LA EMPRESA - NOTIFICANDO CONSULTOR ASIGNADO */
             console.log("Enviando email de consultor Asignado - Etapa: " + key)
@@ -1405,7 +1405,7 @@ dashboardController.actualizarEmpresa = async (req, res) => {
             }
 
             /** INFO PARA ENVÍO DE EMAIL A LA EMPRESA - NOTIFICANDO CONSULTOR ASIGNADO */
-            let consultor = await consultarDatos('consultores')
+            let consultor = await helpers.consultarDatos('consultores')
             consultor = consultor.find(x => x.id_consultores == value.id)
             console.log("\nEnviando email para el consultor de que fue Asignado a una empresa en la Etapa: " + key)
             const subject = "Has sido asignado a una empresa para la etapa de " + key;
@@ -1450,7 +1450,7 @@ dashboardController.bloquearEmpresa = async (req, res) => {
 /** PAGOS MANUALES ETAPA 1 y 2 */
 dashboardController.pagoManualDiagnostico = async (req, res) => {
     const { id, precio } = req.body
-    const pagos = await consultarDatos('pagos')
+    const pagos = await helpers.consultarDatos('pagos')
     let pago_empresa = pagos.find(i => i.id_empresa == id);
     const fecha = new Date().toLocaleDateString("en-US")
     const data = { estado: 1, fecha, precio }
@@ -1519,7 +1519,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     const { codigoEmpresa, zhActualAdm, rolUser } = req.body;
     // Capturar Fecha de guardado
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
-    let infoEmp = await consultarDatos('empresas')
+    let infoEmp = await helpers.consultarDatos('empresas')
     infoEmp = infoEmp.find(x => x.codigo == codigoEmpresa)
     // Capturar ID Empresa
     const id_empresa = infoEmp.id_empresas;
@@ -1737,7 +1737,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     /************************************************************************************************* */
 
     // Guardando en la Base de datos
-    const cuestionario = await insertarDatos('dg_empresa_establecida', nuevoDiagnostico)
+    const cuestionario = await helpers.insertarDatos('dg_empresa_establecida', nuevoDiagnostico)
     if (cuestionario.affectedRows > 0) {
         /************************************************************************************************* */
         // RENDIMIENTO DE LA EMPRESA
@@ -1758,7 +1758,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
             empresa: id_empresa, total_ventas, total_compras, total_gastos, utilidad, fecha: new Date().toLocaleDateString("en-US")
         }
 
-        let rendimientos = await consultarDatos('rendimiento_empresa')
+        let rendimientos = await helpers.consultarDatos('rendimiento_empresa')
         rendimientos = rendimientos.filter(x => x.empresa == id_empresa)
 
         if (rendimientos.length >= 1) {
@@ -1777,7 +1777,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
             nuevoRendimiento.porcentaje_utilidad = (nuevoRendimiento.porcentaje_utilidad).toFixed(2)
         }
         
-        const rendimiento = await insertarDatos('rendimiento_empresa', nuevoRendimiento)
+        const rendimiento = await helpers.insertarDatos('rendimiento_empresa', nuevoRendimiento)
         
         /************************************************************************************************* */
         const areasVitales = {
@@ -1824,10 +1824,10 @@ dashboardController.enviarCuestionario = async (req, res) => {
             marketing: pe_marketing
         }
 
-        const aVitales = await insertarDatos('indicadores_areasvitales', areasVitales)
-        const aDimensiones = await insertarDatos('indicadores_dimensiones', areasDimensiones)
-        const pe_areas = await insertarDatos('percepcion_estadistica_areas', datos_pe_areas)
-        const pe_dimensiones = await insertarDatos('percepcion_estadistica_dimensiones', datos_pe_dimensiones)
+        const aVitales = await helpers.insertarDatos('indicadores_areasvitales', areasVitales)
+        const aDimensiones = await helpers.insertarDatos('indicadores_dimensiones', areasDimensiones)
+        const pe_areas = await helpers.insertarDatos('percepcion_estadistica_areas', datos_pe_areas)
+        const pe_dimensiones = await helpers.insertarDatos('percepcion_estadistica_dimensiones', datos_pe_dimensiones)
         if ((aVitales.affectedRows > 0) && (aDimensiones.affectedRows > 0) && (rendimiento.affectedRows > 0) && (pe_areas.affectedRows > 0) && (pe_dimensiones.affectedRows > 0) ) {
             console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n")
             /**
@@ -1927,7 +1927,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
             let resultAI = await getResponseChatGPT(prompt)
             const resp = resultAI.content.replaceAll('\n', '<br>');
             const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
-            const insertResult = await insertarDatos('informes_ia', informeAI)
+            const insertResult = await helpers.insertarDatos('informes_ia', informeAI)
             if (insertResult.affectedRows > 0) {
                 rolUser == 'Empresa' ? res.redirect('/diagnostico-de-negocio')
                 : res.redirect('/empresas/' + codigoEmpresa + '#diagnostico_')
@@ -2117,11 +2117,11 @@ dashboardController.guardarRespuestas = async (req, res) => {
     }
 
     // Guardando en la Base de datos
-    const cuestionario = await insertarDatos('dg_empresa_nueva', nuevoDiagnostico)
+    const cuestionario = await helpers.insertarDatos('dg_empresa_nueva', nuevoDiagnostico)
     if (cuestionario.affectedRows > 0) {
 
-        const aVitales = await insertarDatos('indicadores_areasvitales', areasVitales)
-        const resultado_categorias = await insertarDatos('resultado_categorias', resulCategorias)
+        const aVitales = await helpers.insertarDatos('indicadores_areasvitales', areasVitales)
+        const resultado_categorias = await helpers.insertarDatos('resultado_categorias', resulCategorias)
         if ((aVitales.affectedRows > 0) && (resultado_categorias.affectedRows > 0)) {
             console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n")
             /**
@@ -2204,7 +2204,7 @@ dashboardController.guardarRespuestas = async (req, res) => {
             let resultAI = await getResponseChatGPT(prompt)
             const resp = resultAI.content.replaceAll('\n', '<br>');
             const informeAI = { empresa: id_empresa, tipo: 'Diagnóstico', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
-            const insertResult = await insertarDatos('informes_ia', informeAI)
+            const insertResult = await helpers.insertarDatos('informes_ia', informeAI)
             if (insertResult.affectedRows > 0) {
                 rolUser == 'Empresa' ? res.redirect('/diagnostico-de-negocio')
                 : res.redirect('/empresas/' + codigoEmpresa + '#diagnostico_')
@@ -2235,7 +2235,7 @@ dashboardController.guardarInforme = async (req, res) => {
     const r = { ok: false }
     const { codigoEmpresa, consultor, nombreInforme, zonaHoraria } = req.body
     console.log(req.body)
-    const empresas = await consultarDatos('empresas')
+    const empresas = await helpers.consultarDatos('empresas')
     const e = empresas.find(x => x.codigo == codigoEmpresa)
 
     const fecha = new Date()
@@ -2257,13 +2257,13 @@ dashboardController.guardarInforme = async (req, res) => {
     }
 
     // Validando si ya tiene un informe montado
-    const tieneInforme = await consultarDatos('informes', `WHERE id_empresa = "${e.id_empresas}" AND nombre = "${nombreInforme}"`)
+    const tieneInforme = await helpers.consultarDatos('informes', `WHERE id_empresa = "${e.id_empresas}" AND nombre = "${nombreInforme}"`)
     let informe = null;
 
     if (tieneInforme.length > 0) {
         informe = await pool.query('UPDATE informes SET ? WHERE id_empresa = ? AND nombre = ?', [actualizar, e.id_empresas, nombreInforme])
     } else {
-        informe = await insertarDatos('informes', nuevoInforme)
+        informe = await helpers.insertarDatos('informes', nuevoInforme)
     }
 
     if (informe.affectedRows > 0) {
@@ -2316,7 +2316,7 @@ dashboardController.guardarArchivo_Empresarial = async (req, res) => {
     console.log("\nDATA FILE >>>");
     console.log(req.file);
 
-    const empresas = await consultarDatos('empresas')
+    const empresas = await helpers.consultarDatos('empresas')
     const e = empresas.find(x => x.codigo == codigoEmpresa)
     const fecha = new Date()
     let nombre = '', urlFile = '../archivos_plan_empresarial/' + req.file.filename;
@@ -2332,7 +2332,7 @@ dashboardController.guardarArchivo_Empresarial = async (req, res) => {
     }
 
     // Validando si ya tiene un informe montado
-    const tieneArchivo = await consultarDatos('archivos_plan_empresarial', `WHERE empresa = "${e.id_empresas}" AND tipo = "${tipo}"`)
+    const tieneArchivo = await helpers.consultarDatos('archivos_plan_empresarial', `WHERE empresa = "${e.id_empresas}" AND tipo = "${tipo}"`)
     let archivoActual = null;
 
     if (tieneArchivo.length > 0) {
@@ -2346,7 +2346,7 @@ dashboardController.guardarArchivo_Empresarial = async (req, res) => {
         }
         archivoActual = await pool.query('UPDATE archivos_plan_empresarial SET ? WHERE empresa = ? AND tipo = ?', [actualizar, e.id_empresas, tipo])
     } else {
-        archivoActual = await insertarDatos('archivos_plan_empresarial', nuevoArchivo)
+        archivoActual = await helpers.insertarDatos('archivos_plan_empresarial', nuevoArchivo)
     }
 
     console.log("ARCHIVO ACTUAL PRO CON: >>>> ", archivoActual)
@@ -2378,7 +2378,7 @@ dashboardController.websiteEmpresarial = async (req, res) => {
 
     console.log(req.body);
     
-    const empresas = await consultarDatos('empresas')
+    const empresas = await helpers.consultarDatos('empresas')
     const e = empresas.find(x => x.codigo == codigoEmpresa)
     const fecha = new Date()
     const nuevoArchivo = {
@@ -2393,7 +2393,7 @@ dashboardController.websiteEmpresarial = async (req, res) => {
 
 
     // Validando si ya tiene un informe montado
-    const tieneLink = await consultarDatos('archivos_plan_empresarial', `WHERE empresa = "${e.id_empresas}" AND tipo = "Website"`)
+    const tieneLink = await helpers.consultarDatos('archivos_plan_empresarial', `WHERE empresa = "${e.id_empresas}" AND tipo = "Website"`)
     let linkActual = null;
 
     if (tieneLink.length > 0) {
@@ -2408,7 +2408,7 @@ dashboardController.websiteEmpresarial = async (req, res) => {
         linkActual = await pool.query('UPDATE archivos_plan_empresarial SET ? WHERE empresa = ? AND tipo = ?', [actualizar, e.id_empresas, 'Website'])
     } else {
         console.log("\n\n----- Hola desde INSERTAR WEBSITE\n\n----- ")
-        linkActual = await insertarDatos('archivos_plan_empresarial', nuevoArchivo)
+        linkActual = await helpers.insertarDatos('archivos_plan_empresarial', nuevoArchivo)
     }
 
     if (linkActual.affectedRows > 0) {
@@ -2435,7 +2435,7 @@ dashboardController.websiteEmpresarial = async (req, res) => {
 
 dashboardController.finalizarEtapa = async (req, res) => {
     const { codigo } = req.body;
-    let empresa = await consultarDatos('empresas')
+    let empresa = await helpers.consultarDatos('empresas')
     empresa = empresa.find(e => e.codigo == codigo)
     let result = false;
     if (empresa) {
@@ -2457,5 +2457,10 @@ dashboardController.finalizarEtapa = async (req, res) => {
 }
 
 dashboardController.recursosCompartidos = async (req, res) => {
-    res.render('admin/recursosCompartidos', { adminDash: true })
+    console.log("Vista de Recursos Compartidos Admin");
+    res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, aprobarConsultor, datosUsuario: JSON.stringify(req.user) })
+}
+
+dashboardController.addRecursos_Compartidos = async (req, res) => {
+    console.log("Hola desde Add Recurso Compartidos Admin");
 }

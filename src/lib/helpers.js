@@ -56,27 +56,39 @@ helpers.delDuplicados = (array) => {
 
 /************************************************************************************************************** */
 /** CARGA DE ARCHIVOS */
-helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false) => {
+helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false, any = false) => {
     const rutaAlmacen = multer.diskStorage({
         destination: (_req, file, cb) => {
-            const ruta = path.join(__dirname, '../public/'+carpeta)
-            cb(null, ruta);
+            cb(null, path.join(__dirname, '../public/' + carpeta));
         },
     
         filename: (_req, file, cb) => {
-            let nomFile = preNombre + file.originalname;
-            if (fecha) {
-                const fechaActual = Math.floor(Date.now() / 1000)
-                nomFile = preNombre + fechaActual + '_' + file.originalname;
+            console.log(file.originalname);
+            let nomFile = preNombre;
+            if (any) {
+                // Obtener el nombre del campo que contiene el recurso.id
+                nomFile += file.fieldname+'_'
             }
-            cb(null, nomFile)
+            if (fecha) {
+                nomFile += Math.floor(Date.now() / 1000) + '_';
+            }
+            nomFile += file.originalname;
+            cb(null, nomFile);
         }
     });
-    let upload = multer({ storage: rutaAlmacen }).single('file')
-    if (inputName) {
-        upload = multer({ storage: rutaAlmacen }).array(inputName)
+
+    if (any) {
+        return multer({
+            storage: rutaAlmacen,
+            fileFilter: function (req, file, callback) {
+                const recursoId = file.fieldname; // Obtener el nombre del campo que contiene el recurso.id
+                recursoId ? callback(null, true) : callback(new Error("Archivo no válido"));
+            },
+        }).any();
+    } else {
+        const upload = inputName ? multer({ storage: rutaAlmacen }).array(inputName) : multer({ storage: rutaAlmacen }).single('file');
+        return upload;
     }
-    return upload;
 }
 
 /************************************************************************************************************** */
