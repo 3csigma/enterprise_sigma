@@ -807,7 +807,7 @@ empresaController.guardar_grupo = async (req, res) => {
         campoExistente.numeroIcono = numeroIcono;
     } else {
         // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
-        const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono: '5' };
+        const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono };
         datosAcumulados.push(nuevoCampo);
     }
 
@@ -968,9 +968,11 @@ empresaController.recursos = async (req, res) => {
                 } else if (recurso.tipo === "3") {
                     contador.t3++;
                     cuerpoHTML += `
+                    <div class="campo-separador" id="campo${r.id}_${recurso.id}" style="border:1px solid white">
                     <i class="fas fa-trash-alt icono-borrar" style="color: red;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
-                    <${recurso.valor} id="grupo${r.id}_${recurso.id}" style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
-                } else if (recurso.tipo === "4") {
+                    <hr class="separador" id="grupo${r.id}_${recurso.id}" style="border:1px solid #5c5c5c">
+                    </div>`;
+                 } else if (recurso.tipo === "4") {
                     contador.t4++;
                     let iconoUrl;
                     if (recurso.numeroIcono === "1") {
@@ -1014,13 +1016,16 @@ empresaController.recursos = async (req, res) => {
                         iconoUrl = "../logos_recursos/icon_Video.svg";
                     }
                     iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    if (recurso.valor.includes('/')) {
+                        recurso.valor = recurso.valor.split("/").pop()
+                    }
                     cuerpoHTML += `
                     <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 10px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
                     <table class="table header-border" id="tablaFile_g${r.id}_${recurso.id}">
                     <tbody>
                         <tr class="text-black">
                         <td style="width: 0px;">
-                            <a href="${recurso.valor}" target="_blank">
+                            <a href="../grupo_recursos/${recurso.valor}" target="_blank">
                             <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
                             </a>
                         </td>
@@ -1028,14 +1033,10 @@ empresaController.recursos = async (req, res) => {
                             <label for="grupo${r.id}_${recurso.id}">
                             <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
                             </label>
-                            <input type="file" class="campo_archivo" name="${
-                            recurso.id
-                            }" id="grupo${r.id}_${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
+                            <input type="file" class="campo_archivo" name="${recurso.id}" id="grupo${r.id}_${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
                         </td>
                         <td>
-                            <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="grupo${r.id}_${recurso.id}" class="nombre-archivo">${recurso.valor
-                        .split("/")
-                        .pop()}</span>
+                            <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="grupo${r.id}_${recurso.id}" class="nombre-archivo">${recurso.valor}</span>
                         </td>
                         </tr>
                     </tbody>
@@ -1076,9 +1077,9 @@ empresaController.recursos = async (req, res) => {
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
-    const archivos = req.files;
+    const archivo = req.files;
     let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
-
+    
     console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
 
     console.log(".....................");
@@ -1086,11 +1087,21 @@ empresaController.actualizarRecurso = async (req, res) => {
     console.log("IdRecurso", idRecurso);
     console.log("Tipo>", tipo);
     console.log("NumeroIcono>", numeroIcono);
-  
-    if (archivos && archivos.length > 0) {
-        valor = archivos.map(archivo => "../grupo_recursos/" + archivo.filename);
+    console.log("*_*_*_*_*_*_*__*_*_*_*");
+    console.log("archivo")
+    console.log(archivo);
+    console.log("*_*_*_*_*_*_*__*_*_*_*");
+
+    if (archivo && archivo[0]) {
+        // archivo = archivo[0];
+        // valor = archivo.map(x => "../grupo_recursos/" + x.filename);
+        valor = "../grupo_recursos/" + archivo[0].filename
     }
-  
+
+    console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
+    console.log(valor);
+    console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
+
     if (idCampo && idCampo.includes('_')) {
         idCampo = idCampo.split('_')[1];
     }
@@ -1105,7 +1116,7 @@ empresaController.actualizarRecurso = async (req, res) => {
     let campoEncontrado = false;
     recursos.forEach((recurso) => {
         if (recurso.id == idCampo) {
-            recurso.valor = valor; // Usar el valor actualizado del body
+            recurso.valor = valor;
             recurso.numeroIcono = numeroIcono;
             campoEncontrado = true;
         }
@@ -1120,9 +1131,6 @@ empresaController.actualizarRecurso = async (req, res) => {
         });
     }
 
-    console.log("Recurso armado nuevo para DB ==>");
-    console.log(recursos);
-
     const data = {
         nombre_grupo,
         descrip_grupo,
@@ -1131,8 +1139,6 @@ empresaController.actualizarRecurso = async (req, res) => {
     }
     await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
 
-    // await pool.query("UPDATE grupo_recursos SET recurso_armado = ? WHERE id = ?", [, idRecurso]);
-   
     res.redirect("/recursos/");
   };
   

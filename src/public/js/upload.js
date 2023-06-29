@@ -84,15 +84,23 @@ function showFile(file) {
   const fileReader = new FileReader();
 
   fileReader.addEventListener("load", () => {
-
+    let image = `
+    <div id="${fileId}" class="file-container">
+      <img src="${logoUrl}" class="file-logo" width="35px">
+      <div class="status">
+        <span>${file.name}</span>
+        <span class="status-text">Cargando...</span>
+      </div>
+    </div>
+  `;
     if (fileId) {
       const existingFile = document.getElementById(fileId);
       existingFile.querySelector('.file-logo').src = logoUrl;
       existingFile.querySelector('.status span').textContent = file.name;
     } else {
       fileId = `file-${Math.random().toString(32).substring(7)}`;
-
-      const image = `
+  
+     image = `
         <div id="${fileId}" class="file-container">
           <img src="${logoUrl}" class="file-logo" width="35px">
           <div class="status">
@@ -101,15 +109,50 @@ function showFile(file) {
           </div>
         </div>
       `;
-
+  
       const preview = document.querySelector('#preview');
       preview.innerHTML = image;
     }
+  
+    if (extension === 'mov' || extension === 'mp4' || extension === 'avi') {
+      // Validar el tamaño del video
+      if (file.size <= 20 * 1024 * 1024) { // 20 megabytes
+        // El video cumple con el tamaño permitido, continuar con la carga
+        $('.btnArchivoSuelto').css('display', 'inline-block');
+        uploadFile(file);
+      } else {
+        const preview = document.querySelector('#preview');
+        preview.innerHTML = image;
+        $('.btnArchivoSuelto').css('display', 'none');
 
-    uploadFile(file);
+        toastr.warning("Tu video supera 20MB", "Error", {
+          positionClass: "toast-top-full-width",
+          timeOut: 5000,
+          closeButton: !0,
+          debug: !1,
+          newestOnTop: !0,
+          progressBar: !0,
+          preventDuplicates: !0,
+          onclick: null,
+          showDuration: "500",
+          hideDuration: "200",
+          extendedTimeOut: "400",
+          showEasing: "swing",
+          hideEasing: "linear",
+          showMethod: "fadeIn",
+          hideMethod: "fadeOut",
+          tapToDismiss: !1
+      })
+       
+      }
+    } else {
+      // No es un video, continuar con la carga sin validación de tamaño
+      uploadFile(file);
+    }
   });
-
+  
   fileReader.readAsDataURL(file);
+  
 }
 
 function uploadFile(file) {
@@ -121,20 +164,23 @@ function uploadFile(file) {
     body: formData,
     headers: { 'enctype': 'multipart/form-data' }
   })
-    .then(response => response.json())
-    .then(data => {
+    .then(response => {
       const statusText = document.querySelector(`#${fileId} .status-text`);
       if (response.ok) {
         statusText.innerHTML = `<span class="success">Archivo subido correctamente</span>`;
       } else {
         statusText.innerHTML = `<span class="failure">Archivo no pudo subirse...</span>`;
       }
+      return response.json();
+    })
+    .then(data => {
       // Mostrar la respuesta del servidor en el DOM
       const responseText = document.createElement('p');
       responseText.textContent = data.message;
+      const statusText = document.querySelector(`#${fileId} .status-text`);
       statusText.appendChild(responseText);
     })
     .catch(error => {
-      document.querySelector(`#${fileId} .status-text`).innerHTML = `<span class="success">Archivo leido...</span>`;
+      statusText.innerHTML = `<span class="success">Archivo subido correctamente</span>`;
     });
 }

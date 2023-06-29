@@ -2457,8 +2457,45 @@ dashboardController.finalizarEtapa = async (req, res) => {
 }
 
 dashboardController.recursosCompartidos = async (req, res) => {
-    console.log("Vista de Recursos Compartidos Admin");
-    res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, aprobarConsultor, datosUsuario: JSON.stringify(req.user) })
+    const recursos = await helpers.consultarDatos('recursos_compartidos');
+    recursos.forEach(x => {
+        x.data = JSON.parse(x.recurso_armado)
+        x.iconos = []
+        x.data.forEach(r => {
+            if (r.tipo == '4') {
+                if (r.numeroIcono === "1") {
+                    x.iconos.push({ ruta: "../logos_recursos/Video_Youtube.svg" });
+                } else if (r.numeroIcono === "2") {
+                    x.iconos.push({ ruta: "../logos_recursos/Video_Vimeo.svg" });
+                } else if (r.numeroIcono === "3") {
+                    x.iconos.push({ ruta: "../logos_recursos/notion.svg" });
+                } else if (r.numeroIcono === "4") {
+                    x.iconos.push({ ruta: "../logos_recursos/Archivo_Google_Drive.svg" });
+                } else if (r.numeroIcono === "5") {
+                    x.iconos.push({ ruta: "../logos_recursos/Pagina_Web.svg" });
+                }
+            } else if (r.tipo == '5') {
+                if (r.numeroIcono === "1") {
+                    x.iconos.push({ ruta: "../logos_recursos/Documento_Word.svg" });
+                } else if (r.numeroIcono === "2") {
+                    x.iconos.push({ ruta: "../logos_recursos/Documento_PDF.svg" });
+                } else if (r.numeroIcono === "3") {
+                    x.iconos.push({ ruta: "../logos_recursos/Documento_PowePoint.svg" });
+                } else if (r.numeroIcono === "4") {
+                    x.iconos.push({ ruta: "../logos_recursos/Documento_Excel.svg" });
+                } else if (r.numeroIcono === "5") {
+                    x.iconos.push({ ruta: "../logos_recursos/Archivo_imagen.svg" });
+                } else if (r.numeroIcono === "6") {
+                    x.iconos.push({ ruta: "../logos_recursos/icon_Video.svg" });
+                } else {
+                    x.iconos.push({ ruta: "../logos_recursos/Otro.svg" });
+                }
+            }
+        })
+    })
+    console.log("\n\n**** Recursos Compartidos Admin ****");
+    console.log(recursos);
+    res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, aprobarConsultor, datosUsuario: JSON.stringify(req.user), recursos })
 }
 
 dashboardController.addRecursos_Compartidos = async (req, res) => {

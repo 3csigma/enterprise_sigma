@@ -6,13 +6,13 @@ module.exports = {
         watch_delay: 1000, // Delay between restart
         ignore_watch: [
             "node_modules",
-            "**/*/certificados_consultores",
-            "**/*/archivos_analisis_empresa",
-            "**/*/foto_profile",
-            "**/*/informes_empresas",
-            "**/*/propuestas_empresa",
-            "**/*/recurso_empresa",
-            "**/*/grupo_recursos",
+            "./public/*/certificados_consultores",
+            "./public/*/archivos_analisis_empresa",
+            "./public/*/foto_profile",
+            "./public/*/informes_empresas",
+            "./public/*/propuestas_empresa",
+            "./public/*/recurso_empresa",
+            "./public/*/grupo_recursos",
         ],
         env_production: {
             NODE_ENV: "production"

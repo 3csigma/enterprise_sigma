@@ -19,29 +19,6 @@
                                     crecimiento empresarial, duplicarlos para editarlos y cargar tus propios archivos para tener tu información
                                     organizada en un solo lugar</p>
 
-                                {{!-- BOTONES PARA SUBIR GRUPOS/RECURSOS --}}
-                                <!--
-                                <div class="row">
-                                    {{!-- BOTÓN PARA SUBIR RECURSOS --}}
-                                    <div class="col-3">
-                                        <div class="basic-dropdown">
-                                            <div class="dropdown">
-                                                <button class="btn dropdown-toggle btn-md btnArchivo text-black" data-toggle="dropdown">Subir recurso</button>
-                                                <div class="dropdown-menu">
-                                                    <button class="dropdown-item" data-toggle="modal" data-target="#cargar_archivo" aria-disabled="true">Cargar archivo</button>
-                                                    <button class="dropdown-item" data-toggle="modal" data-target="#conectar_link" aria-disabled="true">Conectar link</button>
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {{!-- BOTÓN SUBIR GRUPOS --}}
-                                    <div class="col-6" style="padding-left: 4em;">
-                                        <button class="btnGrupo btn-md" data-toggle="modal" data-target="#subir_grupo" aria-disabled="true">Subir grupo</button>
-                                    </div>
-                                </div>
-                                -->
-
                                 {{!-- HEADER VISTA RECURSOS (MODALES PARA CARGAR LINK, ARCHIOS Y SUBIR GRUPOS DE RECURSOS) --}}
                                 {{> modals/recursos_header}}
                                 
@@ -107,7 +84,7 @@
                         </div>
                     </div>
 
-                    {{!-- Modal GRUPOS CREADOS --}}
+                    {{!-- Modal GRUPOS CREADOS - EDITAR GRUPOS --}}
                     <div class="modal fade grupo" id="modal-{{idGrupo}}" >
                         <div class="modal-dialog" role="document">
                             <form action="/actualizarRecurso" method="post">
@@ -142,7 +119,7 @@
                                                     <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082"></button>
                                                     <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061"></button>
                                                 </div>
-                                                <input type="hidden" id="colorGrupoInput_edit" name="color_grupo">
+                                                <input type="hidden" id="colorGrupoInput_edit" name="color_grupo" value="{{color_grupo}}">
                                             </div>
                                         </div>
                                         <div class="row align-items-center justify-content-center flex-column">

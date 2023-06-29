@@ -2,9 +2,6 @@
 const selectorEdit = document.getElementById("opcionesEdit");
 const contenidosEdit = document.getElementById("contenidoEdit");
 
-// let contador = document.getElementById("contador").value;
-// contador = JSON.parse(contador);
-
 const contadores = { c1: 1, c2: 1, c3: 1, c4: 1 };
 const banderas = { b1: false, b2: false, b3: false, b4: false };
 
@@ -201,10 +198,6 @@ function agregarCampoUrl(select) {
 
   let contElements = document.getElementById(`contador_${idGrupo}`).value;
   contElements = JSON.parse(contElements);
-  console.group("CONTADORES ELEMENTOS ACTUAL - GRUPO: " + idGrupo)
-  console.log(contElements)
-  console.groupEnd();
-  console.log("-------")
 
   if (!banderas.b4) {
     contadores.c4 = contElements.t4 + 1;
@@ -225,10 +218,7 @@ function agregarCampoUrl(select) {
     iconBorrarUrl.style.opacity = "0";
   });
 
-  // // Mostrar el ícono de borrar al pasar el cursor sobre la fila
-  // filaE.addEventListener("mouse", function () {iconBorrarUrl.style.visibility = "visible";});
-  // // Ocultar el ícono de borrar al sacar el cursor de la fila
-  // filaE.addEventListener("mouseleave", function () { iconBorrarUrl.style.visibility = "hidden"; });
+
   iconBorrarUrl.addEventListener("click", function () {
     filaE.remove();
     borrarCampo(urlAgg.id); // Llamada a la función para eliminar el campo en el controlador
@@ -288,35 +278,25 @@ function obtenerIconoPorDominio(domain) {
     "notion.so": "../logos_recursos/notion.svg"
   };
 
-  if (domain.includes('www.'))
-    domain = domain.split('www.')[1]
+  if (domain.includes('www.')) domain = domain.split('www.')[1]
 
   return dominios[domain] || "../logos_recursos/Pagina_Web.svg";
 }
 
 // Obtener el número correcto de cada url ingresado
 function obtenerNumeroIconoPorDominio(domain) {
-  let numeroIcono;
-
   switch (domain) {
     case "youtube.com":
-      numeroIcono = 1;
-      break;
+      return 1;
     case "vimeo.com":
-      numeroIcono = 2;
-      break;
+      return 2;
     case "notion.so":
-      numeroIcono = 3;
-      break;
+      return 3;
     case "drive.google.com":
-      numeroIcono = 4;
-      break;
+      return 4;
     default:
-      numeroIcono = 5;
-      break;
+      return 5;
   }
-
-  return numeroIcono;
 }
 
 //  ==============================================================
@@ -347,7 +327,6 @@ function agregarArhivo(select) {
   fileContainer.classList.add("campo-container");
 
   const table = document.createElement("table");
-  // table.classList.add("campo-table");
   fileContainer.appendChild(table);
 
   const row = document.createElement("tr");
@@ -361,11 +340,9 @@ function agregarArhivo(select) {
   iconoBorrar.style.transition = "opacity 0.3s";
   iconoBorrar.addEventListener("click", () => {
     fileContainer.remove();
-    // borrarCampo(nuevoCampo.id);
   });
   td.appendChild(iconoBorrar);
   row.appendChild(td);
-  // td.innerHTML = `<i class="fas fa-trash-alt" style="color: red; display: none;"></i>`;
 
   const archivoIcon = document.createElement("td");
   archivoIcon.style.textAlign = "left";
@@ -401,69 +378,85 @@ function agregarArhivo(select) {
     const archivo = event.target.files[0];
     const extensiones = obtenerExt(archivo.name);
     const icon = obtenerIcon(extensiones);
-    archivoIcon.innerHTML = `<img src="${icon}" style="margin:15px" class="icono-cargar-archivo">`;
-  
-    // Limitar la longitud del nombre del archivo a mostrar
-    const MAX_LONGITUD_NOMBRE = 20;
-    let nombreArchivoMostrado = archivo.name;
-    let nombreSinExtension = archivo.name.substr(0, archivo.name.lastIndexOf('.'));
-    let extensionArchivo = archivo.name.substr(archivo.name.lastIndexOf('.'));
-    
-    if (nombreSinExtension.length > MAX_LONGITUD_NOMBRE) {
-      nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
-      nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
-    }
-    
-    nameArchivo.textContent = nombreArchivoMostrado;
 
-    const numero_Icon_ = (extensiones) => {
-      switch (extensiones) {
-        case "doc":
-        case "docx":
-          return '1';
-        case "pdf":
-          return '2';
-        case "ppt":
-        case "pptx":
-          return '3';
-        case "xls":
-        case "xlsx":
-          return '4';
-        case "jpg":
-        case "jpeg":
-        case "png":
-          return '5';
-        default:
-          return '6';
+    const esValido = validarPeso_Video(extensiones, archivo)
+
+    if (esValido) {
+      archivoIcon.innerHTML = `<img src="${icon}" style="margin:15px" class="icono-cargar-archivo">`;
+    
+      // Limitar la longitud del nombre del archivo a mostrar
+      const MAX_LONGITUD_NOMBRE = 20;
+      let nombreArchivoMostrado = archivo.name;
+      let nombreSinExtension = archivo.name.substr(0, archivo.name.lastIndexOf('.'));
+      let extensionArchivo = archivo.name.substr(archivo.name.lastIndexOf('.'));
+      
+      if (nombreSinExtension.length > MAX_LONGITUD_NOMBRE) {
+        nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
+        nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
       }
-    };
-    const archivos = event.target.files;
-    const numeroIcono = numero_Icon_(extensiones);
-    // Crear un objeto FormData para enviar los datos y los archivos al controlador
-    const formData = new FormData();
-    formData.append("idCampo", nuevoCampo.name);
-    formData.append("valor", archivos[0].name);
-    formData.append("tipo", "5"); // Tipo 5 para archivos
-    formData.append("idRecurso", idGrupo); // Tipo 5 para archivos
-    formData.append("numeroIcono", numeroIcono); // Número de icono
+      
+      nameArchivo.textContent = nombreArchivoMostrado;
 
-    // Agregar los archivos al FormData
-    archivos.forEach(archivo => {
-      formData.append("archivos", archivo);
-    });
-    
-    actualizarRecurso(formData)
-    // fetch("/actualizarRecurso", {
-    //   method: "POST",
-    //   body: formData,
-    // })
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     // ...
-    //   })
-    //   .catch((error) => {
-    //     // ...
-    //   });
+      const numero_Icon_ = (extensiones) => {
+        switch (extensiones) {
+          case 'doc':
+          case 'docx':
+          case 'docm':
+            return '1';
+          case 'pdf':
+            return '2';
+          case 'ppt':
+          case 'pptx':
+          case 'pptm':
+          case 'potx':
+            return '3';
+          case 'xls':
+          case 'xlsx':
+          case 'xlsm':
+          case 'xltx':
+            return '4';
+          case 'jpg':
+          case 'jpeg':
+          case 'png':
+          case 'gif':
+          case 'svg':
+          case 'psd':
+          case 'ai':
+          case 'tiff':
+            return '5';
+          case 'mov':
+          case 'mp4':
+          case 'avi':
+            return '6'
+          default:
+            return '7' 
+        }
+      };
+      
+      const numeroIcono = numero_Icon_(extensiones);
+      // Crear un objeto FormData para enviar los datos y los archivos al controlador
+      const formData = new FormData();
+      formData.append("idCampo", nuevoCampo.name);
+      formData.append("valor", archivo.name);
+      formData.append("tipo", "5"); // Tipo 5 para archivos
+      formData.append("idRecurso", idGrupo);
+      formData.append("numeroIcono", numeroIcono); // Número de icono
+      formData.append("archivo", archivo);
+      
+      // actualizarRecurso(formData)
+      fetch('/actualizarRecurso', {
+        method: 'POST',
+        body: formData,
+        headers: { 'enctype': 'multipart/form-data'}
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Archivo subido:', data);
+      })
+      .catch(error => {
+        // console.error('Error al subir archivo:', error);
+      });
+    }
 
   });
 }
@@ -545,7 +538,6 @@ function verGrupo(idGrupo){
   // Detectar el evento "mouseover" en cualquier elemento del documento sin saber específicamente a cuál se le hará "hover",
   document.addEventListener("mouseover", function(event) {
     // Acciones a realizar cuando se detecte el evento "mouseover"
-    console.log("event.target.id ==> ", event.target.id)
     let idCampo = event.target.id;
     if (idCampo.includes('_')){
       idCampo = idCampo.split('_')[1];
@@ -558,16 +550,10 @@ function verGrupo(idGrupo){
   document.addEventListener("mouseout", function(event) {
     // Acciones a realizar cuando se detecte el evento "mouseover"
     let idCampo = event.target.id;
- 
     if (idCampo.includes('_')){
       idCampo = idCampo.split('_')[1];
     }
-    // const contID = idCampo.charAt(idCampo.length - 1);
-
-    // $(`#iconG${idGrupo}_titulo${contID}`).css('opacity', '0');
     $(`#iconG${idGrupo}_${idCampo}`).css('opacity', '0');
-
-    // console.log("El puntero del mouse está sobre el elemento:", elemento);
   });
 }
 
@@ -623,7 +609,7 @@ function mostrarUrlNueva(campo) {
   const valor = campo.value;
   const domain = obtenerDominio(valor);
   const icono = obtenerIconoPorDominio(domain);
-  numeroIcono = obtenerNumeroIconoPorDominio(domain); // Asignar el número de icono
+  const numeroIcono = obtenerNumeroIconoPorDominio(domain); // Asignar el número de icono
 
   // Actualizar el icono correspondiente
   const iconoElemento = campo.closest('tr').querySelector('.icono-svg');
@@ -631,19 +617,21 @@ function mostrarUrlNueva(campo) {
 
   // Guardar el número de icono en el atributo 'data-numero-icono' del campo
   campo.setAttribute('data-numero-icono', numeroIcono);
+
+  return numeroIcono;
 }
 
 // ACTUALIZAR CAMPOS DESDE EL MISMO GRUPO YA CREADO
-let numeroIcono; // Variable para almacenar el número de icono
+// let numeroIcono; // Variable para almacenar el número de icono
 const camposDinamicos = document.querySelectorAll('.camposD');
 camposDinamicos.forEach(campo => {
   campo.addEventListener('input', () => {
 
     const idCampo = campo.id; // Obtener el ID del recurso
     const valor = campo.value; // Obtener el valor actualizado del campo
-
+    let numeroIcono = null;
     if (idCampo.includes('url')) {
-      mostrarUrlNueva(campo);
+      numeroIcono = mostrarUrlNueva(campo);
     }
 
     console.log(" idCampo ->" , idCampo);
@@ -652,7 +640,6 @@ camposDinamicos.forEach(campo => {
     // Obtener el id del grupo correspondiente
     const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
-    numeroIcono = JSON.stringify(numeroIcono);
 
     const formData = new FormData();
     formData.append("idCampo", idCampo);
@@ -790,29 +777,67 @@ camposArchivo.forEach(campo => {
     // Obtener el id del grupo correspondiente
     const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
-    const recursoId = campo.id; // Obtener el recurso.id del campo
+    const recursoId = campo.id; // Obtener el recurso.id del campo grupo1_file4
 
     const extension = obtenerExtension(campo.files[0].name);
-    const numIcono = obtenerNumeroIconoPorExtension(extension);
-    // Crear una instancia de FormData y agregar el archivo seleccionado
-    const formData = new FormData();
-    formData.append('archivo', campo.files[0]);
-    formData.append('idCampo', recursoId);
-    formData.append('valor', campo.files[0].name);
-    formData.append('idRecurso', idRecurso);
-    formData.append('numeroIcono', numIcono.toString());
 
-    fetch('/actualizarRecurso', {
-      method: 'POST',
-      body: formData,
-      headers: { 'enctype': 'multipart/form-data'}
-    })
-    .then(response => response.json())
-    .then(data => {
-      console.log('Archivo subido:', data);
-    })
-    .catch(error => {
-      console.error('Error al subir archivo:', error);
-    });
+    const esValido = validarPeso_Video(extension, campo.files[0])
+    if (esValido) {
+      const numIcono = obtenerNumeroIconoPorExtension(extension);
+      // Crear una instancia de FormData y agregar el archivo seleccionado
+      const formData = new FormData();
+      formData.append('archivo', campo.files[0]);
+      formData.append('idCampo', recursoId);
+      formData.append('valor', campo.files[0].name);
+      formData.append('idRecurso', idRecurso);
+      formData.append('numeroIcono', numIcono.toString());
+
+      fetch('/actualizarRecurso', {
+        method: 'POST',
+        body: formData,
+        headers: { 'enctype': 'multipart/form-data'}
+      })
+      .then(response => response.json())
+      .then(data => {
+        console.log('Archivo subido:', data);
+      })
+      .catch(error => {
+        console.error('Error al subir archivo:', error);
+      });
+    }
   });
 });
+
+const colorButtons_edit = document.querySelectorAll('.colorBtnEdit');
+const colorGrupoInput_edit = document.getElementById("colorGrupoInput_edit");
+capturarColor_Grupo(colorButtons_edit, colorGrupoInput_edit)
+
+function validarPeso_Video(extension, archivo) {
+  if (extension === 'mov' || extension === 'mp4' || extension === 'avi') {
+    // Verificar el tamaño del archivo
+    const maxSize = 20 * 1024 * 1024; // 20 megabytes
+    if (archivo.size > maxSize) {
+      // Mostrar mensaje de error o realizar acciones correspondientes
+      toastr.warning("Tu video supera 20MB", "Error", {
+        positionClass: "toast-top-full-width",
+        timeOut: 5000,
+        closeButton: !0,
+        debug: !1,
+        newestOnTop: !0,
+        progressBar: !0,
+        preventDuplicates: !0,
+        onclick: null,
+        showDuration: "500",
+        hideDuration: "200",
+        extendedTimeOut: "400",
+        showEasing: "swing",
+        hideEasing: "linear",
+        showMethod: "fadeIn",
+        hideMethod: "fadeOut",
+        tapToDismiss: !1
+      })
+      return false;
+    }
+  }
+  return true;
+}
