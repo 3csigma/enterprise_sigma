@@ -100,16 +100,16 @@ function eliminarRecurso(id) {
 
 // ============ FIN CONECTAR LINK ============
 
-  // :: GRUPO RECURSOS ::
+// :: GRUPO RECURSOS ::
 // :: PARA CAPTURAR EL COLOR DEL GRUPO ::
 // Obtener los botones de selección de color (Modal Subir & Editar Grupo)
 const colorButtons = document.querySelectorAll('.colorBtnAdd');
 const colorGrupoInput = document.getElementById("colorGrupoInput");
 capturarColor_Grupo(colorButtons, colorGrupoInput)
 
-const colorButtons_edit = document.querySelectorAll('.colorBtnEdit');
-const colorGrupoInput_edit = document.getElementById("colorGrupoInput_edit");
-capturarColor_Grupo(colorButtons_edit, colorGrupoInput_edit)
+// const colorButtons_edit = document.querySelectorAll('.colorBtnEdit');
+// const colorGrupoInput_edit = document.getElementById("colorGrupoInput_edit");
+// capturarColor_Grupo(colorButtons_edit, colorGrupoInput_edit)
 
 /*************************************************
  * FUNCIÓN PARA EL PROCESO DE SELECCIÓN DE COLORES
@@ -119,7 +119,7 @@ function capturarColor_Grupo(colorButtons_, grupoInput) {
   colorButtons_.forEach((button) => {
     button.addEventListener("click", function() {
       // Remover la clase 'selected' de todos los botones
-      colorButtons.forEach(btn => btn.classList.remove('selected') );
+      colorButtons_.forEach(btn => btn.classList.remove('selected') );
   
       // Agregar la clase 'selected' al botón clicado
       this.classList.add('selected');
@@ -266,9 +266,15 @@ function crearCampoUrl() {
 
   inputUrl.addEventListener("input", function () {
     const url = inputUrl.value;
-    const domain = obtenerDominio(url);
+    let domain = obtenerDominio(url);
+    if (domain.includes('www.')) domain = domain.split('www.')[1]
     const icono = obtenerIconoPorDominio(domain);
     let numeroIcono = obtenerNumeroIconoPorDominio(domain);
+
+    console.log("INFO URL =>>> ");
+    console.log(domain);
+    console.log(icono);
+    console.log(numeroIcono);
 
     // Mostrar el icono correspondiente
     if (icono) {
@@ -305,35 +311,25 @@ function obtenerIconoPorDominio(domain) {
     "notion.so": "../logos_recursos/notion.svg"
   };
 
-  if (domain.includes('www.'))
-    domain = domain.split('www.')[1]
+  // if (domain.includes('www.')) domain = domain.split('www.')[1]
 
   return dominios[domain] || "../logos_recursos/Pagina_Web.svg";
 }
 
 // Obtener el número correcto de cada url ingresado
 function obtenerNumeroIconoPorDominio(domain) {
-  let numeroIcono;
-
   switch (domain) {
     case "youtube.com":
-      numeroIcono = 1;
-      break;
+      return 1;
     case "vimeo.com":
-      numeroIcono = 2;
-      break;
+      return 2;
     case "notion.so":
-      numeroIcono = 3;
-      break;
+      return 3;
     case "drive.google.com":
-      numeroIcono = 4;
-      break;
+      return 4;
     default:
-      numeroIcono = 5;
-      break;
+      return 5;
   }
-
-  return numeroIcono;
 }
 
 // Función para crear el campo de file
@@ -386,73 +382,76 @@ function crearCampoArchivo() {
     const archivo = event.target.files[0];
     const extension = obtenerExtensionArchivo(archivo.name);
     const icono = obtenerIcono(extension);
-    archivoIcono.innerHTML = `<img src="${icono}" style="margin:15px" class="icono-cargar-archivo">`;
-  
-    // Limitar la longitud del nombre del archivo a mostrar
-    const MAX_LONGITUD_NOMBRE = 20;
-    let nombreArchivoMostrado = archivo.name;
-    let nombreSinExtension = archivo.name.substr(0, archivo.name.lastIndexOf('.'));
-    let extensionArchivo = archivo.name.substr(archivo.name.lastIndexOf('.'));
-    
-    if (nombreSinExtension.length > MAX_LONGITUD_NOMBRE) {
-      nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
-      nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
-    }
-    
-    nombreArchivo.textContent = nombreArchivoMostrado;
 
-    const extensiones = {
-      'doc': '1',
-      'docx': '1',
-      'docm': '1',
-      'pdf': '2',
-      'ppt': '3',
-      'pptx': '3',
-      'pptm': '3',
-      'potx': '3',
-      'pptx': '3',
-      'xls': '4',
-      'xlsx': '4',
-      'xlsm': '4',
-      'xltx': '4',
-      'jpg': '5',
-      'jpeg': '5',
-      'png': '5',
-      'gif': '5',
-      'svg': '5',
-      'psd': '5',
-      'ai': '5',
-      'tiff': '5',
-      'mov' : '6',
-      'mp4' : '6',
-      'avi' : '6',
-    };
-    const numeroIcono = extensiones[extension] || '7|';
+    const esValido = validarPeso_Video(extension, archivo)
+
+    if (esValido) {
+      archivoIcono.innerHTML = `<img src="${icono}" style="margin:15px" class="icono-cargar-archivo">`;
     
-    const archivos = event.target.files;
-    const formData = new FormData();
-    formData.append("id", inputFile.name);
-    formData.append("valor", archivos[0].name);
-    formData.append("tipo", "5");
-    formData.append("numeroIcono", numeroIcono);
+      // Limitar la longitud del nombre del archivo a mostrar
+      const MAX_LONGITUD_NOMBRE = 20;
+      let nombreArchivoMostrado = archivo.name;
+      let nombreSinExtension = archivo.name.substr(0, archivo.name.lastIndexOf('.'));
+      let extensionArchivo = archivo.name.substr(archivo.name.lastIndexOf('.'));
+      
+      if (nombreSinExtension.length > MAX_LONGITUD_NOMBRE) {
+        nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
+        nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
+      }
+      
+      nombreArchivo.textContent = nombreArchivoMostrado;
+      const extensiones = {
+        'doc': '1',
+        'docx': '1',
+        'docm': '1',
+        'pdf': '2',
+        'ppt': '3',
+        'pptx': '3',
+        'pptm': '3',
+        'potx': '3',
+        'pptx': '3',
+        'xls': '4',
+        'xlsx': '4',
+        'xlsm': '4',
+        'xltx': '4',
+        'jpg': '5',
+        'jpeg': '5',
+        'png': '5',
+        'gif': '5',
+        'svg': '5',
+        'psd': '5',
+        'ai': '5',
+        'tiff': '5',
+        'mov' : '6',
+        'mp4' : '6',
+        'avi' : '6',
+      };
+      const numeroIcono = extensiones[extension] || '7';
+      const archivos = event.target.files;
+      const formData = new FormData();
+      formData.append("id", inputFile.name);
+      formData.append("valor", archivos[0].name);
+      formData.append("tipo", "5");
+      formData.append("numeroIcono", numeroIcono);
 
-    for (let i = 0; i < archivos.length; i++) {
-      formData.append("archivos", archivos[i]);
-    }
+      for (let i = 0; i < archivos.length; i++) {
+        formData.append("archivos", archivos[i]);
+      }
 
-    fetch("/guardar-grupo", {
-      method: "POST",
-      body: formData,
-    })
-      .then(response => response.json())
-      .then(data => {
-        console.log("Respuesta desde /guardar-grupo")
-        console.log(data);
-        // ...
+      fetch("/guardar-grupo", {
+        method: "POST",
+        body: formData,
       })
-      .catch(error => {
-        // ...
-      });
+        .then(response => response.json())
+        .then(data => {
+          console.log("Respuesta desde /guardar-grupo")
+          console.log(data);
+          // ...
+        })
+        .catch(error => {
+          // ...
+        });
+    }
   });
 }
 
@@ -542,12 +541,12 @@ function handleCampoBlur(event) {
   // Ejemplo: enviar el valor del campo al controlador mediante fetch
   fetch('/guardar-grupo', {
     method: 'POST',
-    body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono:numeroIcono }),
+    body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono }),
     headers: { 'Content-Type': 'application/json'}
   })
     .then(response => response.json())
     .then(data => {
-      //console.log("TODO BIEN");
+      console.log("FETCH GUARDAR GRUPO ", data);
     })
     .catch(error => {
       // console.log("TODO MAL");
