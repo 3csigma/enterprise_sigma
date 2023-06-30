@@ -1107,9 +1107,10 @@ empresaController.actualizarRecurso = async (req, res) => {
     }
     
     const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
-    nombre_grupo = infoRecursos.nombre_grupo != nombre_grupo ? nombre_grupo : infoRecursos.nombre_grupo;
-    descrip_grupo = infoRecursos.descrip_grupo != descrip_grupo ? descrip_grupo : infoRecursos.descrip_grupo;
-    color_grupo = infoRecursos.color_grupo != color_grupo ? color_grupo : infoRecursos.color_grupo;
+    nombre_grupo = nombre_grupo == null || nombre_grupo == '' ? infoRecursos.nombre_grupo : nombre_grupo;
+    descrip_grupo = descrip_grupo == null || descrip_grupo == '' ? infoRecursos.descrip_grupo : descrip_grupo;
+    color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
+
     let recursos = JSON.parse(infoRecursos.recurso_armado);
     console.log("\n**** DATOS DEL GRUPO DATABASE ==> ", recursos);
 
@@ -1137,6 +1138,8 @@ empresaController.actualizarRecurso = async (req, res) => {
         color_grupo,
         recurso_armado: JSON.stringify(recursos),
     }
+
+    console.log("LA DATA =>" , data);
     await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
 
     res.redirect("/recursos/");

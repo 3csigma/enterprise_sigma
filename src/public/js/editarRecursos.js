@@ -633,14 +633,16 @@ camposDinamicos.forEach(campo => {
     if (idCampo.includes('url')) {
       numeroIcono = mostrarUrlNueva(campo);
     }
-
-    console.log(" idCampo ->" , idCampo);
-    console.log(" valor ->" , valor);
-
+    
     // Obtener el id del grupo correspondiente
     const idGrupo = campo.closest('.modal').getAttribute('id').split('-')[1];
     const idRecurso = document.getElementById(`idRecurso-${idGrupo}`).value;
-
+  
+    console.log(" idCampo ->" , idCampo);
+    console.log(" valor ->" , valor);
+    console.log(" idRecurso ->" , idRecurso);
+    console.log(" numeroIcono ->" , numeroIcono);
+    
     const formData = new FormData();
     formData.append("idCampo", idCampo);
     formData.append("valor", valor);
