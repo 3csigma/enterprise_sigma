@@ -313,7 +313,7 @@ function agregarArhivo(select) {
   console.log("-------")
 
   if (!banderas.b5) {
-    contadores.c5 = contElements.t5 + 1;
+    contadores.c5 = contElements.t5 + 2;
     banderas.b5 = true;
   }
 
@@ -370,20 +370,16 @@ function agregarArhivo(select) {
   });
 
   contenidoEdit.appendChild(fileContainer);
-  // addIconoEliminar(contenidoEdit, nuevoCampo);
-
   contadores.c5++;
 
   nuevoCampo.addEventListener("change", function (event) {
     const archivo = event.target.files[0];
-    const extensiones = obtenerExt(archivo.name);
+    const extensiones = obtenerExtension(archivo.name);
     const icon = obtenerIcon(extensiones);
 
     const esValido = validarPeso_Video(extensiones, archivo)
-
     if (esValido) {
       archivoIcon.innerHTML = `<img src="${icon}" style="margin:15px" class="icono-cargar-archivo">`;
-    
       // Limitar la longitud del nombre del archivo a mostrar
       const MAX_LONGITUD_NOMBRE = 20;
       let nombreArchivoMostrado = archivo.name;
@@ -394,46 +390,9 @@ function agregarArhivo(select) {
         nombreSinExtension = nombreSinExtension.substring(0, MAX_LONGITUD_NOMBRE) + "...";
         nombreArchivoMostrado = nombreSinExtension + extensionArchivo;
       }
-      
       nameArchivo.textContent = nombreArchivoMostrado;
-
-      const numero_Icon_ = (extensiones) => {
-        switch (extensiones) {
-          case 'doc':
-          case 'docx':
-          case 'docm':
-            return '1';
-          case 'pdf':
-            return '2';
-          case 'ppt':
-          case 'pptx':
-          case 'pptm':
-          case 'potx':
-            return '3';
-          case 'xls':
-          case 'xlsx':
-          case 'xlsm':
-          case 'xltx':
-            return '4';
-          case 'jpg':
-          case 'jpeg':
-          case 'png':
-          case 'gif':
-          case 'svg':
-          case 'psd':
-          case 'ai':
-          case 'tiff':
-            return '5';
-          case 'mov':
-          case 'mp4':
-          case 'avi':
-            return '6'
-          default:
-            return '7' 
-        }
-      };
       
-      const numeroIcono = numero_Icon_(extensiones);
+      const numeroIcono = obtener_NumeroIcono(extensiones);
       // Crear un objeto FormData para enviar los datos y los archivos al controlador
       const formData = new FormData();
       formData.append("idCampo", nuevoCampo.name);
@@ -462,8 +421,8 @@ function agregarArhivo(select) {
 }
 
 // Función para obtener la extensión de un archivo
-function obtenerExt(nombreFiles) {
-  return nombreFiles.split(".").pop();
+function obtenerExtension(nombreArchivo) {
+  return (nombreArchivo.split('.').pop()).toLowerCase();
 }
 
 // Función para obtener el icono correspondiente a una extensión de archivo
@@ -528,7 +487,6 @@ document.addEventListener("change", function(event) {
       case "archivo":
         agregarArhivo(select);
         break;
-      // otros casos aquí
     }
     select.selectedIndex = 0;
   }
@@ -586,20 +544,7 @@ function handleCampoBlur2(event) {
   console.log("FORM DATA - HANDLE CAMPO BLUR ==> ", formData)
 
   actualizarRecurso(formData)
-  // fetch('/actualizarRecurso', {
-  //     method: 'POST',
-  //     body: JSON.stringify({ idCampo, valor, tipo, idRecurso, numeroIcono }),
-  //     headers: { 'Content-Type': 'application/json'}
-  //   })
-  //     .then(response => response.json())
-  //     .then(data => {
-  //     console.log("TODO BIEN", data);
-  //     })
-  //     .catch(error => {
-  //      console.log("TODO MAL", error);
-  //     });
 }
-
 
 // ----------------------------------------------------------------
   // PARA ACTUALIZAR EN VIVO EL CAMPO URL
@@ -617,12 +562,10 @@ function mostrarUrlNueva(campo) {
 
   // Guardar el número de icono en el atributo 'data-numero-icono' del campo
   campo.setAttribute('data-numero-icono', numeroIcono);
-
   return numeroIcono;
 }
 
 // ACTUALIZAR CAMPOS DESDE EL MISMO GRUPO YA CREADO
-// let numeroIcono; // Variable para almacenar el número de icono
 const camposDinamicos = document.querySelectorAll('.camposD');
 camposDinamicos.forEach(campo => {
   campo.addEventListener('input', () => {
@@ -651,19 +594,6 @@ camposDinamicos.forEach(campo => {
     formData.append("numeroIcono", numeroIcono); // Número de icono
 
     actualizarRecurso(formData)
-
-    // fetch('/actualizarRecurso', {
-    //   method: 'POST',
-    //   body: JSON.stringify({ idCampo, valor, idRecurso, numeroIcono }),
-    //   headers: { 'Content-Type': 'application/json' }
-    // })
-    //   .then(response => response.json())
-    //   .then(data => {
-    //     console.log('Campo actualizado:', data);
-    //   })
-    //   .catch(error => {
-    //    // console.error('Error al actualizar campo:', error);
-    //   });
   });
 });
 
@@ -671,7 +601,7 @@ camposDinamicos.forEach(campo => {
 function mostrarFilesNuevos(campo) {
   const valor = campo.files[0].name;
   const extension = obtenerExtension(valor);
-  const numeroIcono = obtenerNumeroIconoPorExtension(extension); // Asignar el número de icono
+  const numeroIcono = obtener_NumeroIcono(extension); // Asignar el número de icono
   const icono = obtenerIconoPorNumero(numeroIcono); // Obtener el icono correspondiente
 
   // Actualizar el icono correspondiente
@@ -707,31 +637,25 @@ function mostrarFilesNuevos(campo) {
   campo.setAttribute('data-numerofile-icono', numeroIcono);
 }
 
-// Función para obtener la extensión de un archivo
-function obtenerExtension(nombreArchivo) {
-  const extension = nombreArchivo.split('.').pop();
-  return extension.toLowerCase();
-}
-
 // Función para obtener el número de icono correspondiente a una extensión de archivo
-function obtenerNumeroIconoPorExtension(extension) {
+function obtener_NumeroIcono(extension) {
   switch (extension) {
     case 'doc':
     case 'docx':
     case 'docm':
-      return 1;
+      return '1';
     case 'pdf':
-      return 2;
+      return '2';
     case 'ppt':
     case 'pptx':
     case 'pptm':
     case 'potx':
-      return 3;
+      return '3';
     case 'xls':
     case 'xlsx':
     case 'xlsm':
     case 'xltx':
-      return 4;
+      return '4';
     case 'jpg':
     case 'jpeg':
     case 'png':
@@ -740,13 +664,13 @@ function obtenerNumeroIconoPorExtension(extension) {
     case 'psd':
     case 'ai':
     case 'tiff':
-      return 5;
+      return '5';
     case 'mov':
     case 'mp4':
     case 'avi':
-      return 6;
+      return '6';
     default:
-      return 7;
+      return '7';
   }
 }
 
@@ -758,7 +682,7 @@ function obtenerIconoPorNumero(numeroIcono) {
     case 2:
       return "../logos_recursos/Documento_PDF.svg";
     case 3:
-      return "../logos_recursos/Documento_PowePoint.svg";
+      return "../logos_recursos/Documento_PowerPoint.svg";
     case 4:
       return "../logos_recursos/Documento_Excel.svg";
     case 5:
@@ -785,14 +709,14 @@ camposArchivo.forEach(campo => {
 
     const esValido = validarPeso_Video(extension, campo.files[0])
     if (esValido) {
-      const numIcono = obtenerNumeroIconoPorExtension(extension);
+      const numIcono = obtener_NumeroIcono(extension);
       // Crear una instancia de FormData y agregar el archivo seleccionado
       const formData = new FormData();
       formData.append('archivo', campo.files[0]);
       formData.append('idCampo', recursoId);
       formData.append('valor', campo.files[0].name);
       formData.append('idRecurso', idRecurso);
-      formData.append('numeroIcono', numIcono.toString());
+      formData.append('numeroIcono', numIcono);
 
       fetch('/actualizarRecurso', {
         method: 'POST',

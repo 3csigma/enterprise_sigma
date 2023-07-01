@@ -686,7 +686,7 @@ empresaController.cargar_recurso = async (req, res) => {
     let año = fechaActual.getFullYear();
     // Formatear la fecha en el formato deseado
     let fecha= dia + '/' + mes + '/' + año;
-    let tipo_archivo = null;
+    let tipo_archivo = 'Otro';
     if (req.file) {
         const archivo = req.file;
         recurso = '../recurso_empresa/' + archivo.filename
@@ -713,8 +713,13 @@ empresaController.cargar_recurso = async (req, res) => {
             'mp4': 'video',
             'avi': 'video'
         };
-          
-        tipo_archivo = extensionesMap.hasOwnProperty(ext) ? extensionesMap[ext] : 'Otro';
+        
+        if (extensionesMap.hasOwnProperty(ext)) {
+            tipo_archivo = extensionesMap[ext];
+        }
+
+        console.log("TIPO DE ARCHIVO ---- => ");
+        console.log(tipo_archivo);
 
     } 
 
@@ -775,8 +780,8 @@ empresaController.guardar_grupo = async (req, res) => {
     const { idEmpresa, nombre_grupo, descrip_grupo, esFormulario } = req.body;
     let { color_grupo } = req.body
     if (!color_grupo) {
-        color_grupo = obtenerColorAlAzar();
-        // color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"
+       // color_grupo = obtenerColorAlAzar();
+        color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"
     }
 
     console.log("ID DEL ELEMENTO AGREGADO ===> ", req.body.id);
@@ -814,9 +819,8 @@ empresaController.guardar_grupo = async (req, res) => {
     // Guardar los datos acumulados en la variable de sesión
     req.session.datosAcumulados = datosAcumulados;
     console.log("--------");
-    console.group("DATOS ACUMULADOS");
+    console.log("DATOS ACUMULADOS");
     console.log(datosAcumulados);
-    console.groupEnd();
     console.log("--------");
     const recurso_armado = JSON.stringify(datosAcumulados);
    
@@ -851,7 +855,7 @@ empresaController.eliminarCampo = async (req, res) => {
         console.log("Entrando en modo Editar >> ")
         console.log(idGrupo)
         console.log(idCampo)
-        const grupo = (await consultarDatos('grupo_recursos')).find(x => x.id == idGrupo)
+        const grupo = req.user.rol == 'Admin' ? (await consultarDatos('recursos_compartidos')).find(x => x.id == idGrupo) : (await consultarDatos('grupo_recursos')).find(x => x.id == idGrupo);
         if (grupo) {
             console.log("Grupo DB =>>")
             console.log(grupo);
@@ -863,7 +867,8 @@ empresaController.eliminarCampo = async (req, res) => {
             console.log(objRecurso)
 
             const data = { recurso_armado: JSON.stringify(objRecurso) }
-            await actualizarDatos('grupo_recursos', data, `WHERE id = ${idGrupo}`)
+            req.user.rol == 'Admin' ? await actualizarDatos('recursos_compartidos', data, `WHERE id = ${idGrupo}`)
+            : await actualizarDatos('grupo_recursos', data, `WHERE id = ${idGrupo}`)
 
             res.send(true)
         } else {
@@ -875,7 +880,7 @@ empresaController.eliminarCampo = async (req, res) => {
 // ELIMINAR EL GRUPO COMO TAL UNA VEZ CREADO
 empresaController.eliminarGrupo = async (req, res) => {
     const { id } = req.body;
-    const recurso = await eliminarDatos('grupo_recursos', `WHERE id = ${id}`)
+    const recurso = req.user.rol == 'Admin' ? await eliminarDatos('recursos_compartidos', `WHERE id = ${id}`) : await eliminarDatos('grupo_recursos', `WHERE id = ${id}`)
     let respu = undefined;
     if (recurso.affectedRows > 0) {
         console.log("Eliminando recurso...")
@@ -1007,7 +1012,7 @@ empresaController.recursos = async (req, res) => {
                     } else if (recurso.numeroIcono === "2") {
                         iconoUrl = "../logos_recursos/Documento_PDF.svg";
                     } else if (recurso.numeroIcono === "3") {
-                        iconoUrl = "../logos_recursos/Documento_PowePoint.svg";
+                        iconoUrl = "../logos_recursos/Documento_PowerPoint.svg";
                     } else if (recurso.numeroIcono === "4") {
                         iconoUrl = "../logos_recursos/Documento_Excel.svg";
                     } else if (recurso.numeroIcono === "5") {
@@ -1065,20 +1070,113 @@ empresaController.recursos = async (req, res) => {
         });
     }
 
+    const recursoCompartido = []
+    const resul = (await pool.query("SELECT * FROM recursos_compartidos")).filter(x => JSON.parse(x.programa).includes(req.user.programa.toString()));
+      if (resul.length > 0) {
+          resul.forEach((r) => {
+            let iconos = [], cuerpoHTML = "";
+            const recursoArmado = JSON.parse(r.recurso_armado);
+            recursoArmado.forEach((recurso) => {
+                if (recurso.tipo === "1") {
+                    cuerpoHTML += `
+                    <input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos" readonly value="${recurso.valor}">`;
+                } else if (recurso.tipo === "2") {
+                    cuerpoHTML += `
+                    <textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control" readonly>${recurso.valor}</textarea>`;
+                } else if (recurso.tipo === "3") {
+                    cuerpoHTML += `
+                    <${recurso.valor} style="width: 100%;margin-left: 5px;border:1px solid #5c5c5c">`;
+                } else if (recurso.tipo === "4") {
+                    let iconoUrl;
+                    if (recurso.numeroIcono === "1") {
+                        iconoUrl = "../logos_recursos/Video_Youtube.svg";
+                    } else if (recurso.numeroIcono === "2") {
+                        iconoUrl = "../logos_recursos/Video_Vimeo.svg";
+                    } else if (recurso.numeroIcono === "3") {
+                        iconoUrl = "../logos_recursos/notion.svg";
+                    } else if (recurso.numeroIcono === "4") {
+                        iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
+                    } else if (recurso.numeroIcono === "5") {
+                        iconoUrl = "../logos_recursos/Pagina_Web.svg";
+                    }
+                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    cuerpoHTML += `
+                    <table class="table header-border">
+                    <tbody>
+                        <tr class="text-black">
+                        <td style="width: 0px;padding-right: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
+                        <td>
+                            <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url " readonly  value="${recurso.valor}">
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>`;
+                }else if (recurso.tipo === "5") {
+                    let iconoUrl = "../logos_recursos/Otro.svg";
+                    if (recurso.numeroIcono === "1") {
+                        iconoUrl = "../logos_recursos/Documento_Word.svg";
+                    } else if (recurso.numeroIcono === "2") {
+                        iconoUrl = "../logos_recursos/Documento_PDF.svg";
+                    } else if (recurso.numeroIcono === "3") {
+                        iconoUrl = "../logos_recursos/Documento_PowerPoint.svg";
+                    } else if (recurso.numeroIcono === "4") {
+                        iconoUrl = "../logos_recursos/Documento_Excel.svg";
+                    } else if (recurso.numeroIcono === "5") {
+                        iconoUrl = "../logos_recursos/Archivo_imagen.svg";
+                    } else if (recurso.numeroIcono === "6") {
+                        iconoUrl = "../logos_recursos/icon_Video.svg";
+                    }
+                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    if (recurso.valor.includes('/')) {
+                        recurso.valor = recurso.valor.split("/").pop()
+                    }
+                    cuerpoHTML += `
+                    <table class="table header-border">
+                    <tbody>
+                        <tr class="text-black">
+                        <td style="width: 0px;">
+                            <a href="../grupo_recursos/${recurso.valor}" target="_blank">
+                            <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                            </a>
+                        </td>
+                        <td>
+                            <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="grupo${r.id}_${recurso.id}" class="nombre-archivo">${recurso.valor
+                        .split("/")
+                        .pop()}</span>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>`;
+                }
+            });
+            recursoCompartido.push({
+                idGrupo: r.id,
+                nombre_grupo: r.nombre_grupo,
+                descrip_grupo: r.descrip_grupo,
+                color_grupo: r.color_grupo,
+                recurso_armado: r.recurso_armado,
+                cuerpoHTML: cuerpoHTML,
+                iconos: iconos.filter((icono) => icono.grupo === r.id),
+                contador: JSON.stringify(r.contadorElementos),
+            });
+          });
+      }
+
+
   res.render("empresa/recursos", {
     user_dash: true,
     id_empresa,
     categorias,
     recurso,
     datos,
-    grupos,
+    grupos, recursoCompartido
   });
 }
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
     const archivo = req.files;
-    let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
+    let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo, programa }= req.body;
     
     console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
 
@@ -1088,13 +1186,9 @@ empresaController.actualizarRecurso = async (req, res) => {
     console.log("Tipo>", tipo);
     console.log("NumeroIcono>", numeroIcono);
     console.log("*_*_*_*_*_*_*__*_*_*_*");
-    console.log("archivo")
-    console.log(archivo);
     console.log("*_*_*_*_*_*_*__*_*_*_*");
 
     if (archivo && archivo[0]) {
-        // archivo = archivo[0];
-        // valor = archivo.map(x => "../grupo_recursos/" + x.filename);
         valor = "../grupo_recursos/" + archivo[0].filename
     }
 
@@ -1106,7 +1200,8 @@ empresaController.actualizarRecurso = async (req, res) => {
         idCampo = idCampo.split('_')[1];
     }
     
-    const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
+    const infoRecursos = req.user.rol == 'Admin' ? (await consultarDatos('recursos_compartidos')).find(x => x.id == idRecurso)
+    : (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso);
     nombre_grupo = nombre_grupo == null || nombre_grupo == '' ? infoRecursos.nombre_grupo : nombre_grupo;
     descrip_grupo = descrip_grupo == null || descrip_grupo == '' ? infoRecursos.descrip_grupo : descrip_grupo;
     color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
@@ -1140,9 +1235,15 @@ empresaController.actualizarRecurso = async (req, res) => {
     }
 
     console.log("LA DATA =>" , data);
-    await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
-
-    res.redirect("/recursos/");
+    if (req.user.rol == 'Admin') {
+        const programa = req.body.programa || ["1"]
+        data.programa = JSON.stringify(programa)
+        await actualizarDatos('recursos_compartidos', data, `WHERE id = ${idRecurso}`) 
+        res.redirect("/recursos-compartidos/");
+    } else {
+        await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
+        res.redirect("/recursos/");
+    }
   };
   
   

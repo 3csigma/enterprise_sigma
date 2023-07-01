@@ -2458,46 +2458,261 @@ dashboardController.finalizarEtapa = async (req, res) => {
 
 dashboardController.recursosCompartidos = async (req, res) => {
     const recursos = await helpers.consultarDatos('recursos_compartidos');
-    recursos.forEach(x => {
-        x.data = JSON.parse(x.recurso_armado)
-        x.iconos = []
-        x.data.forEach(r => {
-            if (r.tipo == '4') {
-                if (r.numeroIcono === "1") {
-                    x.iconos.push({ ruta: "../logos_recursos/Video_Youtube.svg" });
-                } else if (r.numeroIcono === "2") {
-                    x.iconos.push({ ruta: "../logos_recursos/Video_Vimeo.svg" });
-                } else if (r.numeroIcono === "3") {
-                    x.iconos.push({ ruta: "../logos_recursos/notion.svg" });
-                } else if (r.numeroIcono === "4") {
-                    x.iconos.push({ ruta: "../logos_recursos/Archivo_Google_Drive.svg" });
-                } else if (r.numeroIcono === "5") {
-                    x.iconos.push({ ruta: "../logos_recursos/Pagina_Web.svg" });
+    const grupos = []
+    if (recursos.length > 0) {
+        recursos.forEach((r) => {
+            let iconos = [], cuerpoHTML = "";
+            const recursoArmado = JSON.parse(r.recurso_armado);
+            const contador = { t1: 0, t2: 0, t3: 0, t4: 0, t5: 0 };
+
+            recursoArmado.forEach((recurso) => {
+                if (recurso.tipo === "1") {
+                    contador.t1++;
+                    cuerpoHTML += `
+                    <div id="divElemento_${recurso.id}">
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <input style="width:100% !important;font-size: 1.5em; font-weight: 700; color: black !important; border: 0px solid #000000 !important; text-align: left;" class="form-control input-recursos camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}" placeholder="Ingrese el título aquí">
+                    </div>`;
+                } else if (recurso.tipo === "2") {
+                    contador.t2++;
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top:6px" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <textarea style="color: black !important; border: 0px solid; text-align: left; font-weight: 100;" class="form-control camposD" id="grupo${r.id}_${recurso.id}" placeholder="Agrega algo de texto">${recurso.valor}</textarea>`;
+                } else if (recurso.tipo === "3") {
+                    contador.t3++;
+                    cuerpoHTML += `
+                    <div class="campo-separador" id="campo${r.id}_${recurso.id}" style="border:1px solid white">
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <hr class="separador" id="grupo${r.id}_${recurso.id}" style="border:1px solid #5c5c5c">
+                    </div>`;
+                 } else if (recurso.tipo === "4") {
+                    contador.t4++;
+                    let iconoUrl;
+                    if (recurso.numeroIcono === "1") {
+                        iconoUrl = "../logos_recursos/Video_Youtube.svg";
+                    } else if (recurso.numeroIcono === "2") {
+                        iconoUrl = "../logos_recursos/Video_Vimeo.svg";
+                    } else if (recurso.numeroIcono === "3") {
+                        iconoUrl = "../logos_recursos/notion.svg";
+                    } else if (recurso.numeroIcono === "4") {
+                        iconoUrl = "../logos_recursos/Archivo_Google_Drive.svg";
+                    } else if (recurso.numeroIcono === "5") {
+                        iconoUrl = "../logos_recursos/Pagina_Web.svg";
+                    }
+                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 20px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <table class="table header-border" id="tablaUrl_g${r.id}_${recurso.id}">
+                    <tbody>
+                        <tr class="text-black">
+                        <td style="width: 0px;padding-right: 0px;"><a href="${recurso.valor}" target="_blank"><img src="${iconoUrl}" class="icono-svg" alt="Icono"></a></td>
+                        <td>
+                            <input data-numero-icono="${recurso.numeroIcono}" style="color: black !important;border: 0px solid;text-align: left;text-decoration-line: underline;" class="form-control campo_url camposD" id="grupo${r.id}_${recurso.id}" value="${recurso.valor}" placeholder="Ingrese la URL">
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>`;
+                } else if (recurso.tipo === "5") {
+                    contador.t5++;
+                    let iconoUrl = "../logos_recursos/Otro.svg";
+                    if (recurso.numeroIcono === "1") {
+                        iconoUrl = "../logos_recursos/Documento_Word.svg";
+                    } else if (recurso.numeroIcono === "2") {
+                        iconoUrl = "../logos_recursos/Documento_PDF.svg";
+                    } else if (recurso.numeroIcono === "3") {
+                        iconoUrl = "../logos_recursos/Documento_PowerPoint.svg";
+                    } else if (recurso.numeroIcono === "4") {
+                        iconoUrl = "../logos_recursos/Documento_Excel.svg";
+                    } else if (recurso.numeroIcono === "5") {
+                        iconoUrl = "../logos_recursos/Archivo_imagen.svg";
+                    } else if (recurso.numeroIcono === "6") {
+                        iconoUrl = "../logos_recursos/icon_Video.svg";
+                    }
+                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    if (recurso.valor.includes('/')) {
+                        recurso.valor = recurso.valor.split("/").pop()
+                    }
+                    cuerpoHTML += `
+                    <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 10px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
+                    <table class="table header-border" id="tablaFile_g${r.id}_${recurso.id}">
+                    <tbody>
+                        <tr class="text-black">
+                        <td style="width: 0px;">
+                            <a href="../grupo_recursos/${recurso.valor}" target="_blank">
+                            <img data-numerofile-icono="${iconoUrl}" src="${iconoUrl}" class="icono-svg" alt="IconoDocs">
+                            </a>
+                        </td>
+                        <td style="width: 20px">
+                            <label for="grupo${r.id}_${recurso.id}">
+                            <img src="../logos_recursos/cargar_Archivo.svg" class="icono-cargar-archivo" alt="IconoCargarArchivo">
+                            </label>
+                            <input type="file" class="campo_archivo" name="${recurso.id}" id="grupo${r.id}_${recurso.id}" accept=".pdf,.docx,.xlsx,.jpg,.png" style="display: none;">
+                        </td>
+                        <td>
+                            <span style="color: black !important; text-decoration: none; border: 0px solid; text-align: left;" id="grupo${r.id}_${recurso.id}" class="nombre-archivo">${recurso.valor}</span>
+                        </td>
+                        </tr>
+                    </tbody>
+                    </table>`;
                 }
-            } else if (r.tipo == '5') {
-                if (r.numeroIcono === "1") {
-                    x.iconos.push({ ruta: "../logos_recursos/Documento_Word.svg" });
-                } else if (r.numeroIcono === "2") {
-                    x.iconos.push({ ruta: "../logos_recursos/Documento_PDF.svg" });
-                } else if (r.numeroIcono === "3") {
-                    x.iconos.push({ ruta: "../logos_recursos/Documento_PowePoint.svg" });
-                } else if (r.numeroIcono === "4") {
-                    x.iconos.push({ ruta: "../logos_recursos/Documento_Excel.svg" });
-                } else if (r.numeroIcono === "5") {
-                    x.iconos.push({ ruta: "../logos_recursos/Archivo_imagen.svg" });
-                } else if (r.numeroIcono === "6") {
-                    x.iconos.push({ ruta: "../logos_recursos/icon_Video.svg" });
-                } else {
-                    x.iconos.push({ ruta: "../logos_recursos/Otro.svg" });
-                }
-            }
-        })
-    })
-    console.log("\n\n**** Recursos Compartidos Admin ****");
-    console.log(recursos);
-    res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, aprobarConsultor, datosUsuario: JSON.stringify(req.user), recursos })
+            });
+
+            iconos = iconos.filter((valor, indice, self) => {
+                return !self
+                .slice(indice + 1)
+                .some((objeto) => objeto.ruta === valor.ruta);
+            });
+
+            r.contadorElementos = contador;
+            const programa = {n1:false,n2:false,n3:false,n4:false}
+            r.programa = JSON.parse(r.programa)
+            console.log("PROGRAMA ==>> ");
+            console.log(r.programa);
+            programa.n1 = r.programa.includes('1');
+            programa.n2 = r.programa.includes('2');
+            programa.n3 = r.programa.includes('3');
+            programa.n4 = r.programa.includes('4');
+
+            grupos.push({
+                idGrupo: r.id,
+                nombre_grupo: r.nombre_grupo,
+                descrip_grupo: r.descrip_grupo,
+                color_grupo: r.color_grupo,
+                recurso_armado: r.recurso_armado,
+                cuerpoHTML: cuerpoHTML,
+                iconos: iconos.filter((icono) => icono.grupo === r.id),
+                contador: JSON.stringify(r.contadorElementos),
+                programa,
+            });
+        });
+    }
+  
+    res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, grupos, aprobarConsultor, datosUsuario: JSON.stringify(req.user) })
 }
+
+// ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
+dashboardController.actualizarRecurso = async (req, res) => {
+    const archivo = req.files;
+    let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
+    
+    console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
+
+    console.log(".....................");
+    console.log("campo ID>", idCampo);
+    console.log("IdRecurso", idRecurso);
+    console.log("Tipo>", tipo);
+    console.log("NumeroIcono>", numeroIcono);
+    console.log("*_*_*_*_*_*_*__*_*_*_*");
+    console.log("archivo")
+    console.log(archivo);
+    console.log("*_*_*_*_*_*_*__*_*_*_*");
+
+    if (archivo && archivo[0]) {
+        // archivo = archivo[0];
+        // valor = archivo.map(x => "../grupo_recursos/" + x.filename);
+        valor = "../grupo_recursos/" + archivo[0].filename
+    }
+
+    console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
+    console.log(valor);
+    console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
+
+    if (idCampo && idCampo.includes('_')) {
+        idCampo = idCampo.split('_')[1];
+    }
+    
+    const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
+    nombre_grupo = nombre_grupo == null || nombre_grupo == '' ? infoRecursos.nombre_grupo : nombre_grupo;
+    descrip_grupo = descrip_grupo == null || descrip_grupo == '' ? infoRecursos.descrip_grupo : descrip_grupo;
+    color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
+
+    let recursos = JSON.parse(infoRecursos.recurso_armado);
+    console.log("\n**** DATOS DEL GRUPO DATABASE ==> ", recursos);
+
+    let campoEncontrado = false;
+    recursos.forEach((recurso) => {
+        if (recurso.id == idCampo) {
+            recurso.valor = valor;
+            recurso.numeroIcono = numeroIcono;
+            campoEncontrado = true;
+        }
+    });
+  
+    if (!campoEncontrado && valor) { // Agregar validación para evitar valores en blanco
+        recursos.push({
+            id: idCampo,
+            valor: valor,
+            tipo: tipo,
+            numeroIcono: numeroIcono,
+        });
+    }
+
+    const data = {
+        nombre_grupo,
+        descrip_grupo,
+        color_grupo,
+        recurso_armado: JSON.stringify(recursos),
+    }
+
+    console.log("LA DATA =>" , data);
+    await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
+
+    res.redirect("/recursos/");
+  };
+  
 
 dashboardController.addRecursos_Compartidos = async (req, res) => {
     console.log("Hola desde Add Recurso Compartidos Admin");
+    const { nombre_grupo, descrip_grupo, esFormulario } = req.body;
+    let { color_grupo } = req.body
+    if (!color_grupo) {
+        color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"
+    }
+
+    // Obtener los datos acumulados de la variable de sesión
+    const datosAcumulados = req.session.datosAcumulados || [];
+
+    // Acceder a los archivos subidos en req.files
+    const archivos = req.files, tipoCampo = req.body.tipo, numeroIcono = req.body.numeroIcono, campoId = req.body.id;
+    let valor, valorCampo = req.body.valor;
+
+    // Recorrer los archivos y obtener sus nombres
+    if (archivos && archivos.length > 0) {
+        archivos.forEach((archivo) => {
+            valor = '../grupo_recursos/' + archivo.filename
+            valorCampo = valor;
+        });
+    }
+
+    // Verificar si el campo ya existe en los datos acumulados
+    const campoExistente = datosAcumulados.find(dato => dato.id === campoId);
+    console.log("CAMPO EXISTENTE ===> ", campoExistente);
+    if (campoExistente) {
+        // Si el campo existe, actualizar su valor y tipo
+        campoExistente.valor = valorCampo;
+        campoExistente.tipo = tipoCampo;
+        campoExistente.numeroIcono = numeroIcono;
+    } else {
+        // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
+        const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono };
+        datosAcumulados.push(nuevoCampo);
+    }
+
+    // Guardar los datos acumulados en la variable de sesión
+    req.session.datosAcumulados = datosAcumulados;
+    console.log("--------");
+    console.group("DATOS ACUMULADOS");
+    console.log(datosAcumulados);
+    console.groupEnd();
+    console.log("--------");
+    const recurso_armado = JSON.stringify(datosAcumulados);
+   
+    if (esFormulario === 'true') {
+        const programa = req.body.programa || ["1"]
+        // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
+        await pool.query('INSERT INTO recursos_compartidos (programa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [JSON.stringify(programa), nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
+        req.session.datosAcumulados = null;
+    }
+
+    res.redirect('/recursos-compartidos/');
 }

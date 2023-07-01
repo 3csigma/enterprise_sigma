@@ -187,28 +187,34 @@ function crearCampoDescripcion() {
 // Función para crear el separador
 function crearSeparador() {
   const hr = document.createElement("hr");
-  hr.style.border = "1px solid #5c5c5c";
+  hr.style.border = "1px solid #5c5c5c"; 
   hr.classList.add("separador");
   hr.id = "separador" + contadorHr;
 
   // Agregar los valores al separador
-  const campoId = hr.id;
-  const valorCampo = "hr";
-  const tipoCampo = "3";
+  const formData = new FormData();
+  formData.append("id", hr.id);
+  formData.append("valor", "hr");
+  formData.append("tipo", "3");
+  formData.append("numeroIcono", null);
 
-  // Ejemplo: enviar el valor del separador al controlador mediante fetch
-  fetch('/guardar-grupo', {
-    method: 'POST',
-    body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo }),
-    headers: { 'Content-Type': 'application/json' }
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log("Separador creado:", data);
-    })
-    .catch(error => {
-      console.error('Error al crear separador:', error);
-    });
+  if (document.getElementById('adminDash')) {
+    guardarGrupo_DB('/add-grupos-compartidos', formData);
+  } else {
+    guardarGrupo_DB('/guardar-grupo', formData);
+  }
+  // fetch('/guardar-grupo', {
+  //   method: 'POST',
+  //   body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo }),
+  //   headers: { 'Content-Type': 'application/json' }
+  // })
+  //   .then(response => response.json())
+  //   .then(data => {
+  //     console.log("Separador creado:", data);
+  //   })
+  //   .catch(error => {
+  //     console.error('Error al crear separador:', error);
+  //   });
 
   const campoContainer = document.createElement("div");
   campoContainer.classList.add("campo-container");
@@ -520,6 +526,21 @@ select.addEventListener("change", function() {
   select.selectedIndex = 0;
 });
 
+function guardarGrupo_DB(ruta, formData) {
+  fetch(ruta, {
+    method: 'POST',
+    body: formData
+    // headers: { 'Content-Type': 'application/json' }
+  })
+    .then(response => response.json())
+    .then(data => {
+      // console.log("Respuesta desde Guardar Grupo en DB => ", data);
+    })
+    .catch(error => {
+      // console.error('Error al crear separador:', error);
+    });
+}
+
 function handleCampoBlur(event) {
   const valorCampo = event.target.value, campoId = event.target.id;
   let tipoCampo;
@@ -537,20 +558,19 @@ function handleCampoBlur(event) {
   let numeroIcono = event.target.getAttribute("data-numero-icono");
   console.log("Número de icono:", numeroIcono);
   console.log("campoId:", campoId);
+  console.log("VALOR DEL CAMPO ===> ", valorCampo);
+  const formData = new FormData();
+  formData.append("id", campoId);
+  formData.append("valor", valorCampo);
+  formData.append("tipo", tipoCampo);
+  formData.append("numeroIcono", numeroIcono);
 
-  // Ejemplo: enviar el valor del campo al controlador mediante fetch
-  fetch('/guardar-grupo', {
-    method: 'POST',
-    body: JSON.stringify({ id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono }),
-    headers: { 'Content-Type': 'application/json'}
-  })
-    .then(response => response.json())
-    .then(data => {
-      console.log("FETCH GUARDAR GRUPO ", data);
-    })
-    .catch(error => {
-      // console.log("TODO MAL");
-    });
+  if (document.getElementById('adminDash')) {
+    guardarGrupo_DB('/add-grupos-compartidos', formData);
+  } else {
+    guardarGrupo_DB('/guardar-grupo', formData);
+  }
+
 }
 
 // ELIMINANDO GRUPO DE RECURSOS

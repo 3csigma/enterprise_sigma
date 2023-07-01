@@ -858,4 +858,64 @@ helpers.obtenerColorAlAzar = () => {
     return colores[indice];
 }
 
+// helpers.addGrupo_DB = async (req, tabla) => {
+//     const { nombre_grupo, descrip_grupo, numeroIcono, campoID, tipoCampo, esFormulario } = req.body;
+//     let { color_grupo, valor } = req.body
+//     if (!color_grupo) {
+//         // color_grupo = obtenerColorAlAzar();
+//         color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"
+//     }
+
+//     // Obtener los datos acumulados de la variable de sesión
+//     // const datosAcumulados = req.session.datosAcumulados || [];
+//     const datosAcumulados = req.datosAcumulados;
+
+//     // Acceder a los archivos subidos en req.files
+//     const archivos = req.files;
+//     // Recorrer los archivos y obtener sus nombres
+//     if (archivos && archivos.length > 0) {
+//         archivos.forEach((archivo) => {
+//             valor = '../grupo_recursos/' + archivo.filename
+//         });
+//     }
+
+//     // Verificar si el campo ya existe en los datos acumulados
+//     const campoExistente = datosAcumulados.find(dato => dato.id === campoID);
+//     if (campoExistente) {
+//         // Si el campo existe, actualizar su valor y tipo
+//         campoExistente.valor = valor;
+//         campoExistente.tipo = tipoCampo;
+//         campoExistente.numeroIcono = numeroIcono;
+//     } else {
+//         // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
+//         datosAcumulados.push({ id: campoID, valor: valor, tipo: tipoCampo, numeroIcono });
+//     }
+
+//     // Guardar los datos acumulados en la variable de sesión
+//     req.datosAcumulados = datosAcumulados;
+//     console.log("--------");
+//     console.log("DATOS ACUMULADOS *_*_*_*_*_*");
+//     console.log(datosAcumulados);
+//     console.log("**********--------");
+//     const recurso_armado = JSON.stringify(datosAcumulados);
+   
+//     if (esFormulario === 'true') {
+//         // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
+//         const data = { nombre_grupo, descrip_grupo, color_grupo, recurso_armado }
+//         if (req.adminDash) {
+//             data.programa = req.body.programa || ["1"];
+//             data.programa = JSON.stringify(data.programa)
+//         } else {
+//             data.idEmpresa = req.body.idEmpresa;
+//         }
+//         console.log("nueva data DB ==> ");
+//         console.log(data);
+//         await helpers.insertarDatos(tabla, data)
+//         // await pool.query('INSERT INTO grupo_recursos (idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)', [idEmpresa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado]);
+//         req.datosAcumulados = null;
+//         return true;
+//     }
+//     return false;
+// }
+
 module.exports = helpers;
