@@ -25,29 +25,122 @@
 
                 {{!-- SECCIÓN PARA RECURSOS COMPARTIDOS --}}
                 <div class="row" style="margin-top: 15%;">
-                    {{#if recursos}}
+                    {{#if grupos}}
                     <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Recursos compartidos</h3>
-                    {{#each recursos}}
-                    <div class="col-xl-3">
+                    {{#each grupos}}
+                     <div class="col-xl-3">
                         <div class="card text-white" style="background:{{color_grupo}};border-radius: 11px;width: 240px; height: 215px;">
-                            <a onclick="eliminarGrupo({{id}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 10px;right: 10px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
-                            <a href="#" data-toggle="modal" data-target="#modal-{{id}}" onclick="verGrupo('{{id}}')">
+                            <a onclick="eliminarGrupo({{idGrupo}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 10px;right: 10px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
+                            <a href="#" data-toggle="modal" data-target="#modal-{{idGrupo}}" onclick="verGrupo('{{idGrupo}}')">
                                 <div class="card-body mb-0">
                                     <br>
                                     <div class="widget-media">
                                         <div class="timeline d-flex flex-row">
-                                            {{#each iconos}}
-                                                <div class="timeline-panel">
-                                                    <img src="{{ruta}}" alt="Icono"/>
-                                                </div>
-                                            {{/each}}
+                                        {{#each iconos}}
+                                            <div class="timeline-panel">
+                                                <img src="{{ruta}}" alt="Icono"/>
                                             </div>
-                                        <h3 class="card-footer bg-transparent border-0 text-white"
-                                            style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">Documentos financieros</h3>
-                                        <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">Documentos necesarios para presentar reporte de ingresos y declaracion de impuestos en el estado de la Florida</div>
+                                        {{/each}}
+                                        </div>
+                                        <h3 class="card-footer bg-transparent border-0 text-white" style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">{{nombre_grupo}}</h3>
+                                        <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">{{descrip_grupo}}</div>
                                     </div>
                                 </div>
                             </a>
+                        </div>
+                    </div>
+
+                    {{!-- Modal GRUPOS CREADOS - EDITAR GRUPOS --}}
+                    <div class="modal fade grupo" id="modal-{{idGrupo}}" >
+                        <div class="modal-dialog" role="document">
+                            <form action="/actualizarRecurso" method="post">
+                                {{!-- Campo oculto para indicar que la solicitud proviene del formulario --}}
+                                <input type="hidden" name="formuario" value="true" />
+                                <input type="hidden" name="idRecurso" value="{{idGrupo}}" id="idRecurso-{{idGrupo}}">
+                                <input type="hidden" value="{{contador}}" id="contador_{{idGrupo}}">
+                                
+                                <div class="modal-content">
+                                    {{> modals/header_GrupoRecursos}}
+                                    <div class="modal-body">
+                                        <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Información del grupo de recursos</h3>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-3" style="margin-left: -16px;">
+                                                <input type="text" class="form-control input-recursos" required name="nombre_grupo" placeholder="Introduce el nombre del grupo" value="{{nombre_grupo}}">
+                                            </div>
+                                            <div class="col-3">
+                                                <textarea name="descrip_grupo" class="form-control input-recursos" required maxlength="120" cols="30" rows="10" placeholder="Introduce la descripcion del grupo">{{descrip_grupo}}</textarea>
+                                            </div>
+                                        </div>
+                                        <br>
+                                        <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">
+                                            Programa(s) destino</h3>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="form-group">
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="1" {{#if programa.n1}}checked=""{{/if}}>Free Trial
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="2" {{#if programa.n2}}checked=""{{/if}}>Entrepreneur
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="3" {{#if programa.n3}}checked=""{{/if}}>Business
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="4" {{#if programa.n4}}checked=""{{/if}}>Enterprise
+                                                    </label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-6">
+                                                <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
+                                                <div class="colorButtons">
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#D74040'}} selected {{/comparar}}" data-color="#D74040"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#739232'}} selected {{/comparar}}" data-color="#739232"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#58B57D'}} selected {{/comparar}}" data-color="#58B57D"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#407CD7'}} selected {{/comparar}}" data-color="#407CD7"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#4085D7'}} selected {{/comparar}}" data-color="#4085D7"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#9540D7'}} selected {{/comparar}}" data-color="#9540D7"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061"></button>
+                                                </div>
+                                                <input type="hidden" id="colorGrupoInput_edit" name="color_grupo" value="{{color_grupo}}">
+                                            </div>
+                                        </div>
+                                        <div class="row align-items-center justify-content-center flex-column">
+                                            <select data-id="{{idGrupo}}" class="form-control-sm default-select btnTypeArchivo text-white opcionesEdit">
+                                                <option value="">Agregar Elemento</option>
+                                                <option value="titulo">Título</option>
+                                                <option value="descripcion">Bloque de texto</option>
+                                                <option value="separador">Separador</option>
+                                                <option value="url">URL</option>
+                                                <option value="archivo">Subir Archivo</option>
+                                            </select>
+                                        </div>
+                                        <br>
+                                        <div class="row align-items-center justify-content-center">
+                                            <div class="col-10">
+                                                {{{cuerpoHTML}}}
+                                            </div>
+                                            <br>
+                                            <div class="col-10">
+                                                <div id="contenidoEdit{{idGrupo}}"></div>
+                                            </div>
+                                        </div>
+                                        <br>
+                                    </div>
+                                    <div class="modal-footer justify-content-center">
+                                        <button type="submit" class="btn color_tertiary text-black">Guardar</button>
+                                    </div>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     {{/each}}

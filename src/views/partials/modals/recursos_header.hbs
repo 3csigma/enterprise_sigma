@@ -146,6 +146,7 @@
                 <input type="hidden" name="idEmpresa" value="{{id_empresa}}">
                 {{!-- Campo oculto para indicar que la solicitud proviene del formulario --}}
                 <input type="hidden" name="esFormulario" value="true" />
+                {{#if adminDash}} <input type="hidden" id="adminDash" value="{{adminDash}}"/> {{/if}}
                 <div class="modal-content">
                     {{> modals/header_GrupoRecursos}}
                     <div class="modal-body">
@@ -163,6 +164,34 @@
                             </div>
                         </div>
                         <br>
+                        {{#if adminDash}}
+                        <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">
+                            Programa(s) destino</h3>
+                        <div class="row align-items-center justify-content-center">
+                            <div class="form-group">
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" name="programa" value="1">Free Trial
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" name="programa" value="2" checked="">Entrepreneur
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" name="programa" value="3">Business
+                                    </label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <label class="form-check-label">
+                                        <input type="checkbox" class="form-check-input" name="programa" value="4">Enterprise
+                                    </label>
+                                </div>
+                            </div>
+                        </div>
+                        {{/if}}
                         <div class="row align-items-center justify-content-center">
                             <div class="col-6">
                                 <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">
