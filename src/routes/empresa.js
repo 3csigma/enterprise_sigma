@@ -77,5 +77,6 @@ const actualizarArchivo = multer({
 });
 // router.post('/actualizarRecurso', checkLogin, actualizarArchivo.any(), empresaController.actualizarRecurso);
 router.post('/actualizarRecurso', checkLogin, uploadFiles('Recurso_', false, 'grupo_recursos', true, true), empresaController.actualizarRecurso);
+router.post('/copiar-recurso', checkLogin, empresaController.copiarRecurso);
 
 module.exports = router
