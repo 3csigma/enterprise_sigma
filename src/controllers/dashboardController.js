@@ -2564,17 +2564,35 @@ dashboardController.recursosCompartidos = async (req, res) => {
             });
 
             r.contadorElementos = contador;
-            const programa = {n1:false,n2:false,n3:false,n4:false}
             r.programa = JSON.parse(r.programa)
-            console.log("PROGRAMA ==>> ");
-            console.log(r.programa);
-            programa.n1 = r.programa.includes('1');
-            programa.n2 = r.programa.includes('2');
-            programa.n3 = r.programa.includes('3');
-            programa.n4 = r.programa.includes('4');
+            const programa = {n1:false,n2:false,n3:false,n4:false, txt:[]}
+            // programa.n1 = r.programa.includes('1');
+            // programa.n2 = r.programa.includes('2');
+            // programa.n3 = r.programa.includes('3');
+            // programa.n4 = r.programa.includes('4');
 
+            if (r.programa.includes('1')) {
+                programa.n1 = true;
+                programa.txt.push('Free Trial')
+            }
+            if (r.programa.includes('2')) {
+                programa.n2 = true;
+                programa.txt.push('Entrepreneur')
+            }
+            if (r.programa.includes('3')) {
+                programa.n3 = true;
+                programa.txt.push('Business')
+            }
+            if (r.programa.includes('4')) {
+                programa.n4 = true;
+                programa.txt.push('Enterprise')
+            }
+
+            const palabrasConComas = programa.txt.slice(0, -1).map(palabra => palabra + ', ');
+            programa.txt = [...palabrasConComas, programa.txt[programa.txt.length - 1]];
             grupos.push({
                 idGrupo: r.id,
+                programa,
                 nombre_grupo: r.nombre_grupo,
                 descrip_grupo: r.descrip_grupo,
                 color_grupo: r.color_grupo,
@@ -2582,7 +2600,6 @@ dashboardController.recursosCompartidos = async (req, res) => {
                 cuerpoHTML: cuerpoHTML,
                 iconos: iconos.filter((icono) => icono.grupo === r.id),
                 contador: JSON.stringify(r.contadorElementos),
-                programa,
             });
         });
     }
@@ -2591,76 +2608,77 @@ dashboardController.recursosCompartidos = async (req, res) => {
 }
 
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
-dashboardController.actualizarRecurso = async (req, res) => {
-    const archivo = req.files;
-    let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
+// dashboardController.actualizarRecurso = async (req, res) => {
+//     const archivo = req.files;
+//     let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
     
-    console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
+//     console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
 
-    console.log(".....................");
-    console.log("campo ID>", idCampo);
-    console.log("IdRecurso", idRecurso);
-    console.log("Tipo>", tipo);
-    console.log("NumeroIcono>", numeroIcono);
-    console.log("*_*_*_*_*_*_*__*_*_*_*");
-    console.log("archivo")
-    console.log(archivo);
-    console.log("*_*_*_*_*_*_*__*_*_*_*");
+//     console.log(".....................");
+//     console.log("campo ID>", idCampo);
+//     console.log("IdRecurso", idRecurso);
+//     console.log("Tipo>", tipo);
+//     console.log("NumeroIcono>", numeroIcono);
+//     console.log("*_*_*_*_*_*_*__*_*_*_*");
+//     console.log("archivo")
+//     console.log(archivo);
+//     console.log("*_*_*_*_*_*_*__*_*_*_*");
 
-    if (archivo && archivo[0]) {
-        // archivo = archivo[0];
-        // valor = archivo.map(x => "../grupo_recursos/" + x.filename);
-        valor = "../grupo_recursos/" + archivo[0].filename
-    }
+//     if (archivo && archivo[0]) {
+//         // archivo = archivo[0];
+//         // valor = archivo.map(x => "../grupo_recursos/" + x.filename);
+//         valor = "../grupo_recursos/" + archivo[0].filename
+//     }
 
-    console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
-    console.log(valor);
-    console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
+//     console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
+//     console.log(valor);
+//     console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
 
-    if (idCampo && idCampo.includes('_')) {
-        idCampo = idCampo.split('_')[1];
-    }
-    
-    const infoRecursos = (await consultarDatos('grupo_recursos')).find(x => x.id == idRecurso)
-    nombre_grupo = nombre_grupo == null || nombre_grupo == '' ? infoRecursos.nombre_grupo : nombre_grupo;
-    descrip_grupo = descrip_grupo == null || descrip_grupo == '' ? infoRecursos.descrip_grupo : descrip_grupo;
-    color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
+//     if (idCampo && idCampo.includes('_')) {
+//         idCampo = idCampo.split('_')[1];
+//     }
 
-    let recursos = JSON.parse(infoRecursos.recurso_armado);
-    console.log("\n**** DATOS DEL GRUPO DATABASE ==> ", recursos);
+//     const infoRecursos = (await consultarDatos('recursos_compartidos')).find(x => x.id == idRecurso)
+//     nombre_grupo = nombre_grupo == null || nombre_grupo == '' ? infoRecursos.nombre_grupo : nombre_grupo;
+//     descrip_grupo = descrip_grupo == null || descrip_grupo == '' ? infoRecursos.descrip_grupo : descrip_grupo;
+//     color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
 
-    let campoEncontrado = false;
-    recursos.forEach((recurso) => {
-        if (recurso.id == idCampo) {
-            recurso.valor = valor;
-            recurso.numeroIcono = numeroIcono;
-            campoEncontrado = true;
-        }
-    });
+//     let recursos = JSON.parse(infoRecursos.recurso_armado);
+//     console.log("\n**** DATOS DEL GRUPO DATABASE ==> ", recursos);
+
+//     let campoEncontrado = false;
+//     recursos.forEach((recurso) => {
+//         if (recurso.id == idCampo) {
+//             recurso.valor = valor;
+//             recurso.numeroIcono = numeroIcono;
+//             campoEncontrado = true;
+//         }
+//     });
   
-    if (!campoEncontrado && valor) { // Agregar validación para evitar valores en blanco
-        recursos.push({
-            id: idCampo,
-            valor: valor,
-            tipo: tipo,
-            numeroIcono: numeroIcono,
-        });
-    }
+//     if (!campoEncontrado && valor) { // Agregar validación para evitar valores en blanco
+//         recursos.push({
+//             id: idCampo,
+//             valor: valor,
+//             tipo: tipo,
+//             numeroIcono: numeroIcono,
+//         });
+//     }
 
-    const data = {
-        nombre_grupo,
-        descrip_grupo,
-        color_grupo,
-        recurso_armado: JSON.stringify(recursos),
-    }
+//     const data = {
+//         nombre_grupo,
+//         descrip_grupo,
+//         color_grupo,
+//         recurso_armado: JSON.stringify(recursos),
+//     }
 
-    console.log("LA DATA =>" , data);
-    await actualizarDatos('grupo_recursos', data, `WHERE id = ${idRecurso}`)
-
-    res.redirect("/recursos/");
-  };
+//     console.log("LA DATA =>" , data);
+//     const programa = req.body.programa || ["1"]
+//     console.log("programa = >>>", programa);
+//     data.programa = JSON.stringify(programa)
+//     await actualizarDatos('recursos_compartidos', data, `WHERE id = ${idRecurso}`) 
+//     res.redirect("/recursos-compartidos/");
+// };
   
-
 dashboardController.addRecursos_Compartidos = async (req, res) => {
     console.log("Hola desde Add Recurso Compartidos Admin");
     const { nombre_grupo, descrip_grupo, esFormulario } = req.body;
@@ -2692,7 +2710,7 @@ dashboardController.addRecursos_Compartidos = async (req, res) => {
         campoExistente.valor = valorCampo;
         campoExistente.tipo = tipoCampo;
         campoExistente.numeroIcono = numeroIcono;
-    } else {
+    } else if(valorCampo){
         // Si el campo no existe y tiene un valor, agregarlo a los datos acumulados con su valor y tipo
         const nuevoCampo = { id: campoId, valor: valorCampo, tipo: tipoCampo, numeroIcono };
         datosAcumulados.push(nuevoCampo);

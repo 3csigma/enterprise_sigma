@@ -32,9 +32,10 @@
                         <div class="card text-white" style="background:{{color_grupo}};border-radius: 11px;width: 240px; height: 215px;">
                             <a onclick="eliminarGrupo({{idGrupo}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 10px;right: 10px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
                             <a href="#" data-toggle="modal" data-target="#modal-{{idGrupo}}" onclick="verGrupo('{{idGrupo}}')">
-                                <div class="card-body mb-0">
+                                <div class="card-body mb-0" style="padding-top: 1.2em;">
+                                    <span class="border-0 text-white" style="font-size: 10px;">{{#each programa.txt}}{{this}}{{/each}}</span>
                                     <br>
-                                    <div class="widget-media">
+                                    <div class="widget-media pt-3">
                                         <div class="timeline d-flex flex-row">
                                         {{#each iconos}}
                                             <div class="timeline-panel">
@@ -147,26 +148,7 @@
                     {{else}}
                     <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Aún no sé han subido recursos</h3>
                     {{/if}}
-                    {{!-- <div class="col-xl-3">
-                        <div class="card text-white" style="background: #EF2727;box-shadow: 0px 0px 30px rgba(239, 39, 39, 0.4);border-radius: 11px;width: 240px; height: 215px;">
-                            <div class="card-body mb-0">
-                                <br>
-                                <div class="widget-media">
-                                    <div class="timeline d-flex flex-row">
-                                        <div class="timeline-panel">
-                                            <img src="../logos_recursos/Pagina_Web.svg" alt="Icono">
-                                        </div>
-                                        <div class="timeline-panel">
-                                            <img src="../logos_recursos/Archivo_imagen.svg" alt="Icono">
-                                        </div>
-                                    </div>
-                                    <h3 class="card-footer bg-transparent border-0 text-white"
-                                        style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 15px;">Documentos financieros</h3>
-                                    <div class="card-footer bg-transparent border-0 text-white" style="font-size: 11px;margin:7px -29px;">Documentos necesarios para presentar reporte de ingresos y declaracion de impuestos en el estado de la Florida</div>
-                                </div>
-                            </div>
-                        </div>
-                    </div> --}}
+                    
                 </div>
 
             </div>

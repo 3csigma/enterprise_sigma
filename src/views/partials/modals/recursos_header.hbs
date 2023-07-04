@@ -31,7 +31,7 @@
     {{!-- Modal CARGAR ARCHIVOS SUELTOS --}}
     <div class="modal fade m-cargarArchivo" id="cargar_archivo">
         <div class="modal-dialog modal-dialog-" role="document">
-            <form action="/enviar-archivo" method="post" enctype="multipart/form-data">
+            <form action="/enviar-archivo" method="post" enctype="multipart/form-data" class="myFormsuelto">
                 <input type="hidden" name="idEmpresa" value="{{id_empresa}}">
                 <input type="hidden" name="activeForm" value="true">
                 <div class="modal-content">
@@ -63,19 +63,21 @@
                             </div>
                         </div>
                         <br>
-                        <div class="row align-items-center justify-content-center">
-                            <div class="drag-area">
-                                <center>
-                                    <img src="../img/upload.png" alt="" style="width: 66px;">
-                                </center>
-                                <br>
-                                <h2>Organiza tus archivos</h2>
-                                <p class="text-black" style="font-weight: 265;font-size: 15px;">Arrastra
-                                    o carga un archivo para empezar</p>
-                                <center>
-                                    <button id="btnfile">Examinar archivos</button>
-                                </center>
-                                <input type="file" name="file" id="input-file" hidden>
+                        <div class="row" style="justify-content: center;display: grid;">
+                            <div class="col-6">
+                                <div class="drag-area">
+                                    <center>
+                                        <img src="../img/upload.png" alt="" style="width: 66px;">
+                                    </center>
+                                    <br>
+                                    <h2>Organiza tus archivos</h2>
+                                    <p class="text-black" style="font-weight: 265;font-size: 15px;">Arrastra
+                                        o carga un archivo para empezar</p>
+                                    <center>
+                                        <button id="btnfile" >Examinar archivos</button>
+                                    </center>
+                                    <input type="file" name="file" id="input-file" hidden>
+                                </div>
                             </div>
                             <div id="preview"></div>
                         </div>
@@ -142,11 +144,15 @@
     {{!-- Modal SUBIR GRUPOS --}}
     <div class="modal fade m-subirGrupo" id="subir_grupo">
         <div class="modal-dialog" role="document">
-            <form action="{{#if adminDash}}/add-grupos-compartidos{{else}}/guardar-grupo{{/if}}" method="post">
+            {{#if adminDash}}
+            <form action="/add-grupos-compartidos" method="post">
+            {{else}}
+            <form action="/guardar-grupo" method="post">
+            {{/if}}
+
                 <input type="hidden" name="idEmpresa" value="{{id_empresa}}">
                 {{!-- Campo oculto para indicar que la solicitud proviene del formulario --}}
                 <input type="hidden" name="esFormulario" value="true" />
-                {{#if adminDash}} <input type="hidden" id="adminDash" value="{{adminDash}}"/> {{/if}}
                 <div class="modal-content">
                     {{> modals/header_GrupoRecursos}}
                     <div class="modal-body">

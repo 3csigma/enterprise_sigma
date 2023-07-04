@@ -241,7 +241,8 @@ function agregarCampoUrl(select) {
 
   urlAgg.addEventListener("input", function () {
     const url = urlAgg.value;
-    const domain = obtenerDominio(url);
+    let domain = obtenerDominio(url);
+    if (domain.includes('www.')) domain = domain.split('www.')[1]
     const icono = obtenerIconoPorDominio(domain);
     let numeroIcono = obtenerNumeroIconoPorDominio(domain);
 
@@ -277,8 +278,6 @@ function obtenerIconoPorDominio(domain) {
     "vimeo.com": "../logos_recursos/Video_Vimeo.svg",
     "notion.so": "../logos_recursos/notion.svg"
   };
-
-  if (domain.includes('www.')) domain = domain.split('www.')[1]
 
   return dominios[domain] || "../logos_recursos/Pagina_Web.svg";
 }
@@ -514,6 +513,27 @@ function verGrupo(idGrupo){
     $(`#iconG${idGrupo}_${idCampo}`).css('opacity', '0');
   });
 }
+function copiarGrupo(idGrupo) {
+  fetch('/copiar-recurso', {
+    method: 'POST',
+    body: JSON.stringify({id: idGrupo}),
+    headers: {'Content-Type': 'application/json'}
+  })
+    .then(response => response.json())
+    .then(response => {
+      if (response) {
+        console.log("Copiado Exitosamente");
+        location.reload();
+      } else {
+        console.log("Ocurrió un error al copiar el grupo..");
+      }
+    })
+    .catch(error => {
+      // Manejar errores de la solicitud
+      console.error('Error Fetch Copiar Grupo:', error);
+    });
+
+}
 
 function handleCampoBlur2(event) {
   const idCampo = event.target.id;
@@ -552,7 +572,8 @@ function handleCampoBlur2(event) {
 // Función para mostrarel nuevo icono de la url
 function mostrarUrlNueva(campo) {
   const valor = campo.value;
-  const domain = obtenerDominio(valor);
+  let domain = obtenerDominio(valor);
+  if (domain.includes('www.')) domain = domain.split('www.')[1]
   const icono = obtenerIconoPorDominio(domain);
   const numeroIcono = obtenerNumeroIconoPorDominio(domain); // Asignar el número de icono
 

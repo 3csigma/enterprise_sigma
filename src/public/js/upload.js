@@ -5,6 +5,22 @@ const dragText = dropArea.querySelector("h2");
 const button = dropArea.querySelector("#btnfile");
 const input = dropArea.querySelector("#input-file");
 
+// const btnbtn = document.querySelector(".btnArchivoSuelto");
+// const inputFile = document.getElementById('input-file');
+
+// btnbtn.addEventListener('click', function(event) {
+//   event.preventDefault(); // Evita el envío automático del formulario
+//   // Realiza la validación del campo de archivo
+//   if (inputFile.files.length === 0) {
+//     // El campo de archivo está vacío, muestra una alerta o mensaje
+//     alert('Por favor, selecciona un archivo antes de guardar.');
+    
+//   }else {
+//     uploadFile(input.files[0]);
+//   }
+// });
+
+
 button.addEventListener("click", (e) => {
   e.preventDefault();
   input.click();
@@ -36,122 +52,126 @@ dropArea.addEventListener("drop", (e) => {
 });
 
 function showFile(file) {
-  const extension = file.name.split('.').pop().toLowerCase();
+ 
+    console.log("epaleeee");
+    const extension = file.name.split('.').pop().toLowerCase();
 
-  let logoUrl = '';
-
-  switch (extension) {
-    case 'pdf':
-      logoUrl = '../logos_recursos/Documento_PDF.svg';
-      break;
-    case 'doc':
-    case 'docx':
-    case 'docm':
-      logoUrl = '../logos_recursos/Documento_Word.svg';
-      break;
-    case 'ppt':
-    case 'pptx':
-    case 'pptm':
-    case 'potx':
-      logoUrl = '../logos_recursos/Documento_PowerPoint.svg';
-      break;
-    case 'xls':
-    case 'xlsx':
-    case 'xlsm':
-    case 'xltx':
-      logoUrl = '../logos_recursos/Documento_Excel.svg';
-      break;
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-    case 'gif':
-    case 'svg':
-    case 'psd':
-    case 'ai':
-    case 'tiff':
-      logoUrl = '../logos_recursos/Archivo_imagen.svg';
-      break;
-    case 'mov':
-    case 'mp4':
-    case 'avi':
-      logoUrl = '../logos_recursos/icon_Video.svg';
-      break;
-    default:
-      logoUrl = '../logos_recursos/Otro.svg';
-      break;
-  }
-
-  const fileReader = new FileReader();
-
-  fileReader.addEventListener("load", () => {
-    let image = `
-    <div id="${fileId}" class="file-container">
-      <img src="${logoUrl}" class="file-logo" width="35px">
-      <div class="status">
-        <span>${file.name}</span>
-        <span class="status-text">Cargando...</span>
-      </div>
-    </div>
-  `;
-    if (fileId) {
-      const existingFile = document.getElementById(fileId);
-      existingFile.querySelector('.file-logo').src = logoUrl;
-      existingFile.querySelector('.status span').textContent = file.name;
-    } else {
-      fileId = `file-${Math.random().toString(32).substring(7)}`;
+    let logoUrl = '';
   
-     image = `
-        <div id="${fileId}" class="file-container">
-          <img src="${logoUrl}" class="file-logo" width="35px">
-          <div class="status">
-            <span>${file.name}</span>
-            <span class="status-text">Cargando...</span>
-          </div>
-        </div>
-      `;
-  
-      const preview = document.querySelector('#preview');
-      preview.innerHTML = image;
+    switch (extension) {
+      case 'pdf':
+        logoUrl = '../logos_recursos/Documento_PDF.svg';
+        break;
+      case 'doc':
+      case 'docx':
+      case 'docm':
+        logoUrl = '../logos_recursos/Documento_Word.svg';
+        break;
+      case 'ppt':
+      case 'pptx':
+      case 'pptm':
+      case 'potx':
+        logoUrl = '../logos_recursos/Documento_PowerPoint.svg';
+        break;
+      case 'xls':
+      case 'xlsx':
+      case 'xlsm':
+      case 'xltx':
+        logoUrl = '../logos_recursos/Documento_Excel.svg';
+        break;
+      case 'jpg':
+      case 'jpeg':
+      case 'png':
+      case 'gif':
+      case 'svg':
+      case 'psd':
+      case 'ai':
+      case 'tiff':
+        logoUrl = '../logos_recursos/Archivo_imagen.svg';
+        break;
+      case 'mov':
+      case 'mp4':
+      case 'avi':
+        logoUrl = '../logos_recursos/icon_Video.svg';
+        break;
+      default:
+        logoUrl = '../logos_recursos/Otro.svg';
+        break;
     }
   
-    if (extension === 'mov' || extension === 'mp4' || extension === 'avi') {
-      // Validar el tamaño del video
-      if (file.size <= 20 * 1024 * 1024) { // 20 megabytes
-        // El video cumple con el tamaño permitido, continuar con la carga
-        $('.btnArchivoSuelto').css('display', 'inline-block');
-        uploadFile(file);
+    const fileReader = new FileReader();
+  
+    fileReader.addEventListener("load", () => {
+      let image = `
+      <div id="${fileId}" class="file-container">
+        <img src="${logoUrl}" class="file-logo" width="35px">
+        <div class="status">
+          <span>${file.name}</span>
+          <span class="status-text">Cargando...</span>
+        </div>
+      </div>
+    `;
+      if (fileId) {
+        const existingFile = document.getElementById(fileId);
+        existingFile.querySelector('.file-logo').src = logoUrl;
+        existingFile.querySelector('.status span').textContent = file.name;
       } else {
+        fileId = `file-${Math.random().toString(32).substring(7)}`;
+    
+       image = `
+          <div id="${fileId}" class="file-container">
+            <img src="${logoUrl}" class="file-logo" width="35px">
+            <div class="status">
+              <span>${file.name}</span>
+              <span class="status-text">Cargando...</span>
+            </div>
+          </div>
+        `;
+    
         const preview = document.querySelector('#preview');
         preview.innerHTML = image;
-        $('.btnArchivoSuelto').css('display', 'none');
-
-        toastr.warning("Tu video supera 20MB", "Error", {
-          positionClass: "toast-top-full-width",
-          timeOut: 5000,
-          closeButton: !0,
-          debug: !1,
-          newestOnTop: !0,
-          progressBar: !0,
-          preventDuplicates: !0,
-          onclick: null,
-          showDuration: "500",
-          hideDuration: "200",
-          extendedTimeOut: "400",
-          showEasing: "swing",
-          hideEasing: "linear",
-          showMethod: "fadeIn",
-          hideMethod: "fadeOut",
-          tapToDismiss: !1
-      })
-       
       }
-    } else {
-      // No es un video, continuar con la carga sin validación de tamaño
-      uploadFile(file);
-    }
-  });
+    
+      if (extension === 'mov' || extension === 'mp4' || extension === 'avi') {
+        // Validar el tamaño del video
+        if (file.size <= 20 * 1024 * 1024) { // 20 megabytes
+          // El video cumple con el tamaño permitido, continuar con la carga
+          $('.btnArchivoSuelto').css('display', 'inline-block');
+          uploadFile(file);
+        } else {
+          const preview = document.querySelector('#preview');
+          preview.innerHTML = image;
+          $('.btnArchivoSuelto').css('display', 'none');
   
-  fileReader.readAsDataURL(file);
+          toastr.warning("Tu video supera 20MB", "Error", {
+            positionClass: "toast-top-full-width",
+            timeOut: 5000,
+            closeButton: !0,
+            debug: !1,
+            newestOnTop: !0,
+            progressBar: !0,
+            preventDuplicates: !0,
+            onclick: null,
+            showDuration: "500",
+            hideDuration: "200",
+            extendedTimeOut: "400",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut",
+            tapToDismiss: !1
+        })
+         
+        }
+      } else {
+        // No es un video, continuar con la carga sin validación de tamaño
+        uploadFile(file);
+      }
+    });
+    
+    fileReader.readAsDataURL(file);
+  
+
   
 }
 
@@ -181,6 +201,6 @@ function uploadFile(file) {
       statusText.appendChild(responseText);
     })
     .catch(error => {
-      statusText.innerHTML = `<span class="success">Archivo subido correctamente</span>`;
+    //  statusText.innerHTML = `<span class="success">Archivo subido correctamente</span>`;
     });
 }

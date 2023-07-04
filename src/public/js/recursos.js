@@ -66,8 +66,8 @@ document.addEventListener("DOMContentLoaded", function() {
 //   ELIMINANDO RECURSOS SUELTOS
 function eliminarRecurso(id) {
     Swal.fire({
-    title: '¿Seguro de eliminar este recurso?',
-    text: "Se quitara de tu lista de recursos.",
+    title: '¿Seguro que deseas eliminar este recurso?',
+    text: "Esta acción no se puede deshacer.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#50368C',
@@ -576,8 +576,8 @@ function handleCampoBlur(event) {
 // ELIMINANDO GRUPO DE RECURSOS
 function eliminarGrupo(id) {
   Swal.fire({
-    title: '¿Seguro de eliminar este recurso ?',
-    text: "Se quitara de tu grupos de recursos.",
+    title: '¿Seguro que deseas eliminar este recurso?',
+    text: "Esta acción no se puede deshacer.",
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#50368C',
