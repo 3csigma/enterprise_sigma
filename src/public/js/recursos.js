@@ -98,20 +98,33 @@ function eliminarRecurso(id) {
     })
 }
 
+let categoriaTemporal = null;
+function capturarTxt_temp(id) {
+  categoriaTemporal = null;
+  categoriaTemporal = $("#" + id).val();
+  console.log(categoriaTemporal + " || Se ha guardado temporalmente")
+}
+
 function editarCategoria(id) {
 // Al concatenar el valor de id con el símbolo # en $("#" + id), estarás seleccionando el elemento con el ID correcto
   const categoria = $("#" + id).val();
   fetch('/editar-categoria', {
     method: 'POST',
-    body: JSON.stringify({id, categoria}),
+    body: JSON.stringify({id, categoria, categoriaTemporal}),
     headers: { 'Content-Type': 'application/json' }
   })
     .then(response => response.json())
     .then(data => {
-      console.log("Separador creado:", data);
+      if (data) {
+        console.log(`Categoría ${categoriaTemporal} actualizada exitosamente..`)
+        const slt = $(`#categoriaSelectCargar option[value="${categoriaTemporal}"]`);
+        slt.val(categoria).text(categoria).trigger('chosen:updated');
+      } else {
+        console.log("Error al crear la categoría..")
+      }
     })
     .catch(error => {
-      console.error('Error al crear separador:', error);
+      console.error('Error Fetch Editar Categoría del Recurso', error);
     });
 }
 

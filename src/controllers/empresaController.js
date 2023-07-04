@@ -1021,10 +1021,9 @@ empresaController.eliminarRecurso = async (req, res) => {
 
 // EDITAR CATEGORIA
 empresaController.editarCategoria = async (req, res) => {
-  const { id, categoria } = req.body;
-
-  const data = {categoria}
-  await actualizarDatos("recursos",data,`WHERE id = ${id}`)
+  const { id, categoria, categoriaTemporal} = req.body;
+  const data = { categoria }
+  await actualizarDatos("recursos", data, `WHERE categoria = "${categoriaTemporal}"`)
   res.send(true);
 };
 
@@ -1183,7 +1182,7 @@ empresaController.recursos = async (req, res) => {
   let info = (await consultarDatos("empresas")).find( (x) => x.email === emailEmpresa );
   const id_empresa = info.id_empresas;
   let categorias = [], datos = [], grupos = [];
-  let recurso = await pool.query("SELECT DISTINCT categoria, id As epale FROM recursos WHERE idEmpresa = ?", [id_empresa]);
+  let recurso = await pool.query("SELECT DISTINCT categoria FROM recursos WHERE idEmpresa = ?", [id_empresa]);
   if (recurso.length > 0) {
     recurso.forEach((r) => {categorias.push(r.categoria)})
   }
