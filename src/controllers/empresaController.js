@@ -904,7 +904,7 @@ empresaController.diagnostico = async (req, res) => {
 
 // GUARDAR RECURSOS SUELTOS ::
 empresaController.cargar_recurso = async (req, res) => {
-  const { nombre_recurso, categoria, idEmpresa, activeForm } = req.body;
+  const { nombre_recurso, categoria, idEmpresa } = req.body;
 
   // Obtener la fecha actual
   let fechaActual = new Date();
@@ -958,9 +958,8 @@ empresaController.cargar_recurso = async (req, res) => {
     tipo_archivo,
     recurso,
   };
-  if (activeForm == "true") {
-    await insertarDatos("recursos", dataRecurso);
-  }
+  
+  await insertarDatos("recursos", dataRecurso);
 
   res.redirect("/recursos/");
 };
@@ -1344,7 +1343,7 @@ empresaController.recursos = async (req, res) => {
   }
 
   const recursoCompartido = [];
-  const resul = (await pool.query("SELECT * FROM recursos_compartidos")).filter( (x) => JSON.parse(x.programa).includes(req.user.programa.toString()));
+  const resul = (await pool.query("SELECT * FROM recursos_compartidos")).filter( (x) => (JSON.parse(x.programa)).includes(req.user.programa.toString()));
   if (resul.length > 0) {
     resul.forEach((re) => {
       let iconos = [], cuerpoHTML = "";

@@ -426,39 +426,33 @@ function obtenerExtension(nombreArchivo) {
 
 // Función para obtener el icono correspondiente a una extensión de archivo
 function obtenerIcon(ext) {
-  switch (ext) {
-    case 'pdf':
-      return '../logos_recursos/Documento_PDF.svg';
-    case 'doc':
-    case 'docx':
-    case 'docm':
-      return '../logos_recursos/Documento_Word.svg';
-    case 'ppt':
-    case 'pptx':
-    case 'pptm':
-    case 'potx':
-      return '../logos_recursos/Documento_PowerPoint.svg';
-    case 'xls':
-    case 'xlsx':
-    case 'xlsm':
-    case 'xltx':
-      return '../logos_recursos/Documento_Excel.svg';
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-    case 'gif':
-    case 'svg':
-    case 'psd':
-    case 'ai':
-    case 'tiff':
-      return '../logos_recursos/Archivo_imagen.svg';
-    case 'mov':
-    case 'mp4':
-    case 'avi':
-      return '../logos_recursos/icon_Video.svg';
-    default:
-      return '../logos_recursos/Otro.svg';
-  }
+  const extensionesMap = {
+    pdf: '../logos_recursos/Documento_PDF.svg',
+    doc: '../logos_recursos/Documento_Word.svg',
+    docx: '../logos_recursos/Documento_Word.svg',
+    docm: '../logos_recursos/Documento_Word.svg',
+    ppt: '../logos_recursos/Documento_PowerPoint.svg',
+    pptx: '../logos_recursos/Documento_PowerPoint.svg',
+    pptm: '../logos_recursos/Documento_PowerPoint.svg',
+    potx: '../logos_recursos/Documento_PowerPoint.svg',
+    xls: '../logos_recursos/Documento_Excel.svg',
+    xlsx: '../logos_recursos/Documento_Excel.svg',
+    xlsm: '../logos_recursos/Documento_Excel.svg',
+    xltx: '../logos_recursos/Documento_Excel.svg',
+    jpg: '../logos_recursos/Archivo_imagen.svg',
+    jpeg: '../logos_recursos/Archivo_imagen.svg',
+    png: '../logos_recursos/Archivo_imagen.svg',
+    gif: '../logos_recursos/Archivo_imagen.svg',
+    svg: '../logos_recursos/Archivo_imagen.svg',
+    psd: '../logos_recursos/Archivo_imagen.svg',
+    ai: '../logos_recursos/Archivo_imagen.svg',
+    tiff: '../logos_recursos/Archivo_imagen.svg',
+    mov: '../logos_recursos/icon_Video.svg',
+    mp4: '../logos_recursos/icon_Video.svg',
+    avi: '../logos_recursos/icon_Video.svg',
+  };
+
+  return extensionesMap[ext] || '../logos_recursos/Otro.svg';
 }
 
 // Evento change del selector de opciones
@@ -697,22 +691,16 @@ function obtener_NumeroIcono(extension) {
 
 // Función para obtener el icono correspondiente según el número de icono
 function obtenerIconoPorNumero(numeroIcono) {
-  switch (numeroIcono) {
-    case 1:
-      return "../logos_recursos/Documento_Word.svg";
-    case 2:
-      return "../logos_recursos/Documento_PDF.svg";
-    case 3:
-      return "../logos_recursos/Documento_PowerPoint.svg";
-    case 4:
-      return "../logos_recursos/Documento_Excel.svg";
-    case 5:
-      return "../logos_recursos/Archivo_imagen.svg";
-    case 6:
-      return "../logos_recursos/icon_Video.svg";
-    default:
-      return "../logos_recursos/Otro.svg";
-  }
+  const iconosMap = {
+    1: "../logos_recursos/Documento_Word.svg",
+    2: "../logos_recursos/Documento_PDF.svg",
+    3: "../logos_recursos/Documento_PowerPoint.svg",
+    4: "../logos_recursos/Documento_Excel.svg",
+    5: "../logos_recursos/Archivo_imagen.svg",
+    6: "../logos_recursos/icon_Video.svg",
+  };
+
+  return iconosMap[numeroIcono] || "../logos_recursos/Otro.svg";
 }
 
 // Actualizar campo archivos una vez creados en grupo recursos

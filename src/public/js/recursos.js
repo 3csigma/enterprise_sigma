@@ -468,63 +468,59 @@ function obtenerExtensionArchivo(nombreArchivo) {
 
 // Función para obtener el icono correspondiente a una extensión de archivo
 function obtenerIcono(extension) {
-  switch (extension) {
-    case 'pdf':
-      return '../logos_recursos/Documento_PDF.svg';
-    case 'doc':
-    case 'docx':
-    case 'docm':
-      return '../logos_recursos/Documento_Word.svg';
-    case 'ppt':
-    case 'pptx':
-    case 'pptm':
-    case 'potx':
-      return '../logos_recursos/Documento_PowerPoint.svg';
-    case 'xls':
-    case 'xlsx':
-    case 'xlsm':
-    case 'xltx':
-      return '../logos_recursos/Documento_Excel.svg';
-    case 'jpg':
-    case 'jpeg':
-    case 'png':
-    case 'gif':
-    case 'svg':
-    case 'psd':
-    case 'ai':
-    case 'tiff':
-      return '../logos_recursos/Archivo_imagen.svg';
-    case 'mov':
-    case 'mp4':
-    case 'avi':
-      return '../logos_recursos/icon_Video.svg';
-    default:
-      return '../logos_recursos/Otro.svg';
-  }
+  const extensions = {
+    pdf: '../logos_recursos/Documento_PDF.svg',
+    doc: '../logos_recursos/Documento_Word.svg',
+    docx: '../logos_recursos/Documento_Word.svg',
+    docm: '../logos_recursos/Documento_Word.svg',
+    ppt: '../logos_recursos/Documento_PowerPoint.svg',
+    pptx: '../logos_recursos/Documento_PowerPoint.svg',
+    pptm: '../logos_recursos/Documento_PowerPoint.svg',
+    potx: '../logos_recursos/Documento_PowerPoint.svg',
+    xls: '../logos_recursos/Documento_Excel.svg',
+    xlsx: '../logos_recursos/Documento_Excel.svg',
+    xlsm: '../logos_recursos/Documento_Excel.svg',
+    xltx: '../logos_recursos/Documento_Excel.svg',
+    jpg: '../logos_recursos/Archivo_imagen.svg',
+    jpeg: '../logos_recursos/Archivo_imagen.svg',
+    png: '../logos_recursos/Archivo_imagen.svg',
+    gif: '../logos_recursos/Archivo_imagen.svg',
+    svg: '../logos_recursos/Archivo_imagen.svg',
+    psd: '../logos_recursos/Archivo_imagen.svg',
+    ai: '../logos_recursos/Archivo_imagen.svg',
+    tiff: '../logos_recursos/Archivo_imagen.svg',
+    mov: '../logos_recursos/icon_Video.svg',
+    mp4: '../logos_recursos/icon_Video.svg',
+    avi: '../logos_recursos/icon_Video.svg',
+  };
+
+  return extensions[extension] || '../logos_recursos/Otro.svg';
 }
 
 // Evento change del selector de opciones
-select.addEventListener("change", function() {
-  const opcionSeleccionada = select.value;
-  switch (opcionSeleccionada) {
-    case "titulo":
-      crearCampoTitulo();
-      break;
-    case "descripcion":
-      crearCampoDescripcion();
-      break;
-    case "separador":
-      crearSeparador();
-      break;
-    case "url":
-      crearCampoUrl();
-      break;
-    case "archivo":
-      crearCampoArchivo();
-      break;
-  }
-  select.selectedIndex = 0;
-});
+if (select) {
+  select.addEventListener("change", function() {
+    const opcionSeleccionada = select.value;
+    switch (opcionSeleccionada) {
+      case "titulo":
+        crearCampoTitulo();
+        break;
+      case "descripcion":
+        crearCampoDescripcion();
+        break;
+      case "separador":
+        crearSeparador();
+        break;
+      case "url":
+        crearCampoUrl();
+        break;
+      case "archivo":
+        crearCampoArchivo();
+        break;
+    }
+    select.selectedIndex = 0;
+  });
+}
 
 function guardarGrupo_DB(ruta, formData) {
   fetch(ruta, {

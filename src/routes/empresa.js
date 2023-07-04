@@ -38,8 +38,6 @@ router.get('/generar-informe/:tipo', checkLogin, empresaController.informeAutoGe
 router.post('/informe-estrategico', checkLogin, empresaController.informeEstrategico)
 
 // Recursos
-// Ruta para enviar el archivo
-// router.post('/enviar-archivo', checkLogin, subirRecursoSuelto, empresaController.cargar_recurso);
 router.post('/enviar-archivo', checkLogin, uploadFiles('Recurso_', false, 'recurso_empresa', true, false), empresaController.cargar_recurso);
 router.post('/cargar-link', checkLogin, empresaController.cargar_link);
 router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
