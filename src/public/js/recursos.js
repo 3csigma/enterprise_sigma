@@ -98,6 +98,24 @@ function eliminarRecurso(id) {
     })
 }
 
+function editarCategoria(id) {
+// Al concatenar el valor de id con el símbolo # en $("#" + id), estarás seleccionando el elemento con el ID correcto
+  const categoria = $("#" + id).val();
+  fetch('/editar-categoria', {
+    method: 'POST',
+    body: JSON.stringify({id, categoria}),
+    headers: { 'Content-Type': 'application/json' }
+  })
+    .then(response => response.json())
+    .then(data => {
+      console.log("Separador creado:", data);
+    })
+    .catch(error => {
+      console.error('Error al crear separador:', error);
+    });
+}
+
+
 // ============ FIN CONECTAR LINK ============
 
 // :: GRUPO RECURSOS ::
