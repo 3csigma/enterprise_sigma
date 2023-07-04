@@ -198,7 +198,7 @@
                                     {{#if categoria}}
                                     <tr>
                                         <td colspan="5">
-                                            <h3 class="tituloRecurso">{{categoria}}</h3>
+                                           <h3 class="tituloRecurso"><input type="text" onblur="editarCategoria({{idCategoria}})" class="form-control input-recursos" style="border: 1px solid white !important;color: black;font-size: 20px;font-weight: 600;" id="{{idCategoria}}" value="{{categoria}}"></h3>
                                         </td>
                                     </tr>
                                     {{else}}

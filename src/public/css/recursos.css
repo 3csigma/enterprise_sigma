@@ -49,9 +49,9 @@ a:not([href]):not([tabindex]) {
 }
 
 .tituloRecurso {
-  color: #000000;
-  font-weight: 600;
-  text-transform: lowercase;
+  color: #000000 !important;
+  font-weight: 600 !important;
+  text-transform: lowercase !important;
   margin: 25px 0px 28px;
 }
 .tituloRecurso:first-letter {

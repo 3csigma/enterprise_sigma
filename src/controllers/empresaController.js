@@ -442,15 +442,9 @@ empresaController.index = async (req, res) => {
 empresaController.perfilUsuarios = async (req, res) => {
   const { rol, codigo } = req.user;
 
-  let empresa = await pool.query(
-    "SELECT e.*, u.foto,u.rol FROM empresas e JOIN users u ON e.codigo = u.codigo WHERE e.codigo = ?",
-    [codigo]
-  );
+  let empresa = await pool.query("SELECT e.*, u.foto, u.rol, u.programa FROM empresas e JOIN users u ON e.codigo = u.codigo WHERE e.codigo = ?",[codigo] );
   empresa = empresa[0];
-  let consultor = await pool.query(
-    "SELECT c.*, u.foto, u.rol FROM consultores c JOIN users u ON c.codigo = u.codigo WHERE c.codigo = ?",
-    [codigo]
-  );
+  let consultor = await pool.query("SELECT c.*, u.foto, u.rol FROM consultores c JOIN users u ON c.codigo = u.codigo WHERE c.codigo = ?", [codigo]);
   consultor = consultor[0];
 
   if (consultor) {
@@ -464,14 +458,24 @@ empresaController.perfilUsuarios = async (req, res) => {
       consultor.nivel = "Executive Director";
     }
   }
+
   let user_dash = false,
     adminDash = false,
     consultorDash = false;
   if (rol == "Empresa") {
     user_dash = true;
-    empresa.foto
-      ? (empresa.foto = empresa.foto)
-      : (empresa.foto = "../img/profile_default/user.jpg");
+    empresa.foto ? (empresa.foto = empresa.foto) : (empresa.foto = "../img/profile_default/user.jpg");
+    if (empresa) {
+      if (empresa.programa == 1) {
+        empresa.programa = "Free trial";
+      } else if (empresa.programa == 2) {
+        empresa.programa = "Entrepreneur";
+      } else if (empresa.programa == 3) {
+        empresa.programa = "Business";
+      } else if (empresa.programa == 4) {
+        empresa.programa = "Enterprise";
+      }
+    }
   } else {
     consultor.foto
       ? (consultor.foto = consultor.foto)
@@ -1015,6 +1019,16 @@ empresaController.eliminarRecurso = async (req, res) => {
   res.send(respu);
 };
 
+// EDITAR CATEGORIA
+empresaController.editarCategoria = async (req, res) => {
+  const { id, categoria } = req.body;
+
+  const data = {categoria}
+  await actualizarDatos("recursos",data,`WHERE id = ${id}`)
+  res.send(true);
+};
+
+
 // GUARDAR GRUPO DE RECURSOS ::
 empresaController.guardar_grupo = async (req, res) => {
   const { idEmpresa, nombre_grupo, descrip_grupo, esFormulario } = req.body;
@@ -1169,17 +1183,18 @@ empresaController.recursos = async (req, res) => {
   let info = (await consultarDatos("empresas")).find( (x) => x.email === emailEmpresa );
   const id_empresa = info.id_empresas;
   let categorias = [], datos = [], grupos = [];
-  let recurso = await pool.query("SELECT DISTINCT categoria FROM recursos WHERE idEmpresa = ?",[id_empresa]);
-  if (recurso.length > 0) { recurso.forEach((r) => categorias.push(r.categoria)) }
-
+  let recurso = await pool.query("SELECT DISTINCT categoria, id As epale FROM recursos WHERE idEmpresa = ?", [id_empresa]);
+  if (recurso.length > 0) {
+    recurso.forEach((r) => {categorias.push(r.categoria)})
+  }
+  
   let categoriaAnterior = null, iconoSVG;
-
   // MOSTRAR LOS LINK
   const infoRecursos = await pool.query("SELECT * FROM recursos ORDER BY categoria;");
   if (infoRecursos.length > 0) {
     infoRecursos.forEach((i) => {
       if (i.categoria !== categoriaAnterior) {
-        datos.push({ categoria: i.categoria });
+        datos.push({ idCategoria: i.id, categoria: i.categoria });
         categoriaAnterior = i.categoria;
       }
 
@@ -1214,7 +1229,7 @@ empresaController.recursos = async (req, res) => {
         nombre_recurso: i.nombre_recurso,
         recurso: i.recurso,
         tipo_archivo: i.tipo_archivo,
-      });
+      }); 
     });
   }
 

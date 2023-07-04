@@ -40,6 +40,7 @@ router.post('/informe-estrategico', checkLogin, empresaController.informeEstrate
 // Recursos
 router.post('/enviar-archivo', checkLogin, uploadFiles('Recurso_', false, 'recurso_empresa', true, false), empresaController.cargar_recurso);
 router.post('/cargar-link', checkLogin, empresaController.cargar_link);
+router.post('/editar-categoria', checkLogin, empresaController.editarCategoria);
 router.post('/eliminarRecurso', checkLogin, empresaController.eliminarRecurso)
 
 router.post('/guardar-grupo', checkLogin, uploadFiles('Recurso_', 'archivos', 'grupo_recursos', true, false), empresaController.guardar_grupo);
