@@ -1276,7 +1276,7 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "5") {
             iconoUrl = "../logos_recursos/Pagina_Web.svg";
           }
-          if (iconos.length < 8) {
+          if (iconos.length < 7) {
             iconos.push({ ruta: iconoUrl, grupo: r.id });
           }
 
@@ -1308,7 +1308,7 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "6") {
             iconoUrl = "../logos_recursos/icon_Video.svg";
           }
-          if (iconos.length < 8) {
+          if (iconos.length < 7) {
             iconos.push({ ruta: iconoUrl, grupo: r.id });
           }
 
@@ -1390,7 +1390,7 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "5") {
             iconoUrl = "../logos_recursos/Pagina_Web.svg";
           }
-          if (iconos.length < 8) { 
+          if (iconos.length < 7) { 
             iconos.push({ ruta: iconoUrl, grupo: re.id });
           }
 
@@ -1420,7 +1420,7 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "6") {
             iconoUrl = "../logos_recursos/icon_Video.svg";
           }
-          if (iconos.length < 8) {
+          if (iconos.length < 7) {
             iconos.push({ ruta: iconoUrl, grupo: re.id });
           }
 
