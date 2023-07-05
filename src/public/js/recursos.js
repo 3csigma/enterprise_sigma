@@ -110,12 +110,15 @@ function editarCategoria(id) {
   const categoria = $("#" + id).val();
   fetch('/editar-categoria', {
     method: 'POST',
-    body: JSON.stringify({id, categoria, categoriaTemporal}),
+    body: JSON.stringify({categoria, categoriaTemporal}),
     headers: { 'Content-Type': 'application/json' }
   })
     .then(response => response.json())
     .then(data => {
       if (data) {
+        if (categoria == '') {
+          location.reload();
+        }
         console.log(`Categoría ${categoriaTemporal} actualizada exitosamente..`)
         const slt = $(`#categoriaSelectCargar option[value="${categoriaTemporal}"]`);
         slt.val(categoria).text(categoria).trigger('chosen:updated');

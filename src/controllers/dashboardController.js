@@ -2499,7 +2499,9 @@ dashboardController.recursosCompartidos = async (req, res) => {
                     } else if (recurso.numeroIcono === "5") {
                         iconoUrl = "../logos_recursos/Pagina_Web.svg";
                     }
-                    if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    if (iconos.length < 8) {
+                        iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    }
 
                     cuerpoHTML += `
                     <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 20px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
@@ -2529,8 +2531,10 @@ dashboardController.recursosCompartidos = async (req, res) => {
                     } else if (recurso.numeroIcono === "6") {
                         iconoUrl = "../logos_recursos/icon_Video.svg";
                     }
-                    if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: r.id });
-                    
+                    if (iconos.length < 8) {
+                        iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    }
+
                     if (recurso.valor.includes('/')) {
                         recurso.valor = recurso.valor.split("/").pop()
                     }
