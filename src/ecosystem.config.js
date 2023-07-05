@@ -1,6 +1,6 @@
 module.exports = {
     apps: [{
-        name: "Enterprise 3C Sigma",
+        name: "Enterprise",
         script: "./app.js",
         watch: ["server", "client"],
         watch_delay: 1000, // Delay between restart
@@ -14,11 +14,5 @@ module.exports = {
             "./public/*/recurso_empresa",
             "./public/*/grupo_recursos",
         ],
-        env_production: {
-            NODE_ENV: "production"
-        },
-        env_development: {
-            NODE_ENV: "development"
-        }
     }]
 }
