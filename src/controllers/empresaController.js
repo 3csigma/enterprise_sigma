@@ -916,6 +916,8 @@ empresaController.cargar_recurso = async (req, res) => {
   let dia = fechaActual.getDate();
   let mes = fechaActual.toLocaleString("default", { month: "short" });
   let año = fechaActual.getFullYear();
+  // Eliminar el punto después del mes
+  mes = mes.replace(".", "");
   // Formatear la fecha en el formato deseado
   let fecha = dia + "/" + mes + "/" + año;
   let tipo_archivo = "Otro", recurso = ""
@@ -973,10 +975,10 @@ empresaController.cargar_link = async (req, res) => {
 
   const fechaActual = new Date();
   let mes = fechaActual.toLocaleString("default", { month: "short" });
-  mes = mes.charAt(0).toUpperCase() + mes.slice(1);
+  // Eliminar el punto después del mes
+  mes = mes.replace(".", "");
   // Formatear la fecha en el formato deseado
-  let fecha =
-    fechaActual.getDate() + "/" + mes + "/" + fechaActual.getFullYear();
+  let fecha = fechaActual.getDate() + "/" + mes + "/" + fechaActual.getFullYear();
   let tipo_archivo = "Pagina web";
   const tipos = {
     "drive.google": "Google Drive",
@@ -1001,7 +1003,6 @@ empresaController.cargar_link = async (req, res) => {
     recurso,
   };
   await insertarDatos("recursos", dataRecurso);
-  // await pool.query('INSERT INTO recursos SET ?', [dataRecurso])
   res.redirect("/recursos/");
 };
 
@@ -1035,11 +1036,8 @@ empresaController.guardar_grupo = async (req, res) => {
   if (!color_grupo) {
     // color_grupo = obtenerColorAlAzar();
     color_grupo =
-      "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );";
+      "linear-gradient(180deg, #FED061 -149.33%, #812082 -19.27%, #50368C 158.67%) !important";
   }
-
-  console.log("ID DEL ELEMENTO AGREGADO ===> ", req.body.id);
-  console.log(req.body);
 
   // Obtener los datos acumulados de la variable de sesión
   const datosAcumulados = req.session.datosAcumulados || [];
@@ -1277,7 +1275,8 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "5") {
             iconoUrl = "../logos_recursos/Pagina_Web.svg";
           }
-          iconos.push({ ruta: iconoUrl, grupo: r.id });
+          if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: r.id });
+
           cuerpoHTML += `
                     <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 20px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
                     <table class="table header-border" id="tablaUrl_g${r.id}_${recurso.id}">
@@ -1306,7 +1305,8 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "6") {
             iconoUrl = "../logos_recursos/icon_Video.svg";
           }
-          iconos.push({ ruta: iconoUrl, grupo: r.id });
+          if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: r.id });
+
           if (recurso.valor.includes("/")) {
             recurso.valor = recurso.valor.split("/").pop();
           }
@@ -1385,7 +1385,8 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "5") {
             iconoUrl = "../logos_recursos/Pagina_Web.svg";
           }
-          iconos.push({ ruta: iconoUrl, grupo: re.id });
+          if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: re.id });
+
           cuerpoHTML += `
                 <table class="table header-border">
                 <tbody>
@@ -1412,7 +1413,8 @@ empresaController.recursos = async (req, res) => {
           } else if (recurso.numeroIcono === "6") {
             iconoUrl = "../logos_recursos/icon_Video.svg";
           }
-          iconos.push({ ruta: iconoUrl, grupo: re.id });
+          if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: re.id });
+
           if (recurso.valor.includes("/")) {
             recurso.valor = recurso.valor.split("/").pop();
           }

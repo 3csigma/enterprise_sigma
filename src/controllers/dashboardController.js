@@ -2499,7 +2499,8 @@ dashboardController.recursosCompartidos = async (req, res) => {
                     } else if (recurso.numeroIcono === "5") {
                         iconoUrl = "../logos_recursos/Pagina_Web.svg";
                     }
-                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: r.id });
+
                     cuerpoHTML += `
                     <i class="fas fa-trash-alt icono-borrar" style="color: red; padding-top: 20px;" id="iconG${r.id}_${recurso.id}" onclick="eliminarCampo('${r.id}','${recurso.id}')"></i>
                     <table class="table header-border" id="tablaUrl_g${r.id}_${recurso.id}">
@@ -2528,7 +2529,8 @@ dashboardController.recursosCompartidos = async (req, res) => {
                     } else if (recurso.numeroIcono === "6") {
                         iconoUrl = "../logos_recursos/icon_Video.svg";
                     }
-                    iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    if (iconos.length <= 7) iconos.push({ ruta: iconoUrl, grupo: r.id });
+                    
                     if (recurso.valor.includes('/')) {
                         recurso.valor = recurso.valor.split("/").pop()
                     }
@@ -2566,10 +2568,6 @@ dashboardController.recursosCompartidos = async (req, res) => {
             r.contadorElementos = contador;
             r.programa = JSON.parse(r.programa)
             const programa = {n1:false,n2:false,n3:false,n4:false, txt:[]}
-            // programa.n1 = r.programa.includes('1');
-            // programa.n2 = r.programa.includes('2');
-            // programa.n3 = r.programa.includes('3');
-            // programa.n4 = r.programa.includes('4');
 
             if (r.programa.includes('1')) {
                 programa.n1 = true;
@@ -2590,6 +2588,7 @@ dashboardController.recursosCompartidos = async (req, res) => {
 
             const palabrasConComas = programa.txt.slice(0, -1).map(palabra => palabra + ', ');
             programa.txt = [...palabrasConComas, programa.txt[programa.txt.length - 1]];
+
             grupos.push({
                 idGrupo: r.id,
                 programa,
@@ -2606,85 +2605,13 @@ dashboardController.recursosCompartidos = async (req, res) => {
   
     res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, grupos, aprobarConsultor, datosUsuario: JSON.stringify(req.user) })
 }
-
-// ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
-// dashboardController.actualizarRecurso = async (req, res) => {
-//     const archivo = req.files;
-//     let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo }= req.body;
-    
-//     console.log("\n\n\n -+-+-+-+-+-+-+-+-+-+-+ \n\n\nDATOS PARA ACTUALIZAR RECURSO ==> ", req.body);
-
-//     console.log(".....................");
-//     console.log("campo ID>", idCampo);
-//     console.log("IdRecurso", idRecurso);
-//     console.log("Tipo>", tipo);
-//     console.log("NumeroIcono>", numeroIcono);
-//     console.log("*_*_*_*_*_*_*__*_*_*_*");
-//     console.log("archivo")
-//     console.log(archivo);
-//     console.log("*_*_*_*_*_*_*__*_*_*_*");
-
-//     if (archivo && archivo[0]) {
-//         // archivo = archivo[0];
-//         // valor = archivo.map(x => "../grupo_recursos/" + x.filename);
-//         valor = "../grupo_recursos/" + archivo[0].filename
-//     }
-
-//     console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
-//     console.log(valor);
-//     console.log("NUEVO VALOR ==>>>>>>>>>>>>> ")
-
-//     if (idCampo && idCampo.includes('_')) {
-//         idCampo = idCampo.split('_')[1];
-//     }
-
-//     const infoRecursos = (await consultarDatos('recursos_compartidos')).find(x => x.id == idRecurso)
-//     nombre_grupo = nombre_grupo == null || nombre_grupo == '' ? infoRecursos.nombre_grupo : nombre_grupo;
-//     descrip_grupo = descrip_grupo == null || descrip_grupo == '' ? infoRecursos.descrip_grupo : descrip_grupo;
-//     color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
-
-//     let recursos = JSON.parse(infoRecursos.recurso_armado);
-//     console.log("\n**** DATOS DEL GRUPO DATABASE ==> ", recursos);
-
-//     let campoEncontrado = false;
-//     recursos.forEach((recurso) => {
-//         if (recurso.id == idCampo) {
-//             recurso.valor = valor;
-//             recurso.numeroIcono = numeroIcono;
-//             campoEncontrado = true;
-//         }
-//     });
-  
-//     if (!campoEncontrado && valor) { // Agregar validación para evitar valores en blanco
-//         recursos.push({
-//             id: idCampo,
-//             valor: valor,
-//             tipo: tipo,
-//             numeroIcono: numeroIcono,
-//         });
-//     }
-
-//     const data = {
-//         nombre_grupo,
-//         descrip_grupo,
-//         color_grupo,
-//         recurso_armado: JSON.stringify(recursos),
-//     }
-
-//     console.log("LA DATA =>" , data);
-//     const programa = req.body.programa || ["1"]
-//     console.log("programa = >>>", programa);
-//     data.programa = JSON.stringify(programa)
-//     await actualizarDatos('recursos_compartidos', data, `WHERE id = ${idRecurso}`) 
-//     res.redirect("/recursos-compartidos/");
-// };
   
 dashboardController.addRecursos_Compartidos = async (req, res) => {
     console.log("Hola desde Add Recurso Compartidos Admin");
     const { nombre_grupo, descrip_grupo, esFormulario } = req.body;
     let { color_grupo } = req.body
     if (!color_grupo) {
-        color_grupo = "linear-gradient( 189.55deg, #fed061 -131.52%, #812082 -11.9%, #50368c 129.46% );"
+        color_grupo = "linear-gradient(180deg, #FED061 -149.33%, #812082 -19.27%, #50368C 158.67%) !important;"
     }
 
     // Obtener los datos acumulados de la variable de sesión
@@ -2718,11 +2645,6 @@ dashboardController.addRecursos_Compartidos = async (req, res) => {
 
     // Guardar los datos acumulados en la variable de sesión
     req.session.datosAcumulados = datosAcumulados;
-    console.log("--------");
-    console.group("DATOS ACUMULADOS");
-    console.log(datosAcumulados);
-    console.groupEnd();
-    console.log("--------");
     const recurso_armado = JSON.stringify(datosAcumulados);
    
     if (esFormulario === 'true') {
