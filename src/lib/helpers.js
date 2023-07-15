@@ -35,11 +35,17 @@ helpers.encriptarTxt = (text) => {
 
 // Desencriptando texto
 helpers.desencriptarTxt = (text) => {
-    let encryptedText = Buffer.from(text, 'hex');
-    let decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
-    let decrypted = decipher.update(encryptedText);
-    decrypted = Buffer.concat([decrypted, decipher.final()]);
-    return decrypted.toString();
+    try {
+        let encryptedText = Buffer.from(text, 'hex');
+        let decipher = crypto.createDecipheriv(algorithm, Buffer.from(key), iv);
+        let decrypted = decipher.update(encryptedText);
+        decrypted = Buffer.concat([decrypted, decipher.final()]);
+        return decrypted.toString();
+    } catch (error) {
+        console.error(error);
+        return false;
+        // throw new Error('Error al desencriptar el texto'); // Lanza una excepción personalizada
+    }
 }
 
 // Eliminar elemetos duplicados de un Arreglo

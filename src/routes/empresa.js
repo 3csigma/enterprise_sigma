@@ -1,10 +1,7 @@
 const express = require('express')
 const router = express.Router()
-const multer = require('multer');
-const path = require('path');
-const { checkLogin, validarIDFicha } = require('../lib/auth');
 const empresaController = require('../controllers/empresaController');
-// const signingViaEmail = require('../controllers/envelopeController');
+const { checkLogin, validarIDFicha } = require('../lib/auth');
 const { uploadFiles } = require('../lib/helpers')
 
 // Diagnóstico de Negocio
@@ -18,7 +15,6 @@ router.post('/addficha', checkLogin, empresaController.addFichaCliente)
 router.post('/eliminarFicha', checkLogin, empresaController.eliminarFicha)
 
 // Acuerdo de Confidencialidad
-// router.post('/acuerdo-de-confidencialidad', checkLogin, signingViaEmail.createController)
 router.post('/acuerdo-de-confidencialidad', checkLogin, empresaController.acuerdoCheck)
 
 // Análisis de Negocio
@@ -37,7 +33,11 @@ router.post('/guardar-archivos-estrategico', checkLogin, uploadFiles('Plan-estra
 router.get('/generar-informe/:tipo', checkLogin, empresaController.informeAutoGenerado)
 router.post('/informe-estrategico', checkLogin, empresaController.informeEstrategico)
 
-// Recursos
+/***************************************************************************************************** */
+/* 
+  * Recursos
+*/
+// Material
 router.post('/enviar-archivo', checkLogin, uploadFiles('Recurso_', false, 'recurso_empresa', true, false), empresaController.cargar_recurso);
 router.post('/cargar-link', checkLogin, empresaController.cargar_link);
 router.post('/editar-categoria', checkLogin, empresaController.editarCategoria);
@@ -47,35 +47,12 @@ router.post('/guardar-grupo', checkLogin, uploadFiles('Recurso_', 'archivos', 'g
 router.post('/eliminarCampo', checkLogin, empresaController.eliminarCampo)
 router.post('/eliminarGrupo', checkLogin, empresaController.eliminarGrupo)
 
-//Configurar el almacenamiento de Multer
-const ruta = multer.diskStorage({
-  destination: function (req, file, callback) {
-    const rutaGrupo = path.join(__dirname, '../public/grupo_recursos');
-    callback(null, rutaGrupo);
-  },
-  filename: function (req, file, callback) {
-    const fechaActual = Math.floor(Date.now() / 1000);
-    const recursoId = file.fieldname; // Obtener el nombre del campo que contiene el recurso.id
-    const urlGrupo = `Recurso_${recursoId}_${fechaActual}_${file.originalname}`;
-    console.log(urlGrupo);
-    callback(null, urlGrupo);
-  }
-});
-
-// Crear el middleware de Multer
-const actualizarArchivo = multer({
-  storage: ruta,
-  fileFilter: function (req, file, callback) {
-    const recursoId = file.fieldname; // Obtener el nombre del campo que contiene el recurso.id
-    if (recursoId) {
-      callback(null, true);
-    } else {
-      callback(new Error("Archivo no válido"));
-    }
-  },
-});
-// router.post('/actualizarRecurso', checkLogin, actualizarArchivo.any(), empresaController.actualizarRecurso);
 router.post('/actualizarRecurso', checkLogin, uploadFiles('Recurso_', false, 'grupo_recursos', true, true), empresaController.actualizarRecurso);
 router.post('/copiar-recurso', checkLogin, empresaController.copiarRecurso);
+
+// MODULOS (CURSOS - LECCIONES)
+router.get('/mis-modulos', checkLogin, empresaController.modulos);
+router.get('/mis-modulos/:id', checkLogin, empresaController.verModulo);
+router.post('/leccion-completada', checkLogin, empresaController.leccionCompletada);
 
 module.exports = router

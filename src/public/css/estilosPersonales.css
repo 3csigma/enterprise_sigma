@@ -61,6 +61,15 @@
     background: linear-gradient(180deg, #FED061 -149.33%, #812082 -19.27%, #50368C 158.67%) !important;
 }
 
+.bg_gradient {
+    background: linear-gradient(268.19deg, #812082 22.58%, #50368C 75.27%);
+}
+
+.bg_gradient_2 {
+    border-radius: 27px;
+    background: linear-gradient(180deg, #812082 0%, #50368C 100%);
+}
+
 .card_gradient {
     background: linear-gradient(20deg, rgba(80, 54, 140, 1) 0%, rgba(129, 32, 130, 1) 50%, rgba(254, 208, 97, 1) 100%) !important;
 }
@@ -244,6 +253,7 @@ a.text-secondary:focus {
     border-radius: 5px !important;
     padding-top: 2px !important;
 }
+
 .input-recursos2 {
     height: 31px !important;
     background: #FFFFFF !important;
@@ -256,7 +266,7 @@ a.text-secondary:focus {
     font-size: 11px !important;
 }
 
-.btnTypeArchivo{
+.btnTypeArchivo {
     margin-top: 28px;
     background: #812082 !important;
     border-radius: 5px !important;
@@ -272,7 +282,7 @@ a.text-secondary:focus {
 /*  => fin ESTILOS DE LA VISTA RECURSOS*/
 /* :::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::: */
 
-.chosen-container-single .chosen-single{
+.chosen-container-single .chosen-single {
     height: 31px !important;
     width: 106% !important;
     background: #ffff0000 !important;
@@ -283,59 +293,68 @@ a.text-secondary:focus {
 .colorButtons {
     display: flex;
     justify-content: center;
-  }
-  
-  .colorButton {
+}
+
+.colorButton {
     width: 40px;
     height: 40px;
     border-radius: 50%;
     border: none;
     margin-right: 10px;
     cursor: pointer;
-  }
-  
-  .colorButton.selected {
+}
+
+.colorButton.selected {
     border: 3px solid black;
-  }
-  
-  #colorPreview {
+}
+
+#colorPreview {
     width: 100px;
     height: 100px;
     margin-top: 20px;
-  }
-  
-  .colorButton[data-color="#D74040"] {
+}
+
+.colorButton[data-color="#D74040"] {
     background-color: #D74040;
-  }
-  
-  .colorButton[data-color="#739232"] {
+}
+
+.colorButton[data-color="#739232"] {
     background-color: #739232;
-  }
-  
-  .colorButton[data-color="#58B57D"] {
+}
+
+.colorButton[data-color="#58B57D"] {
     background-color: #58B57D;
-  }
-  
-  .colorButton[data-color="#407CD7"] {
+}
+
+.colorButton[data-color="#407CD7"] {
     background-color: #407CD7;
-  }
-  
-  .colorButton[data-color="#4085D7"] {
+}
+
+.colorButton[data-color="#4085D7"] {
     background-color: #4085D7;
-  }
-  
-  .colorButton[data-color="#9540D7"] {
+}
+
+.colorButton[data-color="#9540D7"] {
     background-color: #9540D7;
-  }
-  
-  .colorButton[data-color="#812082"] {
+}
+
+.colorButton[data-color="#812082"] {
     background-color: #812082;
-  }
-  
-  .colorButton[data-color="#FED061"] {
+}
+
+.colorButton[data-color="#FED061"] {
     background-color: #FED061;
-  }
+}
 
-
-
- 
+.two-line-text {
+    line-height: 1.2;
+    max-height: 2.4em;
+    display: -webkit-box !important;
+    white-space: pre-line !important;
+    text-align: left ;
+    max-width: 300px;
+}
+.item-lecciones {
+    line-height: 1.5em !important;
+    margin-bottom: 2em !important;
+}

@@ -1,0 +1,302 @@
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card" style="background: transparent !important;border: none !important; box-shadow: none !important">
+                    <div class="card-header d-block pb-0 border-0">
+                        <p class="mb-0" style="font-size: 20px;">Módulo</p>
+                        <div class="row">
+                            <div class="col-sm-12 col-lg-8">
+                                <h2 class="text-black" style="white-space: pre-wrap;width: 300px;font-size: 55px;">{{modulo.nombre}}</h2>
+                            </div>
+                            {{!-- Barra de progreso del módulo --}}
+                            <div class="col-sm-12 col-lg-4">
+                                <div class="widget-stat card bg_gradient_2">
+                                    <div class="card-body p-4">
+                                        <div class="media">
+                                            <svg width="80" height="80" viewBox="0 0 70 70" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                                <circle cx="35" cy="35" r="35" fill="white" fill-opacity="0.19"/>
+                                                <g clip-path="url(#clip0_2513_400)">
+                                                <path d="M34.9998 23.625C34.5948 23.625 34.1948 23.6961 33.8148 23.8332L19.7898 28.9773C19.3148 29.1551 18.9998 29.6121 18.9998 30.125C18.9998 30.6379 19.3148 31.0949 19.7898 31.2727L22.6848 32.334C21.8648 33.6441 21.3998 35.193 21.3998 36.823V38.25C21.3998 39.6922 20.8598 41.1801 20.2848 42.3531C19.9598 43.0133 19.5898 43.6633 19.1598 44.2625C18.9998 44.4809 18.9548 44.7652 19.0448 45.0242C19.1348 45.2832 19.3448 45.4762 19.6048 45.5422L22.8048 46.3547C23.0148 46.4105 23.2398 46.3699 23.4248 46.2531C23.6098 46.1363 23.7398 45.9434 23.7798 45.725C24.2098 43.5516 23.9948 41.6016 23.6748 40.2051C23.5148 39.484 23.2998 38.7477 22.9998 38.0723V36.823C22.9998 35.2895 23.5098 33.8422 24.3948 32.6844C25.0398 31.8973 25.8748 31.2625 26.8548 30.8715L34.7048 27.7383C35.1148 27.5758 35.5798 27.7789 35.7398 28.1953C35.8998 28.6117 35.6998 29.084 35.2898 29.2465L27.4398 32.3797C26.8198 32.6285 26.2748 33.0094 25.8298 33.4766L33.8098 36.4016C34.1898 36.5387 34.5898 36.6098 34.9948 36.6098C35.3998 36.6098 35.7998 36.5387 36.1798 36.4016L50.2098 31.2727C50.6848 31.1 50.9998 30.6379 50.9998 30.125C50.9998 29.6121 50.6848 29.1551 50.2098 28.9773L36.1848 23.8332C35.8048 23.6961 35.4048 23.625 34.9998 23.625ZM25.3998 42.7188C25.3998 44.5113 29.6998 46.375 34.9998 46.375C40.2998 46.375 44.5998 44.5113 44.5998 42.7188L43.8348 35.3352L36.7248 37.9453C36.1698 38.1484 35.5848 38.25 34.9998 38.25C34.4148 38.25 33.8248 38.1484 33.2748 37.9453L26.1648 35.3352L25.3998 42.7188Z" fill="white"/>
+                                                </g>
+                                                <defs>
+                                                <clipPath id="clip0_2513_400">
+                                                <rect width="32" height="26" fill="white" transform="translate(19 22)"/>
+                                                </clipPath>
+                                                </defs>
+                                            </svg>
+                                            <div class="media-body text-white pl-4">
+                                                <p class="mb-1">Avance del módulo</p>
+                                                <h3 class="text-white" id="txt_modulo_completado">{{modulo.avance}}%</h3>
+                                                <div class="progress mb-2 bg-primary">
+                                                    <div class="progress-bar progress-animated bg-light" id="porcentaje_modulo" style="width: {{modulo.avance}}%;"></div>
+                                                </div>
+                                                <small><span id="leccion_completada">{{modulo.leccionesCompletadas}}</span> de {{modulo.lecciones.length}} lecciones completadas</small>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <hr style="border: 1px solid #000000">
+
+                    <div class="card-body pb-0">
+                       <div class="row">
+                            <div class="col">
+                                <div class="btn-group mb-1">
+                                    <button class="btn btn-primary btn-lg text-black" type="button" data-toggle="dropdown" aria-expanded="false"
+                                    style="border-radius: 31.5px; border: 1px solid #DBDBDB; background: #FFF; width: 310px; position: relative;
+                                        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.11);">
+                                        <span id="leccion-actual" class="two-line-text" style="font-weight: bold;">1. {{modulo.lecciones.[0].nombre}} </span>
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="8" viewBox="0 0 10 8" fill="none"
+                                        style="position: absolute;right: 25px;top: 50%;transform: translateY(-50%);">
+                                            <path d="M5 8L2.83494 4.25L0.669875 0.499998L5 0.499999L9.33013 0.499999L7.16506 4.25L5 8Z" fill="#812082"></path>
+                                        </svg>
+                                    </button>
+                                    <div class="dropdown-menu" x-placement="bottom-start" 
+                                    style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 61px, 0px);">
+                                        {{#each modulo.lecciones}}
+                                        <a class="dropdown-item item-lecciones two-line-text" href="#">
+                                            <div class="d-flex justify-content-center align-items-center">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                                                    <path class="estrella-{{id}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
+                                                </svg> {{num}}. {{nombre}}
+                                            </div>
+                                        </a>
+                                        {{/each}}
+                                    </div>
+                                </div>
+                            </div>
+                            <input type="hidden" id="lecciones" value="{{lecciones}}">
+                       </div>
+
+                        {{#each modulo.lecciones}}
+                        <div class="contenido" id="contenido-{{id}}" style="display: none;">
+                            {{!-- VIDEO DE LA LECCIÓN --}}
+                            <div class="row mt-2">
+                                <div class="col-12">
+                                    <video width="100%" height="auto" id="video_leccion-{{id}}">
+                                        <source src="{{video}}" type="video/mp4">
+                                        Tu navegador no soporta el elemento video.
+                                    </video>
+
+                                    {{!-- Footer del Video --}}
+                                    <div class="row px-3 my-0">
+                                        <div class="col-12 bg-white py-2" style="border-bottom: 1px solid #E1E1E1; border-left: 1px solid #E1E1E1; border-right: 1px solid #E1E1E1;margin-top: -6px;">
+                                            <div class="col pl-3">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
+                                                    <path d="M12 0C15.1826 0 18.2348 1.26428 20.4853 3.51472C22.7357 5.76516 24 8.8174 24 12C24 15.1826 22.7357 18.2348 20.4853 20.4853C18.2348 22.7357 15.1826 24 12 24C8.8174 24 5.76516 22.7357 3.51472 20.4853C1.26428 18.2348 0 15.1826 0 12C0 8.8174 1.26428 5.76516 3.51472 3.51472C5.76516 1.26428 8.8174 0 12 0ZM10.875 5.625V12C10.875 12.375 11.0625 12.7266 11.3766 12.9375L15.8766 15.9375C16.3922 16.2844 17.0906 16.1437 17.4375 15.6234C17.7844 15.1031 17.6437 14.4094 17.1234 14.0625L13.125 11.4V5.625C13.125 5.00156 12.6234 4.5 12 4.5C11.3766 4.5 10.875 5.00156 10.875 5.625Z" fill="#D8D8D8"/>
+                                                </svg>
+                                                <span id="duracion_video-{{id}}" class="pl-2 pr-3"> </span>
+                                                <div class="btn-group mb-1">
+                                                    <button class="btn btn-primary btn-sm text-white" type="button" data-toggle="dropdown" aria-expanded="false"
+                                                    style="border-radius: 12px; background: #50368C; width: 160px;">
+                                                        Descargables
+                                                        <svg xmlns="http://www.w3.org/2000/svg" width="10" height="8" viewBox="0 0 10 8" fill="none"
+                                                        style="position: absolute;right: 10px;top: 50%;transform: translateY(-50%);">
+                                                            <path d="M5 8L2.83494 4.25L0.669875 0.499998L5 0.499999L9.33013 0.499999L7.16506 4.25L5 8Z" fill="#fff"></path>
+                                                        </svg>
+                                                    </button>
+                                                    <div class="dropdown-menu" x-placement="bottom-start" 
+                                                    style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 61px, 0px);">
+                                                        <a class="dropdown-item" href="#">File 1</a>
+                                                        <a class="dropdown-item" href="#">File 2</a>
+                                                    </div>
+                                                </div>
+                                                <div class="d-flex justify-content-center align-items-center" style="float: right; width: 195px; height: 44px; border-radius: 6px; border: 0.5px solid #000;">
+                                                    <span class="pr-2">Lección completada </span>
+                                                    <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                                                        <path class="estrella-{{id}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
+                                                    </svg>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    
+                                </div>
+                            </div>
+
+                            {{!-- INFORMACIÓN TEXTUAL DE LA LECCIÓN --}}
+                            <div class="row mt-4">
+                                    <di class="col-12">
+                                        <h2>{{nombre}}</h2>
+                                        {{{descripcion}}}
+                                    </di>
+                            </div>
+                        </div>
+                        {{/each}}
+
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Llamar a la función mostrarContenido(1) al cargar la página
+    window.addEventListener('load', function() {
+        procesarOpciones();
+        manejarClicksOpciones(1);
+    });
+
+    const opciones = document.querySelectorAll('.item-lecciones');
+
+    const getPreviousStarFill = (index) => {
+        const previousStar = opciones[index - 1].querySelector(`.estrella-${index}`);
+        const previousStarStyle = window.getComputedStyle(previousStar);
+        return previousStarStyle.getPropertyValue('fill');
+    };
+
+    const manejarClicksOpciones = (index) => {
+        opciones.forEach((opcion, i) => {
+            if (i === index - 1) {
+                console.log(`OPCIÓN SELECCIONADA: ${index}`);
+                mostrarContenido(index);
+                validacionesVideo(index);
+            } else if (i > 0) {
+                const previousStarFill = getPreviousStarFill(i);
+                if (previousStarFill === 'rgb(254, 208, 97)') {
+                    opcion.style.cssText = 'color: #7e7e7e; pointer-events: auto;';
+                } else {
+                    opcion.style.cssText = 'color: #bcbcbc; pointer-events: none;';
+                }
+            }
+        });
+    };
+
+    const procesarOpciones = () => {
+        opciones.forEach((opcion, index) => {
+            if (index > 0) {
+                opcion.style.cssText = 'color: #bcbcbc; pointer-events: none;';
+            }
+            opcion.addEventListener('click', () => {
+                if (index > 0) {
+                    const previousStarFill = getPreviousStarFill(index);
+                    if (previousStarFill !== 'rgb(254, 208, 97)') {
+                        console.log(`La opción lección anterior no se ha completado. Opción clickeada: ${index + 1}`);
+                        return false;
+                    }
+                }
+                manejarClicksOpciones(index + 1);
+            });
+        });
+    };
+
+    function mostrarContenido(index) {
+        // Ocultar todos los elementos de contenido
+        const elementosContenido = document.querySelectorAll('.contenido');
+        elementosContenido.forEach(elemento => {
+            elemento.style.display = 'none';
+        });
+
+        // Mostrar el contenido correspondiente al índice seleccionado
+        const contenido = document.getElementById(`contenido-${index}`);
+        contenido.style.display = 'block';
+
+    }
+
+    function duracionVideo(video, i) {
+        // Obtener la duración total del video en segundos
+        const duracionTotal = Math.floor(video.duration);
+
+        // Calcular los minutos y segundos
+        let minutos = Math.floor(duracionTotal / 60);
+        const segundos = duracionTotal % 60;
+        // Calcular las horas, minutos y segundos
+        const horas = Math.floor(minutos / 60);
+        minutos = minutos % 60;
+
+        //console.log('Duración del video:', horas, 'horas', minutos, 'minutos', segundos, 'segundos');
+        let duracionVideo = ''
+        if (horas > 0) duracionVideo = horas + ' horas ';
+        if (minutos > 0) duracionVideo += minutos + ' minutos ';
+        if (segundos > 0) duracionVideo += segundos + ' segundos ';
+        $('#duracion_video-'+i).text(duracionVideo)
+    }
+
+    function validacionesVideo(i) {
+        const video = document.getElementById(`video_leccion-${i}`);
+
+        if ($(`.estrella-${i}`).attr('fill') === '#FED061') {
+            video.controls = true;
+        }
+
+        if (i === 1) {
+            video.addEventListener('loadedmetadata', () => duracionVideo(video, i));
+        }
+        duracionVideo(video, i);
+
+        // Alternar visibilidad de los controles al hacer clic dentro del video
+        video.addEventListener('click', () => {
+            if (video.paused) {
+            video.play();
+            } else {
+            video.pause();
+            }
+            if (video.controls) {
+            if (video.paused) {
+                video.play();
+            } else {
+                video.pause();
+            }
+            }
+        }, false);
+
+        const lecciones = JSON.parse($('#lecciones').val());
+        const txt_leccionActual = `${lecciones[i - 1].num}. ${lecciones[i - 1].nombre}`;
+        $('#leccion-actual').text(txt_leccionActual);
+
+        // Habilitar los controles cuando el video finaliza
+        video.addEventListener('ended', () => {
+            video.controls = true;
+            let lecciones_Completadas = null;
+            if ($(`#estrella-${i}`).attr('fill') !== '#FED061') {
+                // Realizar la solicitud POST usando fetch
+                fetch('/leccion-completada', {
+                    method: 'POST',
+                    body: JSON.stringify({id: i}),
+                    headers: {'Content-Type': 'application/json'}
+                })
+                    .then(response => response.json())
+                    .then(data => {
+                    // Manejar la respuesta de la API
+                        if (data.ok) {
+                            console.log(data);
+                            const leccionActual = lecciones.find(x => x.id === i);
+                            if (leccionActual) {
+                                leccionActual.estado = '#FED061';
+                                //let leccionesCompletadas = lecciones.filter(obj => obj.estado === '#FED061').length;
+                                const leccionesCompletadas = data.completadas;
+                                const porcentajeCompletado = Math.round((leccionesCompletadas.length / lecciones.length) * 100);
+                                $('#txt_modulo_completado').text(`${porcentajeCompletado}%`);
+                                console.log(`Nuevo porcentaje para el modulo: ${porcentajeCompletado}%`);
+                                const barraProgreso = document.getElementById('porcentaje_modulo');
+                                barraProgreso.style.width = `${porcentajeCompletado}%`;
+                            }
+                            
+                            const leccion_completada = $('#leccion_completada');
+                            if (parseInt(leccion_completada.text()) < lecciones.length) {
+                                const valor = parseInt(leccion_completada.text()) + 1;
+                                console.log(`Actualizar Avance del módulo: ${valor}`);
+                                leccion_completada.text(valor);
+                            }
+                        }
+                    })
+                    .catch(error => {
+                    // Manejar errores de la solicitud
+                    console.error('Error:', error);
+                    });
+
+                $(`.estrella-${i}`).attr('fill', '#FED061');
+                manejarClicksOpciones(i);
+            }
+        });
+        }
+</script>

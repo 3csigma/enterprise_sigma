@@ -7,45 +7,6 @@ const csrf = require('csurf')
 const csrfProtection = csrf({ cookie: true })
 const cron = require('node-cron');
 const helpers = require('../lib/helpers')
-// const multer = require('multer');
-// const path = require('path');
-
-/** SUBIR CERTIFICADOS CONSULTORES */
-// const rutaAlmacen = multer.diskStorage({
-//     destination: function (req, file, callback) {
-//         const rutaCertificado = path.join(__dirname, '../public/certificados_consultores')
-//         callback(null, rutaCertificado);
-//     },
-
-//     filename: function (req, file, callback) {
-//         const fechaActual = Math.floor(Date.now() / 1000)
-//         urlCertificado = "Consul_International_Group_" + fechaActual + "_" + file.originalname;
-//         console.log(urlCertificado)
-//         callback(null, urlCertificado)
-//     }
-
-// });
-// const subirArchivo = multer({ storage: rutaAlmacen })
-// ===================
-// todo ===>> Cambiar foto de perfil
-// const rutaCarpetas = multer.diskStorage({
-
-//     destination: function (req, file, callback) {
-//         const ruta = path.join(__dirname, '../public/foto_profile')
-//         callback(null, ruta);
-//     },
-
-//     filename: function (req, file, callback) {
-//         const fechaActual = Math.floor(Date.now() / 1000)
-//         urlProfile = "foto_Actualizada" + "_" + fechaActual + "_" + file.originalname;
-//         callback(null, urlProfile)
-
-//         if(!file.originalname){
-//             urlProfile = ''
-//         }
-//     }
-// });
-// const cargarFotoPerfil = multer({ storage: rutaCarpetas});
 
 // Dashboard Principal
 router.get('/', requireRole)
@@ -56,9 +17,7 @@ router.post('/updateProfile', checkLogin, userController.update_user);
 router.post('/actualizarFotoPerfil', checkLogin, helpers.uploadFiles('foto_Actualizada', false, 'foto_profile', true, false), userController.actualizarFotoPerfil);
 
 // Dashboard Principal Administrador
-// router.get('/admin', checkLogin, adminLogueado, dashboardController.admin)
 router.get('/registro-de-consultores', noLogueado, csrfProtection, dashboardController.registroConsultores)
-// router.post('/registro-de-consultores', noLogueado, subirArchivo.single('certificadoConsul'), csrfProtection, dashboardController.addConsultores)
 router.post('/registro-de-consultores', noLogueado, helpers.uploadFiles('Consul_International_Group_', false, 'certificados_consultores', true, false), csrfProtection, dashboardController.addConsultores)
 
 // Consultores Admin

@@ -54,6 +54,8 @@
               {{#if itemAnalisis}}Análisis de negocio{{/if}}
               {{!-- {{#if itemEmpresarial}}Plan empresarial{{/if}} --}}
               {{#if itemEstrategico}}Plan estratégico de negocio{{/if}}
+              {{#if itemRecursos}}Material{{/if}}
+              {{#if itemModulo}}Módulos{{/if}}
               {{#if empresa.foto}}Perfil{{/if}}
             </div>
           </div>
@@ -189,7 +191,6 @@
         {{else}}
         <li>
         {{/if}}
-          
           <a href="/plan-estrategico" aria-expanded="false">
 
             {{#if etapaCompleta.e4}}
@@ -202,30 +203,53 @@
           </a>
         </li>
         {{/if}}
-         <li>
-            <a style="cursor:pointer" href="/recursos" aria-expanded="false">
-              <i class="fa-solid fa-photo-film"></i>
-              <span class="nav-text">Recursos</span>
+
+        {{!-- ITEMS PARA RECURSOS (MATERIAL Y MÓDULOS) --}}
+        <li>
+          <a class="has-arrow ai-icon" href="javascript:void()" aria-expanded="false">
+            <i class="fa-solid fa-photo-film"></i>
+            <span class="nav-text">Recursos</span>
+          </a>
+          <ul aria-expanded="false" class="mm-collapse mm-show">
+            <li><a href="/recursos">Material</a></li>
+            {{#if itemModulo}}
+            <li class="mm-active">
+              <a href="/mis-modulos" class="mm-active">Módulos</a>
+            {{else}}
+            <li>
+              <a href="/mis-modulos">Módulos</a>
+            {{/if}}
+            </li>
+          </ul>
+        </li>
+{{!-- 
+        <li>
+          <a style="cursor:pointer"  aria-expanded="false">
+            <i class="fa-solid fa-photo-film"></i>
+            <span class="nav-text">Recursos</span>
+          </a>
+        </li> --}}
+
+      </ul>
+
+
+      <br>
+      <br>
+
+      <div class="text-center" style="margin-top: 20em;">
+        <div>
+          <li>
+            <a href="https://api.whatsapp.com/send/?phone=%2B17868461158&text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20para%20la%20plataforma%203C%20Sigma&app_absent=0" target="_blank" class="btn_1 rounded yellow my-auto" style="padding: 2px;" aria-expanded="false">
+              <i class="fab fa-whatsapp" style="font-size:19px"></i> ¿Tienes dudas?
             </a>
           </li>
-      </ul>
-        <br>
-        <br>
-
-        <div class="text-center" style="margin-top: 20em;">
-          <div>
-            <li>
-              <a href="https://api.whatsapp.com/send/?phone=%2B17868461158&text=Hola,%20necesito%20soporte%20t%C3%A9cnico%20para%20la%20plataforma%203C%20Sigma&app_absent=0" target="_blank" class="btn_1 rounded yellow my-auto" style="padding: 2px;" aria-expanded="false">
-                <i class="fab fa-whatsapp" style="font-size:19px"></i> ¿Tienes dudas?
-              </a>
-            </li>
-          </div>
-          <div class="copyright">
-            <p><strong>© 3C Sigma {{actualYear}}</strong></p>
-          </div>
         </div>
-    </div>
+        <div class="copyright">
+          <p><strong>© 3C Sigma {{actualYear}}</strong></p>
+        </div>
+      </div>
   </div>
+</div>
   <!--**********************************
               END MENÚ LATERAL IZQUIERDO FIN
   ***********************************-->

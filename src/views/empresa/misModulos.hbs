@@ -1,0 +1,50 @@
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12">
+                <div class="card" style="background: transparent !important;border: none !important; box-shadow: none !important">
+                    <div class="card-header d-block pb-0 border-0">
+                        <div class="mr-auto pr-3">
+                            <p class="fs-15 mb-0">Hola, <span class="text-black">{{user.nombres}}!</span></p>
+                            <p class="fs-15 mb-0">Este es tu avance en la lecciones</p>
+                        </div>
+                        <div class="progress" style="height: 20px;">
+                            <div class="progress-bar bg_gradient progress-animated" style="width: 40%;" role="progressbar"></div>
+                        </div>
+                        <h4 class="text-black fs-20"># Lecciones de # completadas</h4>
+                    </div>
+
+                    <div class="card-body pb-0">
+                        {{#each misModulos}}
+                        <h2 class="text-black">{{@key}}</h2>
+                        <hr style="border: 1px solid #000000">
+                        <div class="row mt-5">
+                            {{#each this}}
+                            <div class="col-4">
+                                <a href="/mis-modulos/{{codigo}}">
+                                    <div class="profile-blog mb-5 pb-4 bg-white">
+                                        <img src="{{imagen}}" alt="{{nombre}}" class="img-fluid mb-4 w-100">
+                                        <h4 class="text-black pl-3">{{nombre}}</h4>
+                                        <div class="pl-3">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
+                                                <path d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="#7e7e7e"/>
+                                            </svg>
+                                            <span class="fs-12 pr-2">0/10 Lecciones completadas</span>
+                                            <span class="fs-12"><i class="fa-solid fa-user-group" style="width: 17px;"></i> 3 Estudiantes</span>                                    
+                                        </div>
+                                    </div>
+                                </a>
+                            </div>
+                            {{/each}}
+                        </div>
+                        {{/each}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
