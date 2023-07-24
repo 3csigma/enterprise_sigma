@@ -6149,7 +6149,7 @@ a.badge-dark.focus {
 
 .alert-dark {
   color: #5c5c5c;
-  background-color: #efefef;
+  background-color: #812082;
   border-color: #e9e9e9;
 }
 
@@ -36048,10 +36048,10 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
   border-radius: 50px;
   width: 3rem;
   height: 3rem;
-  border: 2px solid #50368c;
+  border: 1px solid #B0B0B0;
   display: block;
   line-height: 3rem;
-  color: #50368c;
+  color: #B0B0B0;
   font-size: 18px;
   margin: auto;
   background-color: #fff;
@@ -36075,11 +36075,11 @@ Fixing Order => Base + Typography >> General Layout + Grid >> Page Layout + Comp
 }
 
 .form-wizard .nav-wizard li .nav-link.done:after {
-  background: #50368c !important;
+  background: #812082 !important;
 }
 
 .form-wizard .nav-wizard li .nav-link.done span {
-  background-color: #50368c;
+  background-color: #812082;
   color: #fff;
 }
 
@@ -37152,17 +37152,16 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
 }
 
 .accordion-danger-solid .accordion__header {
-  background: #F94687;
-  border-color: #F94687;
+  background: #812082;
+  border-color: #812082;
   color: #fff;
-  box-shadow: 0 -10px 20px 0 rgba(249, 70, 135, 0.15);
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
 }
 
 .accordion-danger-solid .accordion__header.collapsed {
-  background: #fff3f7;
-  border-color: #fff3f7;
+  background:#F0E4F0;
+  border-color: #F0E4F0;
   color: #211c37;
   box-shadow: none;
   border-bottom-left-radius: 1.25rem;
@@ -37176,9 +37175,8 @@ html:not([dir=rtl]) .noUi-horizontal .noUi-handle {
 }
 
 .accordion-danger-solid .accordion__body {
-  border: 2px solid #F94687;
+  border: 2px solid #812082;
   border-top: none;
-  box-shadow: 0 15px 20px 0 rgba(249, 70, 135, 0.15);
   border-bottom-left-radius: 1.25rem;
   border-bottom-right-radius: 1.25rem;
 }
@@ -44210,7 +44208,7 @@ span#counter {
 }
 
 .search-area .form-control {
-  background: #EFEFEF !important;
+  background: #812082 !important;
   border-width: 0px;
   padding-right: 20px;
   min-height: 55px;
@@ -44224,7 +44222,7 @@ span#counter {
 }
 
 .search-area .input-group-text {
-  background: #EFEFEF;
+  background: #812082;
   border-width: 0px;
   border-top-left-radius: 1.25rem !important;
   border-bottom-left-radius: 1.25rem !important;
@@ -48210,4 +48208,9 @@ html[dir="rtl"] [direction="rtl"][data-sidebar-style="compact"]:not([data-layout
 body.swal2-shown > [aria-hidden="true"] {
     transition: 0.1s filter !important;
     filter: blur(10px) !important;
+}
+
+
+.pasos{
+  color: #812082;
 }

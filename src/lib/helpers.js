@@ -97,6 +97,29 @@ helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false, any
     }
 }
 
+helpers.uploadModulos = (preNombre, inputs = [], carpeta) => {
+    const rutaAlmacen = multer.diskStorage({
+        destination: (_req, file, cb) => {
+            cb(null, path.join(__dirname, '../public/' + carpeta));
+        },
+    
+        filename: (_req, file, cb) => {
+            console.log(file.originalname);
+            const nomFile = preNombre + Math.floor(Date.now() / 1000) + '_' + file.originalname;
+            cb(null, nomFile);
+        }
+    });
+
+    const campos = {};
+    if (inputs) {
+        inputs.forEach((name) => {
+            campos[name] = { maxCount: 99 };
+        });
+    }
+
+    return multer({ storage: rutaAlmacen }).fields(campos);
+}
+
 /************************************************************************************************************** */
 /*********************************** FUNCIONES PARA CRON JOB ****************************************************** */
 

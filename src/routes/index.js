@@ -65,7 +65,15 @@ router.post('/finalizarEtapa', checkLogin, dashboardController.finalizarEtapa)
 router.get('/recursos-compartidos', checkLogin, dashboardController.recursosCompartidos)
 router.post('/add-grupos-compartidos', checkLogin, helpers.uploadFiles('Recurso_', 'archivos', 'grupo_recursos', true, false), dashboardController.addRecursos_Compartidos);
 
+/********************************************************************************
+ * MODULOS
+*/
+router.get('/ver-modulos', checkLogin, dashboardController.verModulos);
+router.get('/crear-modulos', checkLogin, dashboardController.crearModulos);
+router.post('/add-modulos', checkLogin, helpers.uploadModulos('leccion_', ["video[]", "material[]"], 'lecciones'), dashboardController.addModulos);
+
 /*******************************************************************************************************/
+
 // Ejecución Diaria (12pm)
 cron.schedule('0 12 * * 0-6',() => {
     helpers.habilitar_siguientePago()
