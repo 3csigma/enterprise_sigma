@@ -15,7 +15,7 @@
 
 {{#if user_dash}}
 <script src="../js/upload.js"></script>
-{{/if}}
+<script src="../js/func_selector_categorias.js"></script>
 <script src="../js/recursos.js"></script>
 <script src="../js/editarRecursos.js"></script>
 
@@ -49,6 +49,29 @@
 {{/if}} 
 
 {{> general/sidebarConsultor}}
+
+{{#if formModulos}}
+<script src="../js/steps.min.js"></script>
+<script src="../js/validate.min.js"></script>
+<script src="../js/validate-init.js"></script>
+<script src="../js/smartWizard.js"></script>
+<script src="../js/func_selector_categorias.js"></script>
+<script>
+		$(document).ready(function(){
+			// SmartWizard initialize
+			$('#ssmartwizard').smartWizard(); 
+		});
+</script>
+<script src="../js/summernote.min.js"></script>
+<script src="../js/summernote-init.js"></script>
+{{/if}}
+
+{{#if formViewModulos}}
+<script src="../js/jquery.dataTables.min.js"></script>
+<script src="../js/datatables.init.js"></script>
+{{/if}}
+
+
 
 {{!-- SCRIPTS - VALIDACIONES FICHA CLIENTE --}}
 <script>
