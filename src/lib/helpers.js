@@ -62,7 +62,7 @@ helpers.delDuplicados = (array) => {
 
 /************************************************************************************************************** */
 /** CARGA DE ARCHIVOS */
-helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false, any = false) => {
+helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false, any = false, modulo = false) => {
     const rutaAlmacen = multer.diskStorage({
         destination: (_req, file, cb) => {
             cb(null, path.join(__dirname, '../public/' + carpeta));
@@ -91,33 +91,11 @@ helpers.uploadFiles = (preNombre, inputName = false, carpeta, fecha = false, any
                 recursoId ? callback(null, true) : callback(new Error("Archivo no válido"));
             },
         }).any();
+    } else if (modulo) {
+        return multer({ storage: rutaAlmacen }).any();
     } else {
-        const upload = inputName ? multer({ storage: rutaAlmacen }).array(inputName) : multer({ storage: rutaAlmacen }).single('file');
-        return upload;
+        return inputName ? multer({ storage: rutaAlmacen }).array(inputName) : multer({ storage: rutaAlmacen }).single('file');
     }
-}
-
-helpers.uploadModulos = (preNombre, inputs = [], carpeta) => {
-    const rutaAlmacen = multer.diskStorage({
-        destination: (_req, file, cb) => {
-            cb(null, path.join(__dirname, '../public/' + carpeta));
-        },
-    
-        filename: (_req, file, cb) => {
-            console.log(file.originalname);
-            const nomFile = preNombre + Math.floor(Date.now() / 1000) + '_' + file.originalname;
-            cb(null, nomFile);
-        }
-    });
-
-    const campos = {};
-    if (inputs) {
-        inputs.forEach((name) => {
-            campos[name] = { maxCount: 99 };
-        });
-    }
-
-    return multer({ storage: rutaAlmacen }).fields(campos);
 }
 
 /************************************************************************************************************** */

@@ -2710,7 +2710,12 @@ dashboardController.crearModulos = async (req, res) => {
 }
 
 dashboardController.addModulos = async (req, res) => {
-   console.log(req.body);
-   
-    res.send("todo bn");
+    console.log("Agregando módulo.....")
+    console.log(req.body);
+    res.json("todo bn");
+}
+dashboardController.eliminarModulos = async (req, res) => {
+    const id = req.body.id
+    await pool.query('DELETE m, l FROM modulos m INNER JOIN lecciones l ON m.id = l.id_modulo WHERE m.id = ?',[id]);
+    res.send(true);
 }
