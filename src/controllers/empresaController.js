@@ -2465,32 +2465,91 @@ empresaController.copiarRecurso = async (req, res) => {
 
 // MOSTRAR MÓDULOS DE LA EMPRESA
 empresaController.modulos = async (req, res) => {
+  const empresas = await consultarDatos("users")
+  const numLecciones = { total: 0, completas: 0, porcentaje: 0 };
+  const misDatos = (await consultarDatos("empresas")).find(x => x.codigo == req.user.codigo)
+
+  // Capturando las lecciones completadas de la Empresa
+  const mapa = new Map(JSON.parse(misDatos.lecciones_completadas))
+  console.log("Mapa: ", mapa);
+  if (mapa.size > 0) {
+    mapa.forEach((valor, clave) => {
+      numLecciones.completas += valor.id.length;
+    });
+  }
+
+  const lecciones = await consultarDatos("lecciones")
+  // Filtrando módulos por programa al que tenga la empresa logueada
   let misModulos = (await consultarDatos('modulos')).filter(m => {
     m.codigo = encriptarTxt((m.id).toString())
     m.programa = JSON.parse(m.programa);
+    m.lecciones_completadas = 0;
+    m.estudiantes = 0;
+
+    if (mapa.size > 0) {
+      const data = (mapa.get((m.id).toString()));
+      if (data) {
+        m.lecciones_completadas = (data.id).length;
+      }
+    }
+
+    const misLecciones = lecciones.filter(l => l.id_modulo == m.id)
+    m.total_lecciones = misLecciones.length;
+    numLecciones.total += m.total_lecciones;
+
+    m.color = m.lecciones_completadas == m.total_lecciones ? '#FED061' : '#7e7e7e';
+
+    // Crea un objeto para almacenar el recuento de empresas por módulo
+    const recuento = {};
+    // Recorre el arreglo de módulos
+    const programas = m.programa;
+
+    console.log("programas");
+    console.log(programas);
+
+    // Inicializa el recuento de empresas para el módulo actual
+    recuento[programas] = 0;
+
+    // Recorre el arreglo de empresas
+    empresas.forEach((e) => {
+      console.log("recuento 1111");
+      console.log(recuento);
+      console.log("Programa e=> ");
+      console.log(e.programa);
+      // Verifica si el programa de la empresa está en el arreglo de programas del módulo
+      if (e.programa && programas.includes((e.programa).toString())) {
+        // Incrementa el recuento de empresas para el módulo correspondiente
+        recuento[programas]++;
+
+        console.log("recuento 2222");
+        console.log(recuento);
+      }
+    });
+    console.log(recuento[programas]);
+    m.estudiantes = recuento[programas] || 0;
+    
     return m.programa.includes(req.user.programa.toString()) && m.estado === 1;
   });
-  
+
+  // Procesar los datos para agrupar los módulos por categoría (Curso)
   if (misModulos.length) {
-    // Procesar los datos para agruparlos por categoría
     misModulos = misModulos.reduce((anterior, actual) => {
-      const category = actual.categoria;
-      if (!anterior[category]) {
-        anterior[category] = [];
+      const curso = actual.categoria;
+      if (!anterior[curso]) {
+        anterior[curso] = [];
       }
-      anterior[category].push(actual);
+      anterior[curso].push(actual);
       return anterior;
     }, {});
   }
 
   console.log("Mis Módulos => ");
   console.log(misModulos);
-  // const palabrasConComas = programa.txt.slice(0, -1).map(palabra => palabra + ', ');
-  // programa.txt = [...palabrasConComas, programa.txt[programa.txt.length - 1]];
+  numLecciones.porcentaje = Math.round((numLecciones.completas / numLecciones.total) * 100) || 0.3;
 
   res.render("empresa/misModulos", {
     user_dash: true, itemModulo: true,
-    misModulos,
+    misModulos, numLecciones
   });
 }
 
@@ -2510,29 +2569,31 @@ empresaController.verModulo = async (req, res) => {
     modulo.leccionesCompletadas = 0;
     modulo.avance = 0;
     
-    const completadas = JSON.parse(empresa.lecciones_completadas);
-    if (completadas && completadas.length > 0) {
-      modulo.leccionesCompletadas = completadas.length;
+    const completadas = new Map(JSON.parse(empresa.lecciones_completadas))
+    console.log(`Lecciones completadas para el modulo: ${id}`);
+    console.log((completadas.get(id)));
+    const existeMapa = (completadas.get(id));
+    if (existeMapa) {
+      modulo.leccionesCompletadas = (existeMapa.id).length;
     }
+
+    console.log("Número de Completadas => ", modulo.leccionesCompletadas);
 
     if (lecciones.length > 0) {
       modulo.avance = parseInt((modulo.leccionesCompletadas / lecciones.length) * 100);
       modulo.lecciones = lecciones.map((leccion, index) => {
         leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
         leccion.estado = '#D8D8D8'
-        if (completadas && completadas.find(x => x == leccion.id)) {
+        if ( existeMapa && (existeMapa.id).find(x => x == leccion.num) ) {
           leccion.estado = '#FED061'
         }
         return leccion;
       });
     }
-    
-    console.log("EL MODULO SELECCIONADO ES ==> ");
+
+    console.log("Info modulo: ");
     console.log(modulo);
-    console.log("-------------");
-    console.log(JSON.stringify(modulo));
-    console.log("-------------");
-  
+    
     res.render("empresa/modulo", {
       user_dash: true, itemModulo: true,
       modulo, lecciones: JSON.stringify(modulo.lecciones)
@@ -2542,16 +2603,34 @@ empresaController.verModulo = async (req, res) => {
 
 // Actualizar Lecciones completadas de la Empresa
 empresaController.leccionCompletada = async (req, res) => {
-  const { id } = req.body;
-  let completadas = [];
+  const { id, modulo } = req.body;
+  let completadas = new Map(), bandera = false;
   const empresa = (await consultarDatos('empresas')).find(x => x.codigo == req.user.codigo)
   if (empresa.lecciones_completadas != null) {
-    console.log("data 1: ", empresa.lecciones_completadas);
-    completadas = JSON.parse(empresa.lecciones_completadas)
+    completadas = new Map(JSON.parse(empresa.lecciones_completadas))
   }
-  if (!completadas.includes(id)) { completadas.push(id) };
-  console.log("completadas: ", completadas);
-  const data = { lecciones_completadas: JSON.stringify(completadas) }
+
+  const moduloId = completadas.get(modulo);
+  if (moduloId) {
+    // Si el id no existe en el array de 'id', lo agregamos al array de 'id'
+    if (!moduloId.id.includes(id)) {
+      console.log("Si el objeto ya existe y el id no existe en el array de 'id', lo agregamos al array de 'id'");
+      const updatedModuloId = {...moduloId, id: [...moduloId.id, id]};
+      completadas.set(modulo, updatedModuloId);
+      bandera = true;
+    }
+  } else {
+    // Si el objeto no existe, creamos un nuevo objeto con la estructura requerida
+    console.log("Si el objeto no existe, creamos un nuevo objeto con la estructura requerida");
+    completadas.set(modulo, {id: [id] });
+    bandera = true;
+  }
+  console.log("completadas")
+  console.log(completadas)
+  const numCompletas = (completadas.get(modulo)).id.length;
+  console.log("numCompletas");
+  console.log(numCompletas);
+  const data = { lecciones_completadas: JSON.stringify([...completadas]) }
   await actualizarDatos('empresas', data, `WHERE id_empresas = ${empresa.id_empresas}`)
-  res.send({ok: true, completadas})
+  res.send({ok: bandera, numCompletas})
 }

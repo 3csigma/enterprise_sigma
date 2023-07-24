@@ -13,9 +13,9 @@
                             <p class="fs-15 mb-0">Este es tu avance en la lecciones</p>
                         </div>
                         <div class="progress" style="height: 20px;">
-                            <div class="progress-bar bg_gradient progress-animated" style="width: 40%;" role="progressbar"></div>
+                            <div class="progress-bar bg_gradient progress-animated" style="width: {{numLecciones.porcentaje}}%;" role="progressbar"></div>
                         </div>
-                        <h4 class="text-black fs-20"># Lecciones de # completadas</h4>
+                        <h4 class="text-black fs-20">{{numLecciones.completas}} Lecciones de {{numLecciones.total}} completadas</h4>
                     </div>
 
                     <div class="card-body pb-0">
@@ -31,10 +31,10 @@
                                         <h4 class="text-black pl-3">{{nombre}}</h4>
                                         <div class="pl-3">
                                             <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
-                                                <path d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="#7e7e7e"/>
+                                                <path d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{color}}"/>
                                             </svg>
-                                            <span class="fs-12 pr-2">0/10 Lecciones completadas</span>
-                                            <span class="fs-12"><i class="fa-solid fa-user-group" style="width: 17px;"></i> 3 Estudiantes</span>                                    
+                                            <span class="fs-12 pr-2">{{lecciones_completadas}}/{{total_lecciones}} Lecciones completadas</span>
+                                            <span class="fs-12"><i class="fa-solid fa-user-group" style="width: 17px;"></i> {{estudiantes}} Estudiantes</span>                                    
                                         </div>
                                     </div>
                                 </a>

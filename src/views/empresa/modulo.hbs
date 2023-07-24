@@ -64,7 +64,7 @@
                                         <a class="dropdown-item item-lecciones two-line-text" href="#">
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
-                                                    <path class="estrella-{{id}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
+                                                    <path class="estrella-{{num}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
                                                 </svg> {{num}}. {{nombre}}
                                             </div>
                                         </a>
@@ -73,14 +73,15 @@
                                 </div>
                             </div>
                             <input type="hidden" id="lecciones" value="{{lecciones}}">
+                            <input type="hidden" id="idModulo" value="{{modulo.id}}">
                        </div>
 
                         {{#each modulo.lecciones}}
-                        <div class="contenido" id="contenido-{{id}}" style="display: none;">
+                        <div class="contenido" id="contenido-{{num}}" style="display: none;">
                             {{!-- VIDEO DE LA LECCIÓN --}}
                             <div class="row mt-2">
                                 <div class="col-12">
-                                    <video width="100%" height="auto" id="video_leccion-{{id}}">
+                                    <video width="100%" height="auto" id="video_leccion-{{num}}">
                                         <source src="{{video}}" type="video/mp4">
                                         Tu navegador no soporta el elemento video.
                                     </video>
@@ -92,7 +93,7 @@
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none">
                                                     <path d="M12 0C15.1826 0 18.2348 1.26428 20.4853 3.51472C22.7357 5.76516 24 8.8174 24 12C24 15.1826 22.7357 18.2348 20.4853 20.4853C18.2348 22.7357 15.1826 24 12 24C8.8174 24 5.76516 22.7357 3.51472 20.4853C1.26428 18.2348 0 15.1826 0 12C0 8.8174 1.26428 5.76516 3.51472 3.51472C5.76516 1.26428 8.8174 0 12 0ZM10.875 5.625V12C10.875 12.375 11.0625 12.7266 11.3766 12.9375L15.8766 15.9375C16.3922 16.2844 17.0906 16.1437 17.4375 15.6234C17.7844 15.1031 17.6437 14.4094 17.1234 14.0625L13.125 11.4V5.625C13.125 5.00156 12.6234 4.5 12 4.5C11.3766 4.5 10.875 5.00156 10.875 5.625Z" fill="#D8D8D8"/>
                                                 </svg>
-                                                <span id="duracion_video-{{id}}" class="pl-2 pr-3"> </span>
+                                                <span id="duracion_video-{{num}}" class="pl-2 pr-3"> </span>
                                                 <div class="btn-group mb-1">
                                                     <button class="btn btn-primary btn-sm text-white" type="button" data-toggle="dropdown" aria-expanded="false"
                                                     style="border-radius: 12px; background: #50368C; width: 160px;">
@@ -111,7 +112,7 @@
                                                 <div class="d-flex justify-content-center align-items-center" style="float: right; width: 195px; height: 44px; border-radius: 6px; border: 0.5px solid #000;">
                                                     <span class="pr-2">Lección completada </span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
-                                                        <path class="estrella-{{id}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
+                                                        <path class="estrella-{{num}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
                                                     </svg>
                                                 </div>
                                             </div>
@@ -124,10 +125,10 @@
 
                             {{!-- INFORMACIÓN TEXTUAL DE LA LECCIÓN --}}
                             <div class="row mt-4">
-                                    <di class="col-12">
-                                        <h2>{{nombre}}</h2>
-                                        {{{descripcion}}}
-                                    </di>
+                                <di class="col-12">
+                                    <h2>{{nombre}}</h2>
+                                    {{{descripcion}}}
+                                </di>
                             </div>
                         </div>
                         {{/each}}
@@ -140,13 +141,13 @@
 </div>
 
 <script>
-    // Llamar a la función mostrarContenido(1) al cargar la página
     window.addEventListener('load', function() {
         procesarOpciones();
         manejarClicksOpciones(1);
     });
 
     const opciones = document.querySelectorAll('.item-lecciones');
+    const idModulo = document.getElementById("idModulo").value;
 
     const getPreviousStarFill = (index) => {
         const previousStar = opciones[index - 1].querySelector(`.estrella-${index}`);
@@ -236,16 +237,16 @@
         // Alternar visibilidad de los controles al hacer clic dentro del video
         video.addEventListener('click', () => {
             if (video.paused) {
-            video.play();
-            } else {
-            video.pause();
-            }
-            if (video.controls) {
-            if (video.paused) {
                 video.play();
             } else {
                 video.pause();
             }
+            if (video.controls) {
+                if (video.paused) {
+                    video.play();
+                } else {
+                    video.pause();
+                }
             }
         }, false);
 
@@ -255,47 +256,50 @@
 
         // Habilitar los controles cuando el video finaliza
         video.addEventListener('ended', () => {
-            video.controls = true;
-            let lecciones_Completadas = null;
-            if ($(`#estrella-${i}`).attr('fill') !== '#FED061') {
+            if ($(`#estrella-${i}`).attr('fill') !== '#FED061' && !video.controls) {
+                console.log("Realizar la solicitud POST usando fetch...")
                 // Realizar la solicitud POST usando fetch
                 fetch('/leccion-completada', {
                     method: 'POST',
-                    body: JSON.stringify({id: i}),
+                    body: JSON.stringify({id: i, modulo: idModulo}),
                     headers: {'Content-Type': 'application/json'}
                 })
                     .then(response => response.json())
-                    .then(data => {
-                    // Manejar la respuesta de la API
-                        if (data.ok) {
-                            console.log(data);
-                            const leccionActual = lecciones.find(x => x.id === i);
+                    .then(result => {
+                        // Manejar la respuesta de la API
+                        console.log("Respuesta de la API...")
+                        if (result.ok) {
+                            video.controls = true;
+                            console.log(result);
+                            console.log("lecciones => ", lecciones)
+                            const leccionActual = lecciones.find(x => x.num === i);
+                            console.log("leccionActual:: ", leccionActual)
                             if (leccionActual) {
                                 leccionActual.estado = '#FED061';
-                                //let leccionesCompletadas = lecciones.filter(obj => obj.estado === '#FED061').length;
-                                const leccionesCompletadas = data.completadas;
-                                const porcentajeCompletado = Math.round((leccionesCompletadas.length / lecciones.length) * 100);
+                                const leccionesCompletadas = result.numCompletas;
+                                const porcentajeCompletado = Math.round((leccionesCompletadas / lecciones.length) * 100);
                                 $('#txt_modulo_completado').text(`${porcentajeCompletado}%`);
                                 console.log(`Nuevo porcentaje para el modulo: ${porcentajeCompletado}%`);
                                 const barraProgreso = document.getElementById('porcentaje_modulo');
                                 barraProgreso.style.width = `${porcentajeCompletado}%`;
+
+                                const leccion_completada = $('#leccion_completada');
+                                if (parseInt(leccion_completada.text()) < lecciones.length) {
+                                    const valor = parseInt(leccion_completada.text()) + 1;
+                                    console.log(`Actualizar Avance del módulo: ${valor}`);
+                                    leccion_completada.text(valor);
+                                }
+
+                                $(`.estrella-${i}`).attr('fill', '#FED061');
+                                manejarClicksOpciones(i);
                             }
                             
-                            const leccion_completada = $('#leccion_completada');
-                            if (parseInt(leccion_completada.text()) < lecciones.length) {
-                                const valor = parseInt(leccion_completada.text()) + 1;
-                                console.log(`Actualizar Avance del módulo: ${valor}`);
-                                leccion_completada.text(valor);
-                            }
                         }
                     })
                     .catch(error => {
-                    // Manejar errores de la solicitud
-                    console.error('Error:', error);
+                        // Manejar errores de la solicitud
+                        console.error('Error:', error);
                     });
-
-                $(`.estrella-${i}`).attr('fill', '#FED061');
-                manejarClicksOpciones(i);
             }
         });
         }
