@@ -1,9 +1,10 @@
 let fileId = null;
 
-const dropArea = document.querySelector(".file-recursos");
-const dragText = dropArea.querySelector("h2");
-const button = dropArea.querySelector("#btnfile");
-const input = dropArea.querySelector("#input-file");
+const dropArea = document.querySelector(".drag-area");
+if (dropArea) {
+  const dragText = dropArea.querySelector("h2");
+  const button = dropArea.querySelector("#btnfile");
+  const input = dropArea.querySelector("#input-file");
 
   button.addEventListener("click", (e) => {
     e.preventDefault();
@@ -69,8 +70,7 @@ if (formFile) {
 
 function showFile(file) {
     const extension = file.name.split('.').pop().toLowerCase();
-
-    const logoConfig = {
+    const extensionesMap = {
       pdf: '../logos_recursos/Documento_PDF.svg',
       doc: '../logos_recursos/Documento_Word.svg',
       docx: '../logos_recursos/Documento_Word.svg',
@@ -95,8 +95,8 @@ function showFile(file) {
       mp4: '../logos_recursos/icon_Video.svg',
       avi: '../logos_recursos/icon_Video.svg',
     };
-
-    const logoUrl = logoConfig[extension] || '../logos_recursos/Otro.svg';
+    
+    const logoUrl = extensionesMap[extension] || '../logos_recursos/Otro.svg';
   
     const fileReader = new FileReader();
   
@@ -169,34 +169,4 @@ function showFile(file) {
     });
     
     fileReader.readAsDataURL(file);
-}
-
-function uploadFile(file) {
-  const formData = new FormData();
-  formData.append('file', file);
-  console.log("Uploading file", file);
-  fetch('/enviar-archivo', {
-    method: 'POST',
-    body: formData,
-    headers: { 'enctype': 'multipart/form-data' }
-  })
-    .then(response => {
-      const statusText = document.querySelector(`#${fileId} .status-text`);
-      if (response.ok) {
-        statusText.innerHTML = `<span class="success">Archivo subido correctamente</span>`;
-      } else {
-        statusText.innerHTML = `<span class="failure">Archivo no pudo subirse...</span>`;
-      }
-      return response.json();
-    })
-    .then(data => {
-      // Mostrar la respuesta del servidor en el DOM
-      const responseText = document.createElement('p');
-      responseText.textContent = data.message;
-      const statusText = document.querySelector(`#${fileId} .status-text`);
-      statusText.appendChild(responseText);
-    })
-    .catch(error => {
-    //  statusText.innerHTML = `<span class="success">Archivo subido correctamente</span>`;
-    });
 }

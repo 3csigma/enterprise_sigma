@@ -212,7 +212,7 @@ table.dataTable.order-column.hover tbody tr:hover>.sorting_2 {
 
 table.dataTable.display tbody tr:hover>.sorting_3,
 table.dataTable.order-column.hover tbody tr:hover>.sorting_3 {
-    background-color: #812082
+    background-color: #efefef
 }
 
 table.dataTable.display tbody tr:hover.selected>.sorting_1,
