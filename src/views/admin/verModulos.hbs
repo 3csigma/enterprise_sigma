@@ -1,0 +1,91 @@
+<!--**********************************
+            Content body start
+        ***********************************-->
+<div class="content-body">
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h1 class="text-black">Módulos educativos</h1>
+                    </div>
+                    <div class="card-body">
+                        <div class="table-responsive">
+                            <table id="example3" class="display min-w850" style="width: 100%">
+                                <thead>
+                                    <tr>
+                                        <th>THUMBNAIL</th>
+                                        <th>MÓDULO</th>
+                                        <th>CATEGORÍA</th>
+                                        <th>LECCIONES</th>
+                                        <th>PROGRAMA</th>
+                                        <th>ESTADO</th>
+                                        <th>ACCIÓN</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    {{#each modulos}}
+                                    <tr>
+                                        <td><div class="d-flex align-items-center"><img src="{{imagen}}"class="rounded-lg mr-2" width="112" alt="" /></div></td>
+                                        <td>{{nombre}}</td>
+                                        <td>{{categoria}}</td>
+                                        <td>{{numLecciones}} Lecciones</td>
+                                        <td>{{programas}}</td>
+                                        <td><div class="d-flex align-items-center"><i class="fa fa-circle {{color}} mr-1"></i>{{estado}}</div></td>
+                                        <td><div style="margin: 0 auto">
+                                                {{!-- <a onclick="bloquearEmpresa({{id_empresas}})"class="btn btn-warning shadow btn-xs sharp mr-1 text-white"><i class="fa fa-ban"></i></a> --}}
+                                                {{!-- <a href="/empresas/{{codigo}}"class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa fa-pencil"></i></a> --}}
+                                                <a onclick="eliminarModulos({{id}})"class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    {{/each}}
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!--**********************************
+            Content body end
+***********************************-->
+<script src="../js/jquery.js"></script>
+<script>
+//   ELIMINANDO MODULOS CREADOS
+function eliminarModulos(id) {
+    Swal.fire({
+        title: '¿Seguro que deseas eliminar este modulo?',
+        text: "Esta acción no se puede deshacer.",
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#50368C',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: '¡Sí, Borrar!'
+    })
+    .then((result) => {
+        if (result.isConfirmed) {
+            fetch('/eliminar-modulo', {
+                method: 'POST',
+                body: JSON.stringify({id}),
+                headers: {'Content-Type': 'application/json'}
+            }).then(res => res.json())
+                .catch(error => console.error('Error:', error))
+                .then(response => {
+                    if (response) {
+                        location.reload();
+                    } else {
+                        Swal.fire(
+                            'Error!',
+                            'Error al borrar el modulo.',
+                            'error'
+                        )
+                    }
+                });
+        }
+    })
+}
+</script>

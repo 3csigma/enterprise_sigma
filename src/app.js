@@ -71,6 +71,7 @@ app.use((req, res, next) => {
   res.locals.session = req.session;
   global.urlPropuestaNegocio = '';
   global.urlProfile = ''
+  global.urlInsignia = ''
   global.urlRecurso = ''
   global.urlGrupo = ''
   if(!req.session.initialised) {

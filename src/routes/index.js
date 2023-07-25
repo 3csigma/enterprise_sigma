@@ -14,11 +14,11 @@ router.get('/', requireRole)
 // Perfil de Usuarios
 router.post('/updateProfile', checkLogin, userController.update_user);
 // router.post('/actualizarFotoPerfil', checkLogin, cargarFotoPerfil.single('foto'), userController.actualizarFotoPerfil);
-router.post('/actualizarFotoPerfil', checkLogin, helpers.uploadFiles('foto_Actualizada', false, 'foto_profile', true, false), userController.actualizarFotoPerfil);
+router.post('/actualizarFotoPerfil', checkLogin, helpers.uploadFiles('foto_Actualizada', false, 'foto_profile', true, false, false), userController.actualizarFotoPerfil);
 
 // Dashboard Principal Administrador
 router.get('/registro-de-consultores', noLogueado, csrfProtection, dashboardController.registroConsultores)
-router.post('/registro-de-consultores', noLogueado, helpers.uploadFiles('Consul_International_Group_', false, 'certificados_consultores', true, false), csrfProtection, dashboardController.addConsultores)
+router.post('/registro-de-consultores', noLogueado, helpers.uploadFiles('Consul_International_Group_', false, 'certificados_consultores', true, false, false), csrfProtection, dashboardController.addConsultores)
 
 // Consultores Admin
 router.get('/consultores', checkLogin, dashboardController.mostrarConsultores)
@@ -53,7 +53,7 @@ router.post('/guardarInforme', checkLogin, dashboardController.subirInforme, das
  * PLAN EMPRESARIAL
  */
 // SUBIR ARCHIVOS PARA PLAN EMPRESARIAL
-router.post('/guardar-archivos-empresarial', checkLogin, helpers.uploadFiles('Plan-Empresarial_', false, 'archivos_plan_empresarial', false, false), dashboardController.guardarArchivo_Empresarial)
+router.post('/guardar-archivos-empresarial', checkLogin, helpers.uploadFiles('Plan-Empresarial_', false, 'archivos_plan_empresarial', false, false, false), dashboardController.guardarArchivo_Empresarial)
 // SUBIR ARCHIVOS PARA PLAN EMPRESARIAL
 router.post('/website-empresarial', checkLogin, dashboardController.websiteEmpresarial)
 // FINALIZAR ETAPA DE PLAN EMPRESARIAL
@@ -63,9 +63,18 @@ router.post('/finalizarEtapa', checkLogin, dashboardController.finalizarEtapa)
  * RECURSOS COMPARTIDOS
 */
 router.get('/recursos-compartidos', checkLogin, dashboardController.recursosCompartidos)
-router.post('/add-grupos-compartidos', checkLogin, helpers.uploadFiles('Recurso_', 'archivos', 'grupo_recursos', true, false), dashboardController.addRecursos_Compartidos);
+router.post('/add-grupos-compartidos', checkLogin, helpers.uploadFiles('Recurso_', 'archivos', 'grupo_recursos', true, false, false), dashboardController.addRecursos_Compartidos);
+
+/********************************************************************************
+ * MODULOS
+*/
+router.get('/ver-modulos', checkLogin, dashboardController.verModulos);
+router.get('/crear-modulos', checkLogin, dashboardController.crearModulos);
+router.post('/add-modulos', checkLogin, helpers.uploadFiles('leccion_', false, 'lecciones', true, false, true), dashboardController.addModulos);
+router.post('/eliminar-modulo', checkLogin, dashboardController.eliminarModulos);
 
 /*******************************************************************************************************/
+
 // Ejecución Diaria (12pm)
 cron.schedule('0 12 * * 0-6',() => {
     helpers.habilitar_siguientePago()
