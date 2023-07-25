@@ -73,13 +73,6 @@ router.get('/crear-modulos', checkLogin, dashboardController.crearModulos);
 router.post('/add-modulos', checkLogin, helpers.uploadFiles('leccion_', false, 'lecciones', true, false, true), dashboardController.addModulos);
 router.post('/eliminar-modulo', checkLogin, dashboardController.eliminarModulos);
 
-/********************************************************************************
- * MODULOS
-*/
-router.get('/ver-modulos', checkLogin, dashboardController.verModulos);
-router.get('/crear-modulos', checkLogin, dashboardController.crearModulos);
-router.post('/add-modulos', checkLogin, helpers.uploadModulos('leccion_', ["video[]", "material[]"], 'lecciones'), dashboardController.addModulos);
-
 /*******************************************************************************************************/
 
 // Ejecución Diaria (12pm)
