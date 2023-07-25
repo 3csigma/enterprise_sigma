@@ -2,7 +2,7 @@ const rutasEmpresa = ['logout', 'perfil', 'updateprofile', 'actualizarfotoperfil
 
 const rutasConsultor = ['logout', 'perfil', 'updateprofile', 'actualizarfotoperfil', 'comentariotareas', 'empresas', 'empresas-asignadas', 'enviar-propuesta-empresa', 'analisis-dimension-producto', 'analisis-dimension-administracion', 'analisis-dimension-operaciones', 'analisis-dimension-marketing', 'agregartarea', 'editartarea', 'actualizartarea', 'eliminartarea', 'nuevorendimiento', 'cuestionario-diagnostico', 'diagnostico-proyecto', 'guardarinforme', 'conclusiones', 'guardar-archivos-empresarial', 'website-empresarial', 'finalizaretapa', 'solicitar-archivos-empresa', 'eliminar-archivos-empresa', 'agregartarea-consultores','generar-informe', 'actualizarRecurso']
 
-const rutasAdmin = ['consultores', 'actualizarconsultor', 'bloquearconsultor', 'actualizarempresa', 'bloquearempresa', 'pagomanual-diagnostico', 'pagomanual-empresas', 'cancelarsub', 'recursos-compartidos', 'add-grupos-compartidos', 'eliminargrupo', 'eliminarcampo', 'eliminargrupo','actualizarrecurso','eliminarrecurso','enviar-archivo','cargar-link', 'guardar-grupo']
+const rutasAdmin = ['consultores', 'actualizarconsultor', 'bloquearconsultor', 'actualizarempresa', 'bloquearempresa', 'pagomanual-diagnostico', 'pagomanual-empresas', 'cancelarsub', 'recursos-compartidos', 'add-grupos-compartidos', 'eliminargrupo', 'eliminarcampo', 'eliminargrupo','actualizarrecurso','eliminarrecurso','enviar-archivo','cargar-link', 'guardar-grupo','ver-modulos','crear-modulos','add-modulos', 'eliminar-modulo']
 
 const privateKey_DKIM = `-----BEGIN RSA PRIVATE KEY-----
 MIIEowIBAAKCAQEA7xNzJ731XqyyDHzYP0WhrtztESwlP9jTW6jHqri4hB2Jjpcf
