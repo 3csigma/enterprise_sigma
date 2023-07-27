@@ -34,7 +34,8 @@
                                         <div class="col-lg-8 mb-2">
                                             <div class="form-group">
                                                 <label class="text-label">Nombre del módulo*</label>
-                                                <input type="text" id="modulo" class="form-control" style="border: 1px solid #DBDBDB;" required>
+                                                <input type="text" id="modulo" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" required>
                                             </div>
                                         </div>
                                     </div>
@@ -42,7 +43,8 @@
                                         <div class="col-lg-8 mb-2">
                                             <div class="form-group">
                                                 <label class="text-label">Insignia del módulo*</label>
-                                                <input type="file" id="insignia" name="file" class="form-control" style="border: 1px solid #DBDBDB;" required>
+                                                <input type="file" id="insignia" name="file" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" required>
                                             </div>
                                         </div>
                                     </div>
@@ -50,39 +52,45 @@
                                         <div class="col-lg-6 mb-2">
                                             <div class="form-group">
                                                 <label class="text-label">Categoria*</label>
-                                                <select id="categoriaSelectModulo" class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
+                                                <select id="categoriaSelectModulo"
+                                                    class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
                                                     <option value="N/A">Escoge curso...</option>
                                                     {{#each categorias}}
                                                     <option value="{{this}}">{{this}}</option>
                                                     {{/each}}
                                                 </select>
-                                                 <input type="hidden" id="categoriaHiddenModulo" name="categoria">
+                                                <input type="hidden" id="categoriaHiddenModulo" name="categoria">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-8 mb-2">
                                             <div class="form-group">
-                                                <h3 style="font-weight: 500;font-size: 17px;color: #000000;">Programa(s) destino</h3>
+                                                <h3 style="font-weight: 500;font-size: 17px;color: #000000;">Programa(s)
+                                                    destino</h3>
                                                 <div class="form-group">
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="1" checked="">Free Trial
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="1" checked="">Free Trial
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="2">Entrepreneur
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="2">Entrepreneur
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="3">Business
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="3">Business
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="4">Enterprise
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="4">Enterprise
                                                         </label>
                                                     </div>
                                                 </div>
@@ -101,7 +109,9 @@
                                                     <!-- Agregamos estilos CSS para posicionar el input fuera del área visible -->
                                                     <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, this)" accept=".jpg, .jpeg, .png, .gif, .tiff" style="position: absolute; top: -9999px;">
                                                 </center>
-                                                <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
+                                                <h6 class="fw-700 text-black">Escoge o <span
+                                                        style="color:#812082;font-weight: 700;font-size: 14px;">arrastra
+                                                    </span>un archivo</h6>
                                             </div>
                                         </div>
                                         <div id="msgFile-thumbnail"></div>
@@ -110,34 +120,57 @@
 
                                 <div id="temario" class="tab-pane" role="tabpanel" style="display: none;">
                                     <div class="row">
-									    <div class="col-lg-12">
+                                        <div class="col-lg-12">
                                             <div class="card-body">
                                                 <div id="accordion-two" class="accordion accordion-danger-solid">
                                                     <div class="accordion__item">
-                                                        <div class="accordion__header" data-toggle="collapse" data-target="#bordered_collapseOne"> <span class="accordion__header--text">Accordion Header One</span>
+                                                        <div class="accordion__header" data-toggle="collapse"
+                                                            data-target="#bordered_collapseOne"> <span
+                                                                class="accordion__header--text">Accordion Header
+                                                                One</span>
                                                             <span class="accordion__header--indicator"></span>
                                                         </div>
-                                                        <div id="bordered_collapseOne" class="collapse accordion__body show" data-parent="#accordion-two">
+                                                        <div id="bordered_collapseOne"
+                                                            class="collapse accordion__body show"
+                                                            data-parent="#accordion-two">
                                                             <div class="accordion__body--text">
                                                                 <div class="row">
                                                                     <div class="col-lg-8 mb-2">
                                                                         <div class="form-group">
-                                                                            <label class="text-label">Nombre de la lección*</label>
-                                                                            <input type="text" id="leccion_0" class="form-control" style="border: 1px solid #DBDBDB;" required>
+                                                                            <label class="text-label">Nombre de la
+                                                                                lección*</label>
+                                                                            <input type="text" id="leccion_0"
+                                                                                class="form-control"
+                                                                                style="border: 1px solid #DBDBDB;"
+                                                                                required>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="row" style="display: grid;">
                                                                     <div class="col-6">
-                                                                        <label class="text-label">Video de la lección*</label>
-                                                                        <div class="drag-area file-videoleccion file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
+                                                                        <label class="text-label">Video de la
+                                                                            lección*</label>
+                                                                        <div class="drag-area file-videoleccion file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
                                                                             <center>
-                                                                               <button id="btnvideoleccion" onclick="btnFile_(event, this.parentNode)" style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
-                                                                                    <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
+                                                                                <button id="btnvideoleccion"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt=""
+                                                                                        style="width: 121px; margin-top: -37px;">
                                                                                 </button>
-                                                                                <input type="file" class="fileVideo_" id="video_0" onchange="fileChange_(event, event.target)" hidden accept=".mov, .mp4, .avi, .mkv">
+                                                                                <input type="file" class="fileVideo_"
+                                                                                    id="video_0"
+                                                                                    onchange="fileChange_(event, event.target)"
+                                                                                    hidden
+                                                                                    accept=".mov, .mp4, .avi, .mkv">
                                                                             </center>
-                                                                            <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span
+                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra
+                                                                                </span>un archivo</h6>
                                                                         </div>
                                                                     </div>
                                                                     <div id="msgFile-video" class="col-12"></div>
@@ -146,21 +179,35 @@
                                                                 <div class="row">
                                                                     <div class="col-xl-12 col-xxl-12">
                                                                         <div class="summernote-theme-1">
-                                                                            <textarea name="name" class="summernote" id="summernote_0" rows="10"></textarea>
+                                                                            <textarea name="name" class="summernote"
+                                                                                id="summernote_0" rows="10"></textarea>
                                                                         </div>
                                                                     </div>
                                                                 </div>
                                                                 <div class="row" style="display: grid;">
                                                                     <div class="col-6">
-                                                                        <label class="text-label">Material descargable</label>
-                                                                        <div class="drag-area file-material file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
+                                                                        <label class="text-label">Material
+                                                                            descargable</label>
+                                                                        <div class="drag-area file-material file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
                                                                             <center>
-                                                                                <button id="btnMaterial" onclick="btnFile_(event, this.parentNode)" style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
-                                                                                    <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
+                                                                                <button id="btnMaterial"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt=""
+                                                                                        style="width: 121px; margin-top: -37px;">
                                                                                 </button>
-                                                                                <input type="file" class="fileMaterial_" id="material_0" onchange="fileChange_(event, event.target)" hidden>
+                                                                                <input type="file" class="fileMaterial_"
+                                                                                    id="material_0"
+                                                                                    onchange="fileChange_(event, event.target)"
+                                                                                    hidden>
                                                                             </center>
-                                                                            <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span
+                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra
+                                                                                </span>un archivo</h6>
                                                                         </div>
                                                                     </div>
                                                                     <div id="msgFile-material" class="col-12"></div>
@@ -168,25 +215,74 @@
                                                             </div>
                                                         </div>
                                                         <br>
-                                                        <div id="lessonsContainer"></div> <!-- Contenedor para las lecciones -->
-                                                        <button id="addLessonBtn" class="btn color_tertiary text-black" style="border-radius: 7px; border: 1px solid white;border-radius: 7px; margin-left: -23px;border: 1px solid white; padding: 6px 30px;" type="button">+ Nueva lección</button>
+                                                        <div id="lessonsContainer"></div>
+                                                        <!-- Contenedor para las lecciones -->
+                                                        <button id="addLessonBtn" class="btn color_tertiary text-black"
+                                                            style="border-radius: 7px; border: 1px solid white;border-radius: 7px; margin-left: -23px;border: 1px solid white; padding: 6px 30px;"
+                                                            type="button">+ Nueva lección</button>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
-									</div>
+                                    </div>
                                 </div>
 
                                 <div id="guardar" class="tab-pane" role="tabpanel" style="display: none;">
                                     <div class="row">
+                                        <div class="col-2">
+                                            <h4 class="text-black">Estado</h4>
+                                        </div>
                                     </div>
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <div class="d-flex align-items-center"><i
+                                                    class="fa fa-circle text-danger mr-1"></i>Borrador</div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-14">
+                                            <div style="margin-left: 15px;" id="resultado"></div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                    {{!-- <div class="table-responsive">
+                                        <h4 class="text-black">Lecciones</h4>
+                                        <table class="table table-hover table-responsive-sm">
+                                            <thead>
+                                                <tr>
+                                                    <th>#</th>
+                                                    <th>VIDEO</th>
+                                                    <th>LECCIÓN</th>
+                                                    <th>DESCARGABLES</th>
+                                                    <th>DURACIÓN</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                <tr>
+                                                    <th>1</th>
+                                                    <td>Kolor Tea Shirt For Man</td>
+                                                    <td><span class="badge badge-primary light">Sale</span>
+                                                    </td>
+                                                    <td>January 22</td>
+                                                    <td class="color-primary">$21.56</td>
+                                                </tr>
+                                            </tbody>
+                                        </table>
+                                    </div> --}}
                                 </div>
                             </div>
-                            <div class="toolbar toolbar-bottom btn-group btn-group-sm" role="toolbar" style="text-align: right;">
-                                <button class="btn btn-primary sw-btn-prev" style="display: none; border-radius: 7px;" type="button">Anterior</button>
-                                <button class="btn btn-primary sw-btn-next" style="display: none;border-radius: 7px;" type="button">Siguiente</button>
-                                <button onclick="addModulo()" class="btn color_secondary sw-btn-guardar text-white" style="display: none;border-radius: 7px; border: 1px solid white;" type="button">Guardar</button>
-                                <button onclick="addModulo(1)" class="btn color_tertiary sw-btn-submit text-black" style="display: none;border-radius: 7px; border: 1px solid white;" type="button">Publicar</button>
+                            <div class="toolbar toolbar-bottom btn-group btn-group-sm" role="toolbar"
+                                style="text-align: right;">
+                                <button class="btn btn-primary sw-btn-prev" style="display: none; border-radius: 7px;"
+                                    type="button">Anterior</button>
+                                <button onclick="guardarYMostrarDatos()" class="btn btn-primary sw-btn-next"
+                                    style="display: none;border-radius: 7px;" type="button">Siguiente</button>
+                                <button onclick="addModulo()" class="btn color_secondary sw-btn-guardar text-white"
+                                    style="display: none;border-radius: 7px; border: 1px solid white;"
+                                    type="button">Guardar</button>
+                                <button onclick="addModulo(1)" class="btn color_tertiary sw-btn-submit text-black"
+                                    style="display: none;border-radius: 7px; border: 1px solid white;"
+                                    type="button">Publicar</button>
                             </div>
                         </div>
                     </div>
@@ -197,13 +293,14 @@
 </div>
 <script src="../js/jquery.js"></script>
 <script>
-// Obtener elementos del DOM
-const lessonsContainer = document.getElementById('lessonsContainer');
-const addLessonBtn = document.getElementById('addLessonBtn');
-let lessonCounter = 1;
-// Función para crear el HTML de una nueva lección
-const createLessonHTML = () => {
-    const lessonHTML = `
+
+    // Obtener elementos del DOM
+    const lessonsContainer = document.getElementById('lessonsContainer');
+    const addLessonBtn = document.getElementById('addLessonBtn');
+    let lessonCounter = 1;
+    // Función para crear el HTML de una nueva lección
+    const createLessonHTML = () => {
+        const lessonHTML = `
     <div class="accordion__item">
       <div class="accordion__header" data-toggle="collapse" data-target="#bordered_collapse_${lessonCounter}">
         <span class="accordion__header--text">Accordion Header ${lessonCounter}</span>
@@ -266,104 +363,104 @@ const createLessonHTML = () => {
       </div>
     </div>
   `;
-  return lessonHTML;
-};
+        return lessonHTML;
+    };
 
-// Función para manejar el evento de clic en el botón "+ Nueva lección"
-const handleAddLesson = () => {
-    const lessonHTML = createLessonHTML();
-    lessonsContainer.insertAdjacentHTML('beforeend', lessonHTML);
+    // Función para manejar el evento de clic en el botón "+ Nueva lección"
+    const handleAddLesson = () => {
+        const lessonHTML = createLessonHTML();
+        lessonsContainer.insertAdjacentHTML('beforeend', lessonHTML);
 
-    // Encuentra el elemento de texto Summernote utilizando el ID generado dinámicamente
-    const newSummernoteElement = document.getElementById(`summernote_${lessonCounter}`);
+        // Encuentra el elemento de texto Summernote utilizando el ID generado dinámicamente
+        const newSummernoteElement = document.getElementById(`summernote_${lessonCounter}`);
 
-    // Inicializa Summernote para el nuevo elemento
-    $(newSummernoteElement).summernote({
-        height: 190,
-        minHeight: null,
-        maxHeight: null,
-        focus: false
-    });
-    lessonCounter++;
-};
+        // Inicializa Summernote para el nuevo elemento
+        $(newSummernoteElement).summernote({
+            height: 190,
+            minHeight: null,
+            maxHeight: null,
+            focus: false
+        });
+        lessonCounter++;
+    };
 
-// Asignar el evento de clic al botón "+ Nueva lección"
-addLessonBtn.addEventListener('click', handleAddLesson);
+    // Asignar el evento de clic al botón "+ Nueva lección"
+    addLessonBtn.addEventListener('click', handleAddLesson);
 
-async function addModulo(acc) {
-    
-    const modulo = $("#modulo").val();
-    const insigniaInput = document.getElementById("insignia");
-    let insignia = insigniaInput.files[0];
-    if (insignia) insignia = await convertirImagenABase64(insignia);
-    const categoria = $("#categoriaHiddenModulo").val();
-    const programa = $(".programa:checked").map(function() {
-        return $(this).val();
-    }).get();
-    let thumbnailInput = document.getElementById("fileThumbnail")
-    let thumbnail = thumbnailInput.files[0];
-    if (thumbnail) thumbnail = await convertirImagenABase64(thumbnail)
-    
-    const formData = new FormData();
-    formData.append('nombre', modulo);
-    formData.append('insignia', insignia);
-    formData.append('categoria', categoria);
-    formData.append('programa', programa.join(','));
-    formData.append('imagen', thumbnail);
-    if(acc == 1) formData.append('estado', 1);
+    async function addModulo(acc) {
 
-    for (let i = 0; i < lessonCounter; i++) {
-        const leccion = $(`#leccion_${i}`).val();
-        formData.append(`nombre_[]`, leccion);
+        const modulo = $("#modulo").val();
+        const insigniaInput = document.getElementById("insignia");
+        let insignia = insigniaInput.files[0];
+        if (insignia) insignia = await convertirImagenABase64(insignia);
+        const categoria = $("#categoriaHiddenModulo").val();
+        const programa = $(".programa:checked").map(function () {
+            return $(this).val();
+        }).get();
+        let thumbnailInput = document.getElementById("fileThumbnail")
+        let thumbnail = thumbnailInput.files[0];
+        if (thumbnail) thumbnail = await convertirImagenABase64(thumbnail)
 
-        const videolInput = document.getElementById(`video_${i}`);
-        const video = videolInput.files[0];
-        console.log("-----------VIDEO---->" ,video)
-        formData.append(`video[]`, video);
+        const formData = new FormData();
+        formData.append('nombre', modulo);
+        formData.append('insignia', insignia);
+        formData.append('categoria', categoria);
+        formData.append('programa', programa.join(','));
+        formData.append('imagen', thumbnail);
+        if (acc == 1) formData.append('estado', 1);
 
-        const summernote = $(`#summernote_${i}`).val();
-        formData.append(`descripcion[]`, summernote);
+        for (let i = 0; i < lessonCounter; i++) {
+            const leccion = $(`#leccion_${i}`).val();
+            formData.append(`nombre_[]`, leccion);
 
-        const materialInput = document.getElementById(`material_${i}`);
-        const material = materialInput.files[0];
-        console.log("--------MATERIAL------->" ,material)
-        formData.append(`material[]`, material);
+            const videolInput = document.getElementById(`video_${i}`);
+            const video = videolInput.files[0];
+            console.log("-----------VIDEO---->", video)
+            formData.append(`video[]`, video);
+
+            const summernote = $(`#summernote_${i}`).val();
+            formData.append(`descripcion[]`, summernote);
+
+            const materialInput = document.getElementById(`material_${i}`);
+            const material = materialInput.files[0];
+            console.log("--------MATERIAL------->", material)
+            formData.append(`material[]`, material);
+        }
+
+        fetch('/add-modulos', {
+            method: 'POST',
+            body: formData,
+            headers: { 'enctype': 'multipart/form-data' }
+        })
+            .then(response => {
+                if (response) {
+                    console.log("se fue")
+                    // location.reload();
+                }
+            })
+            .catch(error => {
+                // Manejo del error
+                console.log("Error ==> ", error)
+
+            });
+
     }
-    
-    fetch('/add-modulos', {
-    method: 'POST',
-    body: formData,
-    headers: { 'enctype': 'multipart/form-data'}
-  })
-    .then(response => {
-      if (response){
-        console.log("se fue")
-       // location.reload();
-      }
-    })
-    .catch(error => {
-      // Manejo del error
-      console.log("Error ==> ", error)
-      
-    });
 
-}
+    function convertirImagenABase64(imagen) {
+        return new Promise((resolve, reject) => {
+            const lector = new FileReader();
+            lector.onloadend = function () {
+                const imagenBase64 = lector.result;
+                // Aquí puedes hacer lo que necesites con la imagen en base64
+                resolve(imagenBase64);
+            };
+            lector.onerror = function () {
+                reject(new Error('Error al leer la imagen.'));
+            };
+            lector.readAsDataURL(imagen);
+        });
 
-function convertirImagenABase64(imagen) {
-  return new Promise((resolve, reject) => {
-    const lector = new FileReader();
-    lector.onloadend = function () {
-      const imagenBase64 = lector.result;
-      // Aquí puedes hacer lo que necesites con la imagen en base64
-      resolve(imagenBase64);
-    };
-    lector.onerror = function () {
-      reject(new Error('Error al leer la imagen.'));
-    };
-    lector.readAsDataURL(imagen);
-  });
-  
-}
+    }
 
 /*********************************************************************************************************/
 function dragOverHandler(event) {
@@ -373,12 +470,12 @@ function dragOverHandler(event) {
     h6.textContent = "Suelta para subir el archivo";
 }
 
-function dragLeaveHandler(event) {
-    event.preventDefault(); // previene el comportamiento por defecto del evento
-    event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
-    const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
-    h6.textContent = "Arrastra y suelta el archivo";
-}
+    function dragLeaveHandler(event) {
+        event.preventDefault(); // previene el comportamiento por defecto del evento
+        event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
+        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        h6.textContent = "Arrastra y suelta el archivo";
+    }
 
 function dropHandler(event) {
     event.preventDefault(); // previene el comportamiento por defecto del evento
@@ -390,18 +487,18 @@ function dropHandler(event) {
     cargarArchivo(event.dataTransfer.files[0], input.className, input.id);
 }
 
-function btnFile_(event, div) {
-    event.preventDefault();
-    console.log("usando btnFile ==> ", div);
-    const input = div.querySelector("input");
-    input.click();
-}
+    function btnFile_(event, div) {
+        event.preventDefault();
+        console.log("usando btnFile ==> ", div);
+        const input = div.querySelector("input");
+        input.click();
+    }
 
-function fileChange_(event, input) {
-    console.log("ID INPUT:: ", input.id);
-    console.log("Usando input, clase: " + input.className);
-    cargarArchivo(input.files[0], input.className, input.id);
-}
+    function fileChange_(event, input) {
+        console.log("ID INPUT:: ", input.id);
+        console.log("Usando input, clase: " + input.className);
+        cargarArchivo(input.files[0], input.className, input.id);
+    }
 
 function cargarArchivo(file, clase, id = null) {
     // Si el div para el archivo es el de Video
@@ -450,25 +547,131 @@ function cargarArchivo(file, clase, id = null) {
     }
 }
 
-function toastError(msg) {
-    return toastr.warning(msg, "Error", {
-        positionClass: "toast-top-full-width",
-        timeOut: 5000,
-        closeButton: true,
-        debug: false,
-        newestOnTop: true,
-        progressBar: true,
-        preventDuplicates: true,
-        onclick: null,
-        showDuration: "500",
-        hideDuration: "200",
-        extendedTimeOut: "400",
-        showEasing: "swing",
-        hideEasing: "linear",
-        showMethod: "fadeIn",
-        hideMethod: "fadeOut",
-        tapToDismiss: false,
-    });
-}
+    function toastError(msg) {
+        return toastr.warning(msg, "Error", {
+            positionClass: "toast-top-full-width",
+            timeOut: 5000,
+            closeButton: true,
+            debug: false,
+            newestOnTop: true,
+            progressBar: true,
+            preventDuplicates: true,
+            onclick: null,
+            showDuration: "500",
+            hideDuration: "200",
+            extendedTimeOut: "400",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut",
+            tapToDismiss: false,
+        });
+    }
 
+   async function guardarYMostrarDatos() {
+        const modulo = $("#modulo").val();
+        const programa = $(".programa:checked").map(function () {
+            return $(this).val();
+        }).get();
+        let freeT = '', entre = '', buss = '', enter = '';
+        let miniatura = '';
+
+        if (programa.includes("1")) {
+            freeT = '<div style="display: inline-block;"><h6 class="mb-1">Free Trial</h6></div>';
+        }
+        if (programa.includes("2")) {
+            entre = '<div style="display: inline-block;"><h6 class="mb-1">Entrepreneur</h6></div>';
+        }
+        if (programa.includes("3")) {
+            buss = '<div style="display: inline-block;"><h6 class="mb-1">Business</h6></div>';
+        }
+        if (programa.includes("4")) {
+            enter = '<div style="display: inline-block;"><h6 class="mb-1">Enterprise</h6></div>';
+        }
+
+        let thumbnailInput = document.getElementById("fileThumbnail")
+        let thumbnail = thumbnailInput.files[0];
+
+        // Crear un objeto FileReader para leer la imagen como URL
+        let reader = new FileReader();
+
+        // Cuando se cargue la imagen, asignarla a la variable miniatura
+        reader.onload = function (event) {
+            miniatura = '<div class="col-6" style=" margin-top: -65px;"><h4 class="text-black" style="text-align: center;">Thumbnail</h4><img src="' + event.target.result + '" alt="Imagen seleccionada" style="margin-left: 40%;width: 276px;"></div>';
+            mostrarDatosEnDiv();
+        };
+
+        // Leer la imagen como URL
+        if (thumbnail) {
+            reader.readAsDataURL(thumbnail);
+        } else {
+            mostrarDatosEnDiv();
+        }
+
+        function mostrarDatosEnDiv() {
+            let lecciones = [];
+            for (let i = 0; i < lessonCounter; i++) {
+                const leccion = $(`#leccion_${i}`).val();
+                const video = $(`#video_${i}`).val(); // Si necesitas el valor del video, ajusta el selector adecuadamente
+                const materialInput = document.getElementById(`material_${i}`);
+                const material = materialInput.files[0].name
+
+                lecciones.push({
+                    leccion,
+                    video,
+                    material
+                });
+            }
+            // Guardar los datos en el almacenamiento local del navegador
+            localStorage.setItem("modulo", modulo);
+            localStorage.setItem("freeT", freeT);
+            localStorage.setItem("entre", entre);
+            localStorage.setItem("buss", buss);
+            localStorage.setItem("enter", enter);
+            localStorage.setItem("miniatura", miniatura);
+
+            // Obtener el elemento div donde mostraremos los datos
+            let divResultado = document.getElementById("resultado");
+
+            // Construir el contenido a mostrar
+            let contenido = '<br><div class="row"><div class="col-6"><h4 class="text-black">Módulo</h4> ' + modulo + '<br><br> <h4 class="text-black">Programa</h4>' + freeT + ' ' + entre + ' ' + buss + ' ' + enter + '</div>' + miniatura + '</div>';
+            
+            // Agregar las lecciones dinámicas a la tabla
+            contenido += `<br>
+                <div class="table-responsive">
+                    <h4 class="text-black">Lecciones</h4>
+                    <table class="table table-hover table-responsive-sm">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>VIDEO</th>
+                                <th>LECCIÓN</th>
+                                <th>DESCARGABLES</th>
+                                <th>DURACIÓN</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+            `;
+           lecciones.forEach((leccion, index) => {
+            // Obtener la duración del video en minutos
+                contenido += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td>Portada de video</td>
+                        <td>${leccion.leccion}</td>
+                        <td>${leccion.material}</td>
+                        <td>00000</td>
+                    </tr>
+                `;
+            });
+            contenido += `
+                        </tbody>
+                    </table>
+                </div>
+            `;
+
+            // Mostrar los datos en el elemento div
+            divResultado.innerHTML = contenido;
+        }
+    }
 </script>
