@@ -11,8 +11,9 @@
                         <p class="mb-0" style="font-size: 20px;">Módulo</p>
                         <div class="row">
                             <div class="col-sm-12 col-lg-8">
-                                <h2 class="text-black" style="white-space: pre-wrap;width: 300px;font-size: 55px;">{{modulo.nombre}}</h2>
+                                <h2 class="text-black" id="nombreModulo" style="white-space: pre-wrap;width: 300px;font-size: 55px;">{{modulo.nombre}}</h2>
                             </div>
+                            {{#if user_dash}}
                             {{!-- Barra de progreso del módulo --}}
                             <div class="col-sm-12 col-lg-4">
                                 <div class="widget-stat card bg_gradient_2">
@@ -41,6 +42,7 @@
                                     </div>
                                 </div>
                             </div>
+                            {{/if}}
                         </div>
                     </div>
                     <hr style="border: 1px solid #000000">
@@ -74,6 +76,8 @@
                             </div>
                             <input type="hidden" id="lecciones" value="{{lecciones}}">
                             <input type="hidden" id="idModulo" value="{{modulo.id}}">
+                            <input type="hidden" id="nombreInsignia" value="{{modulo.nombreInsignia}}">
+                            <input type="hidden" id="fotoInsignia" value="{{modulo.insignia}}">
                        </div>
 
                         {{#each modulo.lecciones}}
@@ -109,12 +113,14 @@
                                                         <a class="dropdown-item" href="#">File 2</a>
                                                     </div>
                                                 </div>
+                                                {{#if estado}}
                                                 <div class="d-flex justify-content-center align-items-center" style="float: right; width: 195px; height: 44px; border-radius: 6px; border: 0.5px solid #000;">
                                                     <span class="pr-2">Lección completada </span>
                                                     <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
                                                         <path class="estrella-{{num}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
                                                     </svg>
                                                 </div>
+                                                {{/if}}
                                             </div>
                                         </div>
                                     </div>
@@ -163,21 +169,26 @@
                 validacionesVideo(index);
             } else if (i > 0) {
                 const previousStarFill = getPreviousStarFill(i);
-                if (previousStarFill === 'rgb(254, 208, 97)') {
-                    opcion.style.cssText = 'color: #7e7e7e; pointer-events: auto;';
-                } else {
-                    opcion.style.cssText = 'color: #bcbcbc; pointer-events: none;';
-                }
+                {{#if user_dash}}
+                    if (previousStarFill === 'rgb(254, 208, 97)') {
+                        opcion.style.cssText = 'color: #7e7e7e; pointer-events: auto;';
+                    } else {
+                        opcion.style.cssText = 'color: #bcbcbc; pointer-events: none;';
+                    }
+                {{/if}}
             }
         });
     };
 
     const procesarOpciones = () => {
         opciones.forEach((opcion, index) => {
+            {{#if user_dash}}
             if (index > 0) {
                 opcion.style.cssText = 'color: #bcbcbc; pointer-events: none;';
             }
+            {{/if}}
             opcion.addEventListener('click', () => {
+                {{#if user_dash}}
                 if (index > 0) {
                     const previousStarFill = getPreviousStarFill(index);
                     if (previousStarFill !== 'rgb(254, 208, 97)') {
@@ -185,6 +196,7 @@
                         return false;
                     }
                 }
+                {{/if}}
                 manejarClicksOpciones(index + 1);
             });
         });
@@ -224,6 +236,7 @@
 
     function validacionesVideo(i) {
         const video = document.getElementById(`video_leccion-${i}`);
+        {{#if adminDash}} video.controls = true {{/if}}
 
         if ($(`.estrella-${i}`).attr('fill') === '#FED061') {
             video.controls = true;
@@ -292,6 +305,28 @@
 
                                 $(`.estrella-${i}`).attr('fill', '#FED061');
                                 manejarClicksOpciones(i);
+
+                                if (porcentajeCompletado == 100) {
+                                    const modulo = $('#nombreModulo').text()
+                                    const nombreInsignia = $('#nombreInsignia').val()
+                                    const fotoInsignia = $('#fotoInsignia').val()
+                                    fetch('/modulo-completado', {
+                                        method: 'POST',
+                                        body: JSON.stringify({ modulo, nombreInsignia, fotoInsignia }),
+                                        headers: {'Content-Type': 'application/json'}
+                                    })
+                                        .then(response => response.json())
+                                        .then(result => {
+                                            if (result) {
+                                                Swal.fire(
+                                                    'Información',
+                                                    'Has completado el módulo, te llegará un email.',
+                                                    'info'
+                                                )
+                                            }
+                                        })
+                                        .catch(error => {console.error('Error:', error);});
+                                }
                             }
                             
                         }

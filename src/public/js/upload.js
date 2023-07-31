@@ -1,9 +1,10 @@
 let fileId = null;
 
 const dropArea = document.querySelector(".file-recursos");
-const dragText = dropArea.querySelector("h2");
-const button = dropArea.querySelector("#btnfile");
-const input = dropArea.querySelector("#input-file");
+if (dropArea) {
+  const dragText = dropArea.querySelector("h2");
+  const button = dropArea.querySelector("#btnfile");
+  const input = dropArea.querySelector("#input-file");
 
   button.addEventListener("click", (e) => {
     e.preventDefault();
@@ -34,7 +35,6 @@ const input = dropArea.querySelector("#input-file");
     dropArea.classList.remove("active");
     dragText.textContent = "Arrastra y suelta el archivo";
   });
-
 }
 
 // Formulario Cargar Archivo Recurso Individual

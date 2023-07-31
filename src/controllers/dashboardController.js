@@ -2607,7 +2607,7 @@ dashboardController.recursosCompartidos = async (req, res) => {
         });
     }
   
-    res.render('admin/recursosCompartidos', { adminDash: true, itemActivo: 4, grupos, aprobarConsultor, datosUsuario: JSON.stringify(req.user) })
+    res.render('admin/recursosCompartidos', { adminDash: true, recursos: true, itemActivo: 4, grupos, aprobarConsultor, datosUsuario: JSON.stringify(req.user) })
 }
   
 dashboardController.addRecursos_Compartidos = async (req, res) => {
@@ -2661,32 +2661,26 @@ dashboardController.addRecursos_Compartidos = async (req, res) => {
     res.redirect('/recursos-compartidos/');
 }
 
+function getProgramaName(num) {
+    switch (num) {
+        case 1:
+            return 'Free Trial';
+        case 2:
+            return 'Entrepreneur';
+        case 3:
+            return 'Business';
+        case 4:
+            return 'Enterprise';
+    }
+}
+
 dashboardController.verModulos = async (req, res) => {
     const modulos = await helpers.consultarDatos('modulos');
     
-    function getProgramaName(num) {
-        switch (num) {
-            case 1:
-                return 'Free Trial';
-            case 2:
-                return 'Entrepreneur';
-            case 3:
-                return 'Business';
-            case 4:
-                return 'Enterprise';
-            default:
-                return 'Desconocido';
-        }
-    }
-
-    for (const m of modulos) {
-        if (m.estado == 1) {
-            m.estado = 'Publicado';
-            m.color = 'text-success';
-        } else {
-            m.estado = 'Borrador';
-            m.color = 'text-danger';
-        }
+    modulos.forEach(async (m) => {
+        m.codigo = helpers.encriptarTxt((m.id).toString())
+        m.estado = m.estado === 1 ? 'Publicado' : 'Borrador';
+        m.color = m.estado === 'Publicado' ? 'text-success' : 'text-danger';
         
         const lecciones = await pool.query('SELECT COUNT(id_modulo) As numLecciones FROM lecciones WHERE id_modulo = ?', [m.id]);
         if (lecciones.length > 0) {
@@ -2700,13 +2694,13 @@ dashboardController.verModulos = async (req, res) => {
         
         // Crear una nueva propiedad en el objeto "m" que contenga el nombre del programa
         m.programas = m.programa.map(getProgramaName);
-    }
+    });
 
-    res.render('admin/verModulos', { adminDash: true, formViewModulos: true, modulos });
+    res.render('admin/verModulos', { adminDash: true, formViewModulos: true, modulos, recursos: true, itemActivo: 5 });
 }
 
 dashboardController.crearModulos = async (req, res) => {
-   res.render('admin/crearModulos', { adminDash: true, formModulos:true })
+   res.render('admin/crearModulos', { adminDash: true, formModulos:true, itemActivo: 5 })
 }
 
 dashboardController.addModulos = async (req, res) => {
@@ -2718,4 +2712,40 @@ dashboardController.eliminarModulos = async (req, res) => {
     const id = req.body.id
     await pool.query('DELETE m, l FROM modulos m INNER JOIN lecciones l ON m.id = l.id_modulo WHERE m.id = ?',[id]);
     res.send(true);
+}
+
+dashboardController.updateCategory = async (req, res) => {
+    const { categoria_actual, categoria } = req.body;
+    const data = { categoria }
+    await helpers.actualizarDatos("modulos", data, `WHERE categoria = "${categoria_actual}"`)
+    res.redirect('/ver-modulos');
+}
+
+dashboardController.infoModulo = async (req, res) => {
+    let { id } = req.params;
+  id = helpers.desencriptarTxt(id); 
+  console.log("ID DESENCRIPTADO ==> ");
+  console.log(id);
+  if (!id) {
+    res.redirect('/ver-modulos');
+  } else {
+    const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
+    const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
+    modulo.lecciones = null;
+    
+    if (lecciones.length > 0) {
+      modulo.lecciones = lecciones.map((leccion, index) => {
+        leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
+        return leccion;
+      });
+    }
+
+    console.log("Info modulo: ");
+    console.log(modulo);
+    
+    res.render("empresa/modulo", {
+      adminDash: true, itemActivo: 5,
+      modulo, lecciones: JSON.stringify(modulo.lecciones)
+    });
+  }
 }

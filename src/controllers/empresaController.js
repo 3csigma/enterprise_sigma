@@ -11,9 +11,10 @@ const {
   insertarDatos,
   cargarArchivo,
 } = require("../lib/helpers");
-const { sendEmail, archivosCargadosHTML } = require("../lib/mail.config");
+const { sendEmail, archivosCargadosHTML, moduloCompletado } = require("../lib/mail.config");
 const { Country } = require("country-state-city");
 const { getResponseChatGPT, checkGPT3Connectivity } = require("../lib/openai");
+const helpers = require("../lib/helpers");
 
 let pagoPendiente = true,
   etapa1,
@@ -2633,4 +2634,21 @@ empresaController.leccionCompletada = async (req, res) => {
   const data = { lecciones_completadas: JSON.stringify([...completadas]) }
   await actualizarDatos('empresas', data, `WHERE id_empresas = ${empresa.id_empresas}`)
   res.send({ok: bandera, numCompletas})
+}
+
+empresaController.modulosCompletados = async (req, res) => {
+  const { modulo, nombreInsignia, fotoInsignia } = req.body;
+  let respuesta = false;
+
+  const template = moduloCompletado(req.user.nombres, fotoInsignia, nombreInsignia, modulo, '/mis-modulos');
+  const resultEmail = await sendEmail(req.user.email, "Haz completado un módulo", template);
+
+  if (!resultEmail) {
+    console.log("\n*_*_*_*_*_* Ocurrio un error inesperado al enviar el email de Módulo Completado *_*_*_*_*_* \n");
+  } else {
+    console.log(`\n>>>> Email de Módulo Completado - ENVIADO a => ${req.user.email} <<<<<\n`);
+    respuesta = true;
+  }
+
+  res.send(respuesta)
 }

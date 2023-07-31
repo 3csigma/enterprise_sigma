@@ -52,5 +52,6 @@ router.post('/copiar-recurso', checkLogin, empresaController.copiarRecurso);
 router.get('/mis-modulos', checkLogin, empresaController.modulos);
 router.get('/mis-modulos/:id', checkLogin, empresaController.verModulo);
 router.post('/leccion-completada', checkLogin, empresaController.leccionCompletada);
+router.post('/modulo-completado', checkLogin, empresaController.modulosCompletados);
 
 module.exports = router

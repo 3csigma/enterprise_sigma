@@ -5652,12 +5652,344 @@ const informeAutogenerado = (empresa, textoGPT) => {
 	` 
 }
 
+const moduloCompletado = (nombre, fotoInsignia, nombreInsignia, modulo, link) => {
+	return `
+	<!DOCTYPE html>
+<html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
+
+<head>
+	<title></title>
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0"><!--[if mso]><xml><o:OfficeDocumentSettings><o:PixelsPerInch>96</o:PixelsPerInch><o:AllowPNG/></o:OfficeDocumentSettings></xml><![endif]--><!--[if !mso]><!-->
+	<link href="https://fonts.googleapis.com/css?family=Source+Sans+Pro" rel="stylesheet" type="text/css">
+	<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@100;200;300;400;500;600;700;800;900" rel="stylesheet" type="text/css"><!--<![endif]-->
+	<style>
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		a[x-apple-data-detectors] {
+			color: inherit !important;
+			text-decoration: inherit !important;
+		}
+
+		#MessageViewBody a {
+			color: inherit;
+			text-decoration: none;
+		}
+
+		p {
+			line-height: inherit
+		}
+
+		.desktop_hide,
+		.desktop_hide table {
+			mso-hide: all;
+			display: none;
+			max-height: 0px;
+			overflow: hidden;
+		}
+
+		.image_block img+div {
+			display: none;
+		}
+
+		@media (max-width:620px) {
+			.desktop_hide table.icons-inner {
+				display: inline-block !important;
+			}
+
+			.icons-inner {
+				text-align: center;
+			}
+
+			.icons-inner td {
+				margin: 0 auto;
+			}
+
+			.row-content {
+				width: 100% !important;
+			}
+
+			.stack .column {
+				width: 100%;
+				display: block;
+			}
+
+			.mobile_hide {
+				max-width: 0;
+				min-height: 0;
+				max-height: 0;
+				font-size: 0;
+				display: none;
+				overflow: hidden;
+			}
+
+			.desktop_hide,
+			.desktop_hide table {
+				max-height: none !important;
+				display: table !important;
+			}
+
+			.row-1 .column-1 .block-4.spacer_block {
+				height: 15px !important;
+			}
+
+			.row-1 .column-1 .block-2.spacer_block {
+				height: 145px !important;
+			}
+
+			.row-1 .column-1 .block-1.spacer_block {
+				height: 75px !important;
+			}
+
+			.row-1 .column-1 .block-6.paragraph_block td.pad>div,
+			.row-1 .column-1 .block-5.paragraph_block td.pad>div {
+				font-size: 20px !important;
+			}
+
+			.row-1 .column-1 .block-10.spacer_block {
+				height: 15px !important;
+			}
+
+			.row-1 .column-1 .block-7.spacer_block {
+				height: 20px !important;
+			}
+
+			.row-1 .column-1 .block-3.heading_block td.pad {
+				padding: 5px !important;
+			}
+
+			.row-1 .column-1 .block-3.heading_block h1 {
+				font-size: 13px !important;
+			}
+
+			.row-2 .column-1 .block-2.image_block td.pad {
+				padding: 0 !important;
+			}
+
+			.row-1 .column-1 .block-11.button_block td.pad {
+				padding: 0 40px 35px !important;
+			}
+
+			.row-1 .column-1 .block-11.button_block a,
+			.row-1 .column-1 .block-11.button_block div,
+			.row-1 .column-1 .block-11.button_block span {
+				font-size: 13px !important;
+				line-height: 26px !important;
+			}
+
+			.row-1 .column-1 .block-11.button_block .alignment div,
+			.row-1 .column-1 .block-11.button_block .alignment a {
+				width: 95% !important;
+			}
+
+			.row-1 .column-1 .block-8.paragraph_block td.pad>div {
+				font-size: 13px !important;
+			}
+
+			.row-1 .column-1 .block-8.paragraph_block td.pad {
+				padding: 5px 20px !important;
+			}
+
+			.row-2 .column-1 .block-1.spacer_block {
+				height: 25px !important;
+			}
+
+			.row-1 .column-1 .block-9.paragraph_block td.pad>div {
+				font-size: 13px !important;
+			}
+
+			.row-1 .column-1 .block-9.paragraph_block td.pad {
+				padding: 5px 20px !important;
+			}
+
+			.row-1 .column-1 {
+				padding: 0 !important;
+			}
+		}
+	</style>
+</head>
+
+<body style="text-size-adjust: none; background-color: #f6f6f6; margin: 0; padding: 0;">
+	<table class="nl-container" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f6f6f6;">
+		<tbody>
+			<tr>
+				<td>
+					<table class="row row-1" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-size: auto;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #000; background-image: url('${fotoInsignia}'); background-repeat: no-repeat; background-size: cover; border-radius: 0; width: 600px; margin: 0 auto;" width="600">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-left: 60px; padding-right: 60px; vertical-align: middle; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:350px;line-height:350px;font-size:1px;">&#8202;</div>
+													<div class="spacer_block block-2" style="height:75px;line-height:75px;font-size:1px;">&#8202;</div>
+													<table class="heading_block block-3" width="100%" border="0" cellpadding="5" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad">
+																<h1 style="margin: 0; color: #ffffff; direction: ltr; font-family: 'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif; font-size: 14px; font-weight: 700; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;"><strong><span class="tinyMce-placeholder">Felicidades ${nombre}</span></strong></h1>
+															</td>
+														</tr>
+													</table>
+													<div class="spacer_block block-4" style="height:35px;line-height:35px;font-size:1px;">&#8202;</div>
+													<table class="paragraph_block block-5" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad">
+																<div style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:31px;font-weight:300;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:37.199999999999996px;">
+																	<p style="margin: 0;">Has recibido la insignia</p>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<table class="paragraph_block block-6" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad">
+																<div style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:31px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:37.199999999999996px;">
+																	<p style="margin: 0;">${nombreInsignia}</p>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<div class="spacer_block block-7" style="height:40px;line-height:40px;font-size:1px;">&#8202;</div>
+													<table class="paragraph_block block-8" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad" style="padding-left:40px;padding-right:40px;">
+																<div style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:15px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:18px;">
+																	<p style="margin: 0;">Por haber completado el módulo:</p>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<table class="paragraph_block block-9" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad" style="padding-left:40px;padding-right:40px;">
+																<div style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:15px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:18px;">
+																	<p style="margin: 0;">${modulo}</p>
+																</div>
+															</td>
+														</tr>
+													</table>
+													<div class="spacer_block block-10" style="height:50px;line-height:50px;font-size:1px;">&#8202;</div>
+													<table class="button_block block-11" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad" style="padding-bottom:30px;padding-left:10px;padding-right:10px;padding-top:10px;text-align:center;">
+																<div class="alignment" align="center"><!--[if mso]><v:roundrect xmlns:v="urn:schemas-microsoft-com:vml" xmlns:w="urn:schemas-microsoft-com:office:word" href="${link}" style="height:42px;width:232px;v-text-anchor:middle;" arcsize="72%" strokeweight="0.75pt" strokecolor="#fed061" fillcolor="#fed061"><w:anchorlock/><v:textbox inset="0px,0px,0px,0px"><center style="color:#000000; font-family:'Trebuchet MS', Tahoma, sans-serif; font-size:15px"><![endif]--><a href="${my_domain}${link}" target="_blank" style="text-decoration:none;display:block;color:#000000;background-color:#fed061;border-radius:30px;width:50%;border-top:1px solid transparent;font-weight:700;border-right:1px solid transparent;border-bottom:1px solid transparent;border-left:1px solid transparent;padding-top:5px;padding-bottom:5px;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:15px;text-align:center;mso-border-alt:none;word-break:keep-all;"><span style="padding-left:0px;padding-right:0px;font-size:15px;display:inline-block;letter-spacing:normal;"><span style="word-break:break-word;"><span style="line-height: 30px;" data-mce-style><strong>Explorar más cursos</strong></span></span></span></a><!--[if mso]></center></v:textbox></v:roundrect><![endif]--></div>
+															</td>
+														</tr>
+													</table>
+													<div class="spacer_block block-12 mobile_hide" style="height:115px;line-height:115px;font-size:1px;">&#8202;</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="row row-2" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; background-color: #f6f6f6;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content stack" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #f6f6f6; width: 600px; margin: 0 auto;" width="600">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="100%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:20px;line-height:20px;font-size:1px;">&#8202;</div>
+													<table class="image_block block-2" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad">
+																<div class="alignment" align="center" style="line-height:10px"><img src="https://3csigma.com/app_public_files/img/Logo.png" style="height: auto; display: block; border: 0; max-width: 120px; width: 100%;" width="120"></div>
+															</td>
+														</tr>
+													</table>
+													<table class="paragraph_block block-3" width="100%" border="0" cellpadding="10" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; word-break: break-word;">
+														<tr>
+															<td class="pad">
+																<div style="color:#000000;direction:ltr;font-family:'Source Sans Pro', Tahoma, Verdana, Segoe, sans-serif;font-size:14px;font-weight:400;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:16.8px;">
+																	<p style="margin: 0;"><strong>¿Tienes dudas?</strong> Escríbenos a <a href="mailto:hello@3csigma.com" target="_blank" title="hello@3csigma.com" style="text-decoration: none; color: #0068a5;" rel="noopener">hello@3csigma.com</a></p>
+																</div>
+															</td>
+														</tr>
+													</table>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+					<table class="row row-3" align="center" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+						<tbody>
+							<tr>
+								<td>
+									<table class="row-content" align="center" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; color: #000; background-color: #f6f6f6; border-radius: 0; width: 600px; margin: 0 auto;" width="600">
+										<tbody>
+											<tr>
+												<td class="column column-1" width="25%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:1px;line-height:1px;font-size:1px;">&#8202;</div>
+												</td>
+												<td class="column column-2" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad" style="padding-bottom:10px;padding-top:10px;width:100%;padding-right:0px;padding-left:0px;">
+																<div class="alignment" align="right" style="line-height:10px"><a href="https://facebook.com/carlosjramirezp" target="_blank" style="outline:none" tabindex="-1"><img src="https://3csigma.com/app_public_files/img/facebook2x.png" style="height: auto; display: block; border: 0; max-width: 30px; width: 100%;" width="30"></a></div>
+															</td>
+														</tr>
+													</table>
+												</td>
+												<td class="column column-3" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad" style="padding-bottom:10px;padding-top:10px;width:100%;padding-right:0px;padding-left:0px;">
+																<div class="alignment" align="center" style="line-height:10px"><a href="https://instagram.com/carlosjramirezp" target="_blank" style="outline:none" tabindex="-1"><img src="https://3csigma.com/app_public_files/img/instagram2x.png" style="height: auto; display: block; border: 0; max-width: 30px; width: 100%;" width="30"></a></div>
+															</td>
+														</tr>
+													</table>
+												</td>
+												<td class="column column-4" width="16.666666666666668%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<table class="image_block block-1" width="100%" border="0" cellpadding="0" cellspacing="0" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;">
+														<tr>
+															<td class="pad" style="padding-bottom:10px;padding-top:10px;width:100%;padding-right:0px;padding-left:0px;">
+																<div class="alignment" align="left" style="line-height:10px"><a href="https://3csigma.com" target="_blank" style="outline:none" tabindex="-1"><img src="https://3csigma.com/app_public_files/img/Pagina-web.png" style="height: auto; display: block; border: 0; max-width: 30px; width: 100%;" width="30"></a></div>
+															</td>
+														</tr>
+													</table>
+												</td>
+												<td class="column column-5" width="25%" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt; text-align: left; font-weight: 400; padding-bottom: 5px; padding-top: 5px; vertical-align: top; border-top: 0px; border-right: 0px; border-bottom: 0px; border-left: 0px;">
+													<div class="spacer_block block-1" style="height:1px;line-height:1px;font-size:1px;">&#8202;</div>
+												</td>
+											</tr>
+										</tbody>
+									</table>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</td>
+			</tr>
+		</tbody>
+	</table><!-- End -->
+</body>
+
+</html>
+	`
+}
+
 module.exports = {
 	sendEmail, confirmarRegistro, consultorAprobadoHTML, consultorAsignadoHTML, informesHTML,
 	proximoPagoPendienteHTML, restablecerCuentaHTML, tareaCompletadaHTML, tareaNuevaHTML, tareasRetrasadasHTML,
 	etapaFinalizadaHTML, propuestaCargadaHTML,
 	nuevaEmpresa, nuevoConsultorRegistrado, consultor_AsignadoEtapa,
-	archivosPlanEmpresarialHTML,
+	archivosPlanEmpresarialHTML, archivosAnalisisHTML,
 	solicitarArchivoHTML, archivosCargadosHTML,
-	informeAutogenerado
+	informeAutogenerado,
+	moduloCompletado,
 }

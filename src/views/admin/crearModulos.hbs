@@ -92,19 +92,33 @@
                                     <div class="row" style="display: grid;">
                                         <div class="col-6">
                                             <label class="text-label">Thumbnail*</label>
+
                                             <div class="drag-area file-thumbnail file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
+                                                <center>
+                                                    <label for="fileThumbnail" style="cursor: pointer;">
+                                                        <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
+                                                    </label>
+                                                    <!-- Agregamos estilos CSS para posicionar el input fuera del área visible -->
+                                                    <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, this)" accept=".jpg, .jpeg, .png, .gif, .tiff" style="position: absolute; top: -9999px;">
+                                                </center>
+                                                <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
+                                            </div>
+
+
+                                            {{!-- <div class="drag-area file-thumbnail file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
                                                 <center>
                                                     <button id="btnThumbnail" onclick="btnFile_(event, this.parentNode)" style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
                                                         <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
                                                     </button>
-                                                    <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, event.target)" hidden accept=".jpg, .jpeg, .png, .gif, .tiff">
+                                                    <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" hidden onchange="fileChange_(event, event.target)" accept=".jpg, .jpeg, .png, .gif, .tiff">
                                                 </center>
                                                 <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
-                                            </div>
+                                            </div> --}}
                                         </div>
                                         <div id="msgFile-thumbnail"></div>
                                     </div>
                                 </div>
+
                                 <div id="temario" class="tab-pane" role="tabpanel" style="display: none;">
                                     <div class="row">
 									    <div class="col-lg-12">
@@ -173,6 +187,7 @@
                                         </div>
 									</div>
                                 </div>
+
                                 <div id="guardar" class="tab-pane" role="tabpanel" style="display: none;">
                                     <div class="row">
                                     </div>
@@ -368,7 +383,6 @@ function dragOverHandler(event) {
     event.currentTarget.classList.add("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está agregando la clase al div correcto
     const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
     h6.textContent = "Suelta para subir el archivo";
-    console.log("usando dragover");
 }
 
 function dragLeaveHandler(event) {
@@ -380,13 +394,12 @@ function dragLeaveHandler(event) {
 
 function dropHandler(event) {
     event.preventDefault(); // previene el comportamiento por defecto del evento
-    const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
-    console.log("ID INPUT:: ", input.id);
-    console.log("usando dropArea, clase: " + input.className);
-    cargarArchivo(input.files[0], input.className);
     event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
     const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
     h6.textContent = "Arrastra y suelta el archivo";
+    const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+    console.log("usando dropArea, clase: " + input.className);
+    cargarArchivo(event.dataTransfer.files[0], input.className, input.id);
 }
 
 function btnFile_(event, div) {
@@ -404,12 +417,11 @@ function fileChange_(event, input) {
 
 function cargarArchivo(file, clase, id = null) {
     // Si el div para el archivo es el de Video
-    if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_') && file.size >= 20 * 1024 * 1024) { // Validar el tamaño del video - 20 megabytes
+    if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_') && file.size >= (20 * 1024 * 1024)) { // Validar el tamaño del video - 20 megabytes
         toastError("El archivo no puede superar los 20MB.")
     } else {
         const ext = file.name.split(".").pop().toLowerCase();
         let fileOk = true, id_Msg = 'msgFile-material-'+(parseInt(lessonCounter-1));
-        if (id === 'material') { id_Msg = 'msgFile-material' }
         if (id === 'material_0') { id_Msg = 'msgFile-material' }
         // Validando el tipo de archivo
         if (clase == 'fileThumbnail_') {
@@ -423,7 +435,6 @@ function cargarArchivo(file, clase, id = null) {
         } else if (clase == 'fileVideo_') {
             const extensiones = ['mov', 'mp4', 'avi', 'mkv']
             id_Msg = 'msgFile-video-'+(parseInt(lessonCounter-1))
-            if (id === 'video') {id_Msg = 'msgFile-video' }
             if (id === 'video_0') {id_Msg = 'msgFile-video' }
             // Si el archivo no es video
             if (!extensiones.includes(ext)) {
@@ -437,6 +448,7 @@ function cargarArchivo(file, clase, id = null) {
             try {
                 const fileReader = new FileReader();
                 fileReader.addEventListener("load", async () => {
+                    console.log("Archivo cargado exitosamente... " + id_Msg)
                     $('#'+id_Msg).html('<span class="success">Archivo cargado exitosamente...</span>');
                 })
                 fileReader.readAsDataURL(file);

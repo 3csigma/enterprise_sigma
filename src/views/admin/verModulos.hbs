@@ -1,5 +1,4 @@
 <!--**********************************
-<!--**********************************
             Content body start
         ***********************************-->
 <div class="content-body">
@@ -8,7 +7,8 @@
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h1 class="text-black">Módulos educativos</h1>
+                        <h1 class="text-black two-line-text">Módulos educativos</h1>
+                        <a href="/crear-modulos" class="btn color_gradient text-white"><i class="fa fa-plus"></i> Nuevo</a>
                     </div>
                     <div class="card-body">
                         <div class="table-responsive">
@@ -17,7 +17,7 @@
                                     <tr>
                                         <th>THUMBNAIL</th>
                                         <th>MÓDULO</th>
-                                        <th>CATEGORÍA</th>
+                                        <th>CURSO</th>
                                         <th>LECCIONES</th>
                                         <th>PROGRAMA</th>
                                         <th>ESTADO</th>
@@ -27,16 +27,36 @@
                                 <tbody>
                                     {{#each modulos}}
                                     <tr>
-                                        <td><div class="d-flex align-items-center"><img src="{{imagen}}"class="rounded-lg mr-2" width="112" alt="" /></div></td>
+                                        <td>
+                                            <div class="d-flex align-items-center"><img src="{{imagen}}"
+                                                    class="rounded-lg mr-2" width="112" alt="" /></div>
+                                        </td>
                                         <td>{{nombre}}</td>
-                                        <td>{{categoria}}</td>
+                                        <td>
+                                            <a href="#" onclick="editCategory('{{categoria}}')" data-toggle="modal" data-target="#modal_editCategory" class="text-black">
+                                                {{categoria}}
+                                            </a>
+                                        </td>
                                         <td>{{numLecciones}} Lecciones</td>
                                         <td>{{programas}}</td>
-                                        <td><div class="d-flex align-items-center"><i class="fa fa-circle {{color}} mr-1"></i>{{estado}}</div></td>
-                                        <td><div style="margin: 0 auto">
-                                                {{!-- <a onclick="bloquearEmpresa({{id_empresas}})"class="btn btn-warning shadow btn-xs sharp mr-1 text-white"><i class="fa fa-ban"></i></a> --}}
-                                                {{!-- <a href="/empresas/{{codigo}}"class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa fa-pencil"></i></a> --}}
-                                                <a onclick="eliminarModulos({{id}})"class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
+                                        <td>
+                                            <div class="d-flex align-items-center"><i
+                                                    class="fa fa-circle {{color}} mr-1"></i>{{estado}}</div>
+                                        </td>
+                                        <td>
+                                            <div style="margin: 0 auto">
+                                                <!-- Ver Módulo -->
+                                                <a href="/ver-modulos/{{codigo}}"
+                                                    class="btn btn-warning shadow btn-xs sharp mr-1 text-white"><i
+                                                        class="fa fa-eye"></i></a>
+                                                <!-- Editar Módulo -->
+                                                <a href="#"
+                                                    class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i
+                                                        class="fa fa-pencil"></i></a>
+                                                <!-- Eliminar Módulo -->
+                                                <a onclick="eliminarModulos({{id}})"
+                                                    class="btn btn-danger shadow btn-xs sharp text-white"><i
+                                                        class="fa fa-trash"></i></a>
                                             </div>
                                         </td>
                                     </tr>
@@ -50,92 +70,75 @@
         </div>
     </div>
 </div>
-<!--**********************************
-<div class="content-body">
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-12">
-                <div class="card">
-                    <div class="card-header">
-                        <h1 class="text-black">Módulos educativos</h1>
-                    </div>
-                    <div class="card-body">
-                        <div class="table-responsive">
-                            <table id="example3" class="display min-w850" style="width: 100%">
-                                <thead>
-                                    <tr>
-                                        <th>THUMBNAIL</th>
-                                        <th>MÓDULO</th>
-                                        <th>CATEGORÍA</th>
-                                        <th>LECCIONES</th>
-                                        <th>PROGRAMA</th>
-                                        <th>ESTADO</th>
-                                        <th>ACCIÓN</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    {{#each modulos}}
-                                    <tr>
-                                        <td><div class="d-flex align-items-center"><img src="{{imagen}}"class="rounded-lg mr-2" width="112" alt="" /></div></td>
-                                        <td>{{nombre}}</td>
-                                        <td>{{categoria}}</td>
-                                        <td>{{numLecciones}} Lecciones</td>
-                                        <td>{{programas}}</td>
-                                        <td><div class="d-flex align-items-center"><i class="fa fa-circle {{color}} mr-1"></i>{{estado}}</div></td>
-                                        <td><div style="margin: 0 auto">
-                                                {{!-- <a onclick="bloquearEmpresa({{id_empresas}})"class="btn btn-warning shadow btn-xs sharp mr-1 text-white"><i class="fa fa-ban"></i></a> --}}
-                                                {{!-- <a href="/empresas/{{codigo}}"class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i class="fa fa-pencil"></i></a> --}}
-                                                <a onclick="eliminarModulos({{id}})"class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
-                                            </div>
-                                        </td>
-                                    </tr>
-                                    {{/each}}
-                                </tbody>
-                            </table>
-                        </div>
+
+<!-- MODAL EDITAR CATEGORÍA -->
+<div class="modal fade" id="modal_editCategory">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Actualizando nombre del curso</h5>
+                <button type="button" class="close" data-dismiss="modal"><span>×</span>
+                </button>
+            </div>
+            <form action="/updateCategory" method="post">
+                <div class="modal-body">
+                    <div class="form-group col-md-12 pt-2">
+                        <label>Nombre actual</label>
+                        <input type="text" name="categoria_actual" id="categoria_actual" class="form-control" readonly style="border: none">
+                        <label>Nuevo nombre</label>
+                        <input type="text" name="categoria" class="form-control required" required placeholder="Escribe el nuevo nombre del curso.." style="border: 1px solid #c6c6c6;">
                     </div>
                 </div>
-            </div>
+                <div class="modal-footer">
+                    {{!-- <button type="button" class="btn color_gradient text-white" data-dismiss="modal">Cerrar</button> --}}
+                    <button type="submit" class="btn color_gradient text-white">Actualizar</button>
+                </div>
+            </form>
         </div>
     </div>
 </div>
-<!--**********************************
-            Content body end
-***********************************-->
-<script src="../js/jquery.js"></script>
+
+{{!--
+<script src="../js/jquery.js"></script> --}}
 <script>
-//   ELIMINANDO MODULOS CREADOS
-function eliminarModulos(id) {
-    Swal.fire({
-        title: '¿Seguro que deseas eliminar este modulo?',
-        text: "Esta acción no se puede deshacer.",
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#50368C',
-        cancelButtonColor: '#d33',
-        cancelButtonText: 'Cancelar',
-        confirmButtonText: '¡Sí, Borrar!'
-    })
-    .then((result) => {
-        if (result.isConfirmed) {
-            fetch('/eliminar-modulo', {
-                method: 'POST',
-                body: JSON.stringify({id}),
-                headers: {'Content-Type': 'application/json'}
-            }).then(res => res.json())
-                .catch(error => console.error('Error:', error))
-                .then(response => {
-                    if (response) {
-                        location.reload();
-                    } else {
-                        Swal.fire(
-                            'Error!',
-                            'Error al borrar el modulo.',
-                            'error'
-                        )
-                    }
-                });
-        }
-    })
-}
+    // ACTUALIZAR CATEGORÍAS (CURSOS)
+    function editCategory(nombre) {
+        console.log("Categoría a editar: ", nombre)
+        $('#categoria_actual').val(nombre);
+    }
+
+    //   ELIMINANDO MODULOS CREADOS
+    function eliminarModulos(id) {
+        Swal.fire({
+            title: '¿Seguro que deseas eliminar este modulo?',
+            text: "Esta acción no se puede deshacer.",
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#50368C',
+            cancelButtonColor: '#d33',
+            cancelButtonText: 'Cancelar',
+            confirmButtonText: '¡Sí, Borrar!'
+        })
+            .then((result) => {
+                if (result.isConfirmed) {
+                    fetch('/eliminar-modulo', {
+                        method: 'POST',
+                        body: JSON.stringify({ id }),
+                        headers: { 'Content-Type': 'application/json' }
+                    }).then(res => res.json())
+                        .catch(error => console.error('Error:', error))
+                        .then(response => {
+                            if (response) {
+                                location.reload();
+                            } else {
+                                Swal.fire(
+                                    'Error!',
+                                    'Error al borrar el modulo.',
+                                    'error'
+                                )
+                            }
+                        });
+                }
+            })
+    }
 </script>
