@@ -76,7 +76,7 @@
                             </div>
                             <input type="hidden" id="lecciones" value="{{lecciones}}">
                             <input type="hidden" id="idModulo" value="{{modulo.id}}">
-                            <input type="hidden" id="nombreInsignia" value="{{modulo.nombreInsignia}}">
+                            <input type="hidden" id="nombre_insignia" value="{{modulo.nombre_insignia}}">
                             <input type="hidden" id="fotoInsignia" value="{{modulo.insignia}}">
                        </div>
 
@@ -308,11 +308,11 @@
 
                                 if (porcentajeCompletado == 100) {
                                     const modulo = $('#nombreModulo').text()
-                                    const nombreInsignia = $('#nombreInsignia').val()
+                                    const nombre_insignia = $('#nombre_insignia').val()
                                     const fotoInsignia = $('#fotoInsignia').val()
                                     fetch('/modulo-completado', {
                                         method: 'POST',
-                                        body: JSON.stringify({ modulo, nombreInsignia, fotoInsignia }),
+                                        body: JSON.stringify({ modulo, nombre_insignia, fotoInsignia }),
                                         headers: {'Content-Type': 'application/json'}
                                     })
                                         .then(response => response.json())

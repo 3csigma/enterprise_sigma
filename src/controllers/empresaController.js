@@ -2637,10 +2637,10 @@ empresaController.leccionCompletada = async (req, res) => {
 }
 
 empresaController.modulosCompletados = async (req, res) => {
-  const { modulo, nombreInsignia, fotoInsignia } = req.body;
+  const { modulo, nombre_insignia, fotoInsignia } = req.body;
   let respuesta = false;
 
-  const template = moduloCompletado(req.user.nombres, fotoInsignia, nombreInsignia, modulo, '/mis-modulos');
+  const template = moduloCompletado(req.user.nombres, fotoInsignia, nombre_insignia, modulo, '/mis-modulos');
   const resultEmail = await sendEmail(req.user.email, "Haz completado un módulo", template);
 
   if (!resultEmail) {

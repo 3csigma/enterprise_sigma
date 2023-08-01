@@ -5652,7 +5652,7 @@ const informeAutogenerado = (empresa, textoGPT) => {
 	` 
 }
 
-const moduloCompletado = (nombre, fotoInsignia, nombreInsignia, modulo, link) => {
+const moduloCompletado = (nombre, fotoInsignia, nombre_insignia, modulo, link) => {
 	return `
 	<!DOCTYPE html>
 <html xmlns:v="urn:schemas-microsoft-com:vml" xmlns:o="urn:schemas-microsoft-com:office:office" lang="en">
@@ -5852,7 +5852,7 @@ const moduloCompletado = (nombre, fotoInsignia, nombreInsignia, modulo, link) =>
 														<tr>
 															<td class="pad">
 																<div style="color:#ffffff;direction:ltr;font-family:'Montserrat', 'Trebuchet MS', 'Lucida Grande', 'Lucida Sans Unicode', 'Lucida Sans', Tahoma, sans-serif;font-size:31px;font-weight:700;letter-spacing:0px;line-height:120%;text-align:center;mso-line-height-alt:37.199999999999996px;">
-																	<p style="margin: 0;">${nombreInsignia}</p>
+																	<p style="margin: 0;">${nombre_insignia}</p>
 																</div>
 															</td>
 														</tr>
