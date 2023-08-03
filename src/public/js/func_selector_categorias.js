@@ -36,8 +36,8 @@
         }
       });
     }
-    const claseCajaGeneralModulo = $('#categoriaSelectModulo');
-    selectBuscar(claseCajaGeneralModulo, 'categoriaHiddenModulo');
+    // const claseCajaGeneralModulo = $('#categoriaSelectModulo');
+    // selectBuscar(claseCajaGeneralModulo, 'categoriaHiddenModulo');
 
     const claseCajaGeneralCargar = $('#categoriaSelectCargar');
     selectBuscar(claseCajaGeneralCargar, 'categoriaHiddenCargar');

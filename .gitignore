@@ -13,5 +13,5 @@ src/public/foto_profile/*.jpg
 src/public/foto_profile/*.jpeg
 src/public/foto_profile/*.png
 src/public/recurso_empresa/*.*
+src/public/data_modulo/*.*
 src/public/grupo_recursos/*.*
-src/public/lecciones/*.*

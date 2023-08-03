@@ -4244,8 +4244,11 @@ input[type="button"].btn-block {
   position: relative;
   flex: 1 1 auto;
   width: 1%;
-  min-width: 0;
   margin-bottom: 0;
+  padding: 26px;
+  border: solid 1px #e2e2e2;
+  border-top-right-radius: 14px;
+  border-bottom-right-radius: 14px;
 }
 
 .input-group>.form-control+.form-control,
@@ -4689,12 +4692,12 @@ input[type="button"].btn-block {
 
 .custom-file-label::after {
   position: absolute;
-  top: 0;
+  top: -3px;
   right: 0;
   bottom: 0;
   z-index: 3;
   display: block;
-  height: calc(1.5em + 0.75rem);
+  height: calc(3em + 0.75rem);
   padding: 0.375rem 0.75rem;
   line-height: 1.5;
   color: #495057;
@@ -34972,7 +34975,7 @@ svg text {
 }
 
 .custom-file-label:after {
-  background: #656C73;
+  background: linear-gradient( 180deg, #fed061 -149.33%, #812082 -19.27%, #50368c 158.67% ) !important;;
   border: 1px solid #f0f1f5;
   color: #fff;
   border-radius: 0;
@@ -48213,4 +48216,12 @@ body.swal2-shown > [aria-hidden="true"] {
 
 .pasos{
   color: #812082;
+}
+
+#contenido-pestanas {
+  min-height: 230px !important;
+  height: calc(100% + 20px) !important;
+  max-height: calc(100% + 20px) !important;
+  /* display: grid !important;
+  align-content: space-between !important; */
 }

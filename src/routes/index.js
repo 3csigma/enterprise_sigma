@@ -70,7 +70,7 @@ router.post('/add-grupos-compartidos', checkLogin, helpers.uploadFiles('Recurso_
 */
 router.get('/ver-modulos', checkLogin, dashboardController.verModulos);
 router.get('/crear-modulos', checkLogin, dashboardController.crearModulos);
-router.post('/add-modulos', checkLogin, helpers.uploadFiles('leccion_', false, 'lecciones', true, false, true), dashboardController.addModulos);
+router.post('/add-modulos', checkLogin, helpers.uploadFiles('leccion_', false, 'data_modulo', true, false, true), dashboardController.addModulos);
 router.post('/eliminar-modulo', checkLogin, dashboardController.eliminarModulos);
 router.post('/updateCategory', checkLogin, dashboardController.updateCategory);
 router.get('/ver-modulos/:id', checkLogin, dashboardController.infoModulo);
