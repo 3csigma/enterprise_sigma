@@ -4,12 +4,12 @@
 <div class="content-body">
     <!-- row -->
     <div class="container-fluid">
-       <div class="row">
+        <div class="row">
             <div class="col-xl-12 col-xxl-12">
                 <div class="card">
                     <div class="card-body">
                         <div id="modulos3c" class="form-wizard order-create sw sw-theme-default sw-justified">
-                           
+
                             {{!-- tabs --}}
                             <ul class="nav nav-wizard">
                                 <li><a class="nav-link inactive active" href="#infoModulo">
@@ -27,16 +27,18 @@
                                     </a>
                                 </li>
                             </ul>
-                            
+
                             <div class="tab-content" id="contenido-pestanas">
-                                
+
                                 {{!-- MODULO --}}
-                                <div id="infoModulo" class="tab-pane" role="tabpanel" style="display: block; margin-left: 10%;">
-                                     <div class="row">
+                                <div id="infoModulo" class="tab-pane" role="tabpanel"
+                                    style="display: block; margin-left: 10%;">
+                                    <div class="row">
                                         <div class="col-lg-8 mb-2">
                                             <div class="form-group">
                                                 <label class="text-label">Nombre del módulo*</label>
-                                                <input type="text" id="modulo" class="form-control" style="border: 1px solid #DBDBDB;" required>
+                                                <input type="text" id="modulo" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" required>
                                             </div>
                                         </div>
                                     </div>
@@ -45,18 +47,24 @@
                                             <label class="text-label">Insignia del módulo*</label>
                                             <div class="input-group mb-3">
                                                 <div class="input-group-prepend">
-                                                    <button class="btn color_gradient btn-sm text-white" style="padding: 11px;" type="button">Cargar insignia</button>
+                                                    <button class="btn color_gradient btn-sm text-white"
+                                                        style="padding: 11px;" type="button">Cargar insignia</button>
                                                 </div>
                                                 <div class="custom-file">
-                                                    <input type="file" class="form-control custom-file-input required" id="insignia" name="file" required accept=".jpg, .jpeg, .png, .gif, .tiff">
-                                                    <label class="custom-file-label" style="font-size: 13px;padding-top: 15px;">Solo archivos .jpg o .png son permitidos</label>
+                                                    <input type="file" class="form-control custom-file-input required"
+                                                        id="insignia" name="file" required
+                                                        accept=".jpg, .jpeg, .png, .gif, .tiff">
+                                                    <label class="custom-file-label"
+                                                        style="font-size: 13px;padding-top: 15px;">Solo archivos .jpg o
+                                                        .png son permitidos</label>
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="col-lg-4 mb-2">
                                             <div class="form-group">
-                                                <label class="text-label">Nombre de la insignia</label>
-                                                <input type="text" id="nombre_insignia" class="form-control" style="border: 1px solid #DBDBDB;" required>
+                                                <label class="text-label">Nombre de la insignia*</label>
+                                                <input type="text" id="nombre_insignia" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" required>
                                             </div>
                                         </div>
                                     </div>
@@ -78,37 +86,45 @@
                                     <div class="row">
                                         <div class="col-lg-8 mb-2">
                                             <div class="form-group">
-                                                <h3 style="font-weight: 500;font-size: 17px;color: #000000;">Programa(s) destino</h3>
-                                                <label class="text-black">Si no seleccionas ningun programa, este módulo solo sera accesible mediante compra</label>
+                                                <h3 style="font-weight: 500;font-size: 17px;color: #000000;">Programa(s)
+                                                    destino</h3>
+                                                <label class="text-black">Si no seleccionas ningun programa, este módulo
+                                                    solo sera accesible mediante compra</label>
                                                 <div class="form-group">
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="1" checked="">Free Trial
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="1" checked="">Free Trial
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="2">Entrepreneur
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="2">Entrepreneur
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="3">Business
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="3">Business
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="4">Enterprise
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="4">Enterprise
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="5">Accelerate
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="5">Accelerate
                                                         </label>
                                                     </div>
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
-                                                            <input type="checkbox" class="form-check-input programa" value="6">Por compra
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="6">Por compra
                                                         </label>
                                                     </div>
                                                 </div>
@@ -118,16 +134,16 @@
                                     <div class="row" style="display: grid;">
                                         <div class="col-6 mb-2">
                                             <label class="text-label">Thumbnail*</label>
-
                                             <div class="drag-area file-thumbnail file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
                                                 <center>
-                                                    <label for="fileThumbnail" style="cursor: pointer;">
+                                                    <button id="btnThumbnail" onclick="btnFile_(event, this.parentNode)" style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
                                                         <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
-                                                    </label>
-                                                    <!-- Agregamos estilos CSS para posicionar el input fuera del área visible -->
-                                                    <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, this)" accept=".jpg, .jpeg, .png, .gif, .tiff" style="position: absolute; top: -9999px;">
+                                                    </button>
+                                                    <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, event.target)" hidden accept=".jpg, .jpeg, .png, .gif, .tiff">
                                                 </center>
-                                                <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span>un archivo</h6>
+                                                <h6 class="fw-700 text-black">Escoge o <span
+                                                        style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span>un
+                                                    archivo</h6>
                                             </div>
                                         </div>
                                         <div id="msgFile-thumbnail" style="margin-left: 10px;"></div>
@@ -136,83 +152,125 @@
                                 </div>
 
                                 {{!-- TEMARIO --}}
-                                <div id="temario" class="tab-pane" role="tabpanel" style="display: none;margin-left: 10%;">
-                                <div class="row">
-                                    <div class="col-lg-11">
-                                        <div class="card-body">
-                                            <div id="accordion-two" class="accordion accordion-danger-solid">
-                                                <div class="accordion__item">
-                                                    <div class="accordion__header" data-toggle="collapse" data-target="#bordered_collapseOne" style="margin-left: -15px;"> 
-                                                        <span class="accordion__header--text">Lección 0</span>
-                                                        <span class="accordion__header--indicator"></span>
-                                                    </div>
-                                                    <div id="bordered_collapseOne" class="collapse accordion__body show" data-parent="#accordion-two" style="margin-left: -15px;">
-                                                        <div class="accordion__body--text">
-                                                            <div class="row">
-                                                                <div class="col-lg-8 mb-2">
-                                                                    <div class="form-group">
-                                                                        <label class="text-label">Nombre de la lección*</label>
-                                                                        <input type="text" id="leccion_0" class="form-control" style="border: 1px solid #DBDBDB;"required>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <div class="row" style="display: grid;">
-                                                                <div class="col-6 mb-2">
-                                                                    <label class="text-label">Video de la lección*</label>
-                                                                    <div class="drag-area file-videoleccion file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
-                                                                        <center>
-                                                                            <button id="btnvideoleccion" onclick="btnFile_(event, this.parentNode)" style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
-                                                                                <img src="../img/thumbnail.svg" alt="Miniatura" style="width: 121px; margin-top: -37px;">
-                                                                            </button>
-                                                                            <input type="file" class="fileVideo_" id="video_0" onchange="fileChange_(event, event.target)" hidden accept=".mov, .mp4, .avi, .mkv">
-                                                                        </center>
-                                                                        <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span>un archivo</h6>
-                                                                    </div>
-                                                                </div>
-                                                                <div id="msgFile-video" class="col-12"></div>
-                                                            </div>
-                                                            <br>
-                                                            <!-- Summernote -->
-                                                            <div class="row">
-                                                                <div class="col-xl-12 col-xxl-12">
-                                                                    <div class="summernote-theme-1">
-                                                                        <textarea name="name" class="summernote" id="summernote_0" rows="10"></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </div>
-                                                            <br>
-                                                            <div class="row" style="display: grid;">
-                                                                <div class="col-6 mb-2">
-                                                                    <label class="text-label">Material descargable</label>
-                                                                    <div class="drag-area file-material file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
-                                                                        <center>
-                                                                            <button id="btnMaterial" onclick="btnFile_(event, this.parentNode)" style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
-                                                                                <img src="../img/thumbnail.svg" alt="Material" style="width: 121px; margin-top: -37px;">
-                                                                            </button>
-                                                                            <input type="file" class="fileMaterial_" id="material_0"onchange="fileChange_(event, event.target)" hidden>
-                                                                        </center>
-                                                                        <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
-                                                                    </div>
-                                                                </div>
-                                                                <div id="msgFile-material" class="col-12"></div>
-                                                            </div>
-                                                            <br>
+                                <div id="temario" class="tab-pane" role="tabpanel"
+                                    style="display: none;margin-left: 10%;">
+                                    <div class="row">
+                                        <div class="col-lg-11">
+                                            <div class="card-body">
+                                                <div id="accordion-two" class="accordion accordion-danger-solid">
+                                                    <div class="accordion__item">
+                                                        <div class="accordion__header" data-toggle="collapse"
+                                                            data-target="#bordered_collapseOne"
+                                                            style="margin-left: -15px;">
+                                                            <span class="accordion__header--text">Lección 0</span>
+                                                            <span class="accordion__header--indicator"></span>
                                                         </div>
+                                                        <div id="bordered_collapseOne"
+                                                            class="collapse accordion__body show"
+                                                            data-parent="#accordion-two" style="margin-left: -15px;">
+                                                            <div class="accordion__body--text">
+                                                                <div class="row">
+                                                                    <div class="col-lg-8 mb-2">
+                                                                        <div class="form-group">
+                                                                            <label class="text-label">Nombre de la
+                                                                                lección*</label>
+                                                                            <input type="text" id="leccion_0"
+                                                                                class="form-control"
+                                                                                style="border: 1px solid #DBDBDB;"
+                                                                                required>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row" style="display: grid;">
+                                                                    <div class="col-6 mb-2">
+                                                                        <label class="text-label">Video de la
+                                                                            lección*</label>
+                                                                        <div class="drag-area file-videoleccion file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
+                                                                            <center>
+                                                                                <button id="btnvideoleccion"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt="Miniatura"
+                                                                                        style="width: 121px; margin-top: -37px;">
+                                                                                </button>
+                                                                                <input type="file" class="fileVideo_"
+                                                                                    id="video_0"
+                                                                                    onchange="fileChange_(event, event.target)"
+                                                                                    style="display: none;"
+                                                                                    accept=".mov, .mp4, .avi, .mkv">
+                                                                            </center>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span
+                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span>un
+                                                                                archivo</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="msgFile-video" class="col-12"></div>
+                                                                </div>
+                                                                <br>
+                                                                <!-- Summernote -->
+                                                                <div class="row">
+                                                                    <div class="col-xl-12 col-xxl-12">
+                                                                        <label class="text-label">Descripción de la
+                                                                            lección</label>
+                                                                        <div class="summernote-theme-1">
+                                                                            <textarea name="name" class="summernote"
+                                                                                id="summernote_0" rows="10"></textarea>
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <br>
+                                                                <div class="row" style="display: grid;">
+                                                                    <div class="col-6 mb-2">
+                                                                        <label class="text-label">Material
+                                                                            descargable</label>
+                                                                        <div class="drag-area file-material file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
+                                                                            <center>
+                                                                                <button id="btnMaterial"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt="Material"
+                                                                                        style="width: 121px; margin-top: -37px;">
+                                                                                </button>
+                                                                                <input type="file" class="fileMaterial_"
+                                                                                    id="material_0"
+                                                                                    onchange="fileChange_(event, event.target)"
+                                                                                    hidden>
+                                                                            </center>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span
+                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra
+                                                                                </span>un archivo</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="msgFile-material" class="col-12"></div>
+                                                                </div>
+                                                                <br>
+                                                            </div>
+                                                        </div>
+                                                        <br>
+                                                        <!-- Contenedor para las lecciones -->
+                                                        <div id="lessonsContainer"></div>
+                                                        {{!-- Boton para add nuevas lecciones --}}
+                                                        <button id="addLessonBtn" class="btn color_tertiary text-black"
+                                                            style="display: none;  border-radius: 7px; border: 1px solid white;border-radius: 7px; margin-left: -23px;border: 1px solid white; padding: 6px 30px;"
+                                                            type="button">+ Nueva lección</button>
                                                     </div>
-                                                    <br>
-                                                    <!-- Contenedor para las lecciones -->
-                                                    <div id="lessonsContainer"></div>
-                                                    {{!-- Boton para add nuevas lecciones --}}
-                                                    <button id="addLessonBtn" class="btn color_tertiary text-black" style="border-radius: 7px; border: 1px solid white;border-radius: 7px; margin-left: -23px;border: 1px solid white; padding: 6px 30px;" type="button">+ Nueva lección</button>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
-                                    </div>
                                 </div>
 
                                 {{!-- Guardar --}}
-                               <div id="guardar" class="tab-pane" role="tabpanel" style="display: none;margin-left: 10%;">
+                                <div id="guardar" class="tab-pane" role="tabpanel"
+                                    style="display: none;margin-left: 10%;">
                                     <div class="row">
                                         <div class="col-2">
                                             <h4 class="text-black">Estado</h4>
@@ -233,11 +291,18 @@
                                 </div>
                             </div>
                             {{!-- BOTONES --}}
-                            <div class="toolbar toolbar-bottom btn-group btn-group-sm" role="toolbar" style="text-align: right; margin-left: 10%;">
-                                <button class="btn btn-primary sw-btn-prev" style="display: none; border-radius: 7px;"type="button">Anterior</button>
-                                <button onclick="guardarYMostrarDatos()" class="btn btn-primary sw-btn-next" style="display: none;border-radius: 7px;" type="button">Siguiente</button>
-                                <button onclick="addModulo()" class="btn color_secondary sw-btn-guardar text-white" style="display: none;border-radius: 7px; border: 1px solid white;"type="button">Guardar</button>
-                                <button onclick="addModulo(1)" class="btn color_tertiary sw-btn-submit text-black" style="display: none;border-radius: 7px; border: 1px solid white;" type="button">Publicar</button>
+                            <div class="toolbar toolbar-bottom btn-group btn-group-sm" role="toolbar"
+                                style="text-align: right; margin-left: 10%;">
+                                <button class="btn btn-primary sw-btn-prev" style="display: none; border-radius: 7px;"
+                                    type="button">Anterior</button>
+                                <button onclick="guardarYMostrarDatos()" class="btn btn-primary sw-btn-next"
+                                    style="display: none;border-radius: 7px;" type="button">Siguiente</button>
+                                <button onclick="addModulo(0)" class="btn color_secondary sw-btn-guardar text-white"
+                                    style="display: none;border-radius: 7px; border: 1px solid white;"
+                                    type="button">Guardar</button>
+                                <button onclick="addModulo(1)" class="btn color_tertiary sw-btn-submit text-black"
+                                    style="display: none;border-radius: 7px; border: 1px solid white;"
+                                    type="button">Publicar</button>
                             </div>
                             {{!-- BOTONES --}}
                         </div>
