@@ -141,8 +141,8 @@
                                                     </label>
                                                     <!-- Agregamos estilos CSS para posicionar el input fuera del área visible -->
                                                     <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, this)" accept=".jpg, .jpeg, .png, .gif, .tiff" style="position: absolute; top: -9999px;">
-                                                </center>
-                                                <h6 class="fw-700 text-black">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
+                                                </center>
+                                                <h6 class="fw-700 text-black" style="margin-top: -35px;">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
                                             </div>
                                         </div>
                                         <div id="msgFile-thumbnail" style="margin-left: 10px;"></div>
@@ -468,7 +468,7 @@
             /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
                 const formData = new FormData();
-                formData.append('lessonCounter', lessonCounter);
+                formData.append('lecciones_size', lecciones_temp.length);
                 formData.append('nombre', modulo);
                 formData.append('insignia', insignia);
                 formData.append('nombre_insignia', nombre_insignia);
@@ -529,31 +529,35 @@
 
     function dropHandler(event) {
         event.preventDefault(); // previene el comportamiento por defecto del evento
-        const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
         event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
         const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
         h6.textContent = "Arrastra y suelta el archivo";
-        cargarArchivo(input.files[0], input.className);
+        const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        input.files = event.dataTransfer.files
+        console.log("usando dropArea, input: " + input);
+        cargarArchivo(input.files[0], input.className, input.id);
     }
 
     function btnFile_(event, div) {
         event.preventDefault();
+        console.log("usando btnFile ==> ", div);
         const input = div.querySelector("input");
         input.click();
     }
 
     function fileChange_(event, input) {
+        console.log("ID INPUT:: ", input.id);
+        console.log("Usando input, clase: " + input.className);
         cargarArchivo(input.files[0], input.className, input.id);
     }
 
-    function cargarArchivo(file, clase, id = null) {
+    function cargarArchivo(file, clase, id) {
         // Si el div para el archivo es el de Video
-        if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_') && file.size >= 20 * 1024 * 1024) { // Validar el tamaño del video - 20 megabytes
+        if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_') && file.size >= (20 * 1024 * 1024)) { // Validar el tamaño del video - 20 megabytes
             toastError("El archivo no puede superar los 20MB.")
         } else {
             const ext = file.name.split(".").pop().toLowerCase();
             let fileOk = true, id_Msg = 'msgFile-' + id;
-            //if (id === 'material_0') { id_Msg = 'msgFile-material' }
             // Validando el tipo de archivo
             if (clase == 'fileThumbnail_') {
                 const extensiones = ["jpg", "jpeg", "png", "svg", "psd", "ai", "tiff"];
@@ -581,6 +585,10 @@
                     if (img) {
                         img.remove();
                     }
+
+                    if (divPortada.querySelector("video")) {
+                        divPortada.querySelector("video").remove();
+                    }
                     // Agregar el video al div
                     divPortada.appendChild(video);
                 }
@@ -590,9 +598,10 @@
                 try {
                     const fileReader = new FileReader();
                     fileReader.addEventListener("load", async () => {
-                        $('#' + id_Msg).html('<span class="success">Archivo cargado exitosamente...</span>');
+                        $('#'+id_Msg).html('<span class="success">Archivo cargado exitosamente...</span>');
                     })
                     fileReader.readAsDataURL(file);
+                    console.log("File Todo OK: ", file)
                 } catch (error) {
                     // Código que se ejecuta en caso de error
                     console.log('Ha ocurrido un error:', error.message);

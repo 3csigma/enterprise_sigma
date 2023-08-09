@@ -3938,7 +3938,7 @@ dashboardController.crearModulos = async (req, res) => {
 dashboardController.addModulos = async (req, res) => {
   // Guardar el módulo y obtener su ID
   console.log("Agregando módulo.....");
-  const { nombre, nombre_insignia, categoria, programa} = req.body;
+  const { nombre, nombre_insignia, categoria, programa, lecciones_size } = req.body;
   let estado = req.body.estado;
   estado == 1 ? estado : (estado = 0);
   const programaArray = Array.isArray(programa) ? programa : [programa];
@@ -3970,8 +3970,7 @@ dashboardController.addModulos = async (req, res) => {
 
   //Guardar las lecciones asociadas al módulo
   console.log("Agregando lecciones.....");
-  const { lessonCounter } = req.body;
-  for (let i = 0; i < lessonCounter; i++) {
+  for (let i = 0; i < lecciones_size; i++) {
     const nombreLeccion = req.body[`nombre_${i}`];
     const descripcion = req.body[`descripcion_${i}`];
     const leccionData = {
