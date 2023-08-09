@@ -3905,26 +3905,31 @@ dashboardController.verModulos = async (req, res) => {
     const modulos = await helpers.consultarDatos('modulos');
     
     modulos.forEach(async (m) => {
-        m.codigo = helpers.encriptarTxt((m.id).toString())
-        m.estado = m.estado === 1 ? 'Publicado' : 'Borrador';
-        m.color = m.estado === 'Publicado' ? 'text-success' : 'text-danger';
-        
-        const lecciones = await pool.query('SELECT COUNT(id_modulo) As numLecciones FROM lecciones WHERE id_modulo = ?', [m.id]);
-        if (lecciones.length > 0) {
-            m.numLecciones = lecciones[0].numLecciones;
-        } else {
-            m.numLecciones = 0;
-        }
+      m.codigo = helpers.encriptarTxt((m.id).toString())
+      m.estado = m.estado === 1 ? 'Publicado' : 'Borrador';
+      m.color = m.estado === 'Publicado' ? 'text-success' : 'text-danger';
+      
+      const lecciones = await pool.query('SELECT COUNT(id_modulo) As numLecciones FROM lecciones WHERE id_modulo = ?', [m.id]);
+      if (lecciones.length > 0) {
+          m.numLecciones = lecciones[0].numLecciones;
+      } else {
+          m.numLecciones = 0;
+      }
 
-        m.programa = JSON.parse(m.programa); // Convertir el campo "programa" de nuevo a un arreglo
-        m.programa = m.programa.map(Number); // Convertir los elementos del array a números
-        
-        // Crear una nueva propiedad en el objeto "m" que contenga el nombre del programa
-        m.programas = m.programa.map(getProgramaName);
-    });
+    m.programa = JSON.parse(m.programa); // Convertir el campo "programa" de nuevo a un arreglo
+    m.programa = m.programa.map(Number); // Convertir los elementos del array a números
 
-    res.render('admin/verModulos', { adminDash: true, formViewModulos: true, modulos, recursos: true, itemActivo: 5 });
-}
+    // Crear una nueva propiedad en el objeto "m" que contenga el nombre del programa
+    m.programas = m.programa.map(getProgramaName).join(', ');
+
+  });
+
+  res.render("admin/verModulos", {
+    adminDash: true,
+    formViewModulos: true,
+    modulos,
+  });
+};
 
 dashboardController.crearModulos = async (req, res) => {
    res.render('admin/crearModulos', { adminDash: true, formModulos:true, itemActivo: 5 })
@@ -3933,7 +3938,7 @@ dashboardController.crearModulos = async (req, res) => {
 dashboardController.addModulos = async (req, res) => {
   // Guardar el módulo y obtener su ID
   console.log("Agregando módulo.....");
-  const { nombre, nombre_insignia, categoria, programa, imagen } = req.body;
+  const { nombre, nombre_insignia, categoria, programa} = req.body;
   let estado = req.body.estado;
   estado == 1 ? estado : (estado = 0);
   const programaArray = Array.isArray(programa) ? programa : [programa];
@@ -3945,16 +3950,18 @@ dashboardController.addModulos = async (req, res) => {
     nombre_insignia,
     categoria,
     programa: programaJSON,
-    imagen,
-    estado,
+    estado
   };
 
-  const insignia = req.files
-  if (insignia) {
-    insignia.forEach((vm) => {
-      const campo = vm.fieldname;
+  const miniatura_insignira = req.files
+  if (miniatura_insignira) {
+    miniatura_insignira.forEach((mi) => {
+      const campo = mi.fieldname;
       if (campo.startsWith("insignia")) {
-        moduloData.insignia  = `../insignia/${vm.filename}`;
+        moduloData.insignia  = `../data_modulo/${mi.filename}`;
+      } 
+      if (campo.startsWith("miniatura")) {
+        moduloData.miniatura  = `../data_modulo/${mi.filename}`;
       } 
     });
   }
@@ -3977,9 +3984,9 @@ dashboardController.addModulos = async (req, res) => {
       archivos.forEach((vm) => {
         const campo = vm.fieldname;
         if (campo.startsWith("video")) {
-          leccionData.video = `../lecciones/${vm.filename}`;
+          leccionData.video = `../data_modulo/${vm.filename}`;
         } else if (campo.startsWith("material")) {
-          leccionData.material = `../lecciones/${vm.filename}`;
+          leccionData.material = `../data_modulo/${vm.filename}`;
         }
       });
     }

@@ -104,7 +104,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
 
     },
     keyboardSettings: {
-      keyNavigation: true,
+      keyNavigation: false,
       // Enable/Disable keyboard navigation(left and right keys are used if enabled)
       keyLeft: [37],
       // Left key code
