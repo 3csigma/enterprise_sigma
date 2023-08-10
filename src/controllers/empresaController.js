@@ -2388,7 +2388,8 @@ empresaController.recursos = async (req, res) => {
     datos,
     grupos,
     recursoCompartido,
-    itemRecursos: true
+    itemRecursos: true,
+    etapaCompleta: req.session.etapaCompleta,
   });
 };
 
@@ -2513,17 +2514,10 @@ empresaController.modulos = async (req, res) => {
 
     // Recorre el arreglo de empresas
     empresas.forEach((e) => {
-      console.log("recuento 1111");
-      console.log(recuento);
-      console.log("Programa e=> ");
-      console.log(e.programa);
       // Verifica si el programa de la empresa está en el arreglo de programas del módulo
       if (e.programa && programas.includes((e.programa).toString())) {
         // Incrementa el recuento de empresas para el módulo correspondiente
         recuento[programas]++;
-
-        console.log("recuento 2222");
-        console.log(recuento);
       }
     });
     console.log(recuento[programas]);
@@ -2550,7 +2544,8 @@ empresaController.modulos = async (req, res) => {
 
   res.render("empresa/misModulos", {
     user_dash: true, itemModulo: true,
-    misModulos, numLecciones
+    misModulos, numLecciones,
+    etapaCompleta: req.session.etapaCompleta,
   });
 }
 
