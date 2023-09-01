@@ -188,24 +188,24 @@ consultorController.guardarAnalisisProducto = async (req, res) => {
          * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
         */
         const obj_respuestas = {
-            'El público objetivo' : {'¿A cuál segmento del mercado va dirigido su producto: hombres, mujeres, pequeñas empresas, etc.?': publico_objetivo,},
-            'Beneficios': {'¿Qué Beneficios aporta su producto? Y ¿Qué necesidad de este público satisface?': beneficios,},
-            'Tipo de producto': {'¿Cuál es su tipo de producto específicamente?': tipo_producto,},
+            'El público objetivo' : {'¿A cuál segmento del mercado va dirigido su producto/servicio: hombres, mujeres, pequeñas empresas, etc.?': publico_objetivo,},
+            'Beneficios': {'¿Qué Beneficios aporta su producto/servicio? Y ¿Qué necesidad de este público satisface?': beneficios,},
+            'Tipo de producto': {'¿Cuál es su tipo de producto/servicio específicamente?': tipo_producto,},
             'Nivel de precio': {
-                'Explique ¿Cómo es el precio de su producto en relación al sector de mercado en el que se encuentra?': nivel_precio,
+                'Explique ¿Cómo es el precio de su producto/servicio en relación al sector de mercado en el que se encuentra?': nivel_precio,
                 '¿Cuáles son los Productos y/o Servicios que más vende?': mas_vendidos, 
-                '¿Cuál es la razón por la que considera que estos Productos que describió anteriormente se venden más?': razon_venta,
+                '¿Cuál es la razón por la que considera que estos producto/servicio que describió anteriormente se venden más?': razon_venta,
             },
-            'Utilización': { '¿Cómo se utiliza o consume su producto? ¿En qué ocasiones? ¿Por quién? ¿En dónde?': utilizacion, },
-            'Integración en la gama de productos/servicios': { 'Explique ¿Qué coherencia tienen sus productos dentro de la empresa?': integracion_gama, },
+            'Utilización': { '¿Cómo se utiliza o consume su producto/servicio? ¿En qué ocasiones? ¿Por quién? ¿En dónde?': utilizacion, },
+            'Integración en la gama de productos/servicios': { 'Explique ¿Qué coherencia tienen sus producto/servicio dentro de la empresa?': integracion_gama, },
             'Calidad': {
-                '¿Cómo es la calidad de su producto? Y ¿Qué tiene su producto para disponer de la calidad a que hace referencia?': calidad,
-                '¿Qué aceptación tiene su producto?': aceptacion
+                '¿Cómo es la calidad de su producto/servicio? Y ¿Qué tiene su producto/servicio para disponer de la calidad a que hace referencia?': calidad,
+                '¿Qué aceptación tiene su producto/servicio?': aceptacion
             }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión producto que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. El informe no debe superar los 3000 caracteres.")
-        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión producto que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 1500 caracteres.")
+       // console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
         const informeAI = { empresa: id_empresa, tipo: 'Análisis producto', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
@@ -356,8 +356,8 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
             },
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión administración que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. El informe no debe superar los 3000 caracteres.")
-        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión administración que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 1300 caracteres.")
+        //console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
         const informeAI = { empresa: id_empresa, tipo: 'Análisis administración', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
@@ -471,8 +471,8 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
             },
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión operación que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. El informe no debe superar los 3000 caracteres.")
-        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión operación que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 1500 caracteres.")
+        //console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
         const informeAI = { empresa: id_empresa, tipo: 'Análisis operación', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
@@ -580,8 +580,8 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
             }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión marketing que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. El informe no debe superar los 3000 caracteres.")
-        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión marketing que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 1300 caracteres.")
+       // console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
         const informeAI = { empresa: id_empresa, tipo: 'Análisis marketing', informe: resp, fecha: new Date().toLocaleDateString("en-US") }

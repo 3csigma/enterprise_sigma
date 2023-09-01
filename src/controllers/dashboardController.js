@@ -2061,6 +2061,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     presentacion_producto,
     calificacion_global_producto,
   } = req.body;
+
   let empresa_ofrece = { e_ofrece };
   producto_ofrece != ""
     ? (empresa_ofrece.producto_ofrece = producto_ofrece)
@@ -2494,10 +2495,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
   /************************************************************************************************* */
 
   // Guardando en la Base de datos
-  const cuestionario = await helpers.insertarDatos(
-    "dg_empresa_establecida",
-    nuevoDiagnostico
-  );
+  const cuestionario = await helpers.insertarDatos("dg_empresa_establecida", nuevoDiagnostico);
   if (cuestionario.affectedRows > 0) {
     /************************************************************************************************* */
     // RENDIMIENTO DE LA EMPRESA
@@ -2548,10 +2546,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
         nuevoRendimiento.porcentaje_utilidad.toFixed(2);
     }
 
-    const rendimiento = await helpers.insertarDatos(
-      "rendimiento_empresa",
-      nuevoRendimiento
-    );
+    const rendimiento = await helpers.insertarDatos("rendimiento_empresa", nuevoRendimiento );
 
     /************************************************************************************************* */
     const areasVitales = {
@@ -2800,10 +2795,10 @@ dashboardController.enviarCuestionario = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
-        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, el informe no puede superar los 3000 caracteres";
-      console.log(
-        `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
-      );
+        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy prioritario que el informe no pueda superar los 1500 caracteres";
+      // console.log(
+      //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
+      // );
       let resultAI = await getResponseChatGPT(prompt);
       const resp = resultAI.content.replaceAll("\n", "<br>");
       const informeAI = {
@@ -3322,10 +3317,10 @@ dashboardController.guardarRespuestas = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
-        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, el informe no puede superar los 3000 caracteres";
-      console.log(
-        `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
-      );
+        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy importante que priorices que el informe no pueda superar los 1800 caracteres";
+      // console.log(
+      //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
+      // );
       let resultAI = await getResponseChatGPT(prompt);
       const resp = resultAI.content.replaceAll("\n", "<br>");
       const informeAI = {
@@ -4032,6 +4027,32 @@ dashboardController.infoModulo = async (req, res) => {
             modulo, lecciones: JSON.stringify(modulo.lecciones)
         });
     }
+}
+
+dashboardController.editarModulo = async (req, res) => {
+  let { id } = req.params;
+  id = helpers.desencriptarTxt(id); 
+  console.log("ID DESENCRIPTADO ==> ");
+  console.log(id);
+  if (!id) {
+    res.redirect('/ver-modulos');
+  } else {
+    const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
+    const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
+    modulo.lecciones = null;
+    
+    if (lecciones.length > 0) {
+      modulo.lecciones = lecciones.map((leccion, index) => {
+        leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
+        return leccion;
+      });
+    }
+
+    console.log("Info modulo: ");
+    console.log(modulo);
+    
+  res.render("admin/editarModulos", {adminDash: true, itemActivo: 5, modulo, lecciones: JSON.stringify(modulo.lecciones)})
+  }
 }
 
 dashboardController.editarModulo = async (req, res) => {

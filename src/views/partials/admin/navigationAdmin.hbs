@@ -250,29 +250,27 @@
         {{else}}
         <li>
         {{/if}}
-           <a href="javascript: void(0);" class="has-arrow">
-              <i class="fa-solid fa-photo-film"></i>
-                <span data-key="t-contacts">Recursos</span>
-            </a>
-           <ul class="sub-menu" aria-expanded="false">
-
-              {{#comparar itemActivo '==' 4}}
-              <li class="mm-active"><a href="/recursos-compartidos" class="mm-active" data-key="t-user-list">Material</a></li>
+         <a href="javascript: void(0);" class="has-arrow" aria-expanded="false">
+            <i class="fa-solid fa-photo-film"></i>
+            <span class="nav-text">Recursos</span>
+          </a>
+         <ul class="sub-menu" aria-expanded="false">
+           {{#comparar itemActivo '==' 4}}
+              <li class="mm-active"><a href="/recursos-compartidos" class="mm-active">Material de apoyo</a></li>
               {{/comparar}}
               {{#comparar itemActivo '!=' 4}}
-              <li><a href="/recursos-compartidos" data-key="t-user-list">Material</a></li>
+              <li><a href="/recursos-compartidos" data-key="t-user-list">Material de apoyo</a></li>
               {{/comparar}}
 
               {{#comparar itemActivo '==' 5}}
-              <li class="mm-active"><a href="/ver-modulos" class="mm-active" data-key="t-invoice-detail">Modulos</a></li>
+              <li class="mm-active"><a href="/ver-modulos" class="mm-active" >Módulos Educativos</a></li>
               {{/comparar}}
               {{#comparar itemActivo '!=' 5}}
-              <li><a href="/ver-modulos"  data-key="t-invoice-detail">Modulos</a></li>
+              <li><a href="/ver-modulos"  data-key="t-invoice-detail">Módulos Educativos</a></li>
               {{/comparar}}
+         </ul>
 
-            </ul>
         </li>
-
         {{#comparar itemActivo '==' 2}}
         <li class="mm-active">
           {{/comparar}}

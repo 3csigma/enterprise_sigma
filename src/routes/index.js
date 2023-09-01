@@ -72,6 +72,7 @@ router.get('/ver-modulos', checkLogin, dashboardController.verModulos);
 router.get('/crear-modulos', checkLogin, dashboardController.crearModulo);
 router.post('/guardar-modulo', checkLogin, helpers.uploadFiles('leccion_', false, 'data_modulo', true, false, true), dashboardController.guardarModulo);
 router.post('/eliminar-modulo', checkLogin, dashboardController.eliminarModulos);
+router.get('/editar-modulos/:id', checkLogin, dashboardController.editarModulo);
 router.post('/updateCategory', checkLogin, dashboardController.updateCategory);
 router.get('/ver-modulos/:id', checkLogin, dashboardController.infoModulo);
 router.get('/editar-modulo/:id', checkLogin, dashboardController.editarModulo);

@@ -46,8 +46,9 @@
                             <a href="/ficha-cliente/{{cuestionario.fichaCliente.usuario}}"
                               class="btn color_gradient shadow btn-xs sharp mr-1 text-white">
                               <i class="fa fa-pencil"></i></a>
-                            <a onclick="eliminarFichaCliente({{cuestionario.fichaCliente.id}})"
-                              class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i></a>
+                            <a {{#if btnBorrar_}} onclick="eliminarFichaCliente('noDelete')" {{else}} onclick="eliminarFichaCliente({{cuestionario.fichaCliente.id}})" {{/if}}
+                              class="btn btn-danger shadow btn-xs sharp text-white"><i class="fa fa-trash"></i>
+                            </a>
                           </div>
                         </td>
                       </tr>
@@ -57,9 +58,7 @@
                       <tr>
                         <td>{{#if cuestionario.diagnostico.fecha}}{{cuestionario.diagnostico.fecha}}{{else}}N/A{{/if}}</td>
                         <td>Cuestionario diagnóstico</td>
-                        <td><span
-                            class="badge light {{cuestionario.diagnostico.color}}">{{cuestionario.diagnostico.texto}}</span>
-                        </td>
+                        <td><span class="badge light {{cuestionario.diagnostico.color}}">{{cuestionario.diagnostico.texto}}</span></td>
                         <td>
                           {{#if cuestionario.diagnostico.btnEdit}}
                           {{#if cuestionario.operacion.btnDisabled}}
@@ -219,6 +218,18 @@
   {{/if}}
 
   function eliminarFichaCliente(id) {
+    if (id === "noDelete") {
+      Swal.fire({
+        title: 'No es posible reiniciar la ficha de cliente',
+        text: "No es posible reiniciar la ficha de cliente debido a que ya se ha iniciado el proceso de mentoría.",
+        icon: 'warning',
+        showCancelButton: false,
+        confirmButtonColor: '#50368C',
+        cancelButtonColor: '#d33',
+        cancelButtonText: 'Cancelar',
+        confirmButtonText: 'Entendido'
+      })
+    }else { 
     Swal.fire({
       title: '¿Deseas restablecer el formulario?',
       text: "Todas tus respuestas se eliminarán.",
@@ -250,6 +261,7 @@
           
       }
     })
+    }
   }
 
 </script>

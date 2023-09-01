@@ -555,10 +555,8 @@ empresaController.diagnostico = async (req, res) => {
   cuestionario.fichaCliente.usuario = encriptarTxt("" + id_empresa);
   cuestionario.fichaCliente.estado = false;
   // const fichaCliente = await consultarDatos('ficha_cliente', `WHERE id_empresa = ${id_empresa}`)
-  const dataEmpresa_ = await pool.query(
-    `SELECT e.diagnostico_fecha2, f.redes_sociales, f.tipo_empresa, f.fecha_modificacion FROM empresas e JOIN ficha_cliente f ON e.id_empresas = ${id_empresa}`
-  );
-
+  const dataEmpresa_ = await pool.query(`SELECT e.diagnostico_fecha2, f.redes_sociales, f.tipo_empresa, f.fecha_modificacion FROM empresas e JOIN ficha_cliente f ON e.id_empresas = ${id_empresa}`);
+  let btnBorrar_establecida = false , btnBorrar_nueva = false, btnBorrar_ = false;
   if (dataEmpresa_.length == 0) {
     cuestionario.fichaCliente.color = "badge-danger";
     cuestionario.fichaCliente.texto = "Pendiente";
@@ -623,6 +621,7 @@ empresaController.diagnostico = async (req, res) => {
         cuestionario.diagnostico.texto = "Completado";
         cuestionario.diagnostico.modal = "#modalNuevosProyectos";
         cuestionario.nuevo = true;
+        btnBorrar_nueva = true;
 
         if (req.user.programa == 1) {
           req.session.etapaCompleta.gratis = true;
@@ -760,6 +759,7 @@ empresaController.diagnostico = async (req, res) => {
         cuestionario.diagnostico.modal = "#modalEmpresasEstablecidas";
         cuestionario.establecido = true;
         req.session.etapaCompleta.verAnalisis = true;
+        btnBorrar_establecida = true;
 
         if (req.user.programa == 1) {
           req.session.etapaCompleta.gratis = true;
@@ -873,7 +873,7 @@ empresaController.diagnostico = async (req, res) => {
       }
     }
   }
-
+  if (btnBorrar_nueva || btnBorrar_establecida) {btnBorrar_ = true;}
   /**
    * VIDEOS TURIALES ACTIVAR o DESACTIVAR
    */
@@ -903,7 +903,7 @@ empresaController.diagnostico = async (req, res) => {
     etapaCompleta: req.session.etapaCompleta,
     modalAcuerdo,
     tutoriales,
-    id_empresa,
+    id_empresa, btnBorrar_
   });
 };
 
@@ -926,34 +926,24 @@ empresaController.validarFichaCliente = async (req, res) => {
 
 empresaController.fichaCliente = async (req, res) => {
   req.session.fichaCliente = false;
-  const row = await consultarDatos(
-    "empresas",
-    `WHERE email = "${req.user.email}" LIMIT 1`
-  );
+  const row = await consultarDatos("empresas",`WHERE email = "${req.user.email}" LIMIT 1` );
   const empresa = row[0];
-  const id_empresa = row[0].id_empresas,
-    datos = {};
-  const fichaCliente = await consultarDatos(
-    "ficha_cliente",
-    `WHERE id_empresa = "${id_empresa}"`
-  );
+  const id_empresa = row[0].id_empresas,datos = {};
+  const fichaCliente = await consultarDatos("ficha_cliente", `WHERE id_empresa = "${id_empresa}"` );
   const ficha = fichaCliente[0];
+  const dg_empresa_establecida = await consultarDatos("dg_empresa_establecida", `WHERE id_empresa = "${id_empresa}"` );
+  const info_empresa_establecida = dg_empresa_establecida[0];
+  const dg_empresa_nueva = await consultarDatos("dg_empresa_nueva", `WHERE id_empresa = "${id_empresa}"` );
+  const info_empresa_nueva = dg_empresa_nueva[0];
   if (fichaCliente.length > 0) {
-    ficha.es_propietario === "Si"
-      ? (datos.prop1 = "checked")
-      : (datos.prop2 = "checked");
-    ficha.socios === "Si"
-      ? (datos.socio1 = "checked")
-      : (datos.socio2 = "checked");
-    ficha.etapa_actual === "En proyecto"
-      ? (datos.etapa1 = "checked")
-      : (datos.etapa1 = "");
-    ficha.etapa_actual === "Operativo"
-      ? (datos.etapa2 = "checked")
-      : (datos.etapa2 = "");
-    ficha.etapa_actual === "En expansión"
-      ? (datos.etapa3 = "checked")
-      : (datos.etapa3 = "");
+    ficha.es_propietario === "Si"  ? (datos.prop1 = "checked") : (datos.prop2 = "checked");
+    ficha.socios === "Si" ? (datos.socio1 = "checked") : (datos.socio2 = "checked");
+    ficha.etapa_actual === "En proyecto" ? (datos.etapa1 = "checked") : (datos.etapa1 = "");
+    ficha.etapa_actual === "Operativo" ? (datos.etapa2 = "checked") : (datos.etapa2 = "");
+    ficha.etapa_actual === "En expansión" ? (datos.etapa3 = "checked") : (datos.etapa3 = "");
+
+    datos.editEtapa = false
+    if (info_empresa_establecida || info_empresa_nueva) {datos.editEtapa = true}
 
     if (etapaCompleta.e1) {
       datos.etapa1 = datos.etapa1 + " disabled";
@@ -986,52 +976,17 @@ empresaController.fichaCliente = async (req, res) => {
   const fechaMaxima = fm.toLocaleDateString("fr-CA"); // Colocando el formato yyyy-mm-dd
   console.log(fechaMaxima);
 
-  res.render("empresa/fichaCliente", {
-    ficha,
-    datos,
-    fechaMaxima,
-    wizarx: true,
-    user_dash: false,
-    empresa,
-  });
+  res.render("empresa/fichaCliente", {ficha, datos, fechaMaxima, wizarx: true, user_dash: false, empresa,});
 };
 
 empresaController.addFichaCliente = async (req, res) => {
-  let {
-    nombres,
-    apellidos,
-    email,
-    countryCode,
-    telFicha,
-    fecha_nacimiento,
-    pais,
-    twitter,
-    facebook,
-    instagram,
-    otra,
-    es_propietario,
-    socios,
-    nombre_empresa,
-    cantidad_socios,
-    porcentaje_accionario,
-    tiempo_fundacion,
-    promedio_ingreso_anual,
-    num_empleados,
-    page_web,
-    descripcion,
-    etapa_actual,
-    objetivo1,
-    objetivo2,
-    objetivo3,
-    fortaleza1,
-    fortaleza2,
-    fortaleza3,
-    problema1,
-    problema2,
-    problema3,
-    motivo_consultoria,
-    fecha_zh,
-  } = req.body;
+  let {nombres,apellidos,email,countryCode,telFicha,fecha_nacimiento, pais,
+    twitter,facebook,instagram, otra, es_propietario, socios, nombre_empresa,
+    cantidad_socios, porcentaje_accionario,tiempo_fundacion,promedio_ingreso_anual,
+    num_empleados,  page_web, descripcion, etapa_actual, objetivo1,
+    objetivo2,objetivo3, fortaleza1,fortaleza2,fortaleza3, problema1,
+    problema2, problema3, motivo_consultoria,fecha_zh,} = req.body;
+
   let redes_sociales = JSON.stringify({ twitter, facebook, instagram, otra });
   let objetivos = JSON.stringify({ objetivo1, objetivo2, objetivo3 });
   let fortalezas = JSON.stringify({ fortaleza1, fortaleza2, fortaleza3 });
@@ -1039,69 +994,39 @@ empresaController.addFichaCliente = async (req, res) => {
   const telefono = "+" + countryCode + " " + telFicha;
   let tipo_empresa = 1;
 
-  etapa_actual == "En proyecto"
-    ? (tiempo_fundacion = "Proyecto nuevo")
-    : (tipo_empresa = 2);
-
+  etapa_actual == "En proyecto"  ? (tiempo_fundacion = "Proyecto nuevo") : (tipo_empresa = 2);
   es_propietario != undefined ? es_propietario : (es_propietario = "No");
   socios != undefined ? socios : (socios = "No");
-  const row = await consultarDatos(
-    "empresas",
-    `WHERE email = "${req.user.email}" LIMIT 1`
-  );
+
+  const row = await consultarDatos("empresas", `WHERE email = "${req.user.email}" LIMIT 1`);
   const id_empresa = row[0].id_empresas;
-  cantidad_socios == null
-    ? (cantidad_socios = 0)
-    : (cantidad_socios = cantidad_socios);
+  const codigoDeEmpresa = row[0].codigo;
+  cantidad_socios == null ? (cantidad_socios = 0) : (cantidad_socios = cantidad_socios);
 
-  const fecha_modificacion = new Date().toLocaleString("en-US", {
-    timeZone: fecha_zh,
-  });
-
+  const fecha_modificacion = new Date().toLocaleString("en-US", { timeZone: fecha_zh});
   page_web = page_web.replace(/[$ ]/g, "");
 
   const nuevaFichaCliente = {
-    telefono,
-    fecha_nacimiento,
-    pais,
-    redes_sociales,
-    es_propietario,
-    socios,
-    cantidad_socios,
-    porcentaje_accionario,
-    tiempo_fundacion,
-    tipo_empresa,
-    promedio_ingreso_anual,
-    num_empleados,
-    page_web,
-    descripcion,
-    etapa_actual,
-    objetivos,
-    fortalezas,
-    problemas,
-    motivo_consultoria,
-    id_empresa,
-    fecha_modificacion,
+    telefono, fecha_nacimiento, pais,redes_sociales,
+    es_propietario, socios, cantidad_socios, porcentaje_accionario,
+    tiempo_fundacion, tipo_empresa, promedio_ingreso_anual,
+    num_empleados, page_web,descripcion, etapa_actual, objetivos, fortalezas,
+    problemas, motivo_consultoria, id_empresa, fecha_modificacion,
   };
 
-  const userUpdate = { nombres, apellidos, nombre_empresa, email };
+  const userUpdate = {
+    empresas: {nombres, apellidos, nombre_empresa, email},
+    usuarios: {nombres, apellidos, email }
+  };
 
   // Actualizando datos bases de la empresa
-  await pool.query("UPDATE empresas SET ? WHERE id_empresas = ?", [
-    userUpdate,
-    id_empresa,
-  ]);
+  await pool.query("UPDATE empresas SET ? WHERE id_empresas = ?", [userUpdate.empresas, id_empresa]);
+  await pool.query("UPDATE users SET ? WHERE codigo = ?", [userUpdate.usuarios, codigoDeEmpresa]);
 
   // Consultar si ya existen datos en la Base de datos
-  const ficha = await consultarDatos(
-    "ficha_cliente",
-    `WHERE id_empresa = "${id_empresa}"`
-  );
+  const ficha = await consultarDatos("ficha_cliente", `WHERE id_empresa = "${id_empresa}"`);
   if (ficha.length > 0) {
-    await pool.query("UPDATE ficha_cliente SET ? WHERE id_empresa = ?", [
-      nuevaFichaCliente,
-      id_empresa,
-    ]);
+    await pool.query("UPDATE ficha_cliente SET ? WHERE id_empresa = ?", [nuevaFichaCliente, id_empresa]);
   } else {
     await insertarDatos("ficha_cliente", nuevaFichaCliente);
   }
@@ -1758,8 +1683,7 @@ empresaController.informeEstrategico = async (req, res) => {
   );
   if (informe1_IA) informe1_IA = informe1_IA.informe;
   let obj_respuestas = { "Diagnóstico de Negocio": { informe1_IA } };
-  let txtGPT =
-    "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas, que no supere los 3000 caracteres.";
+  let txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas, No debe superar los 1500 caracteres.";
 
   if (req.session.etapaCompleta.verAnalisis) {
     let informe2_IA = informeIA.find(
@@ -1791,14 +1715,13 @@ empresaController.informeEstrategico = async (req, res) => {
     obj_respuestas["Análisis de Negocio - Dimensión Marketing"] = {
       informe5_IA,
     };
-    txtGPT =
-      "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, que no supere los 3000 caracteres.";
+    txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, No debe superar los 3000 caracteres.";
   }
 
   const prompt = JSON.stringify(obj_respuestas) + txtGPT;
-  console.log(
-    `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT INFORME ESTRATÉGICO ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`
-  );
+  // console.log(
+  //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT INFORME ESTRATÉGICO ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`
+  // );
   let resultAI = await getResponseChatGPT(prompt);
   const resp = resultAI.content.replaceAll("\n", "<br>");
   const informeAI = {
