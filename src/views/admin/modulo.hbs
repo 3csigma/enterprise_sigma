@@ -1,0 +1,1200 @@
+<!--**********************************
+        Content body start
+***********************************-->
+<div class="content-body">
+    <!-- row -->
+    <div class="container-fluid">
+        <div class="row">
+            <div class="col-xl-12 col-xxl-12">
+                <div class="card">
+                    <div class="card-body">
+                        <div id="modulos3c" class="form-wizard order-create sw sw-theme-default sw-justified">
+
+                            {{!-- tabs --}}
+                            <ul class="nav nav-wizard">
+                                <li><a class="nav-link inactive active" href="#infoModulo">
+                                        <span style="margin-top: 22px;">1</span>
+                                        <label class="pasos">Información del módulo</label>
+                                    </a>
+                                </li>
+                                <li><a class="nav-link inactive done" href="#temario">
+                                        <span style="margin-top: 22px;">2</span>
+                                        <label class="pasos">Temario</label>
+                                    </a></li>
+                                <li><a class="nav-link inactive" href="#guardar">
+                                        <span style="margin-top: 22px;">3</span>
+                                        <label class="pasos">Publicar/Guardar</label>
+                                    </a>
+                                </li>
+                            </ul>
+
+                            <div class="tab-content" id="contenido-pestanas">
+
+                                {{!-- MODULO --}}
+                                <div id="infoModulo" class="tab-pane" role="tabpanel"
+                                    style="display: block; margin-left: 10%;">
+                                    <div class="row">
+                                        <div class="col-lg-8 mb-2">
+                                            <div class="form-group">
+                                                <label class="text-label">Nombre del módulo*</label>
+                                                <input type="text" id="modulo" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" value="{{modulo.nombre}}">
+                                                    <input type="hidden" id="idModulo" value="{{modulo.id}}">
+                                                    <input type="hidden" id="lastId" value="{{modulo.lastId}}">
+                                                    <input type="hidden" id="urlInsignia" value="{{modulo.insignia}}">
+                                                    <input type="hidden" id="urlMiniatura" value="{{modulo.miniatura}}">
+                                                    <input type="hidden" id="jsonLecciones" value="{{jsonLecciones}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-4 mb-2">
+                                            <label class="text-label">Insignia del módulo*</label>
+                                            <div class="input-group mb-3">
+                                                <div class="input-group-prepend">
+                                                    <button class="btn color_gradient btn-sm text-white"
+                                                        style="padding: 11px;" type="button">Cargar insignia</button>
+                                                </div>
+                                                <div class="custom-file">
+                                                    <input type="file" class="form-control custom-file-input required"
+                                                        id="insignia" name="file" onchange="fileChange_(event, this)"
+                                                        accept=".jpg, .jpeg, .png, .svg, .psd, .ai, .tiff">
+                                                    <label class="custom-file-label" id="txtInsignia"
+                                                        style="font-size: 13px;padding-top: 15px; border: 0; background: transparent;">Solo archivos .jpg o .png son permitidos</label>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-lg-4 mb-2">
+                                            <div class="form-group">
+                                                <label class="text-label">Nombre de la insignia*</label>
+                                                <input type="text" id="nombre_insignia" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" value="{{modulo.nombre_insignia}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-3 mb-2">
+                                            <div class="form-group">
+                                                <label class="text-label">Curso*</label>
+                                                <select id="categoriaSelectModulo"
+                                                    class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
+                                                    <option value="{{modulo.categoria}}">{{modulo.categoria}}</option>
+                                                    <option value="N/A">Escoge curso...</option>
+                                                    {{#each categorias}}
+                                                    <option value="{{this}}">{{this}}</option>
+                                                    {{/each}}
+                                                </select>
+                                                <input type="hidden" id="categoriaHiddenModulo" name="categoria" value="{{modulo.categoria}}">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-lg-8 mb-2">
+                                            <div class="form-group">
+                                                <h3 style="font-weight: 500;font-size: 17px;color: #000000;">Programa(s)
+                                                    destino*</h3>
+                                                <label class="text-black">Si no seleccionas ningun programa, este módulo
+                                                    solo sera accesible mediante compra</label>
+                                                <div class="form-group">
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            {{#if modulo.id}}
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="1" {{#if programas.p1}}checked{{/if}}>Free Trial
+                                                            {{else}}
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="1" checked>Free Trial
+                                                            {{/if}}
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="2" {{#if programas.p2}}checked{{/if}}>Entrepreneur
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="3" {{#if programas.p3}}checked{{/if}}>Business
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="4" {{#if programas.p4}}checked{{/if}}>Enterprise
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="5" {{#if programas.p5}}checked{{/if}}>Accelerate
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="6" {{#if programas.p6}}checked{{/if}}>Por compra
+                                                        </label>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-4 mb-2">
+                                            <label class="text-label">Thumbnail*</label>
+                                            <div class="drag-area file-thumbnail file-leccion" ondragover="dragOverHandler(event)" ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
+                                                <center>
+                                                    <label for="fileThumbnail" style="cursor: pointer;">
+                                                        <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
+                                                    </label>
+                                                    <!-- Agregamos estilos CSS para posicionar el input fuera del área visible -->
+                                                    <input type="file" name="file" class="fileThumbnail_" id="fileThumbnail" onchange="fileChange_(event, this)" accept=".jpg, .jpeg, .png, .gif, .tiff" style="position: absolute; top: -9999px;">
+                                                </center>
+                                                <h6 class="fw-700 text-black" style="margin-top: -35px;">Escoge o <span style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
+                                            </div>
+                                        </div>
+                                        <div class="col-7 pt-4">
+                                            <div id="divMiniatura">
+                                                <img src="{{modulo.miniatura}}" width="250" alt="Miniatura del módulo">
+                                            </div>
+                                        </div>
+                                        <div id="msgFile-thumbnail" style="margin-left: 10px;"></div>
+                                    </div>
+                                    <br>
+                                </div>
+                                
+                                {{!-- TEMARIO --}}
+                                <div id="temario" class="tab-pane" role="tabpanel"
+                                    style="display: none;margin-left: 10%;">
+                                    <div class="row">
+                                        <div class="col-lg-11">
+                                            <div class="card-body">
+                                                <div id="contenedor-lecciones" class="accordion accordion-danger-solid">
+                                                    {{!-- LECCIÓN 0 --}}
+                                                    <div class="accordion__item">
+                                                        <div class="accordion__header" data-toggle="collapse"
+                                                            data-target="#bordered_collapse_0"
+                                                            style="margin-left: -15px;">
+                                                            <span class="accordion__header--text">{{modulo.leccion0.nombre}}</span>
+                                                            <span class="accordion__header--indicator"></span>
+                                                        </div>
+                                                        <div id="bordered_collapse_0"
+                                                            class="collapse accordion__body show"
+                                                            data-parent="#contenedor-lecciones" style="margin-left: -15px;">
+                                                            <div class="accordion__body--text">
+                                                                <div class="row">
+                                                                    <div class="col-lg-8 mb-2">
+                                                                        <div class="form-group">
+                                                                            <label class="text-label">Nombre de la lección*</label>
+                                                                            <input type="text" id="leccion_0" class="form-control" style="border: 1px solid #DBDBDB;" value="{{#if modulo.leccion0.nombre}}{{modulo.leccion0.nombre}}{{else}}Lección por defecto{{/if}}" onblur="actualizarLeccion(this, {{modulo.leccion0.id}})">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-6 mb-2">
+                                                                        <label class="text-label">Video de la lección*</label>
+                                                                        <div class="drag-area file-videoleccion file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
+                                                                            <center>
+                                                                                <button id="btnvideoleccion"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt="Miniatura"
+                                                                                        style="width: 121px; margin-top: -37px;">
+                                                                                </button>
+                                                                                <input type="file" class="fileVideo_"
+                                                                                    id="video_0"
+                                                                                    onchange="fileChange_(event, event.target)"
+                                                                                    style="display: none;"
+                                                                                    accept=".mov, .mp4, .avi, .mkv">
+                                                                            </center>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span 
+                                                                            style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6 pt-4">
+                                                                        <div id="portada-video_0">
+                                                                            <input type="hidden" id="id-video_0" value="{{modulo.leccion0.id}}">
+                                                                            {{#if modulo.leccion0.video}}
+                                                                            <input type="hidden" id="url-video_0" value="{{modulo.leccion0.video}}">
+                                                                            <video src="{{modulo.leccion0.video}}" width="250" alt="Video Lección 0">
+                                                                            {{else}}
+                                                                            <input type="hidden" id="url-video_0" value="">
+                                                                            <video src="../img/Leccion-por-defecto.mp4" width="250" alt="Video Lección 0"></video>
+                                                                            {{!-- <img src="../img/Leccion-por-defecto.jpg" width="250" alt="Video por defecto"> --}}
+                                                                            {{/if}}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="msgFile-video_0" class="col-12"></div>
+                                                                </div>
+                                                                <br>
+                                                                <!-- Summernote -->
+                                                                <div class="row">
+                                                                    <div class="col-xl-12 col-xxl-12">
+                                                                        <label class="text-label">Descripción de la lección</label>
+                                                                        <div class="summernote-theme-1">
+                                                                            <textarea name="name" class="summernote" id="summernote_0" rows="10">
+                                                                                {{modulo.leccion0.descripcion}}
+                                                                            </textarea>
+                                                                        </div>
+                                                                        <br>
+                                                                        <button onclick="actualizarLeccion(document.getElementById('summernote_0'), {{modulo.leccion0.id}})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
+                                                                    </div>
+                                                                </div>
+                                                                <br>
+                                                                <div class="row" style="display: grid;">
+                                                                    <div class="col-6 mb-2">
+                                                                        <label class="text-label">Material descargable</label>
+                                                                        <div class="drag-area file-material file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
+                                                                            <center>
+                                                                                <button id="btnMaterial"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt="Material"
+                                                                                        style="width: 121px; margin-top: -37px;">
+                                                                                </button>
+                                                                                <input type="file" class="fileMaterial_" id="material_0" onchange="fileChange_(event, event.target)"
+                                                                                    hidden>
+                                                                                <input type="hidden" id="url-material_0" value="{{modulo.leccion0.material}}">
+                                                                                <input type="hidden" id="id-material_0" value="{{modulo.leccion0.id}}">
+                                                                            </center>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span
+                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="msgFile-material_0" class="col-12"></div>
+                                                                </div>
+                                                                <br>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+
+                                                    {{!-- LECCIONES DE LA 1 EN ADELANTE --}}
+                                                    {{#each modulo.lecciones}}
+                                                    <div class="accordion__item">
+                                                        <div class="accordion__header collapsed" data-toggle="collapse"
+                                                            data-target="#bordered_collapse_{{id}}"
+                                                            style="margin-left: -15px;" aria-expanded="false">
+                                                            <span class="accordion__header--text">{{nombre}}</span>
+                                                            <span class="accordion__header--indicator"></span>
+                                                        </div>
+                                                        <div id="bordered_collapse_{{id}}"
+                                                            class="collapse accordion__body"
+                                                            data-parent="#contenedor-lecciones" style="margin-left: -15px;">
+                                                            <div class="accordion__body--text">
+                                                                <div class="row">
+                                                                    <div class="col-lg-8 mb-2">
+                                                                        <div class="form-group">
+                                                                            <label class="text-label">Nombre de la lección*</label>
+                                                                            <input type="text" id="leccion_{{id}}" class="form-control" style="border: 1px solid #DBDBDB;" value="{{nombre}}" onblur="actualizarLeccion(this, {{id}})">
+                                                                        </div>
+                                                                    </div>
+                                                                </div>
+                                                                <div class="row">
+                                                                    <div class="col-6 mb-2">
+                                                                        <label class="text-label">Video de la lección*</label>
+                                                                        <div class="drag-area file-videoleccion file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
+                                                                            <center>
+                                                                                <button id="btnvideoleccion"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt="Miniatura"
+                                                                                        style="width: 121px; margin-top: -37px;">
+                                                                                </button>
+                                                                                <input type="file" class="fileVideo_"
+                                                                                    id="video_{{id}}"
+                                                                                    onchange="fileChange_(event, event.target)"
+                                                                                    style="display: none;"
+                                                                                    accept=".mov, .mp4, .avi, .mkv">
+                                                                            </center>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span 
+                                                                            style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div class="col-6 pt-4">
+                                                                        <div id="portada-video_{{id}}">
+                                                                            <input type="hidden" id="id-video_{{id}}" value="{{id}}">
+                                                                            {{#if video}}
+                                                                            <input type="hidden" id="url-video_{{id}}" value="{{video}}">
+                                                                            <video src="{{video}}" width="250" alt="Video Lección {{id}}">
+                                                                            {{else}}
+                                                                            <input type="hidden" id="url-video_{{id}}" value="">
+                                                                            <video src="../img/Leccion-por-defecto.mp4" width="250" alt="Video por defecto {{id}}">
+                                                                            {{/if}}
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="msgFile-video_{{id}}" class="col-12"></div>
+                                                                </div>
+                                                                <br>
+                                                                <!-- Summernote -->
+                                                                <div class="row">
+                                                                    <div class="col-xl-12 col-xxl-12">
+                                                                        <label class="text-label">Descripción de la lección</label>
+                                                                        <div class="summernote-theme-1">
+                                                                            <textarea name="name" class="summernote" id="summernote_{{id}}" rows="10">{{descripcion}}</textarea>
+                                                                        </div>
+                                                                        <br>
+                                                                        <button onclick="actualizarLeccion(document.getElementById('summernote_{{id}}'), {{id}})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
+                                                                    </div>
+                                                                </div>
+                                                                <br>
+                                                                <div class="row" style="display: grid;">
+                                                                    <div class="col-6 mb-2">
+                                                                        <label class="text-label">Material descargable</label>
+                                                                        <div class="drag-area file-material file-leccion"
+                                                                            ondragover="dragOverHandler(event)"
+                                                                            ondragleave="dragLeaveHandler(event)"
+                                                                            ondrop="dropHandler(event)">
+                                                                            <center>
+                                                                                <button id="btnMaterial"
+                                                                                    onclick="btnFile_(event, this.parentNode)"
+                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                                                    <img src="../img/thumbnail.svg"
+                                                                                        alt="Material"
+                                                                                        style="width: 121px; margin-top: -37px;">
+                                                                                </button>
+                                                                                <input type="file" class="fileMaterial_" id="material_{{id}}" onchange="fileChange_(event, event.target)"
+                                                                                    hidden>
+                                                                                <input type="hidden" id="url-material_{{id}}" value="{{material}}">
+                                                                                <input type="hidden" id="id-material_{{id}}" value="{{id}}">
+                                                                            </center>
+                                                                            <h6 class="fw-700 text-black">Escoge o <span
+                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
+                                                                        </div>
+                                                                    </div>
+                                                                    <div id="msgFile-material_{{id}}" class="col-12"></div>
+                                                                </div>
+                                                                <br>
+                                                                <button class="btn btn-danger text-white" style="border-radius: 7px; padding: 6px 30px;" type="button" onclick="eliminarLeccion({{id}})">Eliminar</button>
+                                                            </div>
+                                                        </div>
+                                                    </div>
+                                                    {{/each}}
+
+                                                </div>
+
+                                                 <br>
+                                                <!-- Contenedor para las lecciones -->
+                                                <div id="lessonsContainer"></div>
+                                                {{!-- Boton para add nuevas lecciones --}}
+                                                <button id="addLessonBtn" class="btn color_tertiary text-black"
+                                                    style="border-radius: 7px; border: 1px solid white;border-radius: 7px; margin-left: -23px;border: 1px solid white; padding: 6px 30px;"
+                                                    type="button"><i class="fa fa-plus"></i> Nueva lección</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {{!-- Guardar --}}
+                                <div id="guardar" class="tab-pane" role="tabpanel"
+                                    style="display: none;margin-left: 10%;">
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <h4 class="text-black">Estado</h4>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-2">
+                                            <div class="d-flex align-items-center"><i
+                                                    class="fa fa-circle text-danger mr-1"></i>Borrador</div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-14">
+                                            <div style="margin-left: 15px;" id="resultado"></div>
+                                        </div>
+                                    </div>
+                                    <br>
+                                </div>
+                            </div>
+                            {{!-- BOTONES --}}
+                            <div class="toolbar toolbar-bottom btn-group btn-group-sm" role="toolbar"
+                                style="text-align: right; margin-left: 10%;">
+                                <button onclick="actualizarDatos()" class="btn btn-primary sw-btn-actualizar"
+                                    style="display: none;border-radius: 7px;" type="button">Guardar y continuar</button>
+
+                                <button class="btn btn-primary sw-btn-prev" style="display: none; border-radius: 7px;"
+                                    type="button">Anterior</button>
+
+                                <button onclick="guardarDatosForm({{modulo.id}})" id="btnSgte" class="btn btn-primary sw-btn-next"
+                                    style="display: none;border-radius: 7px;" type="button">Guardar y continuar</button>
+
+                                <button onclick="actualizarModulo(0, '{{#if modulo.id}}{{modulo.id}}{{/if}}')" class="btn color_secondary sw-btn-guardar text-white"
+                                    style="display: none;border-radius: 7px; border: 1px solid white;"
+                                    type="button">Guardar</button>
+
+                                <button onclick="actualizarModulo(1, '{{#if modulo.id}}{{modulo.id}}{{/if}}')" class="btn color_tertiary sw-btn-submit text-black"
+                                    style="display: none;border-radius: 7px; border: 1px solid white;"
+                                    type="button">Publicar</button>
+                            </div>
+                            
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script>
+
+    let lessonCounter = 1, lecciones_temp = [], idModulo = false;
+
+    document.addEventListener("DOMContentLoaded", async function () {
+        idModulo = document.getElementById("idModulo");
+        if (idModulo) {
+            lessonCounter = document.getElementById("lastId").value
+            idModulo = idModulo.value;
+            const urlInsignia = document.getElementById("urlInsignia").value;
+            const urlMiniatura = document.getElementById("urlMiniatura").value;
+            // Buscar el patrón de una fecha UNIX seguida por un guión bajo
+            const regex = /\/leccion_\d+_([^/]+)/;
+            // Ejecutar la expresión regular en la cadena
+            let nombre = urlInsignia.match(regex)[1];
+            $('#txtInsignia').text(nombre)
+            nombre = urlMiniatura.match(regex)[1];
+            $('#msgFile-thumbnail').html(`<span class="text-black">${nombre}</span>`)
+
+            //Lecciones
+            lecciones_temp = JSON.parse(document.getElementById("jsonLecciones").value)
+            console.log("lecciones_temp => ", lecciones_temp)
+            if (lecciones_temp[0].video) {
+                const nomVideo = lecciones_temp[0].video.match(regex)[1];
+                $(`#msgFile-video_0`).html(`
+                    <span class="text-black">${nomVideo}</span>
+                `)
+                const nomMaterial = lecciones_temp[0].material;
+                if (nomMaterial != 'Sin material'){
+                    $(`#msgFile-material_0`).html(`
+                        <span class="text-black">${nomMaterial.match(regex)[1]}</span>
+                    `)  
+                }
+            }
+
+            if (lecciones_temp.length > 1) {
+                const newArray = lecciones_temp.slice(1);
+                newArray.forEach(x => {
+                    if (x.video) {
+                        const nombre = x.video.match(regex)[1];
+                        $(`#msgFile-video_${x.id}`).html(`
+                            <span class="text-black">${nombre}</span>
+                        `)
+                    }
+                    if (x.material != 'Sin material') {
+                        const nombre = x.material.match(regex)[1];
+                        $(`#msgFile-material_${x.id}`).html(`
+                            <span class="text-black">${nombre}</span>
+                        `)
+                    }
+                })
+            }
+        }
+
+        const leccionInput = document.getElementById("leccion_0");
+        const accordionHeader = document.querySelector(".accordion__header--text");
+
+        // Agregar evento blur al campo de entrada
+        leccionInput.addEventListener("keyup", function () {
+            const nuevoNombreLeccion = leccionInput.value;
+            accordionHeader.textContent = nuevoNombreLeccion !== "" ? nuevoNombreLeccion : "Lección 0";
+        });
+
+        const lessonsContainer = document.getElementById("contenedor-lecciones");
+        // Función para crear el HTML de una nueva lección
+        const createLessonHTML = () => {
+            const lessonHTML = `
+                <div class="accordion__item">
+                    <div class="accordion__header" data-toggle="collapse" data-target="#bordered_collapse_${lessonCounter}"
+                        style="margin-left: -15px;">
+                        <span class="accordion__header--text">Lección por defecto ${lessonCounter}</span>
+                        <span class="accordion__header--indicator"></span>
+                    </div>
+                    <div id="bordered_collapse_${lessonCounter}" class="collapse accordion__body show"
+                        data-parent="#contenedor-lecciones" style="margin-left: -15px;">
+                        <div class="accordion__body--text">
+                            <!-- Contenido de la nueva lección -->
+                            <div class="row">
+                                <div class="col-lg-8 mb-2">
+                                    <div class="form-group">
+                                        <label class="text-label">Nombre de la lección*</label>
+                                        <input type="hidden" id="ide-leccion_${lessonCounter}" value="">
+                                        <input type="text" id="leccion_${lessonCounter}" class="form-control"
+                                            style="border: 1px solid #DBDBDB;" value="Lección por defecto ${lessonCounter}" onblur="actualizarLeccion(this, ${lessonCounter})">
+                                    </div>
+                                </div>
+                            </div>
+                            <!-- --- -->
+                            <div class="row" id="divRow-${lessonCounter}">
+                                <div class="col-6">
+                                    <label class="text-label">Video de la lección*</label>
+                                    <div class="drag-area file-videoleccion file-leccion" ondragover="dragOverHandler(event)"
+                                        ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
+                                        <center>
+                                            <button id="btnvideoleccion_${lessonCounter}" onclick="btnFile_(event, this.parentNode)"
+                                                style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
+                                            </button>
+                                            <input type="file" class="fileVideo_" id="video_${lessonCounter}"
+                                                onchange="fileChange_(event, event.target)" hidden>
+                                        </center>
+                                        <h6 class="fw-700 text-black">Escoge o <span
+                                                style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
+                                    </div>
+                                    <div id="msgFile-video_${lessonCounter}" class="col-12"></div>
+                                </div>
+                                <div class="col-6 pt-4">
+                                    <div id="portada-video_${lessonCounter}">
+                                        <input type="hidden" id="id-video_${lessonCounter}" value="${lessonCounter}">
+                                        <input type="hidden" id="url-video_${lessonCounter}" value="">
+                                        <video src="../img/Leccion-por-defecto.mp4" width="250" alt="Video Lección ${lessonCounter}"></video>
+                                    </div>
+                                </div>
+                            </div>
+                            <br>
+                            <!-- --- -->
+                            <!-- Summernote -->
+                            <div class="row">
+                                <div class="col-xl-12 col-xxl-12">
+                                    <label class="text-label">Descripción de la lección</label>
+                                    <div class="summernote-theme-1">
+                                        <textarea name="name" class="summernote" id="summernote_${lessonCounter}" rows="10"></textarea>
+                                    </div>
+                                    <br>
+                                    <button onclick="actualizarLeccion(document.getElementById('summernote_${lessonCounter}'), ${lessonCounter})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
+                                </div>
+                            </div>
+                            <!-- --- -->
+                            <br>
+                            <div class="row" style="display: grid;">
+                                <div class="col-6">
+                                    <label class="text-label">Material descargable</label>
+                                    <div class="drag-area file-material file-leccion" ondragover="dragOverHandler(event)"
+                                        ondragleave="dragLeaveHandler(event)" ondrop="dropHandler(event)">
+                                        <center>
+                                            <button id="btnMaterial_${lessonCounter}" onclick="btnFile_(event, this.parentNode)"
+                                                style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
+                                                <img src="../img/thumbnail.svg" alt="" style="width: 121px; margin-top: -37px;">
+                                            </button>
+                                            <input type="file" class="fileMaterial_" id="material_${lessonCounter}"
+                                                onchange="fileChange_(event, event.target)" hidden>
+                                        </center>
+                                        <h6 class="fw-700 text-black">Escoge o <span
+                                                style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
+                                    </div>
+                                </div>
+                                <div id="msgFile-material_${lessonCounter}" class="col-12"></div>
+                            </div>
+                            <br>
+                            <br>
+                            <button id="addLessonBtn" class="btn btn-danger text-white" style="border-radius: 7px; padding: 6px 30px;"
+                                type="button" onclick="deleteLesson(${lessonCounter})">Eliminar</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return lessonHTML;
+        };
+
+        const handleAddLesson = () => {
+            agregarLeccionDB(lessonCounter, $('#idModulo').val());
+            const lessonHTML = createLessonHTML();
+            lessonsContainer.insertAdjacentHTML("beforeend", lessonHTML);
+
+            // Encuentra el elemento de texto Summernote utilizando el ID generado dinámicamente
+            const newSummernoteElement = document.getElementById(
+                `summernote_${lessonCounter}`
+            );
+
+            // Inicializa Summernote para el nuevo elemento
+            $(newSummernoteElement).summernote({
+                height: 190,
+                minHeight: null,
+                maxHeight: null,
+                focus: false,
+            });
+            lessonCounter++;
+        };
+
+        const updateAccordionHeaderText = (lessonIndex, text) => {
+            const accordionHeader = lessonsContainer.querySelector(`.accordion__header[data-target="#bordered_collapse_${lessonIndex}"] .accordion__header--text`);
+            accordionHeader.textContent = text;
+        };
+
+        lessonsContainer.addEventListener("input", function (event) {
+            const inputElement = event.target;
+            if (inputElement.matches('[id^="leccion_"]')) {
+                const lessonIndex = inputElement.id.split("_")[1];
+                let newHeaderText = `Lección ${lessonIndex}`;
+                if (inputElement.value !== "") { newHeaderText = inputElement.value }
+                updateAccordionHeaderText(lessonIndex, newHeaderText);
+            }
+        });
+
+        lessonsContainer.addEventListener("keyup", function (event) {
+            const inputElement = event.target;
+            if (inputElement.matches('[id^="leccion_"]')) {
+                const lessonIndex = inputElement.id.split("_")[1];
+                const newHeaderText = inputElement.value !== "" ? inputElement.value : `Lección ${lessonIndex}`;
+                updateAccordionHeaderText(lessonIndex, newHeaderText);
+            }
+        });
+
+        const addLessonBtn = document.getElementById("addLessonBtn");
+        addLessonBtn.addEventListener("click", handleAddLesson);
+    });
+
+    
+    function dragOverHandler(event) {
+        event.preventDefault(); // previene el comportamiento por defecto del evento
+        event.currentTarget.classList.add("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está agregando la clase al div correcto
+        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        h6.textContent = "Suelta para subir el archivo";
+    }
+
+    function dragLeaveHandler(event) {
+        event.preventDefault(); // previene el comportamiento por defecto del evento
+        event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
+        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        h6.textContent = "Arrastra y suelta el archivo";
+    }
+
+    function dropHandler(event) {
+        event.preventDefault(); // previene el comportamiento por defecto del evento
+        event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
+        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        h6.textContent = "Arrastra y suelta el archivo";
+        const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        input.files = event.dataTransfer.files
+        console.log("usando dropArea, input: " + input);
+        cargarArchivo(input.files[0], input.className, input.id);
+    }
+
+    function btnFile_(event, div) {
+        event.preventDefault();
+        const input = div.querySelector("input");
+        input.click();
+    }
+
+    function fileChange_(event, input) {
+        console.log("ID INPUT:: ", input.id);
+        console.log("Usando input, clase: " + input.className);
+        cargarArchivo(input.files[0], input.className, input.id);
+    }
+
+    async function cargarArchivo(file, clase, id) {
+        // Si el div para el archivo es el de Video
+        if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_' || id == 'insignia') && (file && file.size >= (20 * 1024 * 1024))) {
+            toastError("El archivo no puede superar los 20MB.")
+        } else {
+            const ext = file.name.split(".").pop().toLowerCase();
+            let fileOk = true, id_Msg = 'msgFile-' + id, currentURL = null, inpurURL = null, img_insignia = false;
+            let tabla = 'lecciones', columna = null, ide = document.getElementById("idModulo").value;
+            // Validando el tipo de archivo
+            if (clase == 'fileThumbnail_') {
+                const extensiones = ["jpg", "jpeg", "png", "svg", "psd", "ai", "tiff"];
+                id_Msg = 'msgFile-thumbnail'
+                currentURL = document.getElementById("urlMiniatura").value;
+                tabla = 'modulos';
+                columna = 'miniatura';
+                // Si el archivo no es una imagen
+                if (!extensiones.includes(ext)) {
+                    fileOk = false;
+                    toastError("Solo se admiten imagenes, intentelo nuevamente.")
+                } else {
+                    const miniatura = new Image();
+                    miniatura.src = URL.createObjectURL(file);
+                    miniatura.style.width = "250px";
+
+                    const divMiniatura = document.getElementById("divMiniatura");
+                    const img = divMiniatura.querySelector("img");
+                    // Eliminar la imagen existente
+                    if (img) { img.remove(); }
+
+                    // Agregar el video al div
+                    divMiniatura.appendChild(miniatura);
+                }
+            } else if (id == 'insignia') {
+                const extensiones = ["jpg", "jpeg", "png", "svg", "psd", "ai", "tiff"];
+                // Si el archivo no es una imagen
+                if (!extensiones.includes(ext)) {
+                    fileOk = false;
+                    toastError("Solo se admiten imagenes, intentelo nuevamente.")
+                } else {
+                    currentURL = document.getElementById("urlInsignia").value;
+                    img_insignia = true;
+                    tabla = 'modulos';
+                    columna = 'insignia';
+                }
+            } else if (clase == 'fileVideo_') {
+                const extensiones = ['mov', 'mp4', 'avi', 'mkv']
+                // Si el archivo no es video
+                if (!extensiones.includes(ext)) {
+                    fileOk = false;
+                    toastError("Solo se admiten videos, intentelo nuevamente.")
+                } else {
+                    const video = document.createElement("video");
+                    video.src = URL.createObjectURL(file);
+                    video.style.width = "250px";
+
+                    const divPortada = document.getElementById("portada-"+id);
+                    const img = divPortada.querySelector("img");
+
+                    // Eliminar la imagen existente
+                    if (img) {
+                        img.remove();
+                    }
+
+                    if (divPortada.querySelector("video")) {
+                        divPortada.querySelector("video").remove();
+                    }
+                    // Agregar el video al div
+                    divPortada.appendChild(video);
+                    
+                    // Capturar URL Actual del video
+                    currentURL = divPortada.querySelector("input").value
+                    columna = 'video';
+                    ide = divPortada.querySelector("#id-"+id).value;
+                }
+            } else if (clase == 'fileMaterial_') {
+                currentURL = document.getElementById("url-"+id).value;
+                columna = 'material';
+                ide = document.querySelector("#id-"+id).value;
+            }
+            
+            if (fileOk) {
+                const formData = new FormData();
+                formData.append(clase, file);
+                formData.append('currentURL', currentURL);
+                formData.append('tabla', tabla);
+                formData.append('columna', columna);
+                formData.append('id', ide);
+                if (clase == 'fileVideo_') {
+                    const duracionVideo = await cargarLaDuracion(file);
+                    formData.append('duracion', duracionVideo);
+                }
+
+                try {
+                    fetch('/subir-archivos', {
+                        method: 'POST',
+                        body: formData,
+                    })
+                        .then(response => response.json()) // Parsear la respuesta JSON
+                        .then(r => {
+                            if (r) {
+                                const fileReader = new FileReader();
+                                fileReader.addEventListener("load", async () => {
+                                    if (img_insignia) {
+                                        document.getElementById("urlInsignia").value = r;
+                                        const regex = /\/leccion_\d+_([^/]+)/;
+                                        // Ejecutar la expresión regular en la cadena
+                                        let nombre = r.match(regex)[1];
+                                        $('#txtInsignia').text(nombre)
+                                    } else {
+                                        $('#'+id_Msg).html(`
+                                            <span class="text-black">${file.name}</span><br>
+                                            <span class="success">Archivo actualizado exitosamente.</span>
+                                        `);
+                                    }
+                                })
+                                fileReader.readAsDataURL(file);
+                                console.log("Respuesta: ", r)
+                                if (columna == 'miniatura') {
+                                    document.getElementById("urlMiniatura").value = r;
+                                }
+                            } else {
+                                Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
+                            }
+                        })
+                        .catch(error => {
+                            console.error('Error al recibir la respuesta:', error);
+                        });
+                } catch (error) {
+                    // Código que se ejecuta en caso de error
+                    console.log('Ha ocurrido un error:', error.message);
+                    toastError("Ocurrio algo inesperado al subir el archivo")
+                }
+            }
+        }
+    }
+
+    function toastError(msg) {
+        return toastr.warning(msg, "Error", {
+            positionClass: "toast-top-full-width",
+            timeOut: 5000,
+            closeButton: true,
+            debug: false,
+            newestOnTop: true,
+            progressBar: true,
+            preventDuplicates: true,
+            onclick: null,
+            showDuration: "500",
+            hideDuration: "200",
+            extendedTimeOut: "400",
+            showEasing: "swing",
+            hideEasing: "linear",
+            showMethod: "fadeIn",
+            hideMethod: "fadeOut",
+            tapToDismiss: false,
+        });
+    }
+
+    const deleteLesson = (lessonNumber) => {
+        lecciones_temp = lecciones_temp.filter((leccion) => leccion.id !== lessonNumber);
+        console.log("lecciones_final ==> ", lecciones_temp)
+        const lessonElement = document.getElementById(`bordered_collapse_${lessonNumber}`).parentNode;
+        lessonElement.remove();
+        eliminarLeccionDB(lessonNumber)
+    };
+
+    const eliminarLeccion = (id) => {
+        lecciones_temp = lecciones_temp.filter((leccion) => leccion.id !== id);
+        console.log("lecciones_final ==> ", lecciones_temp)
+        const lessonElement = document.getElementById(`bordered_collapse_${id}`).parentNode;
+        lessonElement.remove();
+        eliminarLeccionDB(id)
+    };
+   
+    // Guardar Datos y Previsualizar al final
+    function guardarDatosForm(id_modulo) {
+        const modulo = $("#modulo").val();
+        const miniatura = $('#urlMiniatura').val();
+        const programa = $(".programa:checked").map(function () {
+            return $(this).val();
+        }).get();
+
+        const programNames = {
+            "1": "Free Trial",
+            "2": "Entrepreneur",
+            "3": "Business",
+            "4": "Enterprise",
+            "5": "Accelerate",
+            "6": "Por compra",
+        };
+
+        let htmlContent = '';
+        for (const [number, program] of Object.entries(programNames)) {
+            if (programa.includes(number)) {
+                htmlContent += `<div style="display: inline-block;"><h6 class="mb-1">${program} </h6></div>`;
+                if (programa.indexOf(number) < programa.length - 1) {
+                    htmlContent += ', '; // Agregar coma si hay más programas después
+                }
+            }
+        }
+
+        let contenido = `<br>
+        <div class="row">
+            <div class="col-6"><h4 class="text-black">Módulo</h4>
+            ${modulo}<br><br>
+            <h4 class="text-black">Programa</h4>
+            ${htmlContent}
+            </div>
+            <div class="col-6" style=" margin-top: -65px;">
+                <h4 class="text-black" style="text-align: center;">Thumbnail</h4>
+                <img src="${miniatura}" alt="Miniatura" style="margin-left: 33%;width: 276px;">
+            </div>
+        </div>
+        <br>
+        <div class="table-responsive">
+            <h4 class="text-black">Lecciones</h4>
+            <table class="table table-hover table-responsive-sm">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>VIDEO</th>
+                        <th>LECCIÓN</th>
+                        <th>DESCARGABLES</th>
+                        <th>DURACIÓN</th>
+                    </tr>
+                </thead>
+                <tbody>
+        `;
+
+        console.log("ID_MODULO:: ", id_modulo)
+        const regex = /\/leccion_\d+_([^/]+)/;
+        
+        fetch('/consultar-lecciones', {
+            method: 'POST',
+            body: JSON.stringify({id_modulo}),
+            headers: {'Content-Type': 'application/json'}
+        })
+        .then(response => response.json()) // Parsear la respuesta JSON
+        .then(data => {
+            console.log("Todo ok desde el controlador")
+            console.log(data)
+            data.forEach((leccion, index) => {
+                const portada = leccion.video ? leccion.video : '../img/Leccion-por-defecto.mp4';
+                if (leccion.material != null) {
+                    leccion.material = leccion.material.match(regex)[1];
+                } else {
+                    leccion.material = 'Sin material';
+                }
+                contenido += `
+                    <tr>
+                        <td>${index + 1}</td>
+                        <td><video src="${portada}" width="162px" alt="Video por defecto"></td>
+                        <td>${leccion.nombre}</td>
+                        <td>${leccion.material}</td>
+                        <td>${leccion.duracion}</td>
+                    </tr>
+                `;
+            });
+
+            contenido += `
+                    </tbody>
+                </table>
+            </div>
+            `;
+
+            // Obtener el elemento div donde mostraremos los datos
+            let divResultado = document.getElementById("resultado");
+            divResultado.innerHTML = contenido;
+        })
+        .catch(error => {
+            console.error('Error al recibir la respuesta:', error);
+        });
+
+    }
+
+    // Obtener la duración del video subido 
+    function formatTime(duracionTotal) {
+        // Redondear la duración a un número entero
+        duracionTotal = (Math.round(duracionTotal)).toFixed(0);
+
+        // Calcular los minutos y segundos
+        let minutos = Math.floor(duracionTotal / 60);
+        const segundos = duracionTotal % 60;
+        // Calcular las horas, minutos y segundos
+        const horas = Math.floor(minutos / 60);
+        minutos = minutos % 60;
+
+        //console.log('Duración del video:', horas, 'horas', minutos, 'minutos', segundos, 'segundos');
+        let duracionVideo = ''
+        if (horas > 0) duracionVideo = horas + ' horas ';
+        if (minutos > 0) duracionVideo += minutos + ' minutos ';
+        if (segundos > 0) duracionVideo += segundos + ' segundos ';
+        return duracionVideo;
+    }
+
+    // Cargar la duración del video subido
+    function cargarLaDuracion(video) {
+        return new Promise((resolve, reject) => {
+            if (!video) {
+                resolve('Sin video');
+                return;
+            }
+
+            // Crear un objeto URL para el archivo seleccionado
+            let objectURL = URL.createObjectURL(video);
+
+            // Crear un elemento de video para obtener la duración
+            const videoElement = document.createElement('video');
+
+            // Escuchar el evento 'loadedmetadata' para obtener la duración una vez que los metadatos se hayan cargado
+            videoElement.addEventListener('loadedmetadata', function () {
+                // Duración del video en segundos
+                const durationInSeconds = videoElement.duration;
+
+                // Formatear la duración en el formato HH:mm:ss
+                const formattedDuration = formatTime(durationInSeconds);
+
+                // Liberar el objeto URL utilizado para el video una vez que ya no se necesite
+                URL.revokeObjectURL(objectURL);
+
+                resolve(formattedDuration);
+            });
+
+            // Establecer la fuente del video con el objeto URL creado
+            videoElement.src = objectURL;
+        });
+    }
+
+    async function actualizar_estadoModulo(estado, idModulo = false) {
+        let msg = '¿Quieres guardar este módulo como un borrador?'
+        if (estado == 1) msg = '¿Estás seguro que deseas publicar este módulo?'
+        const modulo = $("#modulo").val();
+        const insigniaInput = document.getElementById("insignia");
+        const insignia = insigniaInput.files[0];
+        const categoria = $("#categoriaHiddenModulo").val();
+        const nombre_insignia = $("#nombre_insignia").val();
+        const programa = $(".programa:checked").map(function () {
+            return $(this).val();
+        }).get();
+        const thumbnailInput = document.getElementById("fileThumbnail")
+        const miniatura = thumbnailInput.files[0];
+        Swal.fire({
+            title: msg,
+            showCancelButton: true,
+            confirmButtonText: 'Confirmar',
+        }).then((result) => {
+            /* Read more about isConfirmed, isDenied below */
+            if (result.isConfirmed) {
+                const formData = new FormData();
+                formData.append('lecciones_size', lecciones_temp.length);
+                formData.append('nombre', modulo);
+                formData.append('insignia', insignia);
+                formData.append('nombre_insignia', nombre_insignia);
+                formData.append('categoria', categoria);
+                // Iterar sobre cada valor del array programa y agregarlo individualmente
+                programa.forEach(valor => {
+                    formData.append('programa[]', valor);
+                });
+                formData.append('miniatura', miniatura);
+                formData.append('estado', estado);
+                formData.append('idModulo', idModulo);
+
+                for (let i = 0; i < lecciones_temp.length; i++) {
+                    const leccion = lecciones_temp[i];
+                    formData.append(`nombre_${i}`, leccion.nombre);
+                    formData.append(`video_${i}`, leccion.video);
+                    formData.append(`duracion_${i}`, leccion.duracion);
+                    formData.append(`descripcion_${i}`, leccion.descripcion);
+                    formData.append(`material_${i}`, leccion.material);
+                }
+
+                fetch('/guardar-modulo', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'enctype': 'multipart/form-data' }
+                })
+                    .then(response => response.json()) // Parsear la respuesta JSON
+                    .then(response => {
+                        if (response)
+                            location.href = '/ver-modulos'
+                        else
+                            Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
+                    })
+                    .catch(error => {
+                        // Manejo del error
+                        console.log("Error ==> ", error)
+                    });
+            }
+        })
+
+    }
+
+    function actualizarDatos() {
+        const idModulo = $('#idModulo').val()
+        const modulo = $("#modulo").val();
+        const insigniaInput = document.getElementById("insignia");
+        let insignia = $('#urlInsignia').val();
+        if (insigniaInput.files && insigniaInput.files[0]) { insignia = insigniaInput.files[0] }
+        const nombre_insignia = $("#nombre_insignia").val();
+        const categoria = $("#categoriaHiddenModulo").val();
+        const programa = $(".programa:checked").map(function () {
+            return $(this).val();
+        }).get();
+        const miniatura = $('#urlMiniatura').val()
+
+        if (modulo == '' || (!insignia || insignia == '') || nombre_insignia == '' || categoria == '' || programa.length === 0 || miniatura == '') {
+            Swal.fire('Error!', 'Hay campos vacíos en la configuración del módulo.', 'info')
+        } else {
+            const infoData_ = {
+            idModulo,
+            nombre: modulo,
+            insignia,
+            nombre_insignia,
+            categoria,
+            programa,
+        };
+
+        console.log("infoData_: ", infoData_)
+        
+        fetch('/actualizar-modulo', {
+            method: 'POST',
+            body: JSON.stringify(infoData_),
+            headers: {'Content-Type': 'application/json'}
+        })
+            .then(response => {
+                // Aquí puedes verificar si la solicitud fue exitosa
+                 if (response.ok) {
+                    console.log('Solicitud exitosa. Código de respuesta:', response.status);
+                    return response.json(); // Si se espera una respuesta JSON
+                } else {
+                    console.error('Error en la solicitud. Código de respuesta:', response.status);
+                    throw new Error('La solicitud no se envió correctamente. Por favor, inténtalo nuevamente.');
+                }
+            }) // Parsear la respuesta JSON
+            .then(data => {
+                console.log('Datos recibidos:', data);
+                if (data.ok) {
+                    console.log("Datos guardados exitosamente.!")
+                    $("#btnSgte").trigger("click");
+                } else {
+                    Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
+                }
+
+            })
+            .catch(error => {
+                console.log("Error ==> ", error)
+            });
+        }
+    }
+
+    function actualizarLeccion(elemento, id) {
+        console.log("elemento: ", elemento)
+        const data = { id }
+        if ($('#ide-leccion_'+id).val()) {
+            data.id = $('#ide-leccion_'+id).val()
+        }
+        if (elemento.id.includes('leccion_')) {
+            //console.log(`Se actualizó el input con ID ${elemento.id}, nuevo valor: ${elemento.value}, lección_id => ${id}`);
+            data.nombre = elemento.value;
+        } else if (elemento.id.includes('summernote_')) {
+            ///console.log(`Se actualizó el textarea con ID ${elemento.id}, nuevo valor: ${elemento.value}, lección_id => ${id}`);
+            data.descripcion = elemento.value;
+        }
+
+        fetch('/actualizar-leccion', {
+            method: 'POST',
+            body: JSON.stringify(data),
+            headers: {'Content-Type': 'application/json'}
+        })
+            .then(response => response.json()) // Parsear la respuesta JSON
+            .then(r => {
+                if (r) {
+                   console.log(`Se actualizó el nombre o descripción con ID ${elemento.id}, nuevo valor: ${elemento.value}, lección_id => ${id}`);
+                } else {
+                    Swal.fire('Error!', 'Error al editar la lección, intenta más tarde.', 'error')
+                }
+            })
+            .catch(error => {
+                console.error('Error al recibir la respuesta:', error);
+            });
+    }
+
+    function agregarLeccionDB(i, id_modulo) {
+        fetch('/agregar-leccion', {
+            method: 'POST',
+            body: JSON.stringify({i, id_modulo}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => response.json()) // Parsear la respuesta JSON
+            .then(data => {
+                console.log("Se agregó correctamente una nueva lección al módulo de id: ", id_modulo);
+                $('#ide-leccion_'+lessonCounter).val(data)
+            })
+            .catch(error => { console.error('Error al recibir la respuesta:', error) });
+    }
+
+    function eliminarLeccionDB(id) {
+        fetch('/eliminar-leccion', {
+            method: 'POST',
+            body: JSON.stringify({id}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => response.json()) // Parsear la respuesta JSON
+            .then(data => { console.log("Se eliminó correctamente la lección al módulo") })
+            .catch(error => { console.error('Error al recibir la respuesta:', error) });
+    }
+
+</script>

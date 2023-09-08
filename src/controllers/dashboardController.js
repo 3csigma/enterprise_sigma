@@ -4,15 +4,8 @@ const passport = require("passport");
 const multer = require("multer");
 const path = require("path");
 const helpers = require("../lib/helpers");
-const {
-  sendEmail,
-  consultorAsignadoHTML,
-  consultorAprobadoHTML,
-  informesHTML,
-  etapaFinalizadaHTML,
-  consultor_AsignadoEtapa,
-  archivosPlanEmpresarialHTML,
-} = require("../lib/mail.config");
+const fs = require('fs-extra');
+const { sendEmail, consultorAsignadoHTML, consultorAprobadoHTML, informesHTML, etapaFinalizadaHTML, consultor_AsignadoEtapa, archivosPlanEmpresarialHTML } = require("../lib/mail.config");
 const stripe = require("stripe")(process.env.CLIENT_SECRET_STRIPE);
 const { getResponseChatGPT, checkGPT3Connectivity } = require("../lib/openai");
 
@@ -3931,16 +3924,13 @@ dashboardController.verModulos = async (req, res) => {
   });
 };
 
-dashboardController.crearModulos = async (req, res) => {
-   res.render('admin/crearModulos', { adminDash: true, formModulos:true, itemActivo: 5 })
+dashboardController.crearModulo = async (req, res) => {
+   res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5 })
 }
 
-dashboardController.addModulos = async (req, res) => {
-  // Guardar el módulo y obtener su ID
+dashboardController.guardarModulo = async (req, res) => {
   console.log("Agregando módulo.....");
-  const { nombre, nombre_insignia, categoria, programa, lecciones_size } = req.body;
-  let estado = req.body.estado;
-  estado == 1 ? estado : (estado = 0);
+  const { nombre, nombre_insignia, categoria, programa, lecciones_size, estado } = req.body;
   const programaArray = Array.isArray(programa) ? programa : [programa];
   // Convertir el array programaArray a formato JSON
   const programaJSON = JSON.stringify(programaArray);
@@ -3966,22 +3956,25 @@ dashboardController.addModulos = async (req, res) => {
     });
   }
 
-  const { insertId } = await helpers.insertarDatos("modulos", moduloData);
+  const { insertId } = (await helpers.insertarDatos("modulos", moduloData));
 
   //Guardar las lecciones asociadas al módulo
   console.log("Agregando lecciones.....");
   for (let i = 0; i < lecciones_size; i++) {
-    const nombreLeccion = req.body[`nombre_${i}`];
+    const nombre = req.body[`nombre_${i}`];
     const descripcion = req.body[`descripcion_${i}`];
+    const duracion = req.body[`duracion_${i}`];
     const leccionData = {
       id_modulo: insertId,
-      nombre: nombreLeccion,
-      descripcion: descripcion,
+      nombre,
+      duracion,
+      descripcion,
     };
     const archivos = req.files.filter((file) => file.fieldname.includes(i));
     if (archivos) {
       archivos.forEach((vm) => {
         const campo = vm.fieldname;
+        console.log("campo ==> ", campo)
         if (campo.startsWith("video")) {
           leccionData.video = `../data_modulo/${vm.filename}`;
         } else if (campo.startsWith("material")) {
@@ -3993,6 +3986,7 @@ dashboardController.addModulos = async (req, res) => {
     console.log("Data LECCIONES ==> " + i);
     console.log(leccionData);
     console.log("******************************");
+
     await helpers.insertarDatos("lecciones", leccionData);
   }
   insertId ? res.send(true) : res.send(false);
@@ -4013,29 +4007,177 @@ dashboardController.updateCategory = async (req, res) => {
 
 dashboardController.infoModulo = async (req, res) => {
     let { id } = req.params;
-  id = helpers.desencriptarTxt(id); 
-  console.log("ID DESENCRIPTADO ==> ");
-  console.log(id);
-  if (!id) {
-    res.redirect('/ver-modulos');
-  } else {
-    const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
-    const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
-    modulo.lecciones = null;
-    
-    if (lecciones.length > 0) {
-      modulo.lecciones = lecciones.map((leccion, index) => {
-        leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
-        return leccion;
+    id = helpers.desencriptarTxt(id); 
+    console.log("ID DESENCRIPTADO ==> ");
+    console.log(id);
+    if (!id) {
+        res.redirect('/ver-modulos');
+    } else {
+        const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
+        const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
+        modulo.lecciones = null;
+
+        if (lecciones.length > 0) {
+            modulo.lecciones = lecciones.map((leccion, index) => {
+            leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
+            return leccion;
+            });
+        }
+
+        console.log("Info modulo: ");
+        console.log(modulo);
+
+        res.render("empresa/modulo", {
+            adminDash: true, itemActivo: 5,
+            modulo, lecciones: JSON.stringify(modulo.lecciones)
+        });
+    }
+}
+
+dashboardController.editarModulo = async (req, res) => {
+    let { id } = req.params;
+    id = helpers.desencriptarTxt(id); 
+    console.log("ID DESENCRIPTADO ==> ");
+    console.log(id);
+    if (!id) {
+        res.redirect('/ver-modulos');
+    } else {
+      const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
+      const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
+
+      lecciones.forEach(x => {
+        if (x.video == null) {
+          x.video = false;
+        }
+        if (x.material == null) {
+          x.material = 'Sin material'
+        }
+      })
+
+      modulo.lecciones = lecciones.slice(1);
+      
+      if (lecciones.length > 0) {
+        modulo.numLecciones = lecciones.length;
+        modulo.leccion0 = lecciones[0];
+        modulo.lastId = lecciones[lecciones.length - 1].id + 1;
+      }
+
+      const programasDB = JSON.parse(modulo.programa);
+      const programas = { p1: false, p2: false, p3: false, p4: false, p5: false, p6: false };
+
+      const programaOptions = ["1", "2", "3", "4", "5", "6"];
+
+      for (const option of programaOptions) {
+        if (programasDB.includes(option)) {
+          programas["p" + option] = true;
+        }
+      }
+
+      console.log("Info modulo: ");
+      console.log(modulo);
+      res.render("admin/modulo", {
+          adminDash: true, itemActivo: 5, modulo,
+          formModulos:true, programas, 
+          jsonLecciones: JSON.stringify(lecciones)
       });
     }
+}
 
-    console.log("Info modulo: ");
-    console.log(modulo);
-    
-    res.render("empresa/modulo", {
-      adminDash: true, itemActivo: 5,
-      modulo, lecciones: JSON.stringify(modulo.lecciones)
+dashboardController.subirArchivos = async (req, res) => {
+  const archivos = req.files
+  const { currentURL, tabla, columna, id } = req.body;
+  let dataURL = false;
+  console.log("currentURL: ", currentURL)
+
+  if (currentURL != '') {
+    // Usar el métonombredo replace con una expresión regular
+    const nombre = currentURL.replace(/^\.\.\/data_modulo\//, '');
+    // Ruta completa del archivo a eliminar
+    const filePath = path.join(__dirname, '../public/' + 'data_modulo/' + nombre);
+
+    // Verificar si el archivo existe
+    if (fs.existsSync(filePath)) {
+      // Eliminar el archivo
+      fs.unlinkSync(filePath);
+      console.log(`Archivo ${nombre} eliminado con éxito.`);
+    } else {
+      console.error(`El archivo ${nombre} no existe.`);
+    }
+  }
+
+  if (archivos) {
+    archivos.forEach((x) => {
+      dataURL = `../data_modulo/${x.filename}`;
     });
   }
+
+  // Subir nueva url a la Base de datos
+  const datos = {[columna]: dataURL}
+  if (columna == 'video') {
+    datos.duracion = req.body.duracion;
+  }
+  console.log(datos)
+  const sd = await helpers.actualizarDatos(tabla, datos, `WHERE id = '${id}'`)
+  console.log("actualizar:: ")
+  console.log(sd)
+
+  res.send(JSON.stringify(dataURL))
+};
+
+dashboardController.actualizarModulo = async (req, res) => {
+  console.log("Actualizando módulo...");
+  const { nombre, categoria, programa, nombre_insignia, idModulo } = req.body;
+  console.log(req.body);
+  const programaArray = Array.isArray(programa) ? programa : [programa];
+  // Convertir el array programaArray a formato JSON
+  const programaJSON = JSON.stringify(programaArray);
+
+  const moduloData = {
+    nombre,
+    categoria,
+    programa: programaJSON,
+    nombre_insignia,
+    estado: 0
+  };
+
+  const result = await helpers.actualizarDatos('modulos', moduloData, `WHERE id = ${idModulo}`)
+  console.log(":::: Resultado Actualizar Módulo ::::")
+  console.log(result);
+  const r = {ok: true, result}
+
+  res.send(JSON.stringify(r))
+}
+
+dashboardController.actualizarLeccion = async (req, res) => {
+  console.log("Actualizando Lección ===> ", req.body.id);
+  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id}`)
+  res.send(true)
+}
+
+dashboardController.agregarLeccionDB = async (req, res) => {
+  console.log("Agregando Nueva Lección ===> ", req.body);
+  const { i, id_modulo } = req.body;
+  const data = {
+    id_modulo,
+    orden: i,
+    nombre: 'Lección por defecto ' + i,
+    duracion: 'Desconocida'
+  }
+  const { insertId } = await helpers.insertarDatos('lecciones', data)
+  console.log(insertId)
+  res.send(JSON.stringify(insertId))
+}
+
+dashboardController.consultarLecciones = async (req, res) => {
+  const { id_modulo } = req.body;
+  const datos = await helpers.consultarDatos('lecciones', `WHERE id_modulo = ${id_modulo}`)
+  console.log("Datos actualizar:")
+  console.log(datos);
+  res.send(JSON.stringify(datos))
+}
+
+dashboardController.eliminarLeccion = async (req, res) => {
+  const { id } = req.body;
+  await helpers.eliminarDatos('lecciones', `WHERE id = ${id}`)
+  res.send(true)
 }

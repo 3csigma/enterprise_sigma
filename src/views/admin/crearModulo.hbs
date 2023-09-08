@@ -253,9 +253,7 @@
                                                             style="border-radius: 7px; border: 1px solid white;border-radius: 7px; margin-left: -23px;border: 1px solid white; padding: 6px 30px;"
                                                             type="button"><i class="fa fa-plus"></i> Nueva lección</button>
                                                     </div>
-                                                    {{#each array_lecciones}}
-                                                    {{!-- ACORDEONES DESDE LA BASE DE DATOS --}}
-                                                    {{/each}}
+                                                    
                                                 </div>
                                             </div>
                                         </div>
@@ -434,7 +432,7 @@
             }
         });
 
-        lessonsContainer.addEventListener("bkeyup", function (event) {
+        lessonsContainer.addEventListener("keyup", function (event) {
             const inputElement = event.target;
             if (inputElement.matches('[id^="leccion_"]')) {
                 const lessonIndex = inputElement.id.split("_")[1];
@@ -480,33 +478,30 @@
                 formData.append('miniatura', miniatura);
                 formData.append('estado', estado);
 
-                let isOk = true;
                 for (let i = 0; i < lecciones_temp.length; i++) {
                     const leccion = lecciones_temp[i];
                     formData.append(`nombre_${i}`, leccion.nombre);
                     formData.append(`video_${i}`, leccion.video);
+                    formData.append(`duracion_${i}`, leccion.duracion);
                     formData.append(`descripcion_${i}`, leccion.descripcion);
                     formData.append(`material_${i}`, leccion.material);
                 }
 
-                if (isOk) {
-                    fetch('/add-modulos', {
-                        method: 'POST',
-                        body: formData,
-                        headers: { 'enctype': 'multipart/form-data' }
+                fetch('/guardar-modulo', {
+                    method: 'POST',
+                    body: formData,
+                    headers: { 'enctype': 'multipart/form-data' }
+                })
+                    .then(response => {
+                        if (response)
+                            location.href = '/ver-modulos'
+                        else
+                            Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
                     })
-                        .then(response => {
-                            if (response)
-                                //Swal.fire('Exito!', '', 'success')
-                                location.href = '/ver-modulos'
-                            else
-                                Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
-                        })
-                        .catch(error => {
-                            // Manejo del error
-                            console.log("Error ==> ", error)
-                        });
-                }
+                    .catch(error => {
+                        // Manejo del error
+                        console.log("Error ==> ", error)
+                    });
             }
         })
 
@@ -679,7 +674,7 @@
                 setTimeout(() => {
                     window.location.hash = 'infoModulo'
                     $(".sw-btn-prev").trigger("click");
-                }, 1800); // 3000 milisegundos = 3 segundos
+                }, 1800);
             }
 
         } else {
@@ -714,9 +709,8 @@
                     // Obtener la duración del video usando la función asincrónica
                     const duracion = await cargarLaDuracion(video);
                     const descripcion = $(`#summernote_${i}`).val();
-                    let material = 'Sin material...';
                     const materialInput = document.getElementById(`material_${i}`);
-                    if (materialInput.files.length > 0) { material = materialInput.files[0].name; }
+                    const material = (materialInput && materialInput.files.length > 0) ? materialInput.files[0].name : 'Sin material';
 
                     const newLeccion = {
                         id: i,

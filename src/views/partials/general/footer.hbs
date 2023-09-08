@@ -56,12 +56,6 @@
 <script src="../js/validate-init.js"></script>
 <script src="../js/smartWizard.js"></script>
 <script src="../js/func_selector_categorias.js"></script>
-<script>
-		$(document).ready(function(){
-			// SmartWizard initialize
-			$('#modulos3c').smartWizard(); 
-		});
-</script>
 <script src="../js/summernote.min.js"></script>
 <script src="../js/summernote-init.js"></script>
 <script src="../js/modulos/fileValidation_modulos.js"></script>
@@ -172,7 +166,12 @@
 
     (function () {
         $(document).ready(function () {
-            
+            /*************************************************************************/    
+            {{#if formModulos}}
+            /*************************************************************************/    
+            // SmartWizard initialize
+			$('#modulos3c').smartWizard(); 
+            {{/if}}
             /*************************************************************************/    
             // CAMPO DATE PICKER (DUET LIBRARY)
             const elementos = document.querySelectorAll(".duet-fecha-us")

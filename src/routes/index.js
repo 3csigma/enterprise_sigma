@@ -69,11 +69,18 @@ router.post('/add-grupos-compartidos', checkLogin, helpers.uploadFiles('Recurso_
  * MODULOS
 */
 router.get('/ver-modulos', checkLogin, dashboardController.verModulos);
-router.get('/crear-modulos', checkLogin, dashboardController.crearModulos);
-router.post('/add-modulos', checkLogin, helpers.uploadFiles('leccion_', false, 'data_modulo', true, false, true), dashboardController.addModulos);
+router.get('/crear-modulos', checkLogin, dashboardController.crearModulo);
+router.post('/guardar-modulo', checkLogin, helpers.uploadFiles('leccion_', false, 'data_modulo', true, false, true), dashboardController.guardarModulo);
 router.post('/eliminar-modulo', checkLogin, dashboardController.eliminarModulos);
 router.post('/updateCategory', checkLogin, dashboardController.updateCategory);
 router.get('/ver-modulos/:id', checkLogin, dashboardController.infoModulo);
+router.get('/editar-modulo/:id', checkLogin, dashboardController.editarModulo);
+router.post('/actualizar-modulo', checkLogin, dashboardController.actualizarModulo);
+router.post('/actualizar-leccion', checkLogin, dashboardController.actualizarLeccion);
+router.post('/agregar-leccion', checkLogin, dashboardController.agregarLeccionDB);
+router.post('/eliminar-leccion', checkLogin, dashboardController.eliminarLeccion);
+router.post('/consultar-lecciones', checkLogin, dashboardController.consultarLecciones);
+router.post('/subir-archivos', checkLogin, helpers.uploadFiles('leccion_', false, 'data_modulo', true, false, true), dashboardController.subirArchivos);
 
 /*******************************************************************************************************/
 
