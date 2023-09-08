@@ -432,11 +432,11 @@
                                 <button onclick="guardarDatosForm({{modulo.id}})" id="btnSgte" class="btn btn-primary sw-btn-next"
                                     style="display: none;border-radius: 7px;" type="button">Guardar y continuar</button>
 
-                                <button onclick="actualizarModulo(0, '{{#if modulo.id}}{{modulo.id}}{{/if}}')" class="btn color_secondary sw-btn-guardar text-white"
+                                <button onclick="actualizar_estadoModulo(0, '{{modulo.id}}')" class="btn color_secondary sw-btn-guardar text-white"
                                     style="display: none;border-radius: 7px; border: 1px solid white;"
                                     type="button">Guardar</button>
 
-                                <button onclick="actualizarModulo(1, '{{#if modulo.id}}{{modulo.id}}{{/if}}')" class="btn color_tertiary sw-btn-submit text-black"
+                                <button onclick="actualizar_estadoModulo(1, '{{modulo.id}}')" class="btn color_tertiary sw-btn-submit text-black"
                                     style="display: none;border-radius: 7px; border: 1px solid white;"
                                     type="button">Publicar</button>
                             </div>
@@ -921,7 +921,6 @@
                 <tbody>
         `;
 
-        console.log("ID_MODULO:: ", id_modulo)
         const regex = /\/leccion_\d+_([^/]+)/;
         
         fetch('/consultar-lecciones', {
@@ -1020,60 +1019,26 @@
         });
     }
 
-    async function actualizar_estadoModulo(estado, idModulo = false) {
+    function actualizar_estadoModulo(estado, id) {
         let msg = '¿Quieres guardar este módulo como un borrador?'
         if (estado == 1) msg = '¿Estás seguro que deseas publicar este módulo?'
-        const modulo = $("#modulo").val();
-        const insigniaInput = document.getElementById("insignia");
-        const insignia = insigniaInput.files[0];
-        const categoria = $("#categoriaHiddenModulo").val();
-        const nombre_insignia = $("#nombre_insignia").val();
-        const programa = $(".programa:checked").map(function () {
-            return $(this).val();
-        }).get();
-        const thumbnailInput = document.getElementById("fileThumbnail")
-        const miniatura = thumbnailInput.files[0];
         Swal.fire({
             title: msg,
             showCancelButton: true,
             confirmButtonText: 'Confirmar',
         }).then((result) => {
-            /* Read more about isConfirmed, isDenied below */
             if (result.isConfirmed) {
-                const formData = new FormData();
-                formData.append('lecciones_size', lecciones_temp.length);
-                formData.append('nombre', modulo);
-                formData.append('insignia', insignia);
-                formData.append('nombre_insignia', nombre_insignia);
-                formData.append('categoria', categoria);
-                // Iterar sobre cada valor del array programa y agregarlo individualmente
-                programa.forEach(valor => {
-                    formData.append('programa[]', valor);
-                });
-                formData.append('miniatura', miniatura);
-                formData.append('estado', estado);
-                formData.append('idModulo', idModulo);
-
-                for (let i = 0; i < lecciones_temp.length; i++) {
-                    const leccion = lecciones_temp[i];
-                    formData.append(`nombre_${i}`, leccion.nombre);
-                    formData.append(`video_${i}`, leccion.video);
-                    formData.append(`duracion_${i}`, leccion.duracion);
-                    formData.append(`descripcion_${i}`, leccion.descripcion);
-                    formData.append(`material_${i}`, leccion.material);
-                }
-
-                fetch('/guardar-modulo', {
+                fetch('/actualizar-estado-modulo', {
                     method: 'POST',
-                    body: formData,
-                    headers: { 'enctype': 'multipart/form-data' }
+                    body: JSON.stringify({id, estado}),
+                    headers: {'Content-Type': 'application/json'}
                 })
-                    .then(response => response.json()) // Parsear la respuesta JSON
+                    .then(response => response.json())
                     .then(response => {
                         if (response)
                             location.href = '/ver-modulos'
                         else
-                            Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
+                            Swal.fire('Error!', 'Error al actualizar el módulo, intenta más tarde.', 'error')
                     })
                     .catch(error => {
                         // Manejo del error

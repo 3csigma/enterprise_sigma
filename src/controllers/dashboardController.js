@@ -4181,3 +4181,10 @@ dashboardController.eliminarLeccion = async (req, res) => {
   await helpers.eliminarDatos('lecciones', `WHERE id = ${id}`)
   res.send(true)
 }
+
+dashboardController.actualizar_estadoModulo = async (req, res) => {
+  const { id, estado } = req.body;
+  const data = { estado }
+  await helpers.actualizarDatos('modulos', data, `WHERE id = ${id}`)
+  res.send(true)
+}

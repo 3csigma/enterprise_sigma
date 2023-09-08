@@ -81,6 +81,7 @@ router.post('/agregar-leccion', checkLogin, dashboardController.agregarLeccionDB
 router.post('/eliminar-leccion', checkLogin, dashboardController.eliminarLeccion);
 router.post('/consultar-lecciones', checkLogin, dashboardController.consultarLecciones);
 router.post('/subir-archivos', checkLogin, helpers.uploadFiles('leccion_', false, 'data_modulo', true, false, true), dashboardController.subirArchivos);
+router.post('/actualizar-estado-modulo', checkLogin, dashboardController.actualizar_estadoModulo);
 
 /*******************************************************************************************************/
 
