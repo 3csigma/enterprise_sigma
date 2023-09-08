@@ -743,9 +743,38 @@ camposArchivo.forEach(campo => {
   });
 });
 
-const colorButtons_edit = document.querySelectorAll('.colorBtnEdit');
-const colorGrupoInput_edit = document.getElementById("colorGrupoInput_edit");
-capturarColor_Grupo(colorButtons_edit, colorGrupoInput_edit)
+// Selecciona todos los botones de color y campos de texto dentro de las tarjetas
+const tarjetas = document.querySelectorAll('.tarjeta');
+
+tarjetas.forEach((tarjeta) => {
+    const colorButtons_edit = tarjeta.querySelectorAll('.colorBtnEdit');
+    const colorGrupoInput_edit = tarjeta.querySelector('.colorGrupoInput_edit');
+
+    capturarColor_GrupoEdit(colorButtons_edit, colorGrupoInput_edit);
+});
+
+function capturarColor_GrupoEdit(colorButtons_, colorGrupoInput_edit) {
+    colorButtons_.forEach((button) => {
+        button.addEventListener("click", function() {
+            // Remover la clase 'selected' de todos los botones
+            colorButtons_.forEach(btn => btn.classList.remove('selected'));
+
+            // Agregar la clase 'selected' al botón clicado
+            this.classList.add('selected');
+
+            // Obtener el ID del campo de texto correspondiente
+            const targetFieldID = this.getAttribute('data-target');
+            
+            // Buscar el campo de texto correspondiente usando el ID
+            const colorGrupoInput = document.querySelector(targetFieldID);
+            
+            if (colorGrupoInput) {
+                // Guardar el color seleccionado en el campo de entrada oculto
+                colorGrupoInput.value = this.getAttribute('data-color');
+            }
+        });
+    });
+}
 
 function validarPeso_Video(extension, archivo) {
   if (extension === 'mov' || extension === 'mp4' || extension === 'avi') {

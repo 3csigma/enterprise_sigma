@@ -107,4 +107,32 @@
                 });
             });
     // {{!--  FIN DE LA FUNCIÓN  --}}
+document.addEventListener("DOMContentLoaded", () => {
+    const navegador = navigator.userAgent;
+
+    if (navegador.includes("Safari") && !navegador.includes("Chrome")) {
+        console.log("Estás usando Safari.");
+        // POPUP CON AVISO DE NAVEGADOR SAFARI
+        Swal.fire({
+            title: '<strong>Disfruta una mejor experiencia</strong>',
+            icon: 'info',
+            html: 'Para tener una mejor experiencia por favor visita la plataforma desde un navegador compatible como Google Chrome',
+            showCloseButton: false,      // No mostrar el botón de cierre
+            showCancelButton: false,     // No mostrar el botón de cancelar
+            showConfirmButton: false,    // No mostrar el botón "OK"
+            allowOutsideClick: false,    // No permitir hacer clic fuera del modal para cerrarlo
+            allowEscapeKey: false,       // No permitir cerrar con la tecla Esc
+            focusConfirm: false,
+            confirmButtonAriaLabel: 'Thumbs up, great!',
+            customClass: {
+                container: 'no-close-modal' // Agregar una clase CSS personalizada para desactivar el cierre
+            }
+        })
+    }
+})
+
+
+
+
+
 </script>

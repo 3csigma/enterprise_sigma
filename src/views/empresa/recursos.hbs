@@ -140,24 +140,24 @@
                                             </div>
                                         </div>
                                         <br>
-                                        <div class="row align-items-center justify-content-center">
+                                        <div class="row align-items-center justify-content-center tarjeta">
                                             <div class="col-6">
                                                 <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
                                                 <div class="colorButtons">
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#D74040'}} selected {{/comparar}}" data-color="#D74040"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#739232'}} selected {{/comparar}}" data-color="#739232"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#58B57D'}} selected {{/comparar}}" data-color="#58B57D"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#407CD7'}} selected {{/comparar}}" data-color="#407CD7"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#4085D7'}} selected {{/comparar}}" data-color="#4085D7"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#9540D7'}} selected {{/comparar}}" data-color="#9540D7"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061"></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#D74040'}} selected {{/comparar}}" data-color="#D74040" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#739232'}} selected {{/comparar}}" data-color="#739232" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#58B57D'}} selected {{/comparar}}" data-color="#58B57D" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#407CD7'}} selected {{/comparar}}" data-color="#407CD7" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#4085D7'}} selected {{/comparar}}" data-color="#4085D7" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#9540D7'}} selected {{/comparar}}" data-color="#9540D7" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061" data-target="#colorGrupoInput_edit_{{idGrupo}}" ></button>
                                                 </div>
-                                                <input type="hidden" id="colorGrupoInput_edit" name="color_grupo" value="{{color_grupo}}">
+                                                <input type="hidden" id="colorGrupoInput_edit_{{idGrupo}}" name="color_grupo" value="{{color_grupo}}" >
                                             </div>
-                                        </div>
+                                        </div> 
                                         <div class="row align-items-center justify-content-center flex-column">
-                                            <select data-id="{{idGrupo}}" class="form-control-sm default-select btnTypeArchivo text-white opcionesEdit">
+                                            <select class="form-control-sm default-select btnTypeArchivo text-white opcionesEdit">
                                                 <option value="">Agregar Elemento</option>
                                                 <option value="titulo">Título</option>
                                                 <option value="descripcion">Bloque de texto</option>

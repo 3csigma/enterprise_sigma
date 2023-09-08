@@ -1556,38 +1556,38 @@ empresaController.planEstrategico = async (req, res) => {
   } else {
     archivos = false;
   }
-  /************************************************************************************* */
-  /**
-   * VIDEOS TURIALES ACTIVAR o DESACTIVAR
-   */
-  const tutoriales = {};
-  let registros = await consultarDatos("registro_tutoriales");
-  registros = registros.find((x) => x.empresa == empresa.id_empresas);
-  if (registros) {
-    if (registros.etapa4 == 1) {
-      tutoriales.etapa = true;
-    } else {
-      const data = { etapa4: 1 };
-      await actualizarDatos(
-        "registro_tutoriales",
-        data,
-        `WHERE empresa = ${empresa.id_empresas}`
-      );
-    }
-  }
 
-  /************************************************************************************* */
   /**
    * CONSULTAR Y/O GENERAR INFORME POR CHATGPT
    */
   let verInforme = false;
   let informeIA = await consultarDatos("informes_ia");
-  informeIA = informeIA.find(
-    (x) => x.empresa == empresa.id_empresas && x.tipo == "Estratégico"
-  );
+  informeIA = informeIA.find( (x) => x.empresa == empresa.id_empresas && x.tipo == "Estratégico" );
   if (informeIA) {
     verInforme = true;
   }
+
+    /************************************************************************************* */
+  /**
+   * VIDEOS TURIALES ACTIVAR o DESACTIVAR
+   */
+  let tutoriales = {};
+  if (verInforme) {
+    let registros = await consultarDatos("registro_tutoriales");
+    registros = registros.find((x) => x.empresa == empresa.id_empresas);
+    
+    if (registros) {
+      if (registros.etapa4 == 1) {
+        tutoriales.etapa = false;
+      } else {
+        tutoriales.etapa = true
+        const data = { etapa4: 1 };
+        await actualizarDatos("registro_tutoriales",data,`WHERE empresa = ${empresa.id_empresas}` );
+      }
+    }
+}
+
+  /************************************************************************************* */
 
   res.render("empresa/planEstrategico", {
     user_dash: true,

@@ -99,20 +99,20 @@
                                                 </div>
                                             </div>
                                         </div>
-                                        <div class="row align-items-center justify-content-center">
+                                        <div class="row align-items-center justify-content-center tarjetas_admin">
                                             <div class="col-6">
                                                 <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
                                                 <div class="colorButtons">
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#D74040'}} selected {{/comparar}}" data-color="#D74040"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#739232'}} selected {{/comparar}}" data-color="#739232"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#58B57D'}} selected {{/comparar}}" data-color="#58B57D"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#407CD7'}} selected {{/comparar}}" data-color="#407CD7"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#4085D7'}} selected {{/comparar}}" data-color="#4085D7"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#9540D7'}} selected {{/comparar}}" data-color="#9540D7"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082"></button>
-                                                    <button type="button" class="colorButton colorBtnEdit {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061"></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#D74040'}} selected {{/comparar}}" data-color="#D74040" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#739232'}} selected {{/comparar}}" data-color="#739232" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#58B57D'}} selected {{/comparar}}" data-color="#58B57D" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#407CD7'}} selected {{/comparar}}" data-color="#407CD7" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#4085D7'}} selected {{/comparar}}" data-color="#4085D7" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#9540D7'}} selected {{/comparar}}" data-color="#9540D7" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
+                                                    <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
                                                 </div>
-                                                <input type="hidden" id="colorGrupoInput_edit" name="color_grupo" value="{{color_grupo}}">
+                                                <input type="text" id="colorGrupoInput_editAdm_{{idGrupo}}" name="color_grupo" value="{{color_grupo}}">
                                             </div>
                                         </div>
                                         <div class="row align-items-center justify-content-center flex-column">
@@ -155,3 +155,38 @@
         </div>
     </div>
 </div>
+<script src="../js/jquery.js"></script>
+<script>
+    // Selecciona todos los botones de color y campos de texto dentro de las tarjetas
+const tarjetas_admin = document.querySelectorAll('.tarjetas_admin');
+
+tarjetas_admin.forEach((t) => {
+    const colorBtnEditAdm = t.querySelectorAll('.colorBtnEditAdm');
+    const colorGrupoInput_editAdm_ = t.querySelector('.colorGrupoInput_editAdm_');
+
+    capturarColor_GrupoEditAdm(colorBtnEditAdm, colorGrupoInput_editAdm_);
+});
+
+function capturarColor_GrupoEditAdm(colorButtonsAdm_, colorGrupoInput_editAdm_) {
+    colorButtonsAdm_.forEach((button) => {
+        button.addEventListener("click", function() {
+            // Remover la clase 'selected' de todos los botones
+            colorButtonsAdm_.forEach(btn => btn.classList.remove('selected'));
+
+            // Agregar la clase 'selected' al botón clicado
+            this.classList.add('selected');
+
+            // Obtener el ID del campo de texto correspondiente
+            const targetFieldID = this.getAttribute('data-target');
+            
+            // Buscar el campo de texto correspondiente usando el ID
+            const colorGrupoInput = document.querySelector(targetFieldID);
+            
+            if (colorGrupoInput) {
+                // Guardar el color seleccionado en el campo de entrada oculto
+                colorGrupoInput.value = this.getAttribute('data-color');
+            }
+        });
+    });
+}
+</script>

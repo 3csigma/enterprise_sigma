@@ -125,7 +125,7 @@
                             <div class="col">
                                 <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Link del
                                     recurso</label>
-                                <input type="url" class="form-control input-recursos2" required name="recurso"
+                                <input type="text" class="form-control input-recursos2" required name="recurso"
                                     placeholder="Introduce aqui la URL del recurso">
                             </div>
                         </div>
@@ -237,5 +237,24 @@
             </form>
         </div>
     </div>
-
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const inputRecursos = document.querySelector(".input-recursos2");
+
+        inputRecursos.addEventListener("input", function () {
+            const url = this.value;
+
+            // Expresión regular para validar que la URL tenga un dominio después del punto.
+            const urlExpresion = /\.[A-Za-z]{2,}$/;
+
+            if (urlExpresion.test(url)) {
+                // La URL es válida
+                this.setCustomValidity("");
+            } else {
+                // La URL no es válida
+                this.setCustomValidity("La URL debe tener un dominio válido (por ejemplo, .com)");
+            }
+        });
+    });
+</script>
