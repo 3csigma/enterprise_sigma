@@ -875,6 +875,7 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       value: function _setButtons(idx) {
         // Previous/Next Button enable/disable based on step
         if (!this.options.cycleSteps) {
+          this.main.find('.sw-btn-actualizar').css('display', 'none');
           this.main.find('.sw-btn-prev').css('display', 'block');
           this.main.find('.sw-btn-next').css('display', 'block');
           this.main.find('.sw-btn-guardar').css('display', 'none');
@@ -882,12 +883,15 @@ function _typeof(obj) { "@babel/helpers - typeof"; if (typeof Symbol === "functi
       
           switch (this._getStepPosition(idx)) {
             case 'first':
+              this.main.find('.sw-btn-actualizar').css('display', 'block');
               this.main.find('.sw-btn-prev').css('display', 'none');
+              this.main.find('.sw-btn-next').css('display', 'none');
               this.main.find('.sw-btn-guardar').css('display', 'none');
               this.main.find('.sw-btn-submit').css('display', 'none');
               break;
             case 'last':
               this.main.find('.sw-btn-next').css('display', 'none');
+              this.main.find('.sw-btn-actualizar').css('display', 'none');
               this.main.find('.sw-btn-guardar').css('display', 'block');
               this.main.find('.sw-btn-submit').css('display', 'block');
               break;

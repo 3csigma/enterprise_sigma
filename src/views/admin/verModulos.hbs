@@ -80,7 +80,7 @@
                                                             class="btn btn-warning shadow btn-xs sharp mr-1 text-white"><i
                                                                 class="fa fa-eye"></i></a>
                                                         <!-- Editar Módulo -->
-                                                        <a href="#"
+                                                        <a href="/editar-modulo/{{codigo}}"
                                                             class="btn color_gradient shadow btn-xs sharp mr-1 text-white"><i
                                                                 class="fa fa-pencil"></i></a>
                                                         <!-- Eliminar Módulo -->
@@ -108,15 +108,16 @@
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">Actualizando nombre del curso</h5>
+                <h5 class="modal-title">Actualizar curso</h5>
                 <button type="button" class="close" data-dismiss="modal"><span>×</span>
                 </button>
             </div>
             <form action="/updateCategory" method="post">
                 <div class="modal-body">
                     <div class="form-group col-md-12 pt-2">
-                        <label>Nombre actual</label>
-                        <input type="text" name="categoria_actual" id="categoria_actual" class="form-control" readonly style="border: none">
+                        <input type="text" name="categoria_actual" id="categoria_actual" class="form-control" style="display: none">
+                        <label class="text-black" id="txtCateActual"></label>
+                        <hr>
                         <label>Nuevo nombre</label>
                         <input type="text" name="categoria" class="form-control required" required placeholder="Escribe el nuevo nombre del curso.." style="border: 1px solid #c6c6c6;">
                     </div>
@@ -134,7 +135,14 @@
     // ACTUALIZAR CATEGORÍAS (CURSOS)
     function editCategory(nombre) {
         console.log("Categoría a editar: ", nombre)
+        const cate = $('#txtCateActual')
+        cate.css({
+            'font-size': '20px',
+            'font-weight': 'bold',
+        });
         $('#categoria_actual').val(nombre);
+        cate.text(nombre);
+        
     }
 
     //   ELIMINANDO MODULOS CREADOS
