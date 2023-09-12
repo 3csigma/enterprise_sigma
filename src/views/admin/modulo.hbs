@@ -78,8 +78,8 @@
                                                 <label class="text-label">Curso*</label>
                                                 <select id="categoriaSelectModulo"
                                                     class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
-                                                    <option value="{{modulo.categoria}}">{{modulo.categoria}}</option>
-                                                    <option value="N/A">Escoge curso...</option>
+                                                    <option value="{{modulo.categoria}}"><span style="font-weight: bold;">{{modulo.categoria}}</span></option>
+                                                    <option value="N/A">Escoge otro diferente</option>
                                                     {{#each categorias}}
                                                     <option value="{{this}}">{{this}}</option>
                                                     {{/each}}
@@ -171,9 +171,10 @@
                                     <div class="row">
                                         <div class="col-lg-11">
                                             <div class="card-body">
-                                                <div id="contenedor-lecciones" class="accordion accordion-danger-solid">
+                                                <div id="contenedor-lecciones" class="accordion accordion-danger-solid sortable-container">
                                                     {{!-- LECCIÓN 0 --}}
-                                                    <div class="accordion__item">
+                                                    <!--                                                     
+                                                    <div class="accordion__item" data-lesson-id="1">
                                                         <div class="accordion__header" data-toggle="collapse"
                                                             data-target="#bordered_collapse_0"
                                                             style="margin-left: -15px;">
@@ -233,7 +234,7 @@
                                                                     <div id="msgFile-video_0" class="col-12"></div>
                                                                 </div>
                                                                 <br>
-                                                                <!-- Summernote -->
+                                                                {{!-- Summernote --}}
                                                                 <div class="row">
                                                                     <div class="col-xl-12 col-xxl-12">
                                                                         <label class="text-label">Descripción de la lección</label>
@@ -276,11 +277,12 @@
                                                                 <br>
                                                             </div>
                                                         </div>
-                                                    </div>
+                                                    </div> 
+                                                    -->
 
-                                                    {{!-- LECCIONES DE LA 1 EN ADELANTE --}}
+                                                    {{!-- LECCIONES EXISTENTES DEL MÓDULO --}}
                                                     {{#each modulo.lecciones}}
-                                                    <div class="accordion__item">
+                                                    <div class="accordion__item" data-lesson-id="{{id}}">
                                                         <div class="accordion__header collapsed" data-toggle="collapse"
                                                             data-target="#bordered_collapse_{{id}}"
                                                             style="margin-left: -15px;" aria-expanded="false">
@@ -450,72 +452,66 @@
 </div>
 <script>
 
-    let lessonCounter = 1, lecciones_temp = [], idModulo = false;
+    // Obtener elementos del DOM
+    const lessonsContainer = document.getElementById("contenedor-lecciones");
+    let lessonCounter = document.getElementById("lastId").value,
+    lecciones_temp = [], idModulo = document.getElementById("idModulo").value;
 
     document.addEventListener("DOMContentLoaded", async function () {
-        idModulo = document.getElementById("idModulo");
-        if (idModulo) {
-            lessonCounter = document.getElementById("lastId").value
-            idModulo = idModulo.value;
-            const urlInsignia = document.getElementById("urlInsignia").value;
-            const urlMiniatura = document.getElementById("urlMiniatura").value;
-            // Buscar el patrón de una fecha UNIX seguida por un guión bajo
-            const regex = /\/leccion_\d+_([^/]+)/;
-            // Ejecutar la expresión regular en la cadena
-            let nombre = urlInsignia.match(regex)[1];
-            $('#txtInsignia').text(nombre)
-            nombre = urlMiniatura.match(regex)[1];
-            $('#msgFile-thumbnail').html(`<span class="text-black">${nombre}</span>`)
+        const urlInsignia = document.getElementById("urlInsignia").value;
+        const urlMiniatura = document.getElementById("urlMiniatura").value;
+        // Buscar el patrón de una fecha UNIX seguida por un guión bajo
+        const regex = /\/leccion_\d+_([^/]+)/;
+        // Ejecutar la expresión regular en la cadena
+        let nombre = urlInsignia.match(regex)[1];
+        $('#txtInsignia').text(nombre)
+        nombre = urlMiniatura.match(regex)[1];
+        $('#msgFile-thumbnail').html(`<span class="text-black">${nombre}</span>`)
 
-            //Lecciones
-            lecciones_temp = JSON.parse(document.getElementById("jsonLecciones").value)
-            console.log("lecciones_temp => ", lecciones_temp)
-            if (lecciones_temp[0].video) {
-                const nomVideo = lecciones_temp[0].video.match(regex)[1];
-                $(`#msgFile-video_0`).html(`
-                    <span class="text-black">${nomVideo}</span>
-                `)
-                const nomMaterial = lecciones_temp[0].material;
-                if (nomMaterial != 'Sin material'){
-                    $(`#msgFile-material_0`).html(`
-                        <span class="text-black">${nomMaterial.match(regex)[1]}</span>
-                    `)  
+        //Lecciones
+        lecciones_temp = JSON.parse(document.getElementById("jsonLecciones").value)
+
+        if (lecciones_temp.length > 0) {
+            //lecciones_temp.sort((a, b) => a.orden - b.orden)
+            lecciones_temp.forEach(x => {
+                if (x.video) {
+                    const nombre = x.video.match(regex)[1];
+                    $(`#msgFile-video_${x.id}`).html(`
+                        <span class="text-black">${nombre}</span>
+                    `)
                 }
-            }
-
-            if (lecciones_temp.length > 1) {
-                const newArray = lecciones_temp.slice(1);
-                newArray.forEach(x => {
-                    if (x.video) {
-                        const nombre = x.video.match(regex)[1];
-                        $(`#msgFile-video_${x.id}`).html(`
-                            <span class="text-black">${nombre}</span>
-                        `)
-                    }
-                    if (x.material != 'Sin material') {
-                        const nombre = x.material.match(regex)[1];
-                        $(`#msgFile-material_${x.id}`).html(`
-                            <span class="text-black">${nombre}</span>
-                        `)
-                    }
-                })
-            }
+                if (x.material != 'Sin material') {
+                    const nombre = x.material.match(regex)[1];
+                    $(`#msgFile-material_${x.id}`).html(`
+                        <span class="text-black">${nombre}</span>
+                    `)
+                }
+            })
         }
 
-        const leccionInput = document.getElementById("leccion_0");
+        //const leccionInput = document.getElementById("leccion_0");
         const accordionHeader = document.querySelector(".accordion__header--text");
 
         // Agregar evento blur al campo de entrada
+        /*
         leccionInput.addEventListener("keyup", function () {
             const nuevoNombreLeccion = leccionInput.value;
             accordionHeader.textContent = nuevoNombreLeccion !== "" ? nuevoNombreLeccion : "Lección 0";
         });
+        */
 
-        const lessonsContainer = document.getElementById("contenedor-lecciones");
+        // Inicializa SortableJS
+        const sortable = new Sortable(lessonsContainer, {
+            animation: 150,
+            onEnd: async () => {
+                actualizar_posicionLecciones(lecciones_temp);
+            },
+        });
+
         // Función para crear el HTML de una nueva lección
         const createLessonHTML = () => {
             const lessonHTML = `
-                <div class="accordion__item">
+                <div class="accordion__item" data-lesson-id="${lessonCounter}">
                     <div class="accordion__header" data-toggle="collapse" data-target="#bordered_collapse_${lessonCounter}"
                         style="margin-left: -15px;">
                         <span class="accordion__header--text">Lección por defecto ${lessonCounter}</span>
@@ -589,6 +585,8 @@
                                             </button>
                                             <input type="file" class="fileMaterial_" id="material_${lessonCounter}"
                                                 onchange="fileChange_(event, event.target)" hidden>
+                                            <input type="hidden" id="url-material_${lessonCounter}" value="Sin material">
+                                            <input type="hidden" id="id-material_${lessonCounter}" value="${lessonCounter}">
                                         </center>
                                         <h6 class="fw-700 text-black">Escoge o <span
                                                 style="color:#812082;font-weight: 700;font-size: 14px;">arrastra </span>un archivo</h6>
@@ -625,6 +623,7 @@
                 focus: false,
             });
             lessonCounter++;
+            //actualizar_posicionLecciones();
         };
 
         const updateAccordionHeaderText = (lessonIndex, text) => {
@@ -654,44 +653,6 @@
         const addLessonBtn = document.getElementById("addLessonBtn");
         addLessonBtn.addEventListener("click", handleAddLesson);
     });
-
-    
-    function dragOverHandler(event) {
-        event.preventDefault(); // previene el comportamiento por defecto del evento
-        event.currentTarget.classList.add("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está agregando la clase al div correcto
-        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
-        h6.textContent = "Suelta para subir el archivo";
-    }
-
-    function dragLeaveHandler(event) {
-        event.preventDefault(); // previene el comportamiento por defecto del evento
-        event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
-        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
-        h6.textContent = "Arrastra y suelta el archivo";
-    }
-
-    function dropHandler(event) {
-        event.preventDefault(); // previene el comportamiento por defecto del evento
-        event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
-        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
-        h6.textContent = "Arrastra y suelta el archivo";
-        const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
-        input.files = event.dataTransfer.files
-        console.log("usando dropArea, input: " + input);
-        cargarArchivo(input.files[0], input.className, input.id);
-    }
-
-    function btnFile_(event, div) {
-        event.preventDefault();
-        const input = div.querySelector("input");
-        input.click();
-    }
-
-    function fileChange_(event, input) {
-        console.log("ID INPUT:: ", input.id);
-        console.log("Usando input, clase: " + input.className);
-        cargarArchivo(input.files[0], input.className, input.id);
-    }
 
     async function cargarArchivo(file, clase, id) {
         // Si el div para el archivo es el de Video
@@ -829,27 +790,6 @@
         }
     }
 
-    function toastError(msg) {
-        return toastr.warning(msg, "Error", {
-            positionClass: "toast-top-full-width",
-            timeOut: 5000,
-            closeButton: true,
-            debug: false,
-            newestOnTop: true,
-            progressBar: true,
-            preventDuplicates: true,
-            onclick: null,
-            showDuration: "500",
-            hideDuration: "200",
-            extendedTimeOut: "400",
-            showEasing: "swing",
-            hideEasing: "linear",
-            showMethod: "fadeIn",
-            hideMethod: "fadeOut",
-            tapToDismiss: false,
-        });
-    }
-
     const deleteLesson = (lessonNumber) => {
         lecciones_temp = lecciones_temp.filter((leccion) => leccion.id !== lessonNumber);
         console.log("lecciones_final ==> ", lecciones_temp)
@@ -966,59 +906,6 @@
 
     }
 
-    // Obtener la duración del video subido 
-    function formatTime(duracionTotal) {
-        // Redondear la duración a un número entero
-        duracionTotal = (Math.round(duracionTotal)).toFixed(0);
-
-        // Calcular los minutos y segundos
-        let minutos = Math.floor(duracionTotal / 60);
-        const segundos = duracionTotal % 60;
-        // Calcular las horas, minutos y segundos
-        const horas = Math.floor(minutos / 60);
-        minutos = minutos % 60;
-
-        //console.log('Duración del video:', horas, 'horas', minutos, 'minutos', segundos, 'segundos');
-        let duracionVideo = ''
-        if (horas > 0) duracionVideo = horas + ' horas ';
-        if (minutos > 0) duracionVideo += minutos + ' minutos ';
-        if (segundos > 0) duracionVideo += segundos + ' segundos ';
-        return duracionVideo;
-    }
-
-    // Cargar la duración del video subido
-    function cargarLaDuracion(video) {
-        return new Promise((resolve, reject) => {
-            if (!video) {
-                resolve('Sin video');
-                return;
-            }
-
-            // Crear un objeto URL para el archivo seleccionado
-            let objectURL = URL.createObjectURL(video);
-
-            // Crear un elemento de video para obtener la duración
-            const videoElement = document.createElement('video');
-
-            // Escuchar el evento 'loadedmetadata' para obtener la duración una vez que los metadatos se hayan cargado
-            videoElement.addEventListener('loadedmetadata', function () {
-                // Duración del video en segundos
-                const durationInSeconds = videoElement.duration;
-
-                // Formatear la duración en el formato HH:mm:ss
-                const formattedDuration = formatTime(durationInSeconds);
-
-                // Liberar el objeto URL utilizado para el video una vez que ya no se necesite
-                URL.revokeObjectURL(objectURL);
-
-                resolve(formattedDuration);
-            });
-
-            // Establecer la fuente del video con el objeto URL creado
-            videoElement.src = objectURL;
-        });
-    }
-
     function actualizar_estadoModulo(estado, id) {
         let msg = '¿Quieres guardar este módulo como un borrador?'
         if (estado == 1) msg = '¿Estás seguro que deseas publicar este módulo?'
@@ -1084,7 +971,7 @@
             .then(response => {
                 // Aquí puedes verificar si la solicitud fue exitosa
                  if (response.ok) {
-                    console.log('Solicitud exitosa. Código de respuesta:', response.status);
+                    //console.log('Solicitud exitosa. Código de respuesta:', response.status);
                     return response.json(); // Si se espera una respuesta JSON
                 } else {
                     console.error('Error en la solicitud. Código de respuesta:', response.status);
@@ -1092,9 +979,7 @@
                 }
             }) // Parsear la respuesta JSON
             .then(data => {
-                console.log('Datos recibidos:', data);
                 if (data.ok) {
-                    console.log("Datos guardados exitosamente.!")
                     $("#btnSgte").trigger("click");
                 } else {
                     Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
@@ -1139,15 +1024,29 @@
             });
     }
 
-    function agregarLeccionDB(i, id_modulo) {
-        fetch('/agregar-leccion', {
+    async function agregarLeccionDB(i, id_modulo) {
+        console.log("agregarLeccionDB - Contador Actual =>", i)
+        await fetch('/agregar-leccion', {
             method: 'POST',
             body: JSON.stringify({i, id_modulo}),
             headers: {'Content-Type': 'application/json'}
-        }).then(response => response.json()) // Parsear la respuesta JSON
+        }).then(response => response.json())
             .then(data => {
                 console.log("Se agregó correctamente una nueva lección al módulo de id: ", id_modulo);
                 $('#ide-leccion_'+lessonCounter).val(data)
+                lecciones_temp.push({
+                    id: data,
+                    orden: parseInt(i),
+                    id_modulo: parseInt(id_modulo),
+                    nombre: 'Lección por defecto ' + i,
+                    video: false,
+                    duracion: 'Desconocida',
+                    descripcion: null,
+                    material: 'Sin material'
+                })
+                console.log("lecciones_temp::: ")
+                console.log(lecciones_temp)
+                //actualizar_posicionLecciones()
             })
             .catch(error => { console.error('Error al recibir la respuesta:', error) });
     }
@@ -1161,5 +1060,38 @@
             .then(data => { console.log("Se eliminó correctamente la lección al módulo") })
             .catch(error => { console.error('Error al recibir la respuesta:', error) });
     }
+
+    // Actualizar posiciones de las lecciones
+    const actualizar_posicionLecciones = async (array) => {
+        console.log('Antiguo orden de lecciones_temp:');
+        console.log(array);
+        const id_modulo = $('#idModulo').val();
+        const lessonItems = lessonsContainer.querySelectorAll('.accordion__item');
+        const newLeccionesTemp = [];
+        lessonItems.forEach((item, index) => {
+            const lessonId = item.getAttribute('data-lesson-id');
+            const lessonIndex = lecciones_temp.findIndex((leccion) => leccion.id.toString() === lessonId);
+
+            if (lessonIndex !== -1) {
+                newLeccionesTemp.push(lecciones_temp[lessonIndex]);
+            }
+        });
+        lecciones_temp = newLeccionesTemp;
+        lecciones_temp.forEach((x, i) => {
+            x.orden = i;
+        })
+        lecciones_temp.sort((a, b) => a.orden - b.orden);
+        console.log('LECCIONES FINALES ACTUALIZADAS:');
+        console.log(lecciones_temp);
+        await fetch('/actualizar-orden-lecciones', {
+            method: 'POST',
+            body: JSON.stringify({lecciones_temp, id_modulo}),
+            headers: {'Content-Type': 'application/json'}
+        }).then(response => response.json())
+            .then(data => {
+                console.log("Se actualizó correctamente las posiciones de las lecciones");
+            })
+            .catch(error => { console.error('Error al recibir la respuesta:', error) });
+    };
 
 </script>

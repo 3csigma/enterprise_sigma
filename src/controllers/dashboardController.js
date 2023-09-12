@@ -3920,7 +3920,10 @@ dashboardController.verModulos = async (req, res) => {
 };
 
 dashboardController.crearModulo = async (req, res) => {
-   res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5 })
+  // const categorias = (await helpers.consultarDatos('modulos')).map(x => x.categoria)
+  const categorias = (await pool.query("SELECT DISTINCT categoria FROM modulos")).map(x => x.categoria);
+  console.log("categorias ", categorias)
+  res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5, categorias })
 }
 
 dashboardController.guardarModulo = async (req, res) => {
@@ -3953,13 +3956,15 @@ dashboardController.guardarModulo = async (req, res) => {
 
   const { insertId } = (await helpers.insertarDatos("modulos", moduloData));
 
-  //Guardar las lecciones asociadas al módulo
+  // Guardar las lecciones asociadas al módulo
   console.log("Agregando lecciones.....");
   for (let i = 0; i < lecciones_size; i++) {
     const nombre = req.body[`nombre_${i}`];
     const descripcion = req.body[`descripcion_${i}`];
     const duracion = req.body[`duracion_${i}`];
+    const material = req.body[`material_${i}`];
     const leccionData = {
+      orden: i,
       id_modulo: insertId,
       nombre,
       duracion,
@@ -4009,7 +4014,7 @@ dashboardController.infoModulo = async (req, res) => {
         res.redirect('/ver-modulos');
     } else {
         const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
-        const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
+        const lecciones = (await helpers.consultarDatos("lecciones", `ORDER BY orden ASC`)).filter(l => l.id_modulo == modulo.id)
         modulo.lecciones = null;
 
         if (lecciones.length > 0) {
@@ -4029,31 +4034,31 @@ dashboardController.infoModulo = async (req, res) => {
     }
 }
 
-dashboardController.editarModulo = async (req, res) => {
-  let { id } = req.params;
-  id = helpers.desencriptarTxt(id); 
-  console.log("ID DESENCRIPTADO ==> ");
-  console.log(id);
-  if (!id) {
-    res.redirect('/ver-modulos');
-  } else {
-    const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
-    const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
-    modulo.lecciones = null;
+// dashboardController.editarModulo = async (req, res) => {
+//   let { id } = req.params;
+//   id = helpers.desencriptarTxt(id); 
+//   console.log("ID DESENCRIPTADO ==> ");
+//   console.log(id);
+//   if (!id) {
+//     res.redirect('/ver-modulos');
+//   } else {
+//     const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
+//     const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
+//     modulo.lecciones = null;
     
-    if (lecciones.length > 0) {
-      modulo.lecciones = lecciones.map((leccion, index) => {
-        leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
-        return leccion;
-      });
-    }
+//     if (lecciones.length > 0) {
+//       modulo.lecciones = lecciones.map((leccion, index) => {
+//         leccion.num = index + 1; // Agregar el nuevo atributo "num" con el número de la lección (1, 2....)
+//         return leccion;
+//       });
+//     }
 
-    console.log("Info modulo: ");
-    console.log(modulo);
+//     console.log("Info modulo: ");
+//     console.log(modulo);
     
-  res.render("admin/editarModulos", {adminDash: true, itemActivo: 5, modulo, lecciones: JSON.stringify(modulo.lecciones)})
-  }
-}
+//   res.render("admin/editarModulos", {adminDash: true, itemActivo: 5, modulo, lecciones: JSON.stringify(modulo.lecciones)})
+//   }
+// }
 
 dashboardController.editarModulo = async (req, res) => {
     let { id } = req.params;
@@ -4063,6 +4068,7 @@ dashboardController.editarModulo = async (req, res) => {
     if (!id) {
         res.redirect('/ver-modulos');
     } else {
+      const categorias = (await pool.query("SELECT DISTINCT categoria FROM modulos")).map(x => x.categoria);
       const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
       const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
 
@@ -4075,11 +4081,13 @@ dashboardController.editarModulo = async (req, res) => {
         }
       })
 
-      modulo.lecciones = lecciones.slice(1);
+      // modulo.lecciones = lecciones.slice(1);
+      const leccionesOrden = lecciones.slice()
+      modulo.lecciones = leccionesOrden.sort((a, b) => a.orden - b.orden)
       
       if (lecciones.length > 0) {
         modulo.numLecciones = lecciones.length;
-        modulo.leccion0 = lecciones[0];
+        //modulo.leccion0 = lecciones[0];
         modulo.lastId = lecciones[lecciones.length - 1].id + 1;
       }
 
@@ -4099,7 +4107,8 @@ dashboardController.editarModulo = async (req, res) => {
       res.render("admin/modulo", {
           adminDash: true, itemActivo: 5, modulo,
           formModulos:true, programas, 
-          jsonLecciones: JSON.stringify(lecciones)
+          jsonLecciones: JSON.stringify(leccionesOrden),
+          categorias
       });
     }
 }
@@ -4175,6 +4184,16 @@ dashboardController.actualizarLeccion = async (req, res) => {
   res.send(true)
 }
 
+dashboardController.actualizar_ordenLecciones = async (req, res) => {
+  console.log("Actualizando Lecciones ===> ");
+  const { lecciones_temp, id_modulo } = req.body;
+  lecciones_temp.forEach(async x => {
+    const data = { orden: x.orden }
+    await helpers.actualizarDatos('lecciones', data, `WHERE id = ${x.id} AND id_modulo = ${id_modulo}`)
+  })
+  res.send(true)
+}
+
 dashboardController.agregarLeccionDB = async (req, res) => {
   console.log("Agregando Nueva Lección ===> ", req.body);
   const { i, id_modulo } = req.body;
@@ -4191,7 +4210,7 @@ dashboardController.agregarLeccionDB = async (req, res) => {
 
 dashboardController.consultarLecciones = async (req, res) => {
   const { id_modulo } = req.body;
-  const datos = await helpers.consultarDatos('lecciones', `WHERE id_modulo = ${id_modulo}`)
+  const datos = await helpers.consultarDatos('lecciones', `WHERE id_modulo = ${id_modulo} ORDER BY orden ASC`)
   console.log("Datos actualizar:")
   console.log(datos);
   res.send(JSON.stringify(datos))

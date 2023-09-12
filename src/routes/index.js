@@ -78,6 +78,7 @@ router.get('/ver-modulos/:id', checkLogin, dashboardController.infoModulo);
 router.get('/editar-modulo/:id', checkLogin, dashboardController.editarModulo);
 router.post('/actualizar-modulo', checkLogin, dashboardController.actualizarModulo);
 router.post('/actualizar-leccion', checkLogin, dashboardController.actualizarLeccion);
+router.post('/actualizar-orden-lecciones', checkLogin, dashboardController.actualizar_ordenLecciones);
 router.post('/agregar-leccion', checkLogin, dashboardController.agregarLeccionDB);
 router.post('/eliminar-leccion', checkLogin, dashboardController.eliminarLeccion);
 router.post('/consultar-lecciones', checkLogin, dashboardController.consultarLecciones);
