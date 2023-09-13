@@ -94,7 +94,7 @@
 				<div>
 					<figure><img src="./img/info_graphic_1.svg" alt="" class="img-fluid" width="270" height="270">
 					</figure>
-					<h2>Ficha Cliente</h2>
+					<h2>Perfil Empresa</h2>
 					<p>Permítenos conocer el estado actual de tu empresa, encontraremos los puntos a mejorar y empezaremos juntos el proceso de crecimiento corporativo.</p>
 					<a href="https://wa.me/+17868461158" target="_blank" class="btn_1 rounded yellow my-auto">
 						<i class="fab fa-whatsapp" style="font-size:19px"></i> ¿Tienes dudas?
@@ -211,7 +211,7 @@
 							<div class="row add_top_10 add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
 								<div class="form-group col-md-6 ">
-									<label>¿Eres dueño de negocio?</label>
+									<label>¿Eres dueño de empresa?</label>
 									<div class="form-group mb-3 radio_input">
 										<label class="container_radio mr-3">Si
 											<input type="radio" name="es_propietario" value="Si" class="required"
@@ -307,13 +307,13 @@
 							<div class="row add_top_10 add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
 								<div class="form-group col-md-12 mt-2">
-									<label for="descripcion">¿Qué hace tu negocio?</label>
+									<label for="descripcion">¿Qué hace tu empresa?</label>
 									<textarea name="descripcion" id="descripcion" class="form-control required"
 										style="height: 115px; min-height: 110px;">{{ficha.descripcion}}</textarea>
 								</div>
 
 								<div class="form-group col-md-12">
-									<label>¿En qué etapa se encuentra tu negocio?</label>
+									<label>¿En qué etapa se encuentra tu empresa?</label>
 									<div class="form-group mb-3 radio_input" {{#if datos.editEtapa}} title="No es posible editar este campo ahora"{{/if}}>
 										<label class="container_radio mr-3">En Proyecto (aun sin ejecutar)
 											<input type="radio" name="etapa_actual" value="En proyecto" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa1}}>
@@ -331,7 +331,7 @@
 								</div>
 
 								<div class="form-group col-md-12">
-									<label>¿Cuáles son los 3 principales objetivos de tu negocio?</label>
+									<label>¿Cuáles son los 3 principales objetivos de tu empresa?</label>
 
 									<label for="objetivo1">1-</label>
 									<input type="text" name="objetivo1" id="objetivo1"
@@ -360,7 +360,7 @@
 							<div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
 								<div class="form-group col-md-12">
-									<label>¿Cuáles son las 3 principales fortalezas de tu negocio?</label>
+									<label>¿Cuáles son las 3 principales fortalezas de tu empresa?</label>
 
 									<label for="fortaleza1">1-</label>
 									<input type="text" name="fortaleza1" id="fortaleza1"
@@ -380,7 +380,7 @@
 
 								<!-- Problemas de tu negocio -->
 								<div class="form-group col-md-12">
-									<label>¿Cuáles son los 3 principales problemas de tu negocio?</label>
+									<label>¿Cuáles son los 3 principales problemas de tu empresa?</label>
 
 									<label for="problema1">1-</label>
 									<input type="text" name="problema1" id="problema1"

@@ -840,7 +840,9 @@ consultorController.nuevoRendimiento = async (req, res) => {
         total_gastos = total_gastos.replace(/[$ ]/g, '');
         total_gastos = total_gastos.replace(/[,]/g, '.');
         const utilidad = parseFloat(total_ventas) - parseFloat(total_compras) - parseFloat(total_gastos)
-        const nuevoRendimiento = { empresa, total_ventas, total_compras, total_gastos, utilidad, fecha }
+        const rentabilidad = (((parseFloat(total_compras) + parseFloat(total_gastos))/parseFloat(total_ventas))*100).toFixed(2);
+        console.log("rentabilidad: ", rentabilidad);
+        const nuevoRendimiento = { empresa, total_ventas, total_compras, total_gastos, rentabilidad, utilidad, fecha }
 
         let rendimientos = await consultarDatos('rendimiento_empresa')
         rendimientos = rendimientos.filter(x => x.empresa == empresa)

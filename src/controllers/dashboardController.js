@@ -288,7 +288,7 @@ dashboardController.mostrarEmpresas = async (req, res) => {
     if (e.diagnostico_negocio) {
       const p1 = JSON.parse(e.diagnostico_negocio);
       if (p1.estado == 1) {
-        e.etapa = "Diagnóstico pagado";
+        e.etapa = "Valoración situacional pagada";
         e.pagoEtapa1 = true;
       } else {
         e.etapa = e.etapa;
@@ -1588,10 +1588,10 @@ dashboardController.editarEmpresa = async (req, res) => {
     ]);
   }
 
-  let datosTabla = await helpers.consultarDatos("rendimiento_empresa");
-  datosTabla = datosTabla.filter((x) => x.empresa == idEmpresa);
+  let datosTabla = (await helpers.consultarDatos("rendimiento_empresa")).filter((x) => x.empresa == idEmpresa);
   let jsonRendimiento = false;
   if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
+  const rentabilidad_actual = (datosTabla[datosTabla.length - 1]).rentabilidad;
 
   /*************************************************************************************************** */
   // Objeto para Botones de las tarjetas con base a la etapa del consultor
@@ -1771,6 +1771,7 @@ dashboardController.editarEmpresa = async (req, res) => {
     datosUsuario: JSON.stringify(req.user),
     tab_tareaAsignada,
     archivos_solicitados,
+    rentabilidad_actual
   });
 };
 
@@ -2511,12 +2512,14 @@ dashboardController.enviarCuestionario = async (req, res) => {
     total_gastos = parseFloat(total_gastos);
 
     const utilidad = total_ventas - total_compras - total_gastos; // Utilidad = Ingresos - Costos Totales
+    const rentabilidad = ((total_compras + total_gastos)/total_ventas)*100;
 
     const nuevoRendimiento = {
       empresa: id_empresa,
       total_ventas,
       total_compras,
       total_gastos,
+      rentabilidad,
       utilidad,
       fecha: new Date().toLocaleDateString("en-US"),
     };

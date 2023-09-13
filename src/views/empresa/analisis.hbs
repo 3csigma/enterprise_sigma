@@ -5,13 +5,13 @@
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
-            <h2 style="color: #000; font-weight: bold;">Analicemos tu empresa en 4 dimensiones</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios que servirán para elevar el desarrollo corporativo de tu empresa, con esto se podrán identificar las falencias y pasos a seguir para crear las tareas que permitirán corregir los problemas e impulsar tu empresa a llegar al próximo nivel, se analizará tu empresa través de las dimensiones:
+            <h2 style="color: #000; font-weight: bold;">Analicemos tu empresa en 4 sistemas</h2>
+            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios que servirán para elevar el desarrollo corporativo de tu empresa, con esto se podrán identificar las falencias y pasos a seguir para crear las tareas que permitirán corregir los problemas e impulsar tu empresa a llegar al próximo nivel, se analizará tu empresa través de los sistemas:
             </p>
             <p style="color: #000; font-weight: bold;">
               <i class="fa-solid fa-box"></i> Producto</li></br>
-              <i class="fa-solid fa-user-tie"></i> Administración</br>
-              <i class="fa-solid fa-gear"></i> Operaciones</br>
+              <i class="fa-solid fa-user-tie"></i> Gestión</br>
+              <i class="fa-solid fa-gear"></i> Corporativo</br>
               <i class="fa-solid fa-bullhorn"></i> Marketing</br>
             </p>
           </div>
@@ -76,7 +76,7 @@
                   {{!-- DIMENSIÓN ADMINISTRACIÓN --}}
                   <tr>
                     <td>{{#if cuestionario.administracion.fecha}}{{cuestionario.administracion.fecha}}{{else}}N/A{{/if}}</td>
-                    <td>Cuestionario sistema de administración</td>
+                    <td>Cuestionario sistema de gestión</td>
                     <td>
                       <span class="badge light {{cuestionario.administracion.color}}">{{cuestionario.administracion.texto}}</span>
                     </td>
@@ -107,7 +107,7 @@
                   {{!-- DIMENSIÓN OPERACIÓN --}}
                   <tr>
                     <td>{{#if cuestionario.operacion.fecha}}{{cuestionario.operacion.fecha}}{{else}}N/A{{/if}}</td>
-                    <td>Cuestionario sistema de operación</td>
+                    <td>Cuestionario sistema corporativo</td>
                     <td>
                       <span class="badge light {{cuestionario.operacion.color}}">{{cuestionario.operacion.texto}}</span>
                     </td>

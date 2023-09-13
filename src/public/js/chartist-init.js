@@ -73,9 +73,9 @@
 								for(let j=0;j<3; j++){
 									if(j == 0){
 										matriz[i][j] = dataEmpresa[i].total_ventas                                    
-									}  else if(j == 1){
+									} else if(j == 1) {
 										matriz[i][j] = dataEmpresa[i].total_compras                                    
-									}else if(j == 2){
+									} else if(j == 2) {
 										matriz[i][j] = dataEmpresa[i].total_gastos    
 									}
 								}

@@ -6,7 +6,7 @@
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
             <h2 style="color: #000; font-weight: bold;">Queremos conocerte un poco más</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">Por favor completa el formulario a continuación para tener información mas detallada sobre tu empresa, estos datos son vitales para realizar un diagnóstico preciso. </br> Si deseas modificar, agregar datos o rehacer el formulario puedes hacerlo.<br> Una vez finalices con la ficha de cliente, podrás iniciar el diagnostico de tu empresa. Con base en las respuestas proporcionadas , nuesto sistema generará un informe especifico para ti.</p>
+            <p style="text-align: justify;margin-top: 2em;color: #000">Por favor completa el formulario a continuación para tener información mas detallada sobre tu empresa, estos datos son vitales para realizar una valoración precisa. </br> Si deseas modificar, agregar datos o rehacer el formulario puedes hacerlo.<br> Una vez finalices con el perfil de empresa, podrás iniciar la valoración. Con base en las respuestas proporcionadas, nuesto sistema generará un informe especifico para ti.</p>
           </div>
         </div>
       </div>
@@ -37,7 +37,7 @@
                       {{!-- FICHA CLIENTE --}}
                       <tr>
                         <td id="fActual">{{cuestionario.fichaCliente.fecha}}</td>
-                        <td>Ficha de cliente</td>
+                        <td>Perfil de empresa</td>
                         <td><span class="badge light {{cuestionario.fichaCliente.color}}"
                             style="background: {{cuestionario.fichaCliente.estilo}}">{{cuestionario.fichaCliente.texto}}</span>
                         </td>
@@ -57,7 +57,7 @@
                       {{#if cuestionario.diagnostico.ver}}
                       <tr>
                         <td>{{#if cuestionario.diagnostico.fecha}}{{cuestionario.diagnostico.fecha}}{{else}}N/A{{/if}}</td>
-                        <td>Cuestionario diagnóstico</td>
+                        <td>Cuestionario valoración</td>
                         <td><span class="badge light {{cuestionario.diagnostico.color}}">{{cuestionario.diagnostico.texto}}</span></td>
                         <td>
                           {{#if cuestionario.diagnostico.btnEdit}}
