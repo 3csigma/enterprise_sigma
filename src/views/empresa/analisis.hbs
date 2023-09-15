@@ -178,6 +178,13 @@
   </div>
 </div>
 
+<style>
+    .custom-modal-class {
+  width: 70%;
+}
+
+</style>
+
 {{#if dimProducto}}
 {{> modals/dimensionProducto}}
 {{/if}}
@@ -196,7 +203,7 @@
 <script>
   document.addEventListener("DOMContentLoaded", () => {
       Swal.fire({
-                title: '<strong>Bienvenido a Evaluación empresarial</strong>',
+                title: '<strong>Bienvenido a Evaluación Empresarial</strong>',
                // icon: 'info',
                 html: '<video controls style="width: 91%;">' + 
                     '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_evaluacionEmpresarial.mp4" type="video/mp4">' +
