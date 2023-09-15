@@ -204,7 +204,7 @@ consultorController.guardarAnalisisProducto = async (req, res) => {
             }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión producto que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 1500 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión producto que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 3000 caracteres.")
        // console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
@@ -356,7 +356,7 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
             },
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión administración que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 1300 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión administración que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 3000 caracteres.")
         //console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
@@ -471,7 +471,7 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
             },
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión operación que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 1500 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión operación que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 3000 caracteres.")
         //console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
@@ -580,7 +580,7 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
             }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión marketing que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 1300 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión marketing que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 3000 caracteres.")
        // console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');

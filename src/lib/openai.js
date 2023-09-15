@@ -7,7 +7,7 @@ module.exports = {
         const configuration = new Configuration({ apiKey })
         const openai = new OpenAIApi(configuration)
 
-        const model = 'gpt-3.5-turbo'
+        const model = 'gpt-3.5-turbo-16k'
         const messages = [{
             role: 'user',
             content: prompt
@@ -19,7 +19,7 @@ module.exports = {
 
     async checkGPT3Connectivity() {
         try {
-            const response = await fetch('https://api.openai.com/v1/engines/gpt-3.5-turbo/completions', {
+            const response = await fetch('https://api.openai.com/v1/chat/completions', {
                 method: 'POST',
                 headers: {
                     'Authorization': `Bearer ${apiKey}`,

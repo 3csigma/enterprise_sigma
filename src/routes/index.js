@@ -14,7 +14,7 @@ router.get('/', requireRole)
 // Perfil de Usuarios
 router.post('/updateProfile', checkLogin, userController.update_user);
 // router.post('/actualizarFotoPerfil', checkLogin, cargarFotoPerfil.single('foto'), userController.actualizarFotoPerfil);
-router.post('/actualizarFotoPerfil', checkLogin, helpers.uploadFiles('foto_Actualizada', false, 'foto_profile', true, false, false), userController.actualizarFotoPerfil);
+router.post('/actualizarFotoPerfil', checkLogin, helpers.uploadFiles('foto_Actualizada', false, 'foto_profile', true, false, false, false), userController.actualizarFotoPerfil);
 
 // Dashboard Principal Administrador
 router.get('/registro-de-consultores', noLogueado, csrfProtection, dashboardController.registroConsultores)

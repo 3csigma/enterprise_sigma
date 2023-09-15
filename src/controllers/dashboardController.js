@@ -2798,7 +2798,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
-        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy prioritario que el informe no pueda superar los 1500 caracteres";
+        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy prioritario que el informe no pueda superar los 3000 caracteres";
       // console.log(
       //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
       // );
@@ -3308,7 +3308,7 @@ dashboardController.guardarRespuestas = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
-        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy importante que priorices que el informe no pueda superar los 1800 caracteres";
+        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy importante que priorices que el informe no pueda superar los 3000 caracteres";
       // console.log(
       //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
       // );

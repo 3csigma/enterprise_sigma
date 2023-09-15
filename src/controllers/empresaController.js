@@ -1037,7 +1037,7 @@ empresaController.addFichaCliente = async (req, res) => {
 empresaController.eliminarFicha = async (req, res) => {
   const { id } = req.body;
   // const ficha = await pool.query('DELETE FROM ficha_cliente WHERE id_empresa = ?', [id])
-  const ficha = await eliminarDatos("ficha_cliente", `WHERE id = ${id}`);
+  const ficha = await eliminarDatos("ficha_cliente", `WHERE id_empresa = ${id}`);
   let respu = undefined;
   // console.log(ficha.affectedRows)
   if (ficha.affectedRows > 0) {
@@ -1716,7 +1716,7 @@ empresaController.informeEstrategico = async (req, res) => {
     obj_respuestas["Evaluación Empresarial - Sistema Marketing"] = {
       informe5_IA,
     };
-    txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, No debe superar los 3000 caracteres.";
+    txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología.";
   }
 
   const prompt = JSON.stringify(obj_respuestas) + txtGPT;

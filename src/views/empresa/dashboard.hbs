@@ -533,6 +533,12 @@
     </div>
 </div>
 
+<style>
+    .custom-modal-class {
+  width: 70%;
+}
+
+</style>
 <!--**********************************
         Content body end
 ***********************************-->
@@ -560,25 +566,28 @@
 <script>
     document.addEventListener("DOMContentLoaded", () => {
         {{#unless tutoriales.etapa}}
-        Swal.fire({
-            title: '<strong>TUTORIAL <u>example</u></strong>',
-            icon: 'info',
-            html: 'You can use <b>bold text</b>, ' +
-                '<a href="//sweetalert2.github.io">links</a> ' +
-                'and other HTML tags',
-            showCloseButton: true,
-            showCancelButton: true,
-            focusConfirm: false,
-            confirmButtonText: '<i class="fa fa-thumbs-up"></i> Great!',
-            confirmButtonAriaLabel: 'Thumbs up, great!',
-            cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
-            cancelButtonAriaLabel: 'Thumbs down'
-        })
+            Swal.fire({
+                title: '<strong>Bienvenido al Dashboard</strong>',
+               // icon: 'info',
+                html: '<video controls style="width: 91%;">' + 
+                    '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_dashboard.mp4" type="video/mp4">' +
+                    '  Your browser does not support the video tag.' +
+                    '</video>',
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonColor: '#812082',
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
+                confirmButtonAriaLabel: 'Thumbs up, great!',
+                cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+                cancelButtonAriaLabel: 'Thumbs down',
+                customClass: {
+                    popup: 'custom-modal-class',
+                }
+            });
         {{/unless}}
-
         $('#div_areas2').hide();
         $('#div_dim2').hide();
-
     });
 
     function cambiarIndicadores(i) {
