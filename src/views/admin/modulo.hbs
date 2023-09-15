@@ -41,7 +41,6 @@
                                                     style="border: 1px solid #DBDBDB;" value="{{modulo.nombre}}">
                                                     <input type="hidden" id="idModulo" value="{{modulo.id}}">
                                                     <input type="hidden" id="lastId" value="{{modulo.lastId}}">
-                                                    <input type="hidden" id="urlInsignia" value="{{modulo.insignia}}">
                                                     <input type="hidden" id="urlMiniatura" value="{{modulo.miniatura}}">
                                                     <input type="hidden" id="jsonLecciones" value="{{jsonLecciones}}">
                                             </div>
@@ -49,19 +48,10 @@
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4 mb-2">
-                                            <label class="text-label">Insignia del módulo*</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <button class="btn color_gradient btn-sm text-white"
-                                                        style="padding: 11px;" type="button">Cargar insignia</button>
-                                                </div>
-                                                <div class="custom-file">
-                                                    <input type="file" class="form-control custom-file-input required"
-                                                        id="insignia" name="file" onchange="fileChange_(event, this)"
-                                                        accept=".jpg, .jpeg, .png, .svg, .psd, .ai, .tiff">
-                                                    <label class="custom-file-label" id="txtInsignia"
-                                                        style="font-size: 13px;padding-top: 15px; border: 0; background: transparent;">Solo archivos .jpg o .png son permitidos</label>
-                                                </div>
+                                            <div class="form-group">
+                                                <label class="text-label">URL de la insignia*</label>
+                                                <input type="text" id="insignia" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;" value="{{modulo.insignia}}">
                                             </div>
                                         </div>
                                         <div class="col-lg-4 mb-2">
@@ -172,114 +162,6 @@
                                         <div class="col-lg-11">
                                             <div class="card-body">
                                                 <div id="contenedor-lecciones" class="accordion accordion-danger-solid sortable-container">
-                                                    {{!-- LECCIÓN 0 --}}
-                                                    <!--                                                     
-                                                    <div class="accordion__item" data-lesson-id="1">
-                                                        <div class="accordion__header" data-toggle="collapse"
-                                                            data-target="#bordered_collapse_0"
-                                                            style="margin-left: -15px;">
-                                                            <span class="accordion__header--text">{{modulo.leccion0.nombre}}</span>
-                                                            <span class="accordion__header--indicator"></span>
-                                                        </div>
-                                                        <div id="bordered_collapse_0"
-                                                            class="collapse accordion__body show"
-                                                            data-parent="#contenedor-lecciones" style="margin-left: -15px;">
-                                                            <div class="accordion__body--text">
-                                                                <div class="row">
-                                                                    <div class="col-lg-8 mb-2">
-                                                                        <div class="form-group">
-                                                                            <label class="text-label">Nombre de la lección*</label>
-                                                                            <input type="text" id="leccion_0" class="form-control" style="border: 1px solid #DBDBDB;" value="{{#if modulo.leccion0.nombre}}{{modulo.leccion0.nombre}}{{else}}Lección por defecto{{/if}}" onblur="actualizarLeccion(this, {{modulo.leccion0.id}})">
-                                                                        </div>
-                                                                    </div>
-                                                                </div>
-                                                                <div class="row">
-                                                                    <div class="col-6 mb-2">
-                                                                        <label class="text-label">Video de la lección*</label>
-                                                                        <div class="drag-area file-videoleccion file-leccion"
-                                                                            ondragover="dragOverHandler(event)"
-                                                                            ondragleave="dragLeaveHandler(event)"
-                                                                            ondrop="dropHandler(event)">
-                                                                            <center>
-                                                                                <button id="btnvideoleccion"
-                                                                                    onclick="btnFile_(event, this.parentNode)"
-                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
-                                                                                    <img src="../img/thumbnail.svg"
-                                                                                        alt="Miniatura"
-                                                                                        style="width: 121px; margin-top: -37px;">
-                                                                                </button>
-                                                                                <input type="file" class="fileVideo_"
-                                                                                    id="video_0"
-                                                                                    onchange="fileChange_(event, event.target)"
-                                                                                    style="display: none;"
-                                                                                    accept=".mov, .mp4, .avi, .mkv">
-                                                                            </center>
-                                                                            <h6 class="fw-700 text-black">Escoge o <span 
-                                                                            style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div class="col-6 pt-4">
-                                                                        <div id="portada-video_0">
-                                                                            <input type="hidden" id="id-video_0" value="{{modulo.leccion0.id}}">
-                                                                            {{#if modulo.leccion0.video}}
-                                                                            <input type="hidden" id="url-video_0" value="{{modulo.leccion0.video}}">
-                                                                            <video src="{{modulo.leccion0.video}}" width="250" alt="Video Lección 0">
-                                                                            {{else}}
-                                                                            <input type="hidden" id="url-video_0" value="">
-                                                                            <video src="../img/Leccion-por-defecto.mp4" width="250" alt="Video Lección 0"></video>
-                                                                            {{!-- <img src="../img/Leccion-por-defecto.jpg" width="250" alt="Video por defecto"> --}}
-                                                                            {{/if}}
-                                                                        </div>
-                                                                    </div>
-                                                                    <div id="msgFile-video_0" class="col-12"></div>
-                                                                </div>
-                                                                <br>
-                                                                {{!-- Summernote --}}
-                                                                <div class="row">
-                                                                    <div class="col-xl-12 col-xxl-12">
-                                                                        <label class="text-label">Descripción de la lección</label>
-                                                                        <div class="summernote-theme-1">
-                                                                            <textarea name="name" class="summernote" id="summernote_0" rows="10">
-                                                                                {{modulo.leccion0.descripcion}}
-                                                                            </textarea>
-                                                                        </div>
-                                                                        <br>
-                                                                        <button onclick="actualizarLeccion(document.getElementById('summernote_0'), {{modulo.leccion0.id}})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
-                                                                    </div>
-                                                                </div>
-                                                                <br>
-                                                                <div class="row" style="display: grid;">
-                                                                    <div class="col-6 mb-2">
-                                                                        <label class="text-label">Material descargable</label>
-                                                                        <div class="drag-area file-material file-leccion"
-                                                                            ondragover="dragOverHandler(event)"
-                                                                            ondragleave="dragLeaveHandler(event)"
-                                                                            ondrop="dropHandler(event)">
-                                                                            <center>
-                                                                                <button id="btnMaterial"
-                                                                                    onclick="btnFile_(event, this.parentNode)"
-                                                                                    style="border: 1px solid #ffffff00;background: #f0f8ff00;background-repeat: round;">
-                                                                                    <img src="../img/thumbnail.svg"
-                                                                                        alt="Material"
-                                                                                        style="width: 121px; margin-top: -37px;">
-                                                                                </button>
-                                                                                <input type="file" class="fileMaterial_" id="material_0" onchange="fileChange_(event, event.target)"
-                                                                                    hidden>
-                                                                                <input type="hidden" id="url-material_0" value="{{modulo.leccion0.material}}">
-                                                                                <input type="hidden" id="id-material_0" value="{{modulo.leccion0.id}}">
-                                                                            </center>
-                                                                            <h6 class="fw-700 text-black">Escoge o <span
-                                                                                    style="color:#812082;font-weight: 700;font-size: 14px;">arrastra</span> un archivo</h6>
-                                                                        </div>
-                                                                    </div>
-                                                                    <div id="msgFile-material_0" class="col-12"></div>
-                                                                </div>
-                                                                <br>
-                                                            </div>
-                                                        </div>
-                                                    </div> 
-                                                    -->
-
                                                     {{!-- LECCIONES EXISTENTES DEL MÓDULO --}}
                                                     {{#each modulo.lecciones}}
                                                     <div class="accordion__item" data-lesson-id="{{id}}">
@@ -458,14 +340,11 @@
     lecciones_temp = [], idModulo = document.getElementById("idModulo").value;
 
     document.addEventListener("DOMContentLoaded", async function () {
-        const urlInsignia = document.getElementById("urlInsignia").value;
         const urlMiniatura = document.getElementById("urlMiniatura").value;
         // Buscar el patrón de una fecha UNIX seguida por un guión bajo
         const regex = /\/leccion_\d+_([^/]+)/;
         // Ejecutar la expresión regular en la cadena
-        let nombre = urlInsignia.match(regex)[1];
-        $('#txtInsignia').text(nombre)
-        nombre = urlMiniatura.match(regex)[1];
+        const nombre = urlMiniatura.match(regex)[1];
         $('#msgFile-thumbnail').html(`<span class="text-black">${nombre}</span>`)
 
         //Lecciones
@@ -654,13 +533,27 @@
         addLessonBtn.addEventListener("click", handleAddLesson);
     });
 
+    function dropHandler(event) {
+        event.preventDefault(); // previene el comportamiento por defecto del evento
+        event.currentTarget.classList.remove("active"); // utiliza currentTarget en lugar de this para asegurarte de que se está removiendo la clase del div correcto
+        const h6 = event.currentTarget.querySelector("h6"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        h6.textContent = "Arrastra y suelta el archivo";
+        const input = event.currentTarget.querySelector("input"); // utiliza currentTarget en lugar de this para asegurarte de que se está buscando en el div correcto
+        input.files = event.dataTransfer.files
+        cargarArchivo(input.files[0], input.className, input.id);
+    }
+
+    function fileChange_(event, input) {
+        cargarArchivo(input.files[0], input.className, input.id);
+    }
+    
     async function cargarArchivo(file, clase, id) {
         // Si el div para el archivo es el de Video
-        if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_' || id == 'insignia') && (file && file.size >= (20 * 1024 * 1024))) {
+        if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_') && (file && file.size >= (20 * 1024 * 1024))) {
             toastError("El archivo no puede superar los 20MB.")
         } else {
             const ext = file.name.split(".").pop().toLowerCase();
-            let fileOk = true, id_Msg = 'msgFile-' + id, currentURL = null, inpurURL = null, img_insignia = false;
+            let fileOk = true, id_Msg = 'msgFile-' + id, currentURL = null, inpurURL = null;
             let tabla = 'lecciones', columna = null, ide = document.getElementById("idModulo").value;
             // Validando el tipo de archivo
             if (clase == 'fileThumbnail_') {
@@ -685,18 +578,6 @@
 
                     // Agregar el video al div
                     divMiniatura.appendChild(miniatura);
-                }
-            } else if (id == 'insignia') {
-                const extensiones = ["jpg", "jpeg", "png", "svg", "psd", "ai", "tiff"];
-                // Si el archivo no es una imagen
-                if (!extensiones.includes(ext)) {
-                    fileOk = false;
-                    toastError("Solo se admiten imagenes, intentelo nuevamente.")
-                } else {
-                    currentURL = document.getElementById("urlInsignia").value;
-                    img_insignia = true;
-                    tabla = 'modulos';
-                    columna = 'insignia';
                 }
             } else if (clase == 'fileVideo_') {
                 const extensiones = ['mov', 'mp4', 'avi', 'mkv']
@@ -756,18 +637,10 @@
                             if (r) {
                                 const fileReader = new FileReader();
                                 fileReader.addEventListener("load", async () => {
-                                    if (img_insignia) {
-                                        document.getElementById("urlInsignia").value = r;
-                                        const regex = /\/leccion_\d+_([^/]+)/;
-                                        // Ejecutar la expresión regular en la cadena
-                                        let nombre = r.match(regex)[1];
-                                        $('#txtInsignia').text(nombre)
-                                    } else {
-                                        $('#'+id_Msg).html(`
-                                            <span class="text-black">${file.name}</span><br>
-                                            <span class="success">Archivo actualizado exitosamente.</span>
-                                        `);
-                                    }
+                                    $('#'+id_Msg).html(`
+                                        <span class="text-black">${file.name}</span><br>
+                                        <span class="success">Archivo actualizado exitosamente.</span>
+                                    `);
                                 })
                                 fileReader.readAsDataURL(file);
                                 console.log("Respuesta: ", r)
@@ -913,6 +786,7 @@
             title: msg,
             showCancelButton: true,
             confirmButtonText: 'Confirmar',
+            confirmButtonColor: "#812082",
         }).then((result) => {
             if (result.isConfirmed) {
                 fetch('/actualizar-estado-modulo', {
@@ -939,9 +813,7 @@
     function actualizarDatos() {
         const idModulo = $('#idModulo').val()
         const modulo = $("#modulo").val();
-        const insigniaInput = document.getElementById("insignia");
-        let insignia = $('#urlInsignia').val();
-        if (insigniaInput.files && insigniaInput.files[0]) { insignia = insigniaInput.files[0] }
+        const insignia = $('#insignia').val();
         const nombre_insignia = $("#nombre_insignia").val();
         const categoria = $("#categoriaHiddenModulo").val();
         const programa = $(".programa:checked").map(function () {

@@ -1614,28 +1614,29 @@ empresaController.planEstrategico = async (req, res) => {
 
 empresaController.informeAutoGenerado = async (req, res) => {
   const { tipo } = req.params;
-  let tituloInforme = tipo + " de",
-  tipoInforme = "negocio";
+  let tituloInforme = "Valoración",
+  tipoInforme = "Situacional";
   let tipoDB = "Diagnóstico";
 
   if (tipo == "dimensión_producto") {
-    tituloInforme = "dimensión";
+    tituloInforme = "sistema";
     tipoInforme = "producto";
     tipoDB = "Análisis producto";
   } else if (tipo == "dimensión_administración") {
-    tituloInforme = "dimensión";
+    tituloInforme = "sistema";
     tipoInforme = "administración";
     tipoDB = "Análisis administración";
   } else if (tipo == "dimensión_operación") {
-    tituloInforme = "dimensión";
+    tituloInforme = "sistema";
     tipoInforme = "operación";
     tipoDB = "Análisis operación";
   } else if (tipo == "dimensión_marketing") {
-    tituloInforme = "dimensión";
+    tituloInforme = "sistema";
     tipoInforme = "marketing";
     tipoDB = "Análisis marketing";
   } else if (tipo == "estratégico") {
-    tituloInforme = "Plan Estratégico de";
+    tituloInforme = "Planificación";
+    tipoInforme = "estratégica";
     tipoDB = "Estratégico";
   }
 
@@ -1656,8 +1657,8 @@ empresaController.informeAutoGenerado = async (req, res) => {
     return a.id_ - b.id_;
   });
   if (tipo == "Diagnóstico_2") {
-    tituloInforme = "Diagnóstico de";
-    tipoInforme = "negocio #2";
+    tituloInforme = "Valoración";
+    tipoInforme = "Situacional #2";
     data = data[data.length - 1];
   } else {
     data = data[0];
@@ -1703,16 +1704,16 @@ empresaController.informeEstrategico = async (req, res) => {
       (x) => x.empresa == empresa.id_empresas && x.tipo == "Análisis marketing"
     );
     if (informe5_IA) informe5_IA = informe5_IA.informe;
-    obj_respuestas["Análisis de Negocio - Dimensión Producto"] = {
+    obj_respuestas["Evaluación Empresarial - Sistema Producto"] = {
       informe2_IA,
     };
-    obj_respuestas["Análisis de Negocio - Dimensión Administración"] = {
+    obj_respuestas["Evaluación Empresarial - Sistema Gestión"] = {
       informe3_IA,
     };
-    obj_respuestas["Análisis de Negocio - Dimensión Operación"] = {
+    obj_respuestas["Evaluación Empresarial - Sistema Corporativo"] = {
       informe4_IA,
     };
-    obj_respuestas["Análisis de Negocio - Dimensión Marketing"] = {
+    obj_respuestas["Evaluación Empresarial - Sistema Marketing"] = {
       informe5_IA,
     };
     txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, No debe superar los 3000 caracteres.";
@@ -2197,7 +2198,11 @@ empresaController.recursos = async (req, res) => {
   }
 
   const recursoCompartido = [];
-  const resul = (await pool.query("SELECT * FROM recursos_compartidos")).filter( (x) => (JSON.parse(x.programa)).includes(req.user.programa.toString()));
+  const resul = (await pool.query("SELECT * FROM recursos_compartidos")).filter( (x) => {
+    if ((JSON.parse(x.programa)).includes(req.user.programa.toString()) || req.user.idRecurso.includes(x.idCurso)) {
+      return x;
+    }
+  })
   if (resul.length > 0) {
     resul.forEach((re) => {
       let iconos = [], cuerpoHTML = "";
@@ -2406,47 +2411,49 @@ empresaController.modulos = async (req, res) => {
   const lecciones = await consultarDatos("lecciones")
   // Filtrando módulos por programa al que tenga la empresa logueada
   let misModulos = (await consultarDatos('modulos')).filter(m => {
-    m.codigo = encriptarTxt((m.id).toString())
-    m.programa = JSON.parse(m.programa);
-    m.lecciones_completadas = 0;
-    m.estudiantes = 0;
 
-    if (mapa.size > 0) {
-      const data = (mapa.get((m.id).toString()));
-      if (data) {
-        m.lecciones_completadas = (data.id).length;
+    if (m.estado === 1 && m.programa.includes(req.user.programa.toString()) || req.user.id_categoria.includes(m.id_categoria)) {
+      m.codigo = encriptarTxt((m.id).toString())
+      m.programa = JSON.parse(m.programa);
+      m.lecciones_completadas = 0;
+      m.estudiantes = 0;
+
+      if (mapa.size > 0) {
+        const data = (mapa.get((m.id).toString()));
+        if (data) {
+          m.lecciones_completadas = (data.id).length;
+        }
       }
+
+      const misLecciones = lecciones.filter(l => l.id_modulo == m.id)
+      m.total_lecciones = misLecciones.length;
+      numLecciones.total += m.total_lecciones;
+
+      m.color = m.lecciones_completadas == m.total_lecciones ? '#FED061' : '#7e7e7e';
+
+      // Crea un objeto para almacenar el recuento de empresas por módulo
+      const recuento = {};
+      // Recorre el arreglo de módulos
+      const programas = m.programa;
+
+      console.log("programas");
+      console.log(programas);
+
+      // Inicializa el recuento de empresas para el módulo actual
+      recuento[programas] = 0;
+
+      // Recorre el arreglo de empresas
+      empresas.forEach((e) => {
+        // Verifica si el programa de la empresa está en el arreglo de programas del módulo
+        if (e.programa && programas.includes((e.programa).toString())) {
+          // Incrementa el recuento de empresas para el módulo correspondiente
+          recuento[programas]++;
+        }
+      });
+      console.log(recuento[programas]);
+      m.estudiantes = recuento[programas] || 0;
+      return m;
     }
-
-    const misLecciones = lecciones.filter(l => l.id_modulo == m.id)
-    m.total_lecciones = misLecciones.length;
-    numLecciones.total += m.total_lecciones;
-
-    m.color = m.lecciones_completadas == m.total_lecciones ? '#FED061' : '#7e7e7e';
-
-    // Crea un objeto para almacenar el recuento de empresas por módulo
-    const recuento = {};
-    // Recorre el arreglo de módulos
-    const programas = m.programa;
-
-    console.log("programas");
-    console.log(programas);
-
-    // Inicializa el recuento de empresas para el módulo actual
-    recuento[programas] = 0;
-
-    // Recorre el arreglo de empresas
-    empresas.forEach((e) => {
-      // Verifica si el programa de la empresa está en el arreglo de programas del módulo
-      if (e.programa && programas.includes((e.programa).toString())) {
-        // Incrementa el recuento de empresas para el módulo correspondiente
-        recuento[programas]++;
-      }
-    });
-    console.log(recuento[programas]);
-    m.estudiantes = recuento[programas] || 0;
-    
-    return m.programa.includes(req.user.programa.toString()) && m.estado === 1;
   });
 
   // Procesar los datos para agrupar los módulos por categoría (Curso)
@@ -2515,7 +2522,8 @@ empresaController.verModulo = async (req, res) => {
     
     res.render("empresa/modulo", {
       user_dash: true, itemModulo: true,
-      modulo, lecciones: JSON.stringify(modulo.lecciones)
+      modulo, lecciones: JSON.stringify(modulo.lecciones),
+      etapaCompleta: req.session.etapaCompleta,
     });
   }
 }
@@ -2533,14 +2541,12 @@ empresaController.leccionCompletada = async (req, res) => {
   if (moduloId) {
     // Si el id no existe en el array de 'id', lo agregamos al array de 'id'
     if (!moduloId.id.includes(id)) {
-      console.log("Si el objeto ya existe y el id no existe en el array de 'id', lo agregamos al array de 'id'");
       const updatedModuloId = {...moduloId, id: [...moduloId.id, id]};
       completadas.set(modulo, updatedModuloId);
       bandera = true;
     }
   } else {
     // Si el objeto no existe, creamos un nuevo objeto con la estructura requerida
-    console.log("Si el objeto no existe, creamos un nuevo objeto con la estructura requerida");
     completadas.set(modulo, {id: [id] });
     bandera = true;
   }
@@ -2555,10 +2561,13 @@ empresaController.leccionCompletada = async (req, res) => {
 }
 
 empresaController.modulosCompletados = async (req, res) => {
-  const { modulo, nombre_insignia, fotoInsignia } = req.body;
-  let respuesta = false;
+  const { modulo, nombre_insignia, urlInsignia } = req.body;
 
-  const template = moduloCompletado(req.user.nombres, fotoInsignia, nombre_insignia, modulo, '/mis-modulos');
+  // Reemplazar "file/d/" por "uc?export=download&id=" y Eliminar "/view?usp=sharing" al final
+  const linkDirecto = (urlInsignia.replace("/file/d/", "/uc?export=download&id=")).split('/view?usp=sharing')[0];
+
+  let respuesta = false;
+  const template = moduloCompletado(req.user.nombres, linkDirecto, nombre_insignia, modulo, '/mis-modulos');
   const resultEmail = await sendEmail(req.user.email, "Haz completado un módulo", template);
 
   if (!resultEmail) {

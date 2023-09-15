@@ -38,33 +38,23 @@
                                             <div class="form-group">
                                                 <label class="text-label">Nombre del módulo*</label>
                                                 <input type="text" id="modulo" class="form-control"
-                                                    style="border: 1px solid #DBDBDB;" required>
+                                                    style="border: 1px solid #DBDBDB;">
                                             </div>
                                         </div>
                                     </div>
                                     <div class="row">
                                         <div class="col-lg-4 mb-2">
-                                            <label class="text-label">Insignia del módulo*</label>
-                                            <div class="input-group mb-3">
-                                                <div class="input-group-prepend">
-                                                    <button class="btn color_gradient btn-sm text-white"
-                                                        style="padding: 11px;" type="button">Cargar insignia</button>
-                                                </div>
-                                                <div class="custom-file">
-                                                    <input type="file" class="form-control custom-file-input required"
-                                                        id="insignia" name="file" required
-                                                        accept=".jpg, .jpeg, .png, .gif, .tiff">
-                                                    <label class="custom-file-label"
-                                                        style="font-size: 13px;padding-top: 15px;">Solo archivos .jpg o
-                                                        .png son permitidos</label>
-                                                </div>
+                                            <div class="form-group">
+                                                <label class="text-label">URL de la insignia*</label>
+                                                <input type="text" id="insignia" class="form-control"
+                                                    style="border: 1px solid #DBDBDB;">
                                             </div>
                                         </div>
                                         <div class="col-lg-4 mb-2">
                                             <div class="form-group">
                                                 <label class="text-label">Nombre de la insignia*</label>
                                                 <input type="text" id="nombre_insignia" class="form-control"
-                                                    style="border: 1px solid #DBDBDB;" required>
+                                                    style="border: 1px solid #DBDBDB;">
                                             </div>
                                         </div>
                                     </div>
@@ -74,12 +64,12 @@
                                                 <label class="text-label">Curso*</label>
                                                 <select id="categoriaSelectModulo"
                                                     class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
-                                                    <option value="N/A">Escoge curso...</option>
-                                                    {{#each categorias}}
-                                                    <option value="{{this}}">{{this}}</option>
+                                                    <option value="">Escoge curso...</option>
+                                                    {{#each modulos}}
+                                                    <option value="{{categoria}}">{{categoria}}</option>
                                                     {{/each}}
                                                 </select>
-                                                <input type="hidden" id="categoriaHiddenModulo" name="categoria">
+                                                <input type="hidden" id="categoriaHiddenModulo" name="categoria" value="">
                                             </div>
                                         </div>
                                     </div>
@@ -88,8 +78,6 @@
                                             <div class="form-group">
                                                 <h3 style="font-weight: 500;font-size: 17px;color: #000000;">Programa(s)
                                                     destino*</h3>
-                                                <label class="text-black">Si no seleccionas ningun programa, este módulo
-                                                    solo sera accesible mediante compra</label>
                                                 <div class="form-group">
                                                     <div class="form-check form-check-inline">
                                                         <label class="form-check-label">
@@ -125,6 +113,12 @@
                                                         <label class="form-check-label">
                                                             <input type="checkbox" class="form-check-input programa"
                                                                 value="6">Por compra
+                                                        </label>
+                                                    </div>
+                                                    <div class="form-check form-check-inline">
+                                                        <label class="form-check-label">
+                                                            <input type="checkbox" class="form-check-input programa"
+                                                                value="7">NAR
                                                         </label>
                                                     </div>
                                                 </div>
@@ -168,7 +162,7 @@
                                                                     <div class="col-lg-8 mb-2">
                                                                         <div class="form-group">
                                                                             <label class="text-label">Nombre de la lección*</label>
-                                                                            <input type="text" id="leccion_0" class="form-control" style="border: 1px solid #DBDBDB;" value="Lección por defecto" required>
+                                                                            <input type="text" id="leccion_0" class="form-control" style="border: 1px solid #DBDBDB;" value="Lección por defecto">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -442,9 +436,8 @@
         let msg = '¿Quieres guardar este módulo como un borrador?'
         if (estado == 1) msg = '¿Estás seguro que deseas publicar este módulo?'
         const modulo = $("#modulo").val();
-        const insigniaInput = document.getElementById("insignia");
-        const insignia = insigniaInput.files[0];
         const categoria = $("#categoriaHiddenModulo").val();
+        const insignia = $("#insignia").val();
         const nombre_insignia = $("#nombre_insignia").val();
         const programa = $(".programa:checked").map(function () {
             return $(this).val();
@@ -455,6 +448,7 @@
             title: msg,
             showCancelButton: true,
             confirmButtonText: 'Confirmar',
+            confirmButtonColor: "#812082",
         }).then((result) => {
             if (result.isConfirmed) {
                 const formData = new FormData();
@@ -499,7 +493,7 @@
 
     }
 
-    function cargarArchivo(file, clase, id) {
+    async function cargarArchivo(file, clase, id) {
         // Si el div para el archivo es el de Video
         if ((clase == 'fileThumbnail_' || clase == 'fileMaterial_') && file.size >= (20 * 1024 * 1024)) { // Validar el tamaño del video - 20 megabytes
             toastError("El archivo no puede superar los 20MB.")
@@ -574,11 +568,11 @@
             return $(this).val();
         }).get();
         const nombre_insignia = $('#nombre_insignia').val()
-        const insignia = (document.getElementById("insignia")).files[0];
+        const insignia = $('#insignia').val()
         const categoria = $('#categoriaHiddenModulo').val()
         const thumbnail = (document.getElementById("fileThumbnail")).files[0];
 
-        if (modulo == '' || !insignia || nombre_insignia == '' || categoria == '' || programa.length === 0 || !thumbnail) {
+        if (modulo == '' || insignia == '' || nombre_insignia == '' || categoria == '' || programa.length === 0 || !thumbnail) {
             Swal.fire('Error!', 'Hay campos vacíos en la configuración del módulo.', 'info')
         } else {
             $("#btnNextStep").trigger("click");
@@ -591,9 +585,6 @@
         const programa = $(".programa:checked").map(function () {
             return $(this).val();
         }).get();
-        const nombre_insignia = $('#nombre_insignia').val()
-        const insignia = (document.getElementById("insignia")).files[0];
-        const categoria = $('#categoriaHiddenModulo').val()
         const thumbnail = (document.getElementById("fileThumbnail")).files[0];
 
         const programNames = {

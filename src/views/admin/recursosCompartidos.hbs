@@ -97,6 +97,21 @@
                                                         <input type="checkbox" class="form-check-input" name="programa" value="4" {{#if programa.n4}}checked=""{{/if}}>Enterprise
                                                     </label>
                                                 </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="5" {{#if programa.n5}}checked=""{{/if}}>Accelerate
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="6" {{#if programa.n6}}checked=""{{/if}}>Por compra
+                                                    </label>
+                                                </div>
+                                                <div class="form-check form-check-inline">
+                                                    <label class="form-check-label">
+                                                        <input type="checkbox" class="form-check-input" name="programa" value="7" {{#if programa.n7}}checked=""{{/if}}>NAR
+                                                    </label>
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="row align-items-center justify-content-center tarjetas_admin">
@@ -112,7 +127,7 @@
                                                     <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#812082'}} selected {{/comparar}}" data-color="#812082" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
                                                     <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#FED061'}} selected {{/comparar}}" data-color="#FED061" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>
                                                 </div>
-                                                <input type="text" id="colorGrupoInput_editAdm_{{idGrupo}}" name="color_grupo" value="{{color_grupo}}">
+                                                <input type="hidden" id="colorGrupoInput_editAdm_{{idGrupo}}" name="color_grupo" value="{{color_grupo}}">
                                             </div>
                                         </div>
                                         <div class="row align-items-center justify-content-center flex-column">
@@ -155,7 +170,7 @@
         </div>
     </div>
 </div>
-<script src="../js/jquery.js"></script>
+{{!-- <script src="../js/jquery.js"></script> --}}
 <script>
     // Selecciona todos los botones de color y campos de texto dentro de las tarjetas
 const tarjetas_admin = document.querySelectorAll('.tarjetas_admin');

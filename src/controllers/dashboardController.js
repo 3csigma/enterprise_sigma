@@ -2512,7 +2512,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
     total_gastos = parseFloat(total_gastos);
 
     const utilidad = total_ventas - total_compras - total_gastos; // Utilidad = Ingresos - Costos Totales
-    const rentabilidad = ((total_compras + total_gastos)/total_ventas)*100;
+    const rentabilidad = ((total_ventas-(total_compras + total_gastos))/total_ventas)*100;
 
     const nuevoRendimiento = {
       empresa: id_empresa,
@@ -3098,7 +3098,6 @@ dashboardController.guardarRespuestas = async (req, res) => {
   ];
   eNegocio.forEach((e) => {
     e.valor = parseFloat(e.peso / e.cant);
-    //e.valor = e.valor.toFixed(9)
   });
 
   // Resultado de Áreas Vitales
@@ -3148,18 +3147,7 @@ dashboardController.guardarRespuestas = async (req, res) => {
   c2 = Object.values(c2).filter((n) => n == "Si").length;
   let c3 = JSON.parse(viabilidad);
   c3 = Object.values(c3).filter((n) => n == "Si").length;
-  let c4 = parseInt(
-    cant0 +
-      cant1 +
-      cant2 +
-      cant3 +
-      cant4 +
-      cant5 +
-      cant6 +
-      cant7 +
-      cant8 +
-      cant9
-  );
+  let c4 = parseInt(cant0 + cant1 + cant2 + cant3 + cant4 + cant5 + cant6 + cant7 + cant8 + cant9);
 
   let valoracion = [
     Math.round(c1 * categorias[0].valor),
@@ -3356,7 +3344,6 @@ const storage = multer.diskStorage({
   filename: function (req, file, cb) {
     // const fechaActual = Math.floor(Date.now() / 1000)
     urlInforme = "Informe-3C-Sigma-Empresa-" + file.originalname;
-    console.log(urlInforme);
     cb(null, urlInforme);
   },
 });
@@ -3365,7 +3352,6 @@ dashboardController.subirInforme = subirInforme.single("file");
 dashboardController.guardarInforme = async (req, res) => {
   const r = { ok: false };
   const { codigoEmpresa, consultor, nombreInforme, zonaHoraria } = req.body;
-  console.log(req.body);
   const empresas = await helpers.consultarDatos("empresas");
   const e = empresas.find((x) => x.codigo == codigoEmpresa);
 
@@ -3454,8 +3440,6 @@ dashboardController.guardarInforme = async (req, res) => {
 dashboardController.guardarArchivo_Empresarial = async (req, res) => {
   const r = { ok: false };
   const { codigoEmpresa, tipo, nombreArchivo, zonaHoraria } = req.body;
-  console.log("\nDATA FILE >>>");
-  console.log(req.file);
 
   const empresas = await helpers.consultarDatos("empresas");
   const e = empresas.find((x) => x.codigo == codigoEmpresa);
@@ -3502,8 +3486,6 @@ dashboardController.guardarArchivo_Empresarial = async (req, res) => {
     );
   }
 
-  console.log("ARCHIVO ACTUAL PRO CON: >>>> ", archivoActual);
-
   if (archivoActual.affectedRows > 0) {
     let asunto = "Se ha cargado un nuevo archivo en Plan Empresarial";
     let template = archivosPlanEmpresarialHTML(e.nombre_empresa);
@@ -3532,8 +3514,6 @@ dashboardController.guardarArchivo_Empresarial = async (req, res) => {
 dashboardController.websiteEmpresarial = async (req, res) => {
   const r = { ok: false };
   const { codigoEmpresa, link, zonaHoraria } = req.body;
-
-  console.log(req.body);
 
   const empresas = await helpers.consultarDatos("empresas");
   const e = empresas.find((x) => x.codigo == codigoEmpresa);
@@ -3755,7 +3735,7 @@ dashboardController.recursosCompartidos = async (req, res) => {
 
       r.contadorElementos = contador;
       r.programa = JSON.parse(r.programa);
-      const programa = { n1: false, n2: false, n3: false, n4: false, txt: [] };
+      const programa = { n1: false, n2: false, n3: false, n4: false, n5: false, n6: false, txt: [] };
 
       if (r.programa.includes("1")) {
         programa.n1 = true;
@@ -3772,6 +3752,18 @@ dashboardController.recursosCompartidos = async (req, res) => {
       if (r.programa.includes("4")) {
         programa.n4 = true;
         programa.txt.push("Enterprise");
+      }
+      if (r.programa.includes("5")) {
+        programa.n5 = true;
+        programa.txt.push("Accelerate");
+      }
+      if (r.programa.includes("6")) {
+        programa.n6 = true;
+        programa.txt.push("Por compra");
+      }
+      if (r.programa.includes("7")) {
+        programa.n7 = true;
+        programa.txt.push("NAR");
       }
 
       const palabrasConComas = programa.txt
@@ -3858,17 +3850,25 @@ dashboardController.addRecursos_Compartidos = async (req, res) => {
 
   if (esFormulario === "true") {
     const programa = req.body.programa || ["1"];
-    // Ejecuta la sentencia SQL solo si la solicitud proviene del formulario
-    await pool.query(
-      "INSERT INTO recursos_compartidos (programa, nombre_grupo, descrip_grupo, color_grupo, recurso_armado) VALUES (?, ?, ?, ?, ?)",
-      [
-        JSON.stringify(programa),
-        nombre_grupo,
-        descrip_grupo,
-        color_grupo,
-        recurso_armado,
-      ]
-    );
+
+    
+    const datos = {
+      programa: JSON.stringify(programa),
+      nombre_grupo,
+      descrip_grupo,
+      color_grupo,
+      recurso_armado,
+    }
+
+    // Actualizando Tabla Módulos si este, pertenece al programa "Por Compra con # 6"
+    if (programa.includes("6")) {
+      console.log("Generando id_categoría Random");
+      const codigo = nombre_grupo + '6';
+      datos.idCurso = (helpers.encriptarTxt((codigo).toString())).slice(0, 7)
+    }
+
+    await helpers.insertarDatos('recursos_compartidos', datos)
+    
     req.session.datosAcumulados = null;
   }
 
@@ -3924,33 +3924,41 @@ dashboardController.verModulos = async (req, res) => {
 
 dashboardController.crearModulo = async (req, res) => {
   // const categorias = (await helpers.consultarDatos('modulos')).map(x => x.categoria)
-  const categorias = (await pool.query("SELECT DISTINCT categoria FROM modulos")).map(x => x.categoria);
-  console.log("categorias ", categorias)
-  res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5, categorias })
+  const modulos = await helpers.consultarDatos('modulos', 'GROUP BY categoria')
+  if (modulos.length > 0) {
+    modulos.lastId = modulos[modulos.length - 1].id
+  }
+  res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5, modulos })
 }
 
 dashboardController.guardarModulo = async (req, res) => {
-  console.log("Agregando módulo.....");
-  const { nombre, nombre_insignia, categoria, programa, lecciones_size, estado } = req.body;
+  console.log("\n-+-+-+-+-\nAgregando módulo.....");
+  const { nombre, insignia, nombre_insignia, categoria, programa, lecciones_size, estado } = req.body;
   const programaArray = Array.isArray(programa) ? programa : [programa];
+
   // Convertir el array programaArray a formato JSON
   const programaJSON = JSON.stringify(programaArray);
 
   const moduloData = {
     nombre,
+    insignia,
     nombre_insignia,
     categoria,
     programa: programaJSON,
     estado
   };
 
+  // Actualizando Tabla Módulos si este, pertenece al programa "Por Compra con # 6"
+  if (programaArray.includes("6")) {
+    console.log("Generando id_categoría Random");
+    const codigo = categoria + '6';
+    moduloData.id_categoria = (helpers.encriptarTxt((codigo).toString())).slice(0, 7)
+  }
+
   const miniatura_insignira = req.files
   if (miniatura_insignira) {
     miniatura_insignira.forEach((mi) => {
       const campo = mi.fieldname;
-      if (campo.startsWith("insignia")) {
-        moduloData.insignia  = `../data_modulo/${mi.filename}`;
-      } 
       if (campo.startsWith("miniatura")) {
         moduloData.miniatura  = `../data_modulo/${mi.filename}`;
       } 
@@ -3959,13 +3967,13 @@ dashboardController.guardarModulo = async (req, res) => {
 
   const { insertId } = (await helpers.insertarDatos("modulos", moduloData));
 
+
   // Guardar las lecciones asociadas al módulo
   console.log("Agregando lecciones.....");
   for (let i = 0; i < lecciones_size; i++) {
     const nombre = req.body[`nombre_${i}`];
     const descripcion = req.body[`descripcion_${i}`];
     const duracion = req.body[`duracion_${i}`];
-    const material = req.body[`material_${i}`];
     const leccionData = {
       orden: i,
       id_modulo: insertId,
@@ -4159,7 +4167,7 @@ dashboardController.subirArchivos = async (req, res) => {
 
 dashboardController.actualizarModulo = async (req, res) => {
   console.log("Actualizando módulo...");
-  const { nombre, categoria, programa, nombre_insignia, idModulo } = req.body;
+  const { nombre, categoria, programa, insignia, nombre_insignia, idModulo } = req.body;
   console.log(req.body);
   const programaArray = Array.isArray(programa) ? programa : [programa];
   // Convertir el array programaArray a formato JSON
@@ -4169,6 +4177,7 @@ dashboardController.actualizarModulo = async (req, res) => {
     nombre,
     categoria,
     programa: programaJSON,
+    insignia,
     nombre_insignia,
     estado: 0
   };
