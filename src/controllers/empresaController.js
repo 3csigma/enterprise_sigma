@@ -463,21 +463,27 @@ empresaController.perfilUsuarios = async (req, res) => {
     }
   }
 
-  let user_dash = false,
-    adminDash = false,
-    consultorDash = false;
+  let user_dash = false, adminDash = false, consultorDash = false, tutoriales = {};
   if (rol == "Empresa") {
     user_dash = true;
     empresa.foto ? (empresa.foto = empresa.foto) : (empresa.foto = "../img/profile_default/user.jpg");
     if (empresa) {
-      if (empresa.programa == 1) {
-        empresa.programa = "Free trial";
-      } else if (empresa.programa == 2) {
-        empresa.programa = "Entrepreneur";
-      } else if (empresa.programa == 3) {
-        empresa.programa = "Business";
-      } else if (empresa.programa == 4) {
-        empresa.programa = "Enterprise";
+      if (empresa.programa == 1) { empresa.programa = "Free trial";} 
+      else if (empresa.programa == 2) {empresa.programa = "Entrepreneur";} 
+      else if (empresa.programa == 3) {empresa.programa = "Business";} 
+      else if (empresa.programa == 4) {empresa.programa = "Enterprise";}
+    }
+
+    let registros = await consultarDatos("registro_tutoriales");
+    registros = registros.find((x) => x.empresa == empresa.id_empresas);
+  
+    if (registros) {
+      if (registros.perfil == 1) {
+        tutoriales.etapa = false;
+      } else {
+        tutoriales.etapa = true
+        const data = { perfil: 1 };
+        await actualizarDatos("registro_tutoriales", data, `WHERE empresa = ${empresa.id_empresas}` );
       }
     }
   } else {
@@ -507,7 +513,7 @@ empresaController.perfilUsuarios = async (req, res) => {
     etapa1,
     modalAcuerdo,
     consulAsignado: req.session.consulAsignado,
-    etapaCompleta: req.session.etapaCompleta,
+    etapaCompleta: req.session.etapaCompleta, tutoriales
   });
 };
 
@@ -2311,6 +2317,21 @@ empresaController.recursos = async (req, res) => {
     });
   }
 
+  let tutoriales = {};
+  let registros = await consultarDatos("registro_tutoriales");
+  registros = registros.find((x) => x.empresa == id_empresa);
+  
+  if (registros) {
+    if (registros.recursos == 1) {
+      tutoriales.etapa = false;
+    } else {
+      tutoriales.etapa = true
+      const data = { recursos: 1 };
+      await actualizarDatos("registro_tutoriales",data,`WHERE empresa = ${id_empresa}` );
+    }
+  }
+
+
   res.render("empresa/recursos", {
     user_dash: true,
     id_empresa,
@@ -2320,7 +2341,7 @@ empresaController.recursos = async (req, res) => {
     grupos,
     recursoCompartido,
     itemRecursos: true,
-    etapaCompleta: req.session.etapaCompleta,
+    etapaCompleta: req.session.etapaCompleta, tutoriales
   });
 };
 
@@ -2475,10 +2496,24 @@ empresaController.modulos = async (req, res) => {
   console.log(misModulos);
   numLecciones.porcentaje = Math.round((numLecciones.completas / numLecciones.total) * 100) || 0.3;
 
+  let tutoriales = {};
+  let registros = await consultarDatos("registro_tutoriales");
+  registros = registros.find((x) => x.empresa == misDatos.id_empresas);
+
+  if (registros) {
+    if (registros.modulos == 1) {
+      tutoriales.etapa = false;
+    } else {
+      tutoriales.etapa = true
+      const data = { modulos: 1 };
+      await actualizarDatos("registro_tutoriales",data,`WHERE empresa = ${misDatos.id_empresas}` );
+    }
+  }
+
   res.render("empresa/misModulos", {
     user_dash: true, itemModulo: true,
     misModulos, numLecciones,
-    etapaCompleta: req.session.etapaCompleta,
+    etapaCompleta: req.session.etapaCompleta, tutoriales
   });
 }
 

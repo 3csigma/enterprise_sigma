@@ -49,3 +49,29 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+        {{#if tutoriales.etapa }}
+            //POPUP CON TUTORIAL
+            Swal.fire({
+                title: '<strong>Bienvenido a Módulos de Formación</strong>',
+                // icon: 'info',
+                html: '<video controls style="width: 91%;">' + 
+                    '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_modulos.mp4" type="video/mp4">' +
+                    '  Your browser does not support the video tag.' +
+                    '</video>',
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonColor: '#812082',
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
+                confirmButtonAriaLabel: 'Thumbs up, great!',
+                cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+                cancelButtonAriaLabel: 'Thumbs down',
+                customClass: {
+                    popup: 'custom-modal-class',
+                }
+            });
+        {{/if}}
+    });
+</script>

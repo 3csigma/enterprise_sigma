@@ -225,6 +225,7 @@ a.text-secondary:focus {
   font-weight: 600;
   font-size: 25px;
   color: #ffffff;
+  margin-top: -11px;
 }
 
 .texto {
@@ -234,6 +235,20 @@ a.text-secondary:focus {
   font-size: 13px;
   line-height: 27px;
   color: #ffffff;
+  margin-bottom: -24px;
+}
+
+.msg_recurso{
+  position: absolute; 
+  margin-top: -57px;
+  margin-left: 16px;
+  color:#000000;
+  font-weight: 600
+}
+
+.card_banner_recursos{
+  height: auto !important; 
+  background: linear-gradient(255.07deg,#fed061 10.6%, #812082 78.38%,#50368c 137.18%);
 }
 
 .btnArchivo {
@@ -264,6 +279,50 @@ a.text-secondary:focus {
   color: white !important;
 }
 
+.media_img{
+  margin-top: -26px;
+}
+
+#img_nube{
+  margin-bottom: -68px
+}
+
+
+@media (min-width: 360px) and (max-width:480px){
+  .btnArchivo {
+       width: 132px !important;
+       margin-left: 10px;
+       padding-left: 14px;
+   }
+  .col_btnGrupo {
+      margin-left: 76px;
+   }
+  .btnGrupo {
+       width: 132px !important;
+   }
+   .media_img{
+       text-align: center;
+   }
+   #img_nube{
+       width: 62%;
+       height: 256px;
+   }
+   .titulo {
+       font-weight: 700;
+       font-size: 18px;
+       margin-top: 7px;
+   }
+   .texto {
+       width: 303px;
+       font-size: 13px;
+        font-weight: 500;
+       margin-bottom: 0px !important;
+   }
+}
+
+.custom-modal-class{
+  width: 70%;
+}
 .input-recursos {
   width: 278px !important;
   height: 31px !important;

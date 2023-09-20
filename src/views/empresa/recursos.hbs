@@ -4,35 +4,35 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card card-recursos">
-                    <div class="card-body">
-                        {{!-- CABECERA --}}
-                        <div class="row">
-                            <div class="col-4">
-                                <div class="media-body" style="margin-top: -67px;">
-                                    <img src="../img/Recursos_nube.png" alt="Recursos Upload Enterprise">
-                                </div>
+                <div class="card mb-3 card_banner_recursos">
+                    <div class="row g-0">
+                        <div class="col-md-4">
+                            <div class="media-body media_img">
+                                <img src="../img/Recursos_nube.png" id="img_nube" alt="Recursos Upload Enterprise">
                             </div>
-                            <div class="col-6">
+                        </div>
+                        <div class="col-md-8">
+                            <br><br>
+                            <div class="card-body">
                                 <h6 class="titulo">Bienvenido(a) al area de recursos</h6>
                                 <p class="texto">Desde aquí tendrás acceso a los recursos que hemos preparado para facilitar tu proceso de
                                     crecimiento empresarial, duplicarlos para editarlos y cargar tus propios archivos para tener tu información
-                                    organizada en un solo lugar</p>
-
-                                {{!-- HEADER VISTA RECURSOS (MODALES PARA CARGAR LINK, ARCHIOS Y SUBIR GRUPOS DE RECURSOS) --}}
-                                {{> modals/recursos_header}}
-                                
+                                    organizada en un solo lugar.</p>
                             </div>
+                            {{!-- HEADER VISTA RECURSOS (MODALES PARA CARGAR LINK, ARCHIOS Y SUBIR GRUPOS DE RECURSOS) --}}
+                                {{> modals/recursos_header}} 
                         </div>
                     </div>
                 </div>
-
+                
                 {{!-- SECCIÓN PARA RECURSOS COMPARTIDOS  Nota: esto lo publica el admin--}}
+                <br>
+                <br>
                 <div class="row" style="margin-top: 15%;">
                     {{#if recursoCompartido}}
-                        <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Recursos compartidos</h3>
+                        <h3 class="msg_recurso">Recursos compartidos</h3>
                     {{else}}
-                        <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Aún no sé han subido recursos compartidos</h3>
+                        <h3 class="msg_recurso">Aún no sé han subido recursos compartidos</h3>
                     {{/if}}
                     {{#each recursoCompartido}}
                     <div class="col-xl-3">
@@ -228,3 +228,29 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", () => {
+       {{#if tutoriales.etapa }}
+            //POPUP CON TUTORIAL
+            Swal.fire({
+                title: '<strong>Bienvenido a Material Empresarial</strong>',
+                // icon: 'info',
+                html: '<video controls style="width: 91%;">' + 
+                    '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_recursos.mp4" type="video/mp4">' +
+                    '  Your browser does not support the video tag.' +
+                    '</video>',
+                showCloseButton: true,
+                showCancelButton: false,
+                focusConfirm: false,
+                confirmButtonColor: '#812082',
+                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
+                confirmButtonAriaLabel: 'Thumbs up, great!',
+                cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+                cancelButtonAriaLabel: 'Thumbs down',
+                customClass: {
+                    popup: 'custom-modal-class',
+                }
+            });
+        {{/if}}
+    });
+</script>

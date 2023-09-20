@@ -1,17 +1,17 @@
 {{!-- BOTONES PARA SUBIR GRUPOS/RECURSOS --}}
-<div class="row">
+<div class="row" style="margin-left: 14px;">
     {{#if adminDash}}
     {{!-- BOTÓN SUBIR GRUPOS --}}
     <div class="col-3">
         <button class="btnArchivo btn-md" data-toggle="modal" data-target=".m-subirGrupo" aria-disabled="true">Subir recursos</button>
     </div>
     {{else}}
+
     {{!-- BOTÓN PARA SUBIR RECURSOS --}}
-    <div class="col-3">
+    <div class="col-3" style="margin-bottom: 30px;">
         <div class="basic-dropdown">
             <div class="dropdown">
-                <button class="btn dropdown-toggle btn-md btnArchivo text-black" data-toggle="dropdown">Subir
-                    recurso</button>
+                <button class="btn dropdown-toggle btn-md btnArchivo text-black" data-toggle="dropdown">Subir recurso</button>
                 <div class="dropdown-menu">
                     <button class="dropdown-item" data-toggle="modal" data-target=".m-cargarArchivo"
                         aria-disabled="true">Cargar archivo</button>
@@ -23,7 +23,7 @@
     </div>
 
     {{!-- BOTÓN SUBIR GRUPOS --}}
-    <div class="col-6" style="padding-left: 4em;">
+    <div class="col-3 col_btnGrupo">
         <button class="btnGrupo btn-md" data-toggle="modal" data-target=".m-subirGrupo" aria-disabled="true">Subir grupo</button>
     </div>
     {{/if}}
