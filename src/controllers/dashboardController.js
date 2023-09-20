@@ -1591,7 +1591,7 @@ dashboardController.editarEmpresa = async (req, res) => {
   let datosTabla = (await helpers.consultarDatos("rendimiento_empresa")).filter((x) => x.empresa == idEmpresa);
   let jsonRendimiento = false;
   if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
-  const rentabilidad_actual = (datosTabla[datosTabla.length - 1]).rentabilidad;
+  const rentabilidad_actual = ((datosTabla[datosTabla.length - 1]).rentabilidad).toFixed(2);
 
   /*************************************************************************************************** */
   // Objeto para Botones de las tarjetas con base a la etapa del consultor
@@ -3924,11 +3924,13 @@ dashboardController.verModulos = async (req, res) => {
 
 dashboardController.crearModulo = async (req, res) => {
   // const categorias = (await helpers.consultarDatos('modulos')).map(x => x.categoria)
-  const modulos = await helpers.consultarDatos('modulos', 'GROUP BY categoria')
+  let modulos = await helpers.consultarDatos('modulos')
+  let categorias = [];
   if (modulos.length > 0) {
     modulos.lastId = modulos[modulos.length - 1].id
+    categorias = [...new Set(modulos.map(({ categoria }) => categoria))];
   }
-  res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5, modulos })
+  res.render('admin/crearModulo', { adminDash: true, formModulos:true, itemActivo: 5, modulos, categorias })
 }
 
 dashboardController.guardarModulo = async (req, res) => {
@@ -3939,9 +3941,12 @@ dashboardController.guardarModulo = async (req, res) => {
   // Convertir el array programaArray a formato JSON
   const programaJSON = JSON.stringify(programaArray);
 
+  // Reemplazar "file/d/" por "uc?export=download&id=" y Eliminar "/view?usp=sharing" al final
+  const linkDirecto = (insignia.replace("/file/d/", "/uc?export=download&id=")).split('/view?usp=sharing')[0]
+
   const moduloData = {
     nombre,
-    insignia,
+    insignia: linkDirecto,
     nombre_insignia,
     categoria,
     programa: programaJSON,

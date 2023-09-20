@@ -245,50 +245,50 @@
           </a>
         </li>
 
-        {{#if recursos}}
-        <li class="mm-active">
-        {{else}}
-        <li>
-        {{/if}}
-         <a href="javascript: void(0);" class="has-arrow" aria-expanded="false">
+        
+        <li {{#if recursos}}class="mm-active"{{/if}}>
+          <a class="has-arrow" aria-expanded="false">
             <i class="fa-solid fa-photo-film"></i>
             <span class="nav-text">Recursos</span>
           </a>
-         <ul class="sub-menu" aria-expanded="false">
-           {{#comparar itemActivo '==' 4}}
-              <li class="mm-active"><a href="/recursos-compartidos" class="mm-active">Material Empresarial</a></li>
-              {{/comparar}}
-              {{#comparar itemActivo '!=' 4}}
-              <li><a href="/recursos-compartidos" data-key="t-user-list">Material Empresarial</a></li>
-              {{/comparar}}
+          <ul class="sub-menu" aria-expanded="false">
+            {{#comparar itemActivo '==' 4}}
+            <li class="mm-active">
+            {{/comparar}}
+            {{#comparar itemActivo '!=' 4}}
+            <li>
+            {{/comparar}}
+              <a href="/recursos-compartidos" data-key="t-user-list">Material Empresarial</a>
+            </li>
 
-              {{#comparar itemActivo '==' 5}}
-              <li class="mm-active"><a href="/ver-modulos" class="mm-active" >Módulos de Formación</a></li>
-              {{/comparar}}
-              {{#comparar itemActivo '!=' 5}}
-              <li><a href="/ver-modulos"  data-key="t-invoice-detail">Módulos de Formación</a></li>
-              {{/comparar}}
-         </ul>
-
+            {{#comparar itemActivo '==' 5}}
+            <li class="mm-active">
+            {{/comparar}}
+            {{#comparar itemActivo '!=' 5}}
+            <li>
+            {{/comparar}}
+              <a href="/ver-modulos" class="mm-active" >Módulos de Formación</a>
+            </li>
+          </ul>
         </li>
+
         {{#comparar itemActivo '==' 2}}
         <li class="mm-active">
-          {{/comparar}}
-          {{#comparar itemActivo '!=' 2}}
+        {{/comparar}}
+        {{#comparar itemActivo '!=' 2}}
         <li>
-          {{/comparar}}
+        {{/comparar}}
           <a href="/consultores" aria-expanded="false">
-            {{!-- <i class="fas fa-user-circle"></i> --}}
             <i class="zmdi zmdi-accounts"></i>
             <span class="nav-text">Consultores registrados</span>
           </a>
         </li>
         {{#comparar itemActivo '==' 3}}
         <li class="mm-active">
-          {{/comparar}}
-          {{#comparar itemActivo '!=' 3}}
+        {{/comparar}}
+        {{#comparar itemActivo '!=' 3}}
         <li>
-          {{/comparar}}
+        {{/comparar}}
           <a href="/empresas" aria-expanded="false">
             <i class="fas fa-city"></i>
             <span class="nav-text">Empresas registradas</span>

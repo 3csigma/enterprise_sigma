@@ -686,6 +686,10 @@
         const programa = $(".programa:checked").map(function () {
             return $(this).val();
         }).get();
+        const insignia = {
+            link: $("#insignia").val(),
+            nombre: $("#nombre_insignia").val()
+        }
 
         const programNames = {
             "1": "Free Trial",
@@ -708,10 +712,13 @@
 
         let contenido = `<br>
         <div class="row">
-            <div class="col-6"><h4 class="text-black">Módulo</h4>
-            ${modulo}<br><br>
-            <h4 class="text-black">Programa</h4>
-            ${htmlContent}
+            <div class="col-6">
+                <h4 class="text-black">Módulo</h4>
+                ${modulo}<br><br>
+                <h4 class="text-black">Programa</h4>
+                ${htmlContent}<br><br>
+                <h4 class="text-black">Insignia</h4> 
+                <a href="${insignia.link}" target="_blank" style="text-decoration: underline;">${insignia.nombre}</a>
             </div>
             <div class="col-6" style=" margin-top: -65px;">
                 <h4 class="text-black" style="text-align: center;">Thumbnail</h4>

@@ -43,26 +43,10 @@
 ***********************************-->
 <div class="content-body">
     <!-- row -->
-    <div class="container-fluid">
-        {{!-- <div class="row">
-            <div class="col-8">
-                <h3>Tablero principal</h3>
-                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid velit repellendus blanditiis, sunt odit et delectus voluptatum aliquam, eius omnis aspernatur illum quasi laudantium maiores assumenda quis nulla ipsum! Fuga.
-            </div>
-       
-            <div class="col-4">
-                <a href="https://www.notion.so/f2b98925384f44e88f5f952fa38326d0?v=17a4b1f07de84984acc973de739ecf9c" target="_blank">
-                    <button type="button" class="btn color_primary text-white">Ir a mi Notion</button>
-                </a>
-                <a href="https://cosmic-breath-2fb.notion.site/f2b98925384f44e88f5f952fa38326d0?v=17a4b1f07de84984acc973de739ecf9c" target="_blank">
-                    <button type="button" class="btn color_primary text-white">Ver en Notion</button>
-                </a>
-            </div>
-    </div> --}}
-    <br>
+    <div class="container-fluid"><br>
         <div class="row">
             {{!-- Cuadros principales sobre las etapas --}}
-            <div class="{{#if etapaCompleta.gratis}}col-xl-12{{else}}col-xl-6{{/if}} col-xxl-12">
+            <div class="col-xl-6 col-xxl-12">
                 <div class="row">
 
                     {{!-- Diagnóstico de negocio --}}
@@ -158,30 +142,6 @@
                     </div>
                     {{/if}}
 
-                    {{!-- PLAN EMPRESARIAL --}}
-                    {{!-- <div class="col-sm">
-                        <div class="card avtivity-card">
-                            <div class="card-body">
-                                <div class="media align-items-center">
-                                    <span class="activity-icon mr-md-4 mr-3">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="40" height="37" viewBox="0 0 640 512"><path fill="#6C2986" d="M192 0H48C21.5 0 0 21.5 0 48V368c0 26.5 21.5 48 48 48H162.7c6.6-18.6 24.4-32 45.3-32V272c0-44.2 35.8-80 80-80h32V128H224c-17.7 0-32-14.3-32-32V0zm96 224c-26.5 0-48 21.5-48 48v16 96 32H208c-8.8 0-16 7.2-16 16v16c0 35.3 28.7 64 64 64H576c35.3 0 64-28.7 64-64V432c0-8.8-7.2-16-16-16H592V288c0-35.3-28.7-64-64-64H320 304 288zm32 64H528V416H304V288h16zM224 0V96h96L224 0z"/></svg>
-                                    </span>
-                                    <div class="media-body">
-                                        <p class="fs-14 mb-2">Plan empresarial</p>
-                                        <span class="title text-black font-w600">{{porcentajeEtapa3}}%</span>
-                                    </div>
-                                </div>
-                                <div class="progress" style="height:5px;">
-                                    <div class="progress-bar bg-empresarial" style="width:{{#if porcentajeEtapa3}}{{porcentajeEtapa3}}{{else}}5{{/if}}%; 
-                                        height:5px;" role="progressbar">
-                                        <span class="sr-only">{{porcentajeEtapa3}}% Completado</span>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="effect bg-empresarial"></div>
-                        </div>
-                    </div> --}}
-
                 </div>
 
                 {{!-- PORCENTAJE AVANCE GENERAL DE LA EMPRESA --}}
@@ -220,7 +180,6 @@
                 {{!-- Fin de Cuadros principales --}}
             </div>
 
-            {{#unless etapaCompleta.gratis}}
             {{#if etapaCompleta.verAnalisis}}
             {{!-- NUEVO RENIDMIENTO --}}
             <div class="col-xl-6 col-xxl-6">
@@ -239,20 +198,21 @@
                                         <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
                                     </div>
                                     <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Costos fijos</span>
                                     </div>
                                     <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
+                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Costos variables</span>
                                     </div>
                                     <br>
                                     <div class="card-body" style="margin-left: -50px;">
                                         <div id="multi-line-chart" style="max-height: 26rem;" class="ct-chart ct-golden-section chartlist-chart"></div>
                                     </div>
-                                    <div class="col-12 d-flex justify-content-center align-items-center" style="margin-top: -48px;">
+                                    <div class="col-12" style="margin-top: -48px;">
+                                        <p class="d-flex justify-content-center">Rentabilidad actual: {{rendimiento.rentabilidad_actual}}%</p>
                                         <!-- BOTÓN PARA MODAL NUEVO RENDIMIENTO -->
                                         {{#unless rendimiento.btnDisabled}}
                                         <button type="button" class="btn color_gradient text-white" data-toggle="modal"
-                                            data-target="#modalNewRendimiento">Nuevo Rendimiento</button>
+                                            data-target="#modalNewRendimiento" style="margin: 0 auto !important;justify-content: center;align-items: center;display: flex;">Nuevo Rendimiento</button>
                                         {{/unless}}
                                     </div>
                                     {{else}}
@@ -270,14 +230,15 @@
                     </div>
                 </div>
             </div>
-            {{else}}
-            {{!-- TAREAS RECIENTES --}}
-            <div class="col-xl-6 col-xxl-12">
+            {{/if}}
+ 
+            {{!-- Últimas 2 Tareas recientes de Planificación Estratégica --}}
+            <div class="{{#if etapaCompleta.verAnalisis}}col-xl-12{{else}}col-xl-6{{/if}} col-xxl-12">
                 <div class="row">
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Tareas recientes</h4>
+                                <h4 class="card-title">Tareas recientes de Planificación Estratégica</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -286,7 +247,7 @@
                                             <tr>
                                                 <th>ENTREGA</th>
                                                 <th>NOMBRE</th>
-                                                <th>DIMENSIÓN</th>
+                                                <th>SISTEMA</th>
                                                 <th>PRIORIDAD</th>
                                             </tr>
                                         </thead>
@@ -313,8 +274,6 @@
                     </div>
                 </div>
             </div>
-            {{/if}}
-            {{/unless}}
 
             {{!-- GRÁFICAS DE INDICADORES (ÁREAS VITALES Y DIMENSIONES) --}}
             <div class="col-xl-12 col-xxl-12">
@@ -476,57 +435,13 @@
 
                 </div>
             </div>
-
+            
+            {{!-- GRÁFICAS CIRCULARES --}}
             <div class="col-xl-12 col-xxl-12">
                 {{#if verGraficasCircular}}
                 {{> user/graficasCircular}}
                 {{/if}}
             </div>
-
-            {{#if etapaCompleta.verAnalisis}}
-            {{!-- Últimas 2 tareas asignadas --}}
-            <div class="col-xl-12 col-xxl-12">
-                <div class="row">
-                    <div class="col-xl-12">
-                        <div class="card">
-                            <div class="card-header">
-                                <h4 class="card-title">Tareas recientes de Planificación Estratégica</h4>
-                            </div>
-                            <div class="card-body">
-                                <div class="table-responsive">
-                                    <table class="table table-responsive-md text-center">
-                                        <thead>
-                                            <tr>
-                                                <th>ENTREGA</th>
-                                                <th>NOMBRE</th>
-                                                <th>SISTEMA</th>
-                                                <th>PRIORIDAD</th>
-                                            </tr>
-                                        </thead>
-                                        <tbody>
-                                            {{#if tareas}}
-                                            {{#each tareas}}
-                                            <tr>
-                                                <td>{{fecha_entrega}}</td>
-                                                <td>{{actividad}}</td>
-                                                <td>{{dimension}}</td>
-                                                <td>{{prioridad}}</td>
-                                            </tr>
-                                            {{/each}}
-                                            {{else}}
-                                            <tr>
-                                                <td colspan="5">Aún no hay tareas asignadas.</td>
-                                            </tr>
-                                            {{/if}}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {{/if}}
 
             <br>
         </div>

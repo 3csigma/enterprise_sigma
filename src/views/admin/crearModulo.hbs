@@ -65,8 +65,8 @@
                                                 <select id="categoriaSelectModulo"
                                                     class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
                                                     <option value="">Escoge curso...</option>
-                                                    {{#each modulos}}
-                                                    <option value="{{categoria}}">{{categoria}}</option>
+                                                    {{#each categorias}}
+                                                    <option value="{{this}}">{{this}}</option>
                                                     {{/each}}
                                                 </select>
                                                 <input type="hidden" id="categoriaHiddenModulo" name="categoria" value="">
@@ -606,6 +606,11 @@
             }
         }
 
+        const insignia = {
+            link: $("#insignia").val(),
+            nombre: $("#nombre_insignia").val()
+        }
+        
         // Crear un objeto FileReader para leer la imagen como URL
         let reader = new FileReader();
         // Leer la imagen como URL
@@ -615,14 +620,27 @@
 
         // Cuando se cargue la imagen, asignarla a la variable miniatura
         reader.onload = function (event) {
-            const miniatura = '<div class="col-6" style=" margin-top: -65px;"><h4 class="text-black" style="text-align: center;">Thumbnail</h4><img src="' + event.target.result + '" alt="Imagen seleccionada" style="margin-left: 40%;width: 276px;"></div>';
+            const miniatura = event.target.result;
             const hash = etiqueta || window.location.hash.substring(1)
-            procesarDatos_modulo(modulo, htmlContent, miniatura, hash)
+            procesarDatos_modulo(modulo, htmlContent, insignia, miniatura, hash)
         };
     }
 
-    async function procesarDatos_modulo(modulo, programas, miniatura, hash = null) {
-        let contenido = '<br><div class="row"><div class="col-6"><h4 class="text-black">Módulo</h4> ' + modulo + '<br><br> <h4 class="text-black">Programa</h4>' + programas + '</div>' + miniatura + '</div>';
+    async function procesarDatos_modulo(modulo, programas, insignia, miniatura, hash = null) {
+        let contenido = `<br>
+        <div class="row">
+            <div class="col-6">
+                <h4 class="text-black">Módulo</h4>
+                ${modulo}<br><br>
+                <h4 class="text-black">Programa</h4>
+                ${programas}<br><br>
+                <h4 class="text-black">Insignia</h4> 
+                <a href="${insignia.link}" target="_blank" style="text-decoration: underline;">${insignia.nombre}</a>
+            </div> 
+            <div class="col-6" style="margin-top: -65px;"><h4 class="text-black" style="text-align: center;">Thumbnail</h4>
+                <img src="${miniatura}" alt="Insignia del módulo" style="margin-left: 40%;width: 276px;">
+            </div>
+        </div>`;
 
         if (hash == 'guardar') {
             for (let i = 0; i < lessonCounter; i++) {

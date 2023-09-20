@@ -25,7 +25,7 @@
                     <p class="msg-Login-Top">¡Bienvenido de nuevo!</p>
                     <p class="msg-Login-Top">Ingresa tu correo registrado en la platforma!</p>
                     {{else}}
-                    <p class="msg-Login-Top">¡Bienvenido!</p>
+                    <p class="msg-Login-Top">Ingresa el mismo correo que usaste al adquirir tu programa</p>
                     {{/if}}
                     <br>
                     <form action="/reset-password-email" method="post">
@@ -37,9 +37,9 @@
 
                         <p id="message" style="color:#6B2986; font-size: 12px; font-weight: bold;"> </p>
                         <div class="row">
-                            <div class="col-12 col-sm-5" style="margin-top: -15px; font-size: 14px;">
+                            <div class="col-12 col-sm-12" style="margin-top: -15px; font-size: 14px;">
                                 {{#if resetUser}}¿Recordaste?{{/if}}
-                                <a href="/login" class="text-secondary">Ingresa aquí</a>
+                                <a href="/login" class="text-secondary">¿Ya tienes una cuenta? Inicia sesión.</a>
                             </div>
                         </div>
                         <div class="form-button d-flex align-items-center">
@@ -52,8 +52,7 @@
                     {{!-- Copyright --}}
                     <div class="d-flex align-items-center my-4">
                         <br><br>
-                        <span class="text-center fw-bold mx-auto mb-0 mt-4">{{actualYear}} Copyright &copy; 3C
-                            Sigma</span>
+                        <span class="text-center fw-bold mx-auto mb-0 mt-4">{{actualYear}} Copyright &copy; 3C Sigma</span>
                     </div>
                 </div>
             </div>

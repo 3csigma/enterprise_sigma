@@ -388,7 +388,7 @@ empresaController.index = async (req, res) => {
   if (req.user.programa == 1) {
     etapaCompleta.gratis = true;
     porcentajeTotal = porcentajeEtapa1;
-    etapaCompleta.verAnalisis = etapaCompleta.verEstrategico = false;
+    // etapaCompleta.verAnalisis = etapaCompleta.verEstrategico = false;
   }
 
   req.session.etapaCompleta = etapaCompleta;
@@ -410,11 +410,14 @@ empresaController.index = async (req, res) => {
   // RENDIMIENTO DE LA EMRPESA
   let datosTabla = await consultarDatos("rendimiento_empresa");
   datosTabla = datosTabla.filter((x) => x.empresa == id_empresa);
-  if (datosTabla.length == 3) {
+  if (datosTabla.length >= 3) {
     rendimiento.btnDisabled = true;
   }
   let jsonRendimiento = false;
-  if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
+  if (datosTabla.length > 0) {
+    rendimiento.rentabilidad_actual = datosTabla[datosTabla.length-1].rentabilidad;
+    jsonRendimiento = JSON.stringify(datosTabla);
+  }
 
   res.render("empresa/dashboard", {
     user_dash: true,
@@ -2563,11 +2566,8 @@ empresaController.leccionCompletada = async (req, res) => {
 empresaController.modulosCompletados = async (req, res) => {
   const { modulo, nombre_insignia, urlInsignia } = req.body;
 
-  // Reemplazar "file/d/" por "uc?export=download&id=" y Eliminar "/view?usp=sharing" al final
-  const linkDirecto = (urlInsignia.replace("/file/d/", "/uc?export=download&id=")).split('/view?usp=sharing')[0];
-
   let respuesta = false;
-  const template = moduloCompletado(req.user.nombres, linkDirecto, nombre_insignia, modulo, '/mis-modulos');
+  const template = moduloCompletado(req.user.nombres, urlInsignia, nombre_insignia, modulo, '/mis-modulos');
   const resultEmail = await sendEmail(req.user.email, "Haz completado un módulo", template);
 
   if (!resultEmail) {

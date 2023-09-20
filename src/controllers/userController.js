@@ -86,16 +86,19 @@ userController.getresetPassword = (req, res) => {
 userController.resetPassword = async (req, res, next) => {
     let { email, resetUser } = req.body;
 
-    pool.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
+    let type = 'error', msg = `El correo ${email} no está registrado.`, ruta = '/restablecer-clave';
+    let asunto = "Reestablece tu contraseña en 3C Sigma"
+    let txt1 = "Olvidaste", txt2 = "restablecerla", txt3 = "Restablecer";
+    
+    await pool.query("SELECT * FROM users WHERE email = ?", [email], (err, result) => {
         if (err) throw err;
-        let type = 'error', msg = 'Este correo no está registrado', ruta = '/restablecer-clave';
-        let asunto = "Reestablece tu contraseña en 3C Sigma"
-        let txt1 = "Olvidaste", txt2 = "restablecerla", txt3 = "Restablecer";
-        if (!resetUser) {
+        
+        if (!resetUser || resetUser == '') {
             asunto = "Crea tu contraseña en 3C Sigma";
             txt1 = "Solicitaste", txt2 = "crearla", txt3 = "Crear";
             ruta = '/solicitar-clave'
         }
+
         if (result.length > 0) {
             const token = randtoken.generate(20);
             
@@ -113,11 +116,10 @@ userController.resetPassword = async (req, res, next) => {
                     if (err) throw err
                 })
                 type = 'success';
-                msg = 'Solicitud exitosa! Dentro de un par de minutos revisa tu bandeja de entrada.';
+                msg = 'Solicitud exitosa! Dentro de un par de minutos revisa tu bandeja de entrada. No olvides revisar tu carpeta de SPAM';
             }
-        } else {
-
         }
+
         req.flash(type, msg);
         res.redirect(ruta);
     });
