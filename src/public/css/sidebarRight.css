@@ -95,3 +95,46 @@ input#responsable-sidebar1::placeholder, input#responsable-sidebar2::placeholder
 .contentAll {
     height: calc(100vh - 30px);
 }
+
+.pastilla_estado{
+    border-radius: 1.25rem;
+    height: 43px;
+    width: 140px;
+    padding-left: 1em;
+}
+
+.pastilla_prioridad{
+    border-radius: 1.25rem;
+    height: 43px;
+    width: 140px;
+    padding-left: 1em; 
+    margin-left: -26px;
+    font-size: 14px;
+}
+
+.pastilla_tiempo{
+    padding: 10px 30px; 
+    padding-left: 20px;
+}
+
+@media (min-width: 360px) and (max-width:480px){
+    .pastilla_estado{
+      width: 114px !important;
+      margin-left: -18px !important;
+      font-size: 11px;
+    }
+    .pastilla_prioridad{
+        width: 103px;
+        margin-left: -16px;
+        font-size: 11px;
+    }
+    .pastilla_tiempo{
+        padding: 13px 9px 10px 9px;
+        margin-left: 27px;
+        font-size: 11px;
+    }
+    .text_size_movil{
+        font-size: 13px !important;
+        margin-left: 18px;
+    }
+}
