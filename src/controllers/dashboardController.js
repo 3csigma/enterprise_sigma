@@ -3888,8 +3888,6 @@ function getProgramaName(num) {
           return "Accelerate";
         case 6:
           return "Por compra";
-        case 7:
-          return "NAR";
     }
 }
 
