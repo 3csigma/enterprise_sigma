@@ -122,10 +122,9 @@
                     <div class="modal fade grupo" id="modal-{{idGrupo}}" >
                         <div class="modal-dialog" role="document">
                             <form action="/actualizarRecurso" method="post">
-                                {{!-- Campo oculto para indicar que la solicitud proviene del formulario --}}
                                 <input type="hidden" name="formuario" value="true" />
-                                <input type="hidden" name="idRecurso" value="{{idGrupo}}" id="idRecurso-{{idGrupo}}">
-                                <input type="hidden" value="{{contador}}" id="contador_{{idGrupo}}">
+                                <input type="hidden" name="idRecurso" value="{{idGrupo}}" id="idRecurso-{{idGrupo}}" />
+                                <input type="hidden" id="contador_{{idGrupo}}" value="{{contador}}" />
                                 
                                 <div class="modal-content">
                                     {{> modals/header_GrupoRecursos}}
@@ -157,7 +156,7 @@
                                             </div>
                                         </div> 
                                         <div class="row align-items-center justify-content-center flex-column">
-                                            <select class="form-control-sm default-select btnTypeArchivo text-white opcionesEdit">
+                                            <select data-id="{{idGrupo}}" class="form-control-sm default-select btnTypeArchivo text-white opcionesEdit">
                                                 <option value="">Agregar Elemento</option>
                                                 <option value="titulo">Título</option>
                                                 <option value="descripcion">Bloque de texto</option>

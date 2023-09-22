@@ -316,15 +316,15 @@
 									<label>¿En qué etapa se encuentra tu empresa?</label>
 									<div class="form-group mb-3 radio_input" {{#if datos.editEtapa}} title="No es posible editar este campo ahora"{{/if}}>
 										<label class="container_radio mr-3">En Proyecto (aun sin ejecutar)
-											<input type="radio" name="etapa_actual" value="En proyecto" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa1}}>
+											<input type="radio" name="etapa_empresa" value="En proyecto" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa1}}>
 											<span class="checkmark"></span>
 										</label>
 										<label class="container_radio mr-3" {{#if datos.editEtapa}} title="No es posible editar este campo ahora"{{/if}}>Operativo
-											<input type="radio" name="etapa_actual" value="Operativo" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa2}}>
+											<input type="radio" name="etapa_empresa" value="Operativo" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa2}}>
 											<span class="checkmark"></span>
 										</label>
 										<label class="container_radio" {{#if datos.editEtapa}} title="No es posible editar este campo ahora"{{/if}}>En expansión
-											<input type="radio" name="etapa_actual" {{#if datos.editEtapa}} disabled {{/if}} value="En expansión"class="required" {{datos.etapa3}}>
+											<input type="radio" name="etapa_empresa" {{#if datos.editEtapa}} disabled {{/if}} value="En expansión"class="required" {{datos.etapa3}}>
 											<span class="checkmark"></span>
 										</label>
 									</div>

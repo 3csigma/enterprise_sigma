@@ -3799,7 +3799,7 @@ dashboardController.recursosCompartidos = async (req, res) => {
 
 dashboardController.addRecursos_Compartidos = async (req, res) => {
   console.log("Hola desde Add Recurso Compartidos Admin");
-  const { nombre_grupo, descrip_grupo, esFormulario } = req.body;
+  const { nombre_grupo, descrip_grupo, esFormulario, programas } = req.body;
   let { color_grupo } = req.body;
   if (!color_grupo) {
     color_grupo =
@@ -3849,11 +3849,10 @@ dashboardController.addRecursos_Compartidos = async (req, res) => {
   const recurso_armado = JSON.stringify(datosAcumulados);
 
   if (esFormulario === "true") {
-    const programa = req.body.programa || ["1"];
+    const programa = programas || ["1"];
 
-    
     const datos = {
-      programa: JSON.stringify(programa),
+      programa: JSON.stringify(programas),
       nombre_grupo,
       descrip_grupo,
       color_grupo,
@@ -3941,8 +3940,8 @@ dashboardController.guardarModulo = async (req, res) => {
   // Convertir el array programaArray a formato JSON
   const programaJSON = JSON.stringify(programaArray);
 
-  // Reemplazar "file/d/" por "uc?export=download&id=" y Eliminar "/view?usp=sharing" al final
-  const linkDirecto = (insignia.replace("/file/d/", "/uc?export=download&id=")).split('/view?usp=sharing')[0]
+  // Reemplazar "file/d/" por "uc?export=download&id=" & Eliminar "/view?usp=sharing" al final
+  const linkDirecto = cadena_test.replace(/\/file\/d\//, '/uc?export=download&id=').split('/view?usp=sharing')[0];
 
   const moduloData = {
     nombre,

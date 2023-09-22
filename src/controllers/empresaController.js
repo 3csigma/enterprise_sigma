@@ -935,30 +935,34 @@ empresaController.validarFichaCliente = async (req, res) => {
 
 empresaController.fichaCliente = async (req, res) => {
   req.session.fichaCliente = false;
-  const row = await consultarDatos("empresas",`WHERE email = "${req.user.email}" LIMIT 1` );
-  const empresa = row[0];
-  const id_empresa = row[0].id_empresas,datos = {};
-  const fichaCliente = await consultarDatos("ficha_cliente", `WHERE id_empresa = "${id_empresa}"` );
-  const ficha = fichaCliente[0];
-  const dg_empresa_establecida = await consultarDatos("dg_empresa_establecida", `WHERE id_empresa = "${id_empresa}"` );
-  const info_empresa_establecida = dg_empresa_establecida[0];
-  const dg_empresa_nueva = await consultarDatos("dg_empresa_nueva", `WHERE id_empresa = "${id_empresa}"` );
-  const info_empresa_nueva = dg_empresa_nueva[0];
-  if (fichaCliente.length > 0) {
-    ficha.es_propietario === "Si"  ? (datos.prop1 = "checked") : (datos.prop2 = "checked");
-    ficha.socios === "Si" ? (datos.socio1 = "checked") : (datos.socio2 = "checked");
-    ficha.etapa_actual === "En proyecto" ? (datos.etapa1 = "checked") : (datos.etapa1 = "");
-    ficha.etapa_actual === "Operativo" ? (datos.etapa2 = "checked") : (datos.etapa2 = "");
-    ficha.etapa_actual === "En expansión" ? (datos.etapa3 = "checked") : (datos.etapa3 = "");
+  const empresa = (await consultarDatos("empresas")).find(x => x.email == req.user.email)
+  const id_empresa = empresa.id_empresas, datos = {};
+  const ficha = (await consultarDatos("ficha_cliente")).find(x => x.id_empresa == id_empresa);
+  // const info_empresa_establecida = await consultarDatos("dg_empresa_establecida", `WHERE id_empresa = "${id_empresa}"` );
+  const info_empresa_establecida = (await consultarDatos("dg_empresa_establecida")).find(x => x.id_empresa == id_empresa);
+  const info_empresa_nueva = (await consultarDatos("dg_empresa_nueva")).find(x => x.id_empresa == id_empresa);
+  if (ficha) {
+    datos.editEtapa = false;
+  
+    datos.prop1 = (ficha.es_propietario === "Si") ? "checked" : "";
+    datos.prop2 = (ficha.es_propietario !== "Si") ? "checked" : "";
 
-    datos.editEtapa = false
-    if (info_empresa_establecida || info_empresa_nueva) {datos.editEtapa = true}
+    datos.socio1 = (ficha.socios === "Si") ? "checked" : "";
+    datos.socio2 = (ficha.socios !== "Si") ? "checked" : "";
 
-    if (etapaCompleta.e1) {
-      datos.etapa1 = datos.etapa1 + " disabled";
-      datos.etapa2 = datos.etapa2 + " disabled";
-      datos.etapa3 = datos.etapa3 + " disabled";
+    datos.etapa1 = (ficha.etapa_actual === "En proyecto") ? "checked" : "";
+    datos.etapa2 = (ficha.etapa_actual === "Operativo") ? "checked" : "";
+    datos.etapa3 = (ficha.etapa_actual === "En expansión") ? "checked" : "";
+
+    if (info_empresa_establecida || info_empresa_nueva) {
+        datos.editEtapa = true;
     }
+
+    // if (etapaCompleta.e1) {
+    //     datos.etapa1 += " disabled";
+    //     datos.etapa2 += " disabled";
+    //     datos.etapa3 += " disabled";
+    // }
 
     datos.redes_sociales = JSON.parse(ficha.redes_sociales);
     datos.objetivos = JSON.parse(ficha.objetivos);
@@ -968,14 +972,11 @@ empresaController.fichaCliente = async (req, res) => {
     datos.descripcion = ficha.descripcion;
     datos.motivo = ficha.motivo_consultoria;
 
-    datos.socioMin = 1;
-
-    if (datos.socio2) {
-      datos.estiloSocio = "background:#f2f2f2;";
-      datos.socioNo = "disabled";
-      datos.socioMin = 0;
-    }
+    datos.socioMin = datos.socio2 ? 0 : 1;
+    datos.estiloSocio = datos.socio2 ? "background:#f2f2f2;" : "";
+    datos.socioNo = datos.socio2 ? "disabled" : "";
   }
+
   // Obteniendo todos los países
   datos.paises = Country.getAllCountries();
   // Capturando Fecha Máxima - 18 años atrás
@@ -992,7 +993,7 @@ empresaController.addFichaCliente = async (req, res) => {
   let {nombres,apellidos,email,countryCode,telFicha,fecha_nacimiento, pais,
     twitter,facebook,instagram, otra, es_propietario, socios, nombre_empresa,
     cantidad_socios, porcentaje_accionario,tiempo_fundacion,promedio_ingreso_anual,
-    num_empleados,  page_web, descripcion, etapa_actual, objetivo1,
+    num_empleados,  page_web, descripcion, etapa_empresa, objetivo1,
     objetivo2,objetivo3, fortaleza1,fortaleza2,fortaleza3, problema1,
     problema2, problema3, motivo_consultoria,fecha_zh,} = req.body;
 
@@ -1003,7 +1004,7 @@ empresaController.addFichaCliente = async (req, res) => {
   const telefono = "+" + countryCode + " " + telFicha;
   let tipo_empresa = 1;
 
-  etapa_actual == "En proyecto"  ? (tiempo_fundacion = "Proyecto nuevo") : (tipo_empresa = 2);
+  etapa_empresa == "En proyecto"  ? (tiempo_fundacion = "Proyecto nuevo") : (tipo_empresa = 2);
   es_propietario != undefined ? es_propietario : (es_propietario = "No");
   socios != undefined ? socios : (socios = "No");
 
@@ -1019,9 +1020,13 @@ empresaController.addFichaCliente = async (req, res) => {
     telefono, fecha_nacimiento, pais,redes_sociales,
     es_propietario, socios, cantidad_socios, porcentaje_accionario,
     tiempo_fundacion, tipo_empresa, promedio_ingreso_anual,
-    num_empleados, page_web,descripcion, etapa_actual, objetivos, fortalezas,
+    num_empleados, page_web,descripcion, objetivos, fortalezas,
     problemas, motivo_consultoria, id_empresa, fecha_modificacion,
   };
+
+  if (!etapaCompleta.e1) {
+    nuevaFichaCliente.etapa_actual = etapa_empresa
+  }
 
   const userUpdate = {
     empresas: {nombres, apellidos, nombre_empresa, email},
@@ -2494,7 +2499,7 @@ empresaController.modulos = async (req, res) => {
 
   console.log("Mis Módulos => ");
   console.log(misModulos);
-  numLecciones.porcentaje = Math.round((numLecciones.completas / numLecciones.total) * 100) || 0.3;
+  numLecciones.porcentaje = Math.round((numLecciones.completas / numLecciones.total) * 100);
 
   let tutoriales = {};
   let registros = await consultarDatos("registro_tutoriales");

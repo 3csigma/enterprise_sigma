@@ -56,8 +56,9 @@
 <script src="../js/validate-init.js"></script>
 <script src="../js/smartWizard.js"></script>
 <script src="../js/func_selector_categorias.js"></script>
-<script src="../js/summernote.min.js"></script>
-<script src="../js/summernote-init.js"></script>
+<!-- Summernote -->
+<script src="../vendor/summernote/js/summernote.min.js"></script>
+{{!-- <script src="../js/summernote-init.js"></script> --}}
 <script src="../js/modulos/fileValidation_modulos.js"></script>
 {{/if}}
 
@@ -168,6 +169,11 @@
         $(document).ready(function () {
             /*************************************************************************/    
             {{#if formModulos}}
+            $(".summernote").summernote({
+                height: 190,
+                minHeight: 190,
+                maxHeight: null,
+            })
             /*************************************************************************/    
             // SmartWizard initialize
 			$('#modulos3c').smartWizard(); 

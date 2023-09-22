@@ -1,3 +1,8 @@
+<style>
+    .MsoListParagraphCxSpFirst, .MsoListParagraphCxSpMiddle, .MsoListParagraphCxSpLast {
+        text-indent: 22pt !important;
+    }
+</style>
 <!--**********************************
         Content body start
 ***********************************-->
@@ -192,9 +197,11 @@
                                                                 <div class="row">
                                                                     <div class="col-xl-12 col-xxl-12">
                                                                         <label class="text-label">Descripción de la lección</label>
-                                                                        <div class="summernote-theme-1">
+                                                                        {{!-- <div class="summernote-theme-1">
                                                                             <textarea name="name" class="summernote" id="summernote_0" rows="10"></textarea>
-                                                                        </div>
+                                                                        </div> --}}
+
+                                                                        <div class="summernote" id="summernote_0"></div>
                                                                     </div>
                                                                 </div>
                                                                 <br>
@@ -348,9 +355,12 @@
                 <div class="row">
                     <div class="col-xl-12 col-xxl-12">
                     <label class="text-label">Descripción de la lección</label>
+                    <!--
                     <div class="summernote-theme-1">
                         <textarea name="name" class="summernote" id="summernote_${lessonCounter}" rows="10"></textarea>
                     </div>
+                    -->
+                    <div class="summernote" id="summernote_${lessonCounter}"></div>
                     </div>
                 </div>
                 <!-- --- -->
@@ -392,9 +402,6 @@
             // Inicializa Summernote para el nuevo elemento
             $(newSummernoteElement).summernote({
                 height: 190,
-                minHeight: null,
-                maxHeight: null,
-                focus: false,
             });
             lessonCounter++;
 
