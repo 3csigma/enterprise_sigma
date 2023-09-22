@@ -325,10 +325,6 @@ button.bg-estrategico:focus {
 }
 
 @media (max-width: 440px) {
-    #titu-indicador {
-        margin-top: -3em;
-    }
-
     #indicadores {
         margin-top: 4em;
         margin-left: -10em;
