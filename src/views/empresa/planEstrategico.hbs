@@ -64,7 +64,7 @@
                 </div>
             </div>
 
-            <div class="col-md-12 col-xl-5 col-xxl-5 graficos_movil">
+            <div class="col-md-12 col-xl-5 col-xxl-5">
                 {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
                 {{#if etapaCompleta.verAnalisis}}
                 <div class="row">
@@ -238,19 +238,19 @@
             {{!-- TAREAS ASIGNADAS --}}
             <div class="col-xl-12 mt-2">
                 <div class="card plan-list">
-                    <div class="card-header d-sm-flex flex-wrap d-block pb-0 border-0 ">
+                    <div class="card-header d-sm-flex flex-wrap d-block pb-0 border-0">
                         <div class="mr-auto pr-3 mb-3">
                             <h4 class="text-black fs-20">Lista de Tareas</h4>
                             <p class="fs-13 mb-0 text-black">Haz clic en una tarea para verla</p>
                         </div>
-                        <div class="card-action card-tabs mr-8 mt-3 mt-sm-0 mb-3">
-                            <ul class="nav nav-tabs" role="tablist" style="justify-content: center;">
+                        <div class="card-action card-tabs mr-4 mt-3 mt-sm-0 mb-3">
+                            <ul class="nav nav-tabs" role="tablist">
                                 <li class="nav-item">
-                                    <a class="nav-link tabs-Task active text_size_movil" data-toggle="tab" href="#Pendientes"
+                                    <a class="nav-link tabs-Task active" data-toggle="tab" href="#Pendientes"
                                         role="tab" aria-selected="true">Pendientes (<span id="cant-tab1">{{tareas.pendientes.cant}}</span>)</a>
                                 </li>
                                 <li class="nav-item">
-                                    <a class="nav-link tabs-Task" style="width: 104%;" data-toggle="tab" href="#EnProceso"
+                                    <a class="nav-link tabs-Task" data-toggle="tab" href="#EnProceso"
                                         role="tab">En Proceso ({{tareas.enProceso.cant}})</a>
                                 </li>
                                 <li class="nav-item">
@@ -292,7 +292,7 @@
                                     <span class="text-gray ml-2">{{dimension}}</span>
                                 </div>
                                 
-                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex icon_btn_movil" style="flex-direction: row;justify-content: flex-end;">
+                                <div class="col-xl-4 col-xxl-12 col-lg-3 col-sm-12 d-flex" style="flex-direction: row;justify-content: flex-end;">
                                     <a onclick="editarTarea({{id}})" title="Editar"
                                         class="btn color_gradient shadow btn-xs sharp mr-1 text-white rounded mr-3"><i class="fa fa-pencil"></i>
                                     </a>

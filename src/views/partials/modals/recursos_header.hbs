@@ -2,7 +2,7 @@
 <div class="row" style="margin-left: 14px;">
     {{#if adminDash}}
     {{!-- BOTÓN SUBIR GRUPOS --}}
-    <div class="col-3" style="margin-bottom: 30px;">
+    <div class="col-3">
         <button class="btnArchivo btn-md" data-toggle="modal" data-target=".m-subirGrupo" aria-disabled="true">Subir recursos</button>
     </div>
     {{else}}
@@ -13,8 +13,10 @@
             <div class="dropdown">
                 <button class="btn dropdown-toggle btn-md btnArchivo text-black" data-toggle="dropdown">Subir recurso</button>
                 <div class="dropdown-menu">
-                    <button class="dropdown-item" data-toggle="modal" data-target=".m-cargarArchivo" aria-disabled="true">Cargar archivo</button>
-                    <button class="dropdown-item" data-toggle="modal" data-target=".m-cargarLink" aria-disabled="true">Conectar link</button>
+                    <button class="dropdown-item" data-toggle="modal" data-target=".m-cargarArchivo"
+                        aria-disabled="true">Cargar archivo</button>
+                    <button class="dropdown-item" data-toggle="modal" data-target=".m-cargarLink"
+                        aria-disabled="true">Conectar link</button>
                 </div>
             </div>
         </div>
@@ -37,48 +39,48 @@
                         <h5 class="modal-title text-black" style="font-weight: 800;font-size: 30px;">Carga de recursos</h5>
                         <button type="button" class="close" data-dismiss="modal"><span>&times;</span></button>
                     </div>
-                    <h6 class="msg_pantalla titulo text-black">Accede desde un computador para disfrutar de la experiencia completa.</h6>
-                    <div class="modal_pantalla">
-                        <div class="modal-body">
-                            <div class="row centrado_row">
-                                <div class="col-4 col_nombre_recurso">
-                                    <label class="text-black label1">Nombre del recurso</label>
-                                    <input type="text" class="form-control input-recursos" required name="nombre_recurso" placeholder="Introduce un nombre para el archivo">
-                                </div>
-                                <div class="col-4 ">
-                                    <label  class="text-black label1">Categoria</label>
-                                    <select id="categoriaSelectCargar"
-                                        class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
-                                        <option value="Sin categoría">Escoge o crea una categoría para tu recurso</option>
-                                        {{#each categorias}}
-                                            <option value="{{this}}">{{this}}</option>
-                                        {{/each}}
-                                    </select>
-                                    <input type="hidden" id="categoriaHiddenCargar" name="categoria">
-                                </div>
+                    <div class="modal-body">
+                        <div class="row align-items-center justify-content-center">
+                            <div class="col-4">
+                                <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Nombre del recurso</label>
+                                <input type="text" class="form-control input-recursos" required name="nombre_recurso"
+                                    placeholder="Introduce un nombre para el archivo">
                             </div>
-                            <br>
-                            <div class="row" style="justify-content: center;display: grid;">
-                                <div class="col-6">
-                                    <div class="drag-area file-recursos">
-                                        <center>
-                                            <img src="../img/upload.png" alt="" style="width: 66px;">
-                                        </center>
-                                        <br>
-                                        <h2>Organiza tus archivos</h2>
-                                        <p class="text-black" style="font-weight: 265;font-size: 15px;">Arrastra o carga un archivo para empezar</p>
-                                        <center>
-                                            <button id="btnfile" >Examinar archivos</button>
-                                        </center>
-                                        <input type="file" name="file" id="input-file" hidden>
-                                    </div>
-                                </div>
-                                <div id="preview"></div>
+                            <div class="col-3">
+                                <label for="" style="font-weight: 500;font-size: 15px;"
+                                    class="text-black">Categoria</label>
+                                <select id="categoriaSelectCargar"
+                                    class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
+                                    <option value="Sin categoría">Escoge o crea una categoría para tu recurso
+                                    </option>
+                                    {{#each categorias}}
+                                    <option value="{{this}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                                <input type="hidden" id="categoriaHiddenCargar" name="categoria">
                             </div>
                         </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="submit" class="btn color_tertiary text-black btnArchivoSuelto">Guardar</button>
+                        <br>
+                        <div class="row" style="justify-content: center;display: grid;">
+                            <div class="col-6">
+                                <div class="drag-area file-recursos">
+                                    <center>
+                                        <img src="../img/upload.png" alt="" style="width: 66px;">
+                                    </center>
+                                    <br>
+                                    <h2>Organiza tus archivos</h2>
+                                    <p class="text-black" style="font-weight: 265;font-size: 15px;">Arrastra o carga un archivo para empezar</p>
+                                    <center>
+                                        <button id="btnfile" >Examinar archivos</button>
+                                    </center>
+                                    <input type="file" name="file" id="input-file" hidden>
+                                </div>
+                            </div>
+                            <div id="preview"></div>
                         </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn color_tertiary text-black btnArchivoSuelto">Guardar</button>
                     </div>
                 </div>
             </form>
@@ -96,43 +98,40 @@
                 <form action="/cargar-link" method="post">
                     <input type="hidden" name="idEmpresa" value="{{id_empresa}}">
                     <input type="hidden" name="activeForm" value="true">
-                    <h6 class="msg_pantalla titulo text-black">Accede desde un computador para disfrutar de la experiencia completa.</h6>
-                    <div class="modal_pantalla">
-                        <div class="modal-body">
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Nombre del
-                                        recurso</label>
-                                    <input type="text" class="form-control input-recursos" required name="nombre_recurso"
-                                        placeholder="Introduce un nombre para el archivo">
-                                </div>
-                                <div class="col">
-                                    <label style="font-weight: 500;font-size: 15px; margin-left: -14px;"
-                                        class="text-black">Categoria</label>
-                                    <select id="categoriaSelectConectar"
-                                        class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
-                                        <option value="Sin categoría">Escoge o crea una categoría para tu recurso
-                                        </option>
-                                        {{#each categorias}}
-                                        <option value="{{this}}">{{this}}</option>
-                                        {{/each}}
-                                    </select>
-                                    <input type="hidden" id="categoriaHiddenConectar" name="categoria">
-                                </div>
+                    <div class="modal-body">
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Nombre del
+                                    recurso</label>
+                                <input type="text" class="form-control input-recursos" required name="nombre_recurso"
+                                    placeholder="Introduce un nombre para el archivo">
                             </div>
-                            <br>
-                            <div class="row align-items-center">
-                                <div class="col">
-                                    <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Link del
-                                        recurso</label>
-                                    <input type="text" class="form-control input-recursos2" required name="recurso"
-                                        placeholder="Introduce aqui la URL del recurso">
-                                </div>
+                            <div class="col">
+                                <label style="font-weight: 500;font-size: 15px; margin-left: -14px;"
+                                    class="text-black">Categoria</label>
+                                <select id="categoriaSelectConectar"
+                                    class="sltBuscar form-control input-recursos chosen-container chosen-container-single required">
+                                    <option value="Sin categoría">Escoge o crea una categoría para tu recurso
+                                    </option>
+                                    {{#each categorias}}
+                                    <option value="{{this}}">{{this}}</option>
+                                    {{/each}}
+                                </select>
+                                <input type="hidden" id="categoriaHiddenConectar" name="categoria">
                             </div>
                         </div>
-                        <div class="modal-footer justify-content-center">
-                            <button type="submit" class="btn color_tertiary text-black">Guardar</button>
+                        <br>
+                        <div class="row align-items-center">
+                            <div class="col">
+                                <label for="" style="font-weight: 500;font-size: 15px;" class="text-black">Link del
+                                    recurso</label>
+                                <input type="text" class="form-control input-recursos2" required name="recurso"
+                                    placeholder="Introduce aqui la URL del recurso">
+                            </div>
                         </div>
+                    </div>
+                    <div class="modal-footer justify-content-center">
+                        <button type="submit" class="btn color_tertiary text-black">Guardar</button>
                     </div>
                 </form>
             </div>
@@ -155,18 +154,23 @@
                 <div class="modal-content">
                     {{> modals/header_GrupoRecursos}}
                     <div class="modal-body">
-                        <h3 class="texto_recursos">Información del grupo de recursos</h3>
-                        <div class="row align-items-center justify-content-center row_inputs">
-                            <div class="col-3">
-                                <input type="text" class="form-control input-recursos" required name="nombre_grupo"placeholder="Introduce un nombre">
+                        <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">
+                            Información del grupo de recursos</h3>
+                        <div class="row align-items-center justify-content-center">
+                            <div class="col-3" style="margin-left: -16px;">
+                                <input type="text" class="form-control input-recursos" required name="nombre_grupo"
+                                    placeholder="Introduce el nombre del grupo">
                             </div>
                             <div class="col-3">
-                                <input type="text" name="descrip_grupo" class="form-control input-recursos" required placeholder="Introduce una descripcion">
+                                <textarea name="descrip_grupo" class="form-control input-recursos" required
+                                    maxlength="120" cols="30" rows="10"
+                                    placeholder="Introduce la descripcion del grupo"></textarea>
                             </div>
                         </div>
                         <br>
                         {{#if adminDash}}
-                        <h3 class="texto_recursos">Programa(s) destino</h3>
+                        <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">
+                            Programa(s) destino</h3>
                         <div class="row align-items-center justify-content-center">
                             <div class="form-group">
                                 <div class="form-check form-check-inline">
@@ -208,8 +212,9 @@
                         </div>
                         {{/if}}
                         <div class="row align-items-center justify-content-center">
-                            <div class="col-12">
-                                <h3 class="texto_recursos">Color para este grupo</h3>
+                            <div class="col-6">
+                                <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">
+                                    Color para este grupo</h3>
                                 <div class="colorButtons">
                                     <button type="button" class="colorButton colorBtnAdd" data-color="#D74040"></button>
                                     <button type="button" class="colorButton colorBtnAdd" data-color="#739232"></button>

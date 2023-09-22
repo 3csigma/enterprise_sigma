@@ -4,33 +4,32 @@
     <div class="container-fluid">
         <div class="row">
             <div class="col-sm-12">
-                <div class="card mb-3 card_banner_recursos">
-                    <div class="row g-0">
-                        <div class="col-md-4">
-                            <div class="media-body media_img">
-                                <img src="../img/Recursos_nube.png" id="img_nube" alt="Recursos Upload Enterprise">
+                <div class="card card-recursos">
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-4">
+                                <div class="media-body" style="margin-top: -67px;">
+                                    <img src="../img/Recursos_nube.png" alt="Recursos Upload Enterprise">
+                                </div>
                             </div>
-                        </div>
-                        <div class="col-md-8">
-                            <br><br>
-                            <div class="card-body">
-                                 <h6 class="titulo">Bienvenido(a) al area de recursos</h6>
+                            <div class="col-6">
+                                <h6 class="titulo">Bienvenido(a) al area de recursos</h6>
                                 <p class="texto">Desde aquí podrás crear los recursos que verán las empresas, necesarios para llevar a cabo su proceso de mentoría, los recursos que se añadan aquí serán vistos por todas las empresas que cumplan el criterio del programa para el cual fue creado el recurso.</p>
+
+                                {{!-- HEADER VISTA RECURSOS (MODALES PARA CARGAR LINK, ARCHIOS Y SUBIR GRUPOS DE RECURSOS) --}}
+                                {{> modals/recursos_header}}
                             </div>
-                            {{!-- HEADER VISTA RECURSOS (MODALES PARA CARGAR LINK, ARCHIOS Y SUBIR GRUPOS DE RECURSOS) --}}
-                                {{> modals/recursos_header}} 
                         </div>
                     </div>
                 </div>
-                <br>
-                <br>
+
                 {{!-- SECCIÓN PARA RECURSOS COMPARTIDOS --}}
                 <div class="row" style="margin-top: 15%;">
                     {{#if grupos}}
                     <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Recursos compartidos</h3>
                     {{#each grupos}}
                      <div class="col-xl-3">
-                        <div class="card text-white card_grupo" style="background:{{color_grupo}}">
+                        <div class="card text-white" style="background:{{color_grupo}};border-radius: 11px;width: 280px; height: 280px;">
                             <a onclick="eliminarGrupo({{idGrupo}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 10px;right: 10px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
                             <a href="#" data-toggle="modal" data-target="#modal-{{idGrupo}}" onclick="verGrupo('{{idGrupo}}')">
                                 <div class="card-body mb-0" style="padding-top: 1.2em;">
@@ -45,7 +44,7 @@
                                         {{/each}}
                                         </div>
                                         <h3 class="card-footer bg-transparent border-0 text-white" style="padding: 0px 0px 0px;margin: -15px 0px;font-size: 20px;">{{nombre_grupo}}</h3>
-                                        <div class="card-footer bg-transparent border-0 text-white styleMovil" style="font-size: 13px;margin:7px -29px;">{{descrip_grupo}}</div>
+                                        <div class="card-footer bg-transparent border-0 text-white" style="font-size: 13px;margin:7px -29px;">{{descrip_grupo}}</div>
                                     </div>
                                 </div>
                             </a>
@@ -65,12 +64,12 @@
                                     {{> modals/header_GrupoRecursos}}
                                     <div class="modal-body">
                                         <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Información del grupo de recursos</h3>
-                                        <div class="row align-items-center justify-content-center row_inputs">
+                                        <div class="row align-items-center justify-content-center">
                                             <div class="col-3" style="margin-left: -16px;">
                                                 <input type="text" class="form-control input-recursos" required name="nombre_grupo" placeholder="Introduce el nombre del grupo" value="{{nombre_grupo}}">
                                             </div>
                                             <div class="col-3">
-                                                <input type="text" name="descrip_grupo" class="form-control input-recursos" required placeholder="Introduce una descripcion">
+                                                <textarea name="descrip_grupo" class="form-control input-recursos" required maxlength="120" cols="30" rows="10" placeholder="Introduce la descripcion del grupo">{{descrip_grupo}}</textarea>
                                             </div>
                                         </div>
                                         <br>
@@ -116,7 +115,7 @@
                                             </div>
                                         </div>
                                         <div class="row align-items-center justify-content-center tarjetas_admin">
-                                            <div class="col-12">
+                                            <div class="col-6">
                                                 <h3 style="font-weight: 500;font-size: 20px;color: #000000;text-align: center;">Color para este grupo</h3>
                                                 <div class="colorButtons">
                                                     <button type="button" class="colorButton colorBtnEditAdm {{#comparar color_grupo '==' '#D74040'}} selected {{/comparar}}" data-color="#D74040" data-target="#colorGrupoInput_editAdm_{{idGrupo}}" ></button>

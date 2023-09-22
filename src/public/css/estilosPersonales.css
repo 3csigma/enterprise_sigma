@@ -279,123 +279,52 @@ a.text-secondary:focus {
   color: white !important;
 }
 
-  .media_img{
-    margin-top: -26px;
-  }
+.media_img{
+  margin-top: -26px;
+}
 
-  #img_nube{
-    margin-bottom: -68px
-  }
+#img_nube{
+  margin-bottom: -68px
+}
 
-  .msg_pantalla {
-    display: none;
-  }
-  .modal_pantalla{
-        display: block;
-  }
-
-  .custom-modal-class{
-    width: 70%;
-  }
-  
-  .label1{
-    font-weight: 500;
-    font-size: 15px;
-  }
-  
-  .centrado_row{
-    justify-content: center;
-  }
-
-  .card_grupo{
-    border-radius: 11px !important;
-    width: 270px; 
-    height: 270px !important;
-  }
-
- 
 
 @media (min-width: 360px) and (max-width:480px){
   .btnArchivo {
-      width: 132px !important;
-      margin-left: 10px;
-      padding-left: 14px;
-  }
+       width: 132px !important;
+       margin-left: 10px;
+       padding-left: 14px;
+   }
   .col_btnGrupo {
-    margin-left: 76px;
-  }
+      margin-left: 76px;
+   }
   .btnGrupo {
-    width: 132px !important;
-  }
-  .media_img{
-    text-align: center;
-  }
-  #img_nube{
-    width: 62%;
-    height: 256px;
-  }
-  .titulo {
-    font-weight: 700;
-    font-size: 18px;
-    margin-top: 7px;
-  }
-  .texto {
-    width: 303px;
-    font-size: 13px;
-    font-weight: 500;
-    margin-bottom: 0px !important;
-  }
-  .msg_pantalla{
-    margin: 30px;
-    display: block;
-    font-size: 15px;
-    text-align: center;
-  }
-  .modal_pantalla{
-    display: none;
-  }
-  .input-recursos {
-    width: 170px !important;
-  }
-  .input-recursos::placeholder {
-    font-size: 10px !important;
-  }
-  .row_inputs{
-    margin-left: -66% !important;
-    margin-right: -65% !important;
-  }
-  .texto_recursos{
-    font-size: 17px;
-  }
-  .colorButton {
-    width: 29px !important;
-    height: 28px !important;
-  }
-  .styleMovil{
-    margin:7px -17px !important;
-  }
-  .card_grupo{
-    width: auto !important;
-  }
-  .graficos_movil{
-    display: none;
-  }
-  .chatbox.active {
-    width: 370px !important;
-    box-shadow: 0px 0px 30px 0px rgb(82 63 105) !important;
-    background: linear-gradient(20deg, rgb(80 54 140) 0%, rgb(129 32 130) 50%, rgba(254, 208, 97, 0.85) 100%) !important;
-  }
-  .pastilla_estado{
-    width: 114px !important;
-    margin-left: -18px !important;
-  }
-  .icon_btn_movil{
-    margin-top: -58px;
-  }
+       width: 132px !important;
+   }
+   .media_img{
+       text-align: center;
+   }
+   #img_nube{
+       width: 62%;
+       height: 256px;
+   }
+   .titulo {
+       font-weight: 700;
+       font-size: 18px;
+       margin-top: 7px;
+   }
+   .texto {
+       width: 303px;
+       font-size: 13px;
+        font-weight: 500;
+       margin-bottom: 0px !important;
+   }
 }
 
+.custom-modal-class{
+  width: 70%;
+}
 .input-recursos {
-  width: 278px;
+  width: 278px !important;
   height: 31px !important;
   background: #ffffff !important;
   border: 0.7px solid #898989 !important;
@@ -413,10 +342,6 @@ a.text-secondary:focus {
 
 .input-recursos::placeholder {
   font-size: 11px !important;
-}
-
-.texto_recursos{
-  font-weight: 500;font-size: 20px;color: #000000;text-align: center;
 }
 
 .btnTypeArchivo {
