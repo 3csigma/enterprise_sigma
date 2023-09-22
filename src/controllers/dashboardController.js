@@ -3888,6 +3888,8 @@ function getProgramaName(num) {
           return "Accelerate";
         case 6:
           return "Por compra";
+        case 7:
+          return "NAR";
     }
 }
 
@@ -3941,7 +3943,7 @@ dashboardController.guardarModulo = async (req, res) => {
   const programaJSON = JSON.stringify(programaArray);
 
   // Reemplazar "file/d/" por "uc?export=download&id=" & Eliminar "/view?usp=sharing" al final
-  const linkDirecto = cadena_test.replace(/\/file\/d\//, '/uc?export=download&id=').split('/view?usp=sharing')[0];
+  const linkDirecto = insignia.replace(/\/file\/d\//, '/uc?export=download&id=').split('/view?usp=sharing')[0];
 
   const moduloData = {
     nombre,
