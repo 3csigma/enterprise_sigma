@@ -3942,12 +3942,9 @@ dashboardController.guardarModulo = async (req, res) => {
   // Convertir el array programaArray a formato JSON
   const programaJSON = JSON.stringify(programaArray);
 
-  // Reemplazar "file/d/" por "uc?export=download&id=" & Eliminar "/view?usp=sharing" al final
-  const linkDirecto = insignia.replace(/\/file\/d\//, '/uc?export=download&id=').split('/view?usp=sharing')[0];
-
   const moduloData = {
     nombre,
-    insignia: linkDirecto,
+    insignia,
     nombre_insignia,
     categoria,
     programa: programaJSON,
@@ -4109,9 +4106,9 @@ dashboardController.editarModulo = async (req, res) => {
       }
 
       const programasDB = JSON.parse(modulo.programa);
-      const programas = { p1: false, p2: false, p3: false, p4: false, p5: false, p6: false };
+      const programas = { p1: false, p2: false, p3: false, p4: false, p5: false, p6: false, p7: false };
 
-      const programaOptions = ["1", "2", "3", "4", "5", "6"];
+      const programaOptions = ["1", "2", "3", "4", "5", "6", "7"];
 
       for (const option of programaOptions) {
         if (programasDB.includes(option)) {
