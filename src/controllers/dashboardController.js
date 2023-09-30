@@ -3861,7 +3861,7 @@ dashboardController.addRecursos_Compartidos = async (req, res) => {
 
     // Actualizando Tabla Módulos si este, pertenece al programa "Por Compra con # 6"
     if (programa.includes("6")) {
-      console.log("Generando id_categoría Random");
+      console.log("Generando idCurso Random");
       const codigo = nombre_grupo + '6';
       datos.idCurso = (helpers.encriptarTxt((codigo).toString())).slice(0, 7)
     }
@@ -4176,7 +4176,7 @@ dashboardController.actualizarModulo = async (req, res) => {
   // Convertir el array programaArray a formato JSON
   const programaJSON = JSON.stringify(programaArray);
 
-  const moduloData = {
+  let moduloData = {
     nombre,
     categoria,
     programa: programaJSON,
@@ -4184,6 +4184,12 @@ dashboardController.actualizarModulo = async (req, res) => {
     nombre_insignia,
     estado: 0
   };
+
+  if (programaArray.includes("6")) {
+    console.log("Generando id_categoría Random");
+    const codigo = categoria + '6';
+    moduloData.id_categoria = (helpers.encriptarTxt((codigo).toString())).slice(0, 7)
+  }
 
   const result = await helpers.actualizarDatos('modulos', moduloData, `WHERE id = ${idModulo}`)
   console.log(":::: Resultado Actualizar Módulo ::::")

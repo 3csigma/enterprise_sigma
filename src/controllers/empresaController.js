@@ -472,6 +472,9 @@ empresaController.perfilUsuarios = async (req, res) => {
       else if (empresa.programa == 2) {empresa.programa = "Entrepreneur";} 
       else if (empresa.programa == 3) {empresa.programa = "Business";} 
       else if (empresa.programa == 4) {empresa.programa = "Enterprise";}
+      else if (empresa.programa == 5) {empresa.programa = "Accelerate";}
+      else if (empresa.programa == 6) {empresa.programa = "Por Compra";}
+      else if (empresa.programa == 7) {empresa.programa = "NAR";}
     }
 
     let registros = await consultarDatos("registro_tutoriales");
@@ -2213,7 +2216,7 @@ empresaController.recursos = async (req, res) => {
 
   const recursoCompartido = [];
   const resul = (await pool.query("SELECT * FROM recursos_compartidos")).filter( (x) => {
-    if ((JSON.parse(x.programa)).includes(req.user.programa.toString()) || req.user.idRecurso.includes(x.idCurso)) {
+    if ((JSON.parse(x.programa)).includes(req.user.programa.toString()) || (req.user.idRecurso && req.user.idRecurso.includes(x.idCurso))) {
       return x;
     }
   })
@@ -2353,7 +2356,7 @@ empresaController.recursos = async (req, res) => {
 // ACTUALIZAR CAMPOS EN GRUPOS YA CREADOS
 empresaController.actualizarRecurso = async (req, res) => {
   const archivo = req.files;
-  let {idCampo,idRecurso,tipo,numeroIcono,valor, nombre_grupo, descrip_grupo, color_grupo } = req.body;
+  let { idCampo, idRecurso, tipo, numeroIcono, valor, nombre_grupo, descrip_grupo, color_grupo } = req.body;
 
   if (archivo && archivo[0]) {
     valor = "../grupo_recursos/" + archivo[0].filename;
@@ -2364,8 +2367,8 @@ empresaController.actualizarRecurso = async (req, res) => {
   }
 
   const infoRecursos = req.user.rol == "Admin" ? (await consultarDatos("recursos_compartidos")).find((x) => x.id == idRecurso)
-  : (await consultarDatos("grupo_recursos")).find((x) => x.id == idRecurso);
-  nombre_grupo = nombre_grupo == null || nombre_grupo == "" ? infoRecursos.nombre_grupo: nombre_grupo;
+    : (await consultarDatos("grupo_recursos")).find((x) => x.id == idRecurso);
+  nombre_grupo = nombre_grupo == null || nombre_grupo == "" ? infoRecursos.nombre_grupo : nombre_grupo;
   descrip_grupo = descrip_grupo == null || descrip_grupo == "" ? infoRecursos.descrip_grupo : descrip_grupo;
   color_grupo = color_grupo == null || color_grupo == null ? infoRecursos.color_grupo : color_grupo;
 
@@ -2373,35 +2376,47 @@ empresaController.actualizarRecurso = async (req, res) => {
 
   let campoEncontrado = false;
   recursos.forEach((recurso) => {
-      if (recurso.id == idCampo) {
+    if (recurso.id == idCampo) {
       recurso.valor = valor;
       recurso.numeroIcono = numeroIcono;
       campoEncontrado = true;
-      }
+    }
   });
 
   if (!campoEncontrado && valor) {
-      // Agregar validación para evitar valores en blanco
-      recursos.push({id: idCampo,valor: valor,tipo: tipo, numeroIcono: numeroIcono });
+    recursos.push({ id: idCampo, valor: valor, tipo: tipo, numeroIcono: numeroIcono });
   }
 
   const data = {
-      nombre_grupo,
-      descrip_grupo,
-      color_grupo,
-      recurso_armado: JSON.stringify(recursos),
+    nombre_grupo,
+    descrip_grupo,
+    color_grupo,
+    recurso_armado: JSON.stringify(recursos),
   };
 
-  if (req.user.rol == "Admin") {
+  if (req.body.programa.includes("6")) {
+    console.log("Generando id_categoría Random");
+    const codigo = nombre_grupo + '6';
+    data.idCurso = (helpers.encriptarTxt((codigo).toString())).slice(0, 7)
+  }
+  try {
+    if (req.user.rol == "Admin") {
       const programa = req.body.programa || ["1"];
       data.programa = JSON.stringify(programa);
       await actualizarDatos("recursos_compartidos", data, `WHERE id = ${idRecurso}`);
-      res.redirect("/recursos-compartidos/");
-  } else {
+      res.setHeader('Refresh', '0;url=/recursos-compartidos');
+    } else {
       await actualizarDatos("grupo_recursos", data, `WHERE id = ${idRecurso}`);
-      res.redirect("/recursos/");
+      res.setHeader('Refresh', '0;url=/recursos');
+    }  
+    res.json({ success: true });
+  } catch (error) {
+    console.error('Error al subir archivo:', error);
+    res.status(500).json({ success: false, message: 'Error al subir archivo o actualizar base de datos.' });
   }
 };
+
+
 
 empresaController.copiarRecurso = async (req, res) => {
     const { id } = req.body;
@@ -2441,7 +2456,7 @@ empresaController.modulos = async (req, res) => {
   // Filtrando módulos por programa al que tenga la empresa logueada
   let misModulos = (await consultarDatos('modulos')).filter(m => {
 
-    if (m.estado === 1 && m.programa.includes(req.user.programa.toString()) || req.user.id_categoria.includes(m.id_categoria)) {
+    if (m.estado === 1 && m.programa.includes(req.user.programa.toString()) || (req.user.id_categoria && req.user.id_categoria.includes(m.id_categoria))) {
       m.codigo = encriptarTxt((m.id).toString())
       m.programa = JSON.parse(m.programa);
       m.lecciones_completadas = 0;

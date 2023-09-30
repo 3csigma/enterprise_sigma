@@ -401,21 +401,30 @@ function agregarArhivo(select) {
       formData.append("numeroIcono", numeroIcono); // Número de icono
       formData.append("archivo", archivo);
       
-      // actualizarRecurso(formData)
+      $(".loading-icon").removeClass("mostrar");
+      $(".text-btn").text("");
+      $(".btn-save").attr("disabled", true);
+      
       fetch('/actualizarRecurso', {
         method: 'POST',
         body: formData,
-        headers: { 'enctype': 'multipart/form-data'}
+        headers: { 'enctype': 'multipart/form-data' },
       })
-      .then(response => response.json())
-      .then(data => {
-        console.log('Archivo subido:', data);
-      })
-      .catch(error => {
-        // console.error('Error al subir archivo:', error);
-      });
+        .then(response => response.json())
+        .then(response => {
+          console.log('Respuesta del servidor:', response);
+          if (response.success) {
+              $(".loading-icon").addClass("mostrar");
+              $(".text-btn").text("Guardar");              
+              $(".btn-save").attr("disabled", false);
+          } else {
+            console.error('Error en el servidor:', response.message);
+          }
+        })
+        .catch(error => {
+          console.error('Error al subir archivo:', error);
+        });
     }
-
   });
 }
 
