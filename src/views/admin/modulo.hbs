@@ -415,7 +415,7 @@
                                 <div class="col-lg-8 mb-2">
                                     <div class="form-group">
                                         <label class="text-label">Nombre de la lección*</label>
-                                        <input type="hidden" id="ide-leccion_${lessonCounter}" value="">
+                                        <input type="hidden" id="id_DB-leccion_${lessonCounter}" value="">
                                         <input type="text" id="leccion_${lessonCounter}" class="form-control"
                                             style="border: 1px solid #DBDBDB;" value="Lección por defecto ${lessonCounter}" onblur="actualizarLeccion(this, ${lessonCounter})">
                                     </div>
@@ -885,10 +885,16 @@
 
     function actualizarLeccion(elemento, id) {
         console.log("elemento: ", elemento)
-        const data = { id }
-        if ($('#ide-leccion_'+id).val()) {
-            data.id = $('#ide-leccion_'+id).val()
+        const data = { id, id_modulo: parseInt(idModulo) }
+        /*
+        const idDB = 'xxxxxx';
+        // Capturando id de la lección creada en DB
+        if ($('#id_DB-leccion_'+id).val()) {
+            data.id = $('#id_DB-leccion_'+id).val();
         }
+        console.log("idDB: ", idDB)
+        */
+
         if (elemento.id.includes('leccion_')) {
             //console.log(`Se actualizó el input con ID ${elemento.id}, nuevo valor: ${elemento.value}, lección_id => ${id}`);
             data.nombre = elemento.value;
@@ -897,6 +903,7 @@
             data.descripcion = elemento.value;
         }
 
+        console.log("Data Edit: ", data)
         fetch('/actualizar-leccion', {
             method: 'POST',
             body: JSON.stringify(data),
@@ -922,11 +929,11 @@
             body: JSON.stringify({i, id_modulo}),
             headers: {'Content-Type': 'application/json'}
         }).then(response => response.json())
-            .then(data => {
+            .then(id_DB => {
                 console.log("Se agregó correctamente una nueva lección al módulo de id: ", id_modulo);
-                $('#ide-leccion_'+lessonCounter).val(data)
+                $('#id_DB-leccion_'+lessonCounter).val(id_DB)
                 lecciones_temp.push({
-                    id: data,
+                    id: id_DB,
                     orden: parseInt(i),
                     id_modulo: parseInt(id_modulo),
                     nombre: 'Lección por defecto ' + i,

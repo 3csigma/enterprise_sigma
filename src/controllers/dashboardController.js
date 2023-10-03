@@ -4201,7 +4201,8 @@ dashboardController.actualizarModulo = async (req, res) => {
 
 dashboardController.actualizarLeccion = async (req, res) => {
   console.log("Actualizando Lección ===> ", req.body.id);
-  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id}`)
+  console.log("Actualizando DATOS ===> ", req.body);
+  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id} AND id_modulo = ${req.body.id_modulo}`)
   res.send(true)
 }
 
