@@ -1579,9 +1579,14 @@ dashboardController.editarEmpresa = async (req, res) => {
   }
 
   let datosTabla = (await helpers.consultarDatos("rendimiento_empresa")).filter((x) => x.empresa == idEmpresa);
-  let jsonRendimiento = false;
-  if (datosTabla.length > 0) jsonRendimiento = JSON.stringify(datosTabla);
-  const rentabilidad_actual = ((datosTabla[datosTabla.length - 1]).rentabilidad).toFixed(2);
+  let jsonRendimiento = false, rentabilidad_actual = false;
+  
+  if (datosTabla.length > 0) {jsonRendimiento = JSON.stringify(datosTabla);
+    rentabilidad_actual = (datosTabla[datosTabla.length - 1].rentabilidad || 0).toFixed(2);
+  } else {
+    console.error('No se encontraron datos en datosTabla');
+  }
+  
 
   /*************************************************************************************************** */
   // Objeto para Botones de las tarjetas con base a la etapa del consultor
@@ -4125,7 +4130,7 @@ dashboardController.actualizarModulo = async (req, res) => {
 
 dashboardController.actualizarLeccion = async (req, res) => {
   console.log("Actualizando Lección ===> ", req.body.id);
-  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id}`)
+  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id} AND id_modulo = ${req.body.id_modulo}`)
   res.send(true)
 }
 
