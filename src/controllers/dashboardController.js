@@ -2798,7 +2798,11 @@ dashboardController.enviarCuestionario = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
+<<<<<<< HEAD
         " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy prioritario que el informe no pueda superar los 3000 caracteres";
+=======
+        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy prioritario que el informe no pueda superar los 1500 caracteres";
+>>>>>>> parent of eafeb78 (Hot Fix 6.0 (Cuestionarios Nuevas preguntas))
       // console.log(
       //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
       // );
@@ -3308,7 +3312,11 @@ dashboardController.guardarRespuestas = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
+<<<<<<< HEAD
         " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy importante que priorices que el informe no pueda superar los 3000 caracteres";
+=======
+        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy importante que priorices que el informe no pueda superar los 1800 caracteres";
+>>>>>>> parent of eafeb78 (Hot Fix 6.0 (Cuestionarios Nuevas preguntas))
       // console.log(
       //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
       // );
@@ -4201,7 +4209,8 @@ dashboardController.actualizarModulo = async (req, res) => {
 
 dashboardController.actualizarLeccion = async (req, res) => {
   console.log("Actualizando Lección ===> ", req.body.id);
-  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id}`)
+  console.log("Actualizando DATOS ===> ", req.body);
+  await helpers.actualizarDatos('lecciones', req.body, `WHERE id = ${req.body.id} AND id_modulo = ${req.body.id_modulo}`)
   res.send(true)
 }
 

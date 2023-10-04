@@ -1733,7 +1733,11 @@ empresaController.informeEstrategico = async (req, res) => {
     obj_respuestas["Evaluación Empresarial - Sistema Marketing"] = {
       informe5_IA,
     };
+<<<<<<< HEAD
     txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología.";
+=======
+    txtGPT = "Con base en los informes anteriores, crea una lista de tareas o plan estratégico para esta empresa basado en prioridades y separado por dimensiones que tenga como principal propósito solucionar las falencias encontradas. Adicionalmente y por aparte con base en los informes anteriores, aplicar la Metodología Sigma (Simplificar Procesos, Identificar Problemas, Generar Soluciones, Medición de Resultados y Análisis de Datos) y generar una lista de tareas o plan estratégico para llevar a cabo la metodología, No debe superar los 3000 caracteres.";
+>>>>>>> parent of eafeb78 (Hot Fix 6.0 (Cuestionarios Nuevas preguntas))
   }
 
   const prompt = JSON.stringify(obj_respuestas) + txtGPT;
