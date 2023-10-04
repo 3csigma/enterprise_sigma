@@ -2,29 +2,30 @@
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 style="color: #000 !important">Análisis dimensión marketing</h2>
+                <h2 style="color: #000 !important">Evaluación Empresarial Sistema de Comercialización</h2>
                 <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
                 </button>
             </div>
 
             <div class="modal-header">
-                <ul class="nav nav-pills justify-content-start">
+                <ul class="nav nav-tabs" role="tablist" style="border-bottom: none;">
                     <li class=" nav-item">
-                        <a href="#plan" class="nav-link active" data-toggle="tab" aria-expanded="false">Plan de Marketing</a>
+                        <a href="#asistencia" class="nav-link active" data-toggle="tab" aria-expanded="false">Asistencia y Relación con el Cliente</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#manual-ide" class="nav-link" data-toggle="tab" aria-expanded="false">Manual de Identidad</a>
+                        <a href="#marketing" class="nav-link" data-toggle="tab" aria-expanded="false">Marketing</a>
                     </li>
                     <li class="nav-item">
-                        <a href="#av-ventas" class="nav-link" data-toggle="tab" aria-expanded="false">Área vital de Ventas</a>
+                        <a href="#ventas" class="nav-link" data-toggle="tab" aria-expanded="true">Ventas</a>
                     </li>
                 </ul>
             </div>
 
             <div class="modal-body">
+
                 <div class="tab-content">
                     
-                    <div id="plan" class="tab-pane active">
+                    <div id="asistencia" class="tab-pane active">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -36,213 +37,341 @@
                             <tbody>
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Tu objetivo principal y métrica</td>
+                                    <td colspan="2" class="text-black">Entendimiento profundo del cliente</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">1</td>
-                                    <td>¿Cuál es el objetivo principal que quisieras conseguir con una estrategia de marketing? y ¿Cómo lo vas a medir?</td>
-                                    <td>{{dimMarketing.objetivo_principal}}</td>
+                                    <td>{{preguntas.asistencia.[0].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[0]}}</td>
                                 </tr>
-                                <tr>
-                                    <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Encuesta de satisfacción</td>
-                                </tr>
-
                                 <tr>
                                     <td scope="row">2</td>
-                                    <td>¿Quién es el cliente al que te diriges?</td>
-                                    <td>{{dimMarketing.cliente}}</td>
+                                    <td>{{preguntas.asistencia.[1].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[1]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Posicionamiento</td>
+                                    <td colspan="2" class="text-black">Relaciones con Clientes (MN)</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">3</td>
-                                    <td>¿Cuál será tu factor de diferenciación frente a la competencia?</td>
-                                    <td>{{dimMarketing.posicionamiento}}</td>
-                                </tr>
-
-
-                                <tr>
-                                    <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Beneficios</td>
+                                    <td>{{preguntas.asistencia.[2].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[2]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">4</td>
-                                    <td>¿Qué beneficios le aporta tu propuesta a quien adquiere tu producto?</td>
-                                    <td>{{dimMarketing.beneficios}}</td>
-                                </tr>
-
-                                <tr>
-                                    <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Mensaje</td>
+                                    <td>{{preguntas.asistencia.[3].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[3]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">5</td>
-                                    <td>¿Cuál es el mensaje con el que vas a captar la atención de tus clientes?</td>
-                                    <td>{{dimMarketing.mensaje}}</td>
+                                    <td>{{preguntas.asistencia.[4].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[4]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Oferta</td>
+                                    <td colspan="2" class="text-black">Comunicación efectiva (MN)</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">6</td>
-                                    <td>¿Cuál es la oferta de productos que tienes?</td>
-                                    <td>{{dimMarketing.oferta1}}</td>
+                                    <td>{{preguntas.asistencia.[5].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[5]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">7</td>
-                                    <td>¿Cuál es tu producto de entrada? si tienes un producto Premium.</td>
-                                    <td>{{dimMarketing.oferta2}}</td>
+                                    <td>{{preguntas.asistencia.[6].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[6]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Seguimiento de etapas del cliente</td>
+                                    <td colspan="2" style="font-weight: 500;">Capacitación del personal</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">8</td>
-                                    <td>¿Cuáles pueden ser los problemas a resolver más importantes en cada fase del proceso de compra del cliente?</td>
-                                    <td>{{dimMarketing.seguimiento}}</td>
+                                    <td>{{preguntas.asistencia.[7].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[7]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Presupuesto</td>
+                                    <td colspan="2" style="font-weight: 500;">Respuesta rápida</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">9</td>
-                                    <td>¿Cuál podría ser tu presupuesto máximo?</td>
-                                    <td>{{dimMarketing.presupuesto}}</td>
-                                </tr>
-
-                                 <tr>
-                                    <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Atracción</td>
+                                    <td>{{preguntas.asistencia.[8].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[8]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">10</td>
-                                    <td>¿Qué acciones de atracción a clientes puedes realizar?</td>
-                                    <td>{{dimMarketing.atraccion}}</td>
+                                    <td>{{preguntas.asistencia.[9].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[9]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Fidelización</td>
+                                    <td colspan="2" style="font-weight: 500;">Uso de tecnología</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">11</td>
-                                    <td>¿Qué acciones puedes proponer para para conseguir fidelizar a los clientes, y que vuelvan a comprar y que recomienden los productos?</td>
-                                    <td>{{dimMarketing.fidelizacion}}</td>
+                                    <td>{{preguntas.asistencia.[10].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[10]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Sitio Web y Redes sociales</td>
+                                    <td colspan="2" style="font-weight: 500;">Resolución de problemas</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">12</td>
-                                    <td>¿Quieres trabajar sobre lo que está, o buscas algo totalmente nuevo?</td>
-                                    <td>{{dimMarketing.sitioWeb.s1}}</td>
+                                    <td>{{preguntas.asistencia.[11].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[11]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">13</td>
-                                    <td>¿Cómo quieres que se vea tu página Web? da ejemplo</td>
-                                    <td>{{dimMarketing.sitioWeb.s2}}</td>
+                                    <td>{{preguntas.asistencia.[12].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[12]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Recompensas y lealtad</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">14</td>
-                                    <td>¿Te gusta el diseño/funcionalidad de alguna página Web? Ejemplos</td>
-                                    <td>{{dimMarketing.sitioWeb.s3}}</td>
+                                    <td>{{preguntas.asistencia.[13].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[13]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">15</td>
-                                    <td>¿Qué incluirías de ese diseño en la tuya/qué no incluirías?</td>
-                                    <td>{{dimMarketing.sitioWeb.s4}}</td>
+                                    <td>{{preguntas.asistencia.[14].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[14]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Seguimiento proactivo</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">16</td>
-                                    <td>¿Cuál podría ser tu presupuesto máximo?</td>
-                                    <td>{{dimMarketing.sitioWeb.s5}}</td>
+                                    <td>{{preguntas.asistencia.[15].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[15]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Integridad y transparencia</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">17</td>
-                                    <td>¿Cuál es el estado de tu marca en el mundo digital de las redes sociales?</td>
-                                    <td>{{dimMarketing.sitioWeb.s6}}</td>
+                                    <td>{{preguntas.asistencia.[16].txt}}</td>
+                                    <td>{{sistema.comercializacion.asistencia.[16]}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div id="marketing" class="tab-pane">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>#</th>
+                                    <th>Pregunta</th>
+                                    <th>Respuesta</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="text-black">Comprensión del Público Objetivo (MN)</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">1</td>
+                                    <td>{{preguntas.marketing.[0].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[0]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">2</td>
+                                    <td>{{preguntas.marketing.[1].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[1]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">3</td>
+                                    <td>{{preguntas.marketing.[2].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[2]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="text-black">Conocimiento del Cliente Objetivo (MN)</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">4</td>
+                                    <td>{{preguntas.marketing.[3].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[3]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">5</td>
+                                    <td>{{preguntas.marketing.[4].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[4]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="text-black">Propuesta de Valor (MN)</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">6</td>
+                                    <td>{{preguntas.marketing.[5].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[5]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">7</td>
+                                    <td>{{preguntas.marketing.[6].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[6]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">8</td>
+                                    <td>{{preguntas.marketing.[7].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[7]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Presencia Digital - Sitio Web</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">9</td>
+                                    <td>{{preguntas.marketing.[8].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[8]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">10</td>
+                                    <td>{{preguntas.marketing.[9].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[9]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">11</td>
+                                    <td>{{preguntas.marketing.[10].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[10]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Redes Sociales</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">12</td>
+                                    <td>{{preguntas.marketing.[11].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[11]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">13</td>
+                                    <td>{{preguntas.marketing.[12].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[12]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">14</td>
+                                    <td>{{preguntas.marketing.[13].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[13]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Contenido de Calidad</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">15</td>
+                                    <td>{{preguntas.marketing.[14].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[14]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">16</td>
+                                    <td>{{preguntas.marketing.[15].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[15]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">SEO</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">17</td>
+                                    <td>{{preguntas.marketing.[16].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[16]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">18</td>
-                                    <td>¿Cuáles son tus redes sociales?</td>
-                                    <td>{{dimMarketing.sitioWeb.s7}}</td>
+                                    <td>{{preguntas.marketing.[17].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[17]}}</td>
                                 </tr>
-                            </tbody>
-                        </table>
-                    </div>
 
-                    <div id="manual-ide" class="tab-pane">
-                        <table class="table">
-                            <thead>
                                 <tr>
-                                    <th>#</th>
-                                    <th>Pregunta</th>
-                                    <th>Respuesta</th>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Publicidad Segmentada</td>
                                 </tr>
-                            </thead>
-                            <tbody>
                                 <tr>
                                     <td scope="row">19</td>
-                                    <td>¿Quisieras cambiar algo sobre lo que ya tienes?</td>
-                                    <td>{{dimMarketing.identidadC.ic1}}</td>
+                                    <td>{{preguntas.marketing.[18].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[18]}}</td>
                                 </tr>
                                 <tr>
                                     <td scope="row">20</td>
-                                    <td>¿Hay algún elemento que quieras que aparezca en el logo?</td>
-                                    <td>{{dimMarketing.identidadC.ic2}}</td>
-                                </tr>
-                                <tr>
-                                    <td scope="row">21</td>
-                                    <td>En tu opinión, ¿qué define un logotipo bien diseñado?</td>
-                                    <td>{{dimMarketing.identidadC.ic3}}</td>
-                                </tr>
-                                <tr>
-                                    <td scope="row">22</td>
-                                    <td>¿Cuál es tu preferencia, en referencia a los iconos, tipografía, colores etc?</td>
-                                    <td>{{dimMarketing.identidadC.ic4}}</td>
-                                </tr>
-                                <tr>
-                                    <td scope="row">23</td>
-                                    <td>¿Qué palabras o iconos se deben incluir en el logo?</td>
-                                    <td>{{dimMarketing.identidadC.ic5}}</td>
-                                </tr>
-                                <tr>
-                                    <td scope="row">24</td>
-                                    <td>¿Qué logos te gustan y por qué? </td>
-                                    <td>{{dimMarketing.identidadC.ic6}}</td>
-                                </tr>
-                                <tr>
-                                    <td scope="row">25</td>
-                                    <td>¿Qué logos no te gustan y por qué? </td>
-                                    <td>{{dimMarketing.identidadC.ic7}}</td>
+                                    <td>{{preguntas.marketing.[19].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[19]}}</td>
                                 </tr>
 
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 500;">Presentación de su empresa </td>
+                                    <td colspan="2" style="font-weight: 500;">Educación y Capacitación Continua</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">26</td>
-                                    <td>¿Cuál es el eslogan que podría definir a tu empresa?</td>
-                                    <td>{{dimMarketing.eslogan}}</td>
+                                    <td scope="row">21</td>
+                                    <td>{{preguntas.marketing.[20].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[20]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Asignación Adecuada de Recursos</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">22</td>
+                                    <td>{{preguntas.marketing.[21].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[21]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Plan de Marketing</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">23</td>
+                                    <td>{{preguntas.marketing.[22].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[22]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">24</td>
+                                    <td>{{preguntas.marketing.[23].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[23]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Manual de Identidad Corporativa</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">25</td>
+                                    <td>{{preguntas.marketing.[24].txt}}</td>
+                                    <td>{{sistema.comercializacion.marketing.[24]}}</td>
                                 </tr>
                             </tbody>
                         </table>
                     </div>
 
-                    <div id="av-ventas" class="tab-pane">
+                    <div id="ventas" class="tab-pane">
                         <table class="table">
                             <thead>
                                 <tr>
@@ -254,43 +383,153 @@
                             <tbody>
                                 <tr>
                                     <td></td>
-                                    <td colspan="2" style="font-weight: 700;">Estrategias de ventas </td>
+                                    <td colspan="2" class="text-black">Estrategias de Ventas</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">27</td>
-                                    <td>¿Como haces para proyectar las ventas que esperas conseguir?</td>
-                                    <td>{{dimMarketing.estrategias.e1}}</td>
+                                    <td scope="row">1</td>
+                                    <td>{{preguntas.ventas.[0].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[0]}}</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">28</td>
-                                    <td>¿Qué haces para vender tus productos?</td>
-                                    <td>{{dimMarketing.estrategias.e2}}</td>
+                                    <td scope="row">2</td>
+                                    <td>{{preguntas.ventas.[1].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[1]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="text-black">Conocimiento del Producto/Servicio</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">29</td>
-                                    <td>¿Cuáles son los canales que utilizas para vender?</td>
-                                    <td>{{dimMarketing.estrategias.e3}}</td>
+                                    <td scope="row">3</td>
+                                    <td>{{preguntas.ventas.[2].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[2]}}</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">30</td>
-                                    <td>¿Cómo organizas tus canales de ventas?</td>
-                                    <td>{{dimMarketing.estrategias.e4}}</td>
+                                    <td scope="row">4</td>
+                                    <td>{{preguntas.ventas.[3].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[3]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" class="text-black">Uso de Tecnología</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">31</td>
-                                    <td>¿Cómo es tu plan de ventas actual?</td>
-                                    <td>{{dimMarketing.estrategias.e5}}</td>
+                                    <td scope="row">5</td>
+                                    <td>{{preguntas.ventas.[4].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[4]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Diversificación de Canales de Ventas</td>
                                 </tr>
                                 <tr>
-                                    <td scope="row">32</td>
-                                    <td>¿Cómo le haces seguimiento al proceso de venta?</td>
-                                    <td>{{dimMarketing.estrategias.e6}}</td>
+                                    <td scope="row">6</td>
+                                    <td>{{preguntas.ventas.[5].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[5]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">7</td>
+                                    <td>{{preguntas.ventas.[6].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[6]}}</td>
+                                </tr>
+                                
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Entender al Cliente</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">8</td>
+                                    <td>{{preguntas.ventas.[7].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[7]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Gestión de Precios</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">9</td>
+                                    <td>{{preguntas.ventas.[8].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[8]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Integración con Marketing</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">10</td>
+                                    <td>{{preguntas.ventas.[9].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[9]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">11</td>
+                                    <td>{{preguntas.ventas.[10].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[10]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Relaciones a Largo Plazo</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">12</td>
+                                    <td>{{preguntas.ventas.[11].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[11]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">13</td>
+                                    <td>{{preguntas.ventas.[12].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[12]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Objetivos y Feedback</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">14</td>
+                                    <td>{{preguntas.ventas.[13].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[13]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">15</td>
+                                    <td>{{preguntas.ventas.[14].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[14]}}</td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Red de Contactos (Networking)</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">16</td>
+                                    <td>{{preguntas.ventas.[15].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[15]}}</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">17</td>
+                                    <td>{{preguntas.ventas.[16].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[16]}}</td>
+                                </tr>
+                                
+                                <tr>
+                                    <td></td>
+                                    <td colspan="2" style="font-weight: 500;">Cultura de Ventas Positiva</td>
+                                </tr>
+                                <tr>
+                                    <td scope="row">18</td>
+                                    <td>{{preguntas.ventas.[17].txt}}</td>
+                                    <td>{{sistema.comercializacion.ventas.[17]}}</td>
                                 </tr>
                             </tbody>
-                        
                         </table>
                     </div>
-
+                   
                 </div>
 
             </div>

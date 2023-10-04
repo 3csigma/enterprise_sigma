@@ -39,10 +39,10 @@
                   </tr>
                 </thead>
                 <tbody>
-                  {{!-- DIMENSIÓN PRODUCTO --}}
+                  {{!-- SISTEMA SOLUCIONES Y VALOR (PRODUCTO) --}}
                   <tr>
                     <td>{{#if cuestionario.producto.fecha}}{{cuestionario.producto.fecha}}{{else}}N/A{{/if}}</td>
-                    <td>Cuestionario sistema de producto</td>
+                    <td>Cuestionario sistema de soluciones y valor</td>
                     <td>
                       <span class="badge light {{cuestionario.producto.color}}">{{cuestionario.producto.texto}}</span>
                     </td>
@@ -73,7 +73,7 @@
                     </td>
                   </tr>
 
-                  {{!-- DIMENSIÓN ADMINISTRACIÓN --}}
+                  {{!-- SISTEMA GESTIÓN DE RECURSOS (ADMINISTRACIÓN) --}}
                   <tr>
                     <td>{{#if cuestionario.administracion.fecha}}{{cuestionario.administracion.fecha}}{{else}}N/A{{/if}}</td>
                     <td>Cuestionario sistema de gestión</td>
@@ -104,10 +104,10 @@
                     </td>
                   </tr>
 
-                  {{!-- DIMENSIÓN OPERACIÓN --}}
+                  {{!-- SISTEMA OPERACIONAL (OPERACIÓN) --}}
                   <tr>
                     <td>{{#if cuestionario.operacion.fecha}}{{cuestionario.operacion.fecha}}{{else}}N/A{{/if}}</td>
-                    <td>Cuestionario sistema corporativo</td>
+                    <td>Cuestionario sistema operacional</td>
                     <td>
                       <span class="badge light {{cuestionario.operacion.color}}">{{cuestionario.operacion.texto}}</span>
                     </td>
@@ -135,10 +135,10 @@
                     </td>
                   </tr>
 
-                  {{!-- DIMENSIÓN MARKETING --}}
+                  {{!-- SISTEMA COMERCIALIZACIÓN (MARKETING) --}}
                   <tr>
                     <td>{{#if cuestionario.marketing.fecha}}{{cuestionario.marketing.fecha}}{{else}}N/A{{/if}}</td>
-                    <td>Cuestionario sistema de marketing</td>
+                    <td>Cuestionario sistema de comercialización</td>
                     <td>
                       <span class="badge light {{cuestionario.marketing.color}}">{{cuestionario.marketing.texto}}</span>
                     </td>
@@ -174,49 +174,78 @@
     </div>
   </div>
 </div>
-
-<style>
-    .custom-modal-class {
-  width: 70%;
-}
-
-</style>
-
-{{#if dimProducto}}
+{{#if sistema.soluciones}}
 {{> modals/dimensionProducto}}
 {{/if}}
-{{#if dimAdmin}}
+{{#if sistema.gestion}}
 {{> modals/dimensionAdministracion}}
 {{/if}}
-{{#if dimOperacion}}
+{{#if sistema.operacional}}
 {{> modals/dimensionOperaciones}}
 {{/if}}
-{{#if dimMarketing}}
+{{#if sistema.comercializacion}}
 {{> modals/dimensionMarketing}}
 {{/if}}
-{{!-- POPUP CON TUTORIAL --}}
-{{#unless tutoriales.etapa}}
 <script>
   document.addEventListener("DOMContentLoaded", () => {
-      Swal.fire({
-                title: '<strong>Bienvenido a Evaluación Empresarial</strong>',
-               // icon: 'info',
-                html: '<video controls style="width: 91%;">' + 
-                    '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_evaluacionEmpresarial.mp4" type="video/mp4">' +
-                    '  Your browser does not support the video tag.' +
-                    '</video>',
-                showCloseButton: true,
-                showCancelButton: false,
-                focusConfirm: false,
-                confirmButtonColor: '#812082',
-                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
-                confirmButtonAriaLabel: 'Thumbs up, great!',
-                cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
-                cancelButtonAriaLabel: 'Thumbs down',
-                customClass: {
-                    popup: 'custom-modal-class',
-                }
-            });
+    {{#unless tutoriales.etapa}}
+    // POPUP CON TUTORIAL
+    Swal.fire({
+      title: '<strong>Bienvenido a Evaluación Empresarial</strong>',
+      html: '<video controls style="width: 91%;">' + 
+          '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_evaluacionEmpresarial.mp4" type="video/mp4">' +
+          '  Your browser does not support the video tag.' +
+          '</video>',
+      showCloseButton: true,
+      showCancelButton: false,
+      focusConfirm: false,
+      confirmButtonColor: '#812082',
+      confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
+      confirmButtonAriaLabel: 'Thumbs up, great!',
+      cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+      cancelButtonAriaLabel: 'Thumbs down',
+      customClass: {
+          popup: 'custom-modal-class',
+      }
+    });
+    {{/unless}}
+
+    // POPUPS PARA HACER UPGRADE
+    {{#if etapaCompleta.upgrade1}}
+    Swal.fire({
+      title: '<strong>Valoración Inicial finalizada</strong>',
+        icon: 'info',
+        html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
+        <div class="d-flex justify-content-center align-items-center mt-2">
+          <a type="button" href="https://3csigma.com/programa-entrepreneur/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Entrepreneur</a>
+          <a type="button" href="/" class="swal2-confirm swal2-styled color_secondary text-white">Cerrar</a>
+        </div>`,
+      showConfirmButton: false,
+      showCloseButton: false,
+      showCancelButton: false,
+      allowOutsideClick: false
+    })
+    $('.swal2-popup').width('50em');
+    {{/if}}
+
+    {{#if etapaCompleta.upgrade2}}
+    Swal.fire({
+        title: '<strong>Diagnóstico finalizado</strong>',
+          icon: 'info',
+          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
+          <div class="d-flex justify-content-center align-items-center mt-2">
+            <a type="button" href="https://3csigma.com/programa-business/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Business</a>
+            <a type="button" href="https://3csigma.com/programa-enterprise/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Enterprise</a>
+          </div>
+          <a type="button" href="/" class="swal2-confirm swal2-styled color_secondary text-white">Cerrar</a>`,
+        showConfirmButton: false,
+        showCloseButton: false,
+        showCancelButton: false,
+        allowOutsideClick: false
+    })
+
+    $('.swal2-popup').width('50em');
+    {{/if}}
+
   });
 </script>
-{{/unless}}

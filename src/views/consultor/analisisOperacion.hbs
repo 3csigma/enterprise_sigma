@@ -26,7 +26,7 @@
                 <div>
                     <figure><img src="../img/info_graphic_1.svg" alt="" class="img-fluid" width="270" height="270">
                     </figure>
-                    <h2>Evaluación empresarial sistema corporativo</h2>
+                    <h2>Evaluación empresarial sistema operacional</h2>
                     <p>Bienvenido al Nivel N° 2, donde podremos ayudarle a analizar y entender el comportamiento de su negocio en el
                         mercado actual.</p>
                     <a href="https://wa.me/+17868461158" target="_blank" class="btn_1 rounded yellow my-auto">
@@ -50,77 +50,129 @@
                     <input id="website" name="website" type="text" value="">
                     <!-- Leave for security protection, read docs for details -->
                     <div id="middle-wizard">
-                        <!-- SECCIÓN 1 - SERVICIO AL CLIENTE -->
+                        <!-- SECCIÓN 1 - Planeación Estratégica -->
                         <div class="step">
-                            <h2 class="section_title">Servicio al Cliente</h2>
+                            <h2 class="section_title">Planeación Estratégica</h2>
 
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Rapidez en la entrega de información sobre los Productos</strong></label>
-                                    <label><span>¿Cómo hace actualmente para facilitarle a sus clientes información rápida y efectiva de sus Productos y/o Servicios?</span></label>
+                                    <label><strong>Comprensión del Mercado</strong></label>
+                                    <label><span>{{preguntas.estrategica.[0].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="info_productos" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[1].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Encuesta de satisfacción</strong></label>
-                                    <label><span>¿Cómo mide actualmente la satisfacción de sus clientes con respecto a sus Productos y/o Servicios?</span></label>
+                                    <label><strong>Claridad en la Misión y Visión</strong></label>
+                                    <label><span>{{preguntas.estrategica.[2].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="satisfaccion" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[3].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[4].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><span>¿Qué le preguntaría a sus clientes con respecto a sus Productos y/ o Servicios?</span></label>
+                                    <label><strong>Valores claros</strong></label>
+                                    <label><span>{{preguntas.estrategica.[5].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="encuesta_clientes" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Encuestas para supera las expectativas</strong></label>
-                                    <label><span>¿Qué información le interesaría conocer de sus clientes?</span></label>
+                                    <label><strong>Objetivos Definidos</strong></label>
+                                    <label><span>{{preguntas.estrategica.[6].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="informacion_deClientes" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Libro de quejas y reclamaciones</strong></label>
-                                    <label><span>¿Qué utilidad le ve a un Libro de quejas y reclamaciones?</span></label>
+                                    <label><strong>Análisis FODA</strong></label>
+                                    <label><span>{{preguntas.estrategica.[7].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="utilidad_libro_quejas" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[8].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><span>¿En qué se puede beneficiar la empresa de un Libro de quejas y reclamaciones?</span></label>
+                                    <label><strong>Participación del Equipo</strong></label>
+                                    <label><span>{{preguntas.estrategica.[9].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="beneficio_libro_quejas" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[10].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><span>En caso de querer incorporar el libro de quejas y reclamaciones ¿Qué estrategia puede utilizar para activar su usabilidad?</span></label>
+                                    <label><strong>Evaluación de la Competencia</strong></label>
+                                    <label><span>{{preguntas.estrategica.[11].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="estrategia__libro_quejas" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[12].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Fidelización de clientes</strong></label>
-                                    <label><span>¿Qué es lo que hace en la actualidad para fidelizar a sus clientes?</span></label>
+                                    <label><strong>Comunicación Estratégica</strong></label>
+                                    <label><span>{{preguntas.estrategica.[13].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="fidelizacion_clientes" class="form-control required"
+                                        <textarea name="estrategica[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.estrategica.[14].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="estrategica[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
@@ -131,92 +183,169 @@
                         </div>
                         <!-- /Paso 1 -->
 
-                        <!-- SECCIÓN 2 - Área vital de Operaciones ============================== -->
+                        <!-- SECCIÓN 2 - Procesos Operativos ============================== -->
                         <div class="step">
-                            <h2 class="section_title">Área vital de Operaciones</h2>
+                            <h2 class="section_title">Procesos Operativos</h2>
 
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Instalaciones adecuadas</strong></label>
-                                    <label><span>¿Qué tan adecuadas están las instalaciones donde opera el negocio? Explique lo más posible..</span></label>
+                                    <label><strong>Análisis y Mapeo de Procesos</strong></label>
+                                    <label><span>{{preguntas.operativos.[0].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="instalaciones_op" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[1].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[2].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label for=""><span>¿Cómo están distribuidas las áreas del negocio? </span></label>
+                                    <label><strong>Establecimiento de Objetivos Claros</strong></label>
+                                    <label><span>{{preguntas.operativos.[3].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="areas_op" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[4].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label for=""><span>¿Qué influencia tienen las instalaciones en general hacia el éxito del negocio? </span></label>
+                                    <label><strong>Eficiencia</strong></label>
+                                    <label><span>{{preguntas.operativos.[5].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="influencia_op" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Flexibilidad</strong></label>
+                                    <label><span>{{preguntas.operativos.[6].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[7].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Permisos de operaciones</strong></label>
-                                    <label for=""><span>¿Cuáles son los permisos necesarios que requiere para la correcta operación del negocio? </span></label>
+                                    <label><strong>Incorporación de Tecnología</strong></label>
+                                    <label><span>{{preguntas.operativos.[8].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="permisos1" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[9].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label for=""><span>¿Qué tipo de permisos requiere actualmente o podría necesitar?</span></label>
+                                    <label><strong>Revisión Regular</strong></label>
+                                    <label><span>{{preguntas.operativos.[10].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="permisos2" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[11].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Plan de Trabajo</strong></label>
-                                    <label for=""><span>¿Cómo está elaborado el plan de trabajo de cada trabajador dentro de la empresa?</span></label>
+                                    <label><strong>Actividades Clave (MN)</strong></label>
+                                    <label><span>{{preguntas.operativos.[12].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="plan_trabajo1" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label for=""><span>¿Cuál es la información más relevante que debe contener el plan de trabajo?</span></label>
+                                    <label><strong>Gestión del Tiempo</strong></label>
+                                    <label><span>{{preguntas.operativos.[13].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="plan_trabajo2" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[14].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label for=""><span>¿Qué podría ayudar a que el plan de trabajo se cumpla?</span></label>
+                                    <label><strong>Canales de Distribución (MN)</strong></label>
+                                    <label><span>{{preguntas.operativos.[15].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="plan_trabajo3" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[16].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.operativos.[17].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>La estandarización de tareas y procesos</strong></label>
-                                    <label for=""><span>¿Qué tareas y procesos tiene actualmente estandarizados?</span></label>
+                                    <label><strong>Alianzas Estratégicas (MN)</strong></label>
+                                    <label><span>{{preguntas.operativos.[18].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="procesos_estandarizados1" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
-
                                 <div class="form-group col-md-12 ">
-                                    <label for=""><span>¿Cuáles tareas y procesos le gustaría estandarizar?</span></label>
+                                    <label><span>{{preguntas.operativos.[19].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="procesos_estandarizados2" class="form-control required"
+                                        <textarea name="operativos[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
@@ -228,43 +357,131 @@
                         </div>
                         <!-- /Paso 2 -->
 
-                        <!-- SECCIÓN 3 - Área vital Ambiente laboral ============================== -->
+                        <!-- SECCIÓN 3 - Integración y Bienestar Laboral ============================== -->
                         <div class="step">
-                            <h2 class="section_title">Área vital Ambiente laboral</h2>
+                            <h2 class="section_title">Integración y Bienestar Laboral</h2>
 
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Ambiente Laboral</strong></label>
-                                    <label><span>¿Qué hace actualmente para contribuir a generar un buen ambiente de trabajo dentro de la empresa?</span></label>
+                                    <label><strong>Liderazgo Comprometido</strong></label>
+                                    <label><span>{{preguntas.integracion.[0].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="ambiente_laboral" class="form-control required"
+                                        <textarea name="integracion[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Comunicación empresarial</strong></label>
-                                    <label><span>¿De qué manera se llevan a cabo las comunicaciones dentro de la empresa?</span></label>
+                                    <label><strong>Comunicación Abierta y Transparente</strong></label>
+                                    <label><span>{{preguntas.integracion.[1].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="comunicacion" class="form-control required"
+                                        <textarea name="integracion[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Reconocimiento laboral</strong></label>
-                                    <label><span>¿De qué manera le reconoce a sus colaboradores que están haciendo un buen trabajo?</span></label>
+                                    <label><strong>Flexibilidad</strong></label>
+                                    <label><span>{{preguntas.integracion.[2].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="reconocimiento1" class="form-control required"
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.integracion.[3].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><span>Generando nuevas opciones, ¿Cómo puede brindar reconocimiento a sus colaboradores cuando están haciendo un buen trabajo?</span></label>
+                                    <label><strong>Espacio de Trabajo Adecuado</strong></label>
+                                    <label><span>{{preguntas.integracion.[4].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="reconocimiento2" class="form-control required"
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.integracion.[5].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Actividades de Integración</strong></label>
+                                    <label><span>{{preguntas.integracion.[6].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.integracion.[7].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Salud y Bienestar</strong></label>
+                                    <label><span>{{preguntas.integracion.[8].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.integracion.[9].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Participación activa</strong></label>
+                                    <label><span>{{preguntas.integracion.[10].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.integracion.[11].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Entorno Laboral</strong></label>
+                                    <label><span>{{preguntas.integracion.[12].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.integracion.[13].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Balance Vida-Trabajo</strong></label>
+                                    <label><span>{{preguntas.integracion.[14].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="integracion[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
@@ -276,61 +493,119 @@
                         </div>
                         <!-- /Paso 3 -->
 
-                        <!-- SECCIÓN 4 - Área vital de Innovación ============================== -->
+                        <!-- SECCIÓN 4 - Modelo de Negocio ============================== -->
                         <div class="step">
-                            <h2 class="section_title">Área vital de Innovación</h2>
+                            <h2 class="section_title">Modelo de Negocio</h2>
 
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Innovación Individual</strong></label>
-                                    <label><span>¿Qué importancia le ve a la posibilidad de que sus trabajadores aportan ideas para la mejora dentro de la empresa?</span></label>
+                                    <label><strong>Competitividad en el Mercado</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[0].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="innovacion_individual1" class="form-control required"
+                                        <textarea name="modelo_negocio[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><span>¿Qué tipo de ideas le gustaría recibir por parte de sus trabajadores?</span></label>
+                                    <label><strong>Propuesta de Valor</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[1].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="innovacion_individual2" class="form-control required"
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.modelo_negocio.[2].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Innovación basada en el producto/servicio </strong></label>
-                                    <label><span>¿Qué mejora en sus productos y/o servicios pueden incrementar tus ventas?</span></label>
+                                    <label><strong>Claridad y Dirección</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[3].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="innovacion_productos" class="form-control required"
+                                        <textarea name="modelo_negocio[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Innovación en los procesos de un producto y servicios</strong></label>
-                                    <label><span>¿Qué cambios podrían mejorar los procesos operativos para desarrollarsus Productos y/o Servicios?</span></label>
+                                    <label><strong>Competitividad en el Mercado</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[4].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="innovacion_procesos" class="form-control required"
+                                        <textarea name="modelo_negocio[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Innovación en el modelo de negocio</strong></label>
-                                    <label><span>¿Qué considera que podría innovar en su modelo de negocio?</span></label>
+                                    <label><strong>Adaptabilidad y Flexibilidad</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[5].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="innovacion_modelo" class="form-control required"
+                                        <textarea name="modelo_negocio[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Innovación en la gestión</strong></label>
-                                    <label><span>¿Qué podría mejorar dentro de los sistemas de gestión que tiene actualmente?</span></label>
+                                    <label><strong>Optimización de Recursos</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[6].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="innovacion_gestion" class="form-control required"
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.modelo_negocio.[7].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Retroalimentación de Clientes</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[8].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Evaluación Interna</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[9].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.modelo_negocio.[10].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Monitoreo del Mercado</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[11].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Visión a Futuro</strong></label>
+                                    <label><span>{{preguntas.modelo_negocio.[12].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="modelo_negocio[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>

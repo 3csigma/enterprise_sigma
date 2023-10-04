@@ -29,7 +29,7 @@
                     {{#if grupos}}
                     <h3 style="position: absolute; margin-top: -57px;margin-left: 16px;color:#000000;font-weight: 600;">Recursos compartidos</h3>
                     {{#each grupos}}
-                     <div class="col-xl-3">
+                     <div class="col-xl-3 col-md-6 col-sm-6 col-xs-12">
                         <div class="card text-white card_grupo" style="background:{{color_grupo}}">
                             <a onclick="eliminarGrupo({{idGrupo}})" class="btn btn-white shadow btn-xs sharp text-white position-absolute" style="top: 10px;right: 10px;padding: 0px;width: 18px;height: 18px; min-width: 21px; min-height: 20px;"><i class="fa fa-trash" style="margin: -3px;font-size: 12px"></i></a>
                             <a href="#" data-toggle="modal" data-target="#modal-{{idGrupo}}" onclick="verGrupo('{{idGrupo}}')">
@@ -171,38 +171,37 @@
         </div>
     </div>
 </div>
-{{!-- <script src="../js/jquery.js"></script> --}}
 <script>
     // Selecciona todos los botones de color y campos de texto dentro de las tarjetas
-const tarjetas_admin = document.querySelectorAll('.tarjetas_admin');
+    const tarjetas_admin = document.querySelectorAll('.tarjetas_admin');
 
-tarjetas_admin.forEach((t) => {
-    const colorBtnEditAdm = t.querySelectorAll('.colorBtnEditAdm');
-    const colorGrupoInput_editAdm_ = t.querySelector('.colorGrupoInput_editAdm_');
+    tarjetas_admin.forEach((t) => {
+        const colorBtnEditAdm = t.querySelectorAll('.colorBtnEditAdm');
+        const colorGrupoInput_editAdm_ = t.querySelector('.colorGrupoInput_editAdm_');
 
-    capturarColor_GrupoEditAdm(colorBtnEditAdm, colorGrupoInput_editAdm_);
-});
-
-function capturarColor_GrupoEditAdm(colorButtonsAdm_, colorGrupoInput_editAdm_) {
-    colorButtonsAdm_.forEach((button) => {
-        button.addEventListener("click", function() {
-            // Remover la clase 'selected' de todos los botones
-            colorButtonsAdm_.forEach(btn => btn.classList.remove('selected'));
-
-            // Agregar la clase 'selected' al botón clicado
-            this.classList.add('selected');
-
-            // Obtener el ID del campo de texto correspondiente
-            const targetFieldID = this.getAttribute('data-target');
-            
-            // Buscar el campo de texto correspondiente usando el ID
-            const colorGrupoInput = document.querySelector(targetFieldID);
-            
-            if (colorGrupoInput) {
-                // Guardar el color seleccionado en el campo de entrada oculto
-                colorGrupoInput.value = this.getAttribute('data-color');
-            }
-        });
+        capturarColor_GrupoEditAdm(colorBtnEditAdm, colorGrupoInput_editAdm_);
     });
-}
+
+    function capturarColor_GrupoEditAdm(colorButtonsAdm_, colorGrupoInput_editAdm_) {
+        colorButtonsAdm_.forEach((button) => {
+            button.addEventListener("click", function() {
+                // Remover la clase 'selected' de todos los botones
+                colorButtonsAdm_.forEach(btn => btn.classList.remove('selected'));
+
+                // Agregar la clase 'selected' al botón clicado
+                this.classList.add('selected');
+
+                // Obtener el ID del campo de texto correspondiente
+                const targetFieldID = this.getAttribute('data-target');
+                
+                // Buscar el campo de texto correspondiente usando el ID
+                const colorGrupoInput = document.querySelector(targetFieldID);
+                
+                if (colorGrupoInput) {
+                    // Guardar el color seleccionado en el campo de entrada oculto
+                    colorGrupoInput.value = this.getAttribute('data-color');
+                }
+            });
+        });
+    }
 </script>

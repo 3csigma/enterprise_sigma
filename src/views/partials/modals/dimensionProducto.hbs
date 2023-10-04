@@ -1,108 +1,375 @@
+<style>
+    .nav-tabs .nav-item .nav-link.active:before {
+        height: 3px;
+        background-color: #50368c;
+    }
+</style>
 <div class="modal fade bd-example-modal-lg" id="modalDimProducto" tabindex="-1" role="dialog" aria-hidden="true">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
             <div class="modal-header">
-                <h2 style="color: #000 !important">Análisis dimensión producto</h2>
+                <h2>Evaluación Empresarial Sistema de Soluciones y Valor</h2>
                 <button type="button" class="close" data-dismiss="modal"><span>&times;</span>
                 </button>
             </div>
 
-            <div class="modal-body">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>#</th>
-                            <th>Pregunta</th>
-                            <th>Respuesta</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">El público objetivo</td></tr>
-                        <tr>
-                            <td scope="row">1</td>
-                            <td>¿A cuál segmento del mercado va dirigido su producto/servicio: hombres, mujeres, pequeñas empresas, etc.?</td>
-                            <td>{{dimProducto.publico_objetivo}}</td>
-                        </tr>
-            
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">Beneficios</td></tr>
-                        <tr>
-                            <td scope="row">2</td>
-                            <td>¿Qué Beneficios aporta su producto/servicio? Y ¿Qué necesidad de este público satisface?</td>
-                            <td>{{dimProducto.beneficios}}</td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">Tipo de producto</td></tr>
-                        <tr>
-                            <td scope="row">3</td>
-                            <td>¿Cuál es su tipo de producto/servicio específicamente?</td>
-                            <td>{{dimProducto.tipo_producto}}</td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">Nivel de precio</td></tr>
-                        <tr>
-                            <td scope="row">4</td>
-                            <td>Explique ¿Cómo es el precio de su producto/servicio en relación al sector de mercado en el que se encuentra?</td>
-                            <td>{{dimProducto.nivel_precio}}</td>
-                        </tr>
-                        <tr>
-                            <td scope="row">5</td>
-                            <td>¿Cuáles son los Productos y/o Servicios que más vende? </td>
-                            <td>{{dimProducto.mas_vendidos}}</td>
-                        </tr>
-                        <tr>
-                            <td scope="row">6</td>
-                            <td>¿Cuál es la razón por la que considera que estos producto/servicio que describió anteriormente se venden más?</td>
-                            <td>{{dimProducto.razon_venta}}</td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">Utilización</td></tr>
-                        <tr>
-                            <td scope="row">7</td>
-                            <td>¿Cómo se utiliza o consume su producto/servicio? ¿En qué ocasiones? ¿Por quién? ¿En dónde?</td>
-                            <td>{{dimProducto.utilizacion}}</td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">Integración en la gama de Productos y/o Servicios</td></tr>
-                        <tr>
-                            <td scope="row">8</td>
-                            <td>Explique ¿Qué coherencia tienen sus Productos y/o Servicios dentro de la empresa?</td>
-                            <td>{{dimProducto.integracion_gama}}</td>
-                        </tr>
-
-                        <tr>
-                            <td></td>
-                            <td colspan="2" style="font-weight: 700;">Calidad</td></tr>
-                        <tr>
-                            <td scope="row">9</td>
-                            <td>¿Cómo es la calidad de su producto/servicio? Y ¿Qué tiene su producto/servicio para disponer de la calidad a que hace referencia?</td>
-                            <td>{{dimProducto.calidad}}</td>
-                        </tr>
-                        <tr>
-                            <td scope="row">10</td>
-                            <td>¿Qué aceptación tiene su producto/servicio?</td>
-                            <td>{{dimProducto.aceptacion}}</td>
-                        </tr>
-                        
-                    </tbody>
-                </table>
-            
-            
+            <div class="modal-header">
+                <ul class="nav nav-tabs" role="tablist" style="border-bottom: none;">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-toggle="tab" href="#producto">
+                            <?xml version="1.0" ?><svg height="20" id="icon" viewBox="0 0 32 32" width="20" xmlns="http://www.w3.org/2000/svg"><defs><style>.cls-1{fill:none;}</style></defs><title/><rect height="2" width="6" x="8" y="18"/><rect height="2" width="10" x="8" y="22"/><path d="M26,4H6A2.0025,2.0025,0,0,0,4,6V26a2.0025,2.0025,0,0,0,2,2H26a2.0025,2.0025,0,0,0,2-2V6A2.0025,2.0025,0,0,0,26,4ZM18,6v4H14V6ZM6,26V6h6v6h8V6h6l.0012,20Z"/><rect class="cls-1" data-name="&lt;Transparent Rectangle&gt;" height="32" id="Transparent_Rectangle" width="32"/></svg>
+                            PRODUCTO - SERVICIO</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-toggle="tab" href="#propuesta">
+                            <?xml version="1.0" ?><svg height="20" version="1.1" viewBox="0 0 20 20" width="20" xmlns="http://www.w3.org/2000/svg"><g id="layer1"><path d="M 12.5 0 A 0.50005 0.50005 0 0 0 12 0.5 L 12 2 L 0 2 L 0 3 L 12 3 L 12 4 A 0.50005 0.50005 0 0 0 12.146484 4.3535156 L 13.646484 5.8535156 A 0.50005 0.50005 0 0 0 14.353516 5.8535156 L 15.853516 4.3535156 A 0.50005 0.50005 0 0 0 16 4 L 16 3 L 20 3 L 20 2 L 16 2 L 16 0.5 A 0.50005 0.50005 0 0 0 15.5 0 L 12.5 0 z M 13 1 L 15 1 L 15 3.7929688 L 14 4.7929688 L 13 3.7929688 L 13 1 z M 3.5 7 A 0.50005 0.50005 0 0 0 3 7.5 L 3 9 L 0 9 L 0 10 L 3 10 L 3 11 A 0.50005 0.50005 0 0 0 3.1464844 11.353516 L 4.6464844 12.853516 A 0.50005 0.50005 0 0 0 5.3535156 12.853516 L 6.8535156 11.353516 A 0.50005 0.50005 0 0 0 7 11 L 7 10 L 20 10 L 20 9 L 7 9 L 7 7.5 A 0.50005 0.50005 0 0 0 6.5 7 L 3.5 7 z M 4 8 L 6 8 L 6 10.792969 L 5 11.792969 L 4 10.792969 L 4 8 z M 8.5 14 A 0.50005 0.50005 0 0 0 8 14.5 L 8 16 L 0 16 L 0 17 L 8 17 L 8 18 A 0.50005 0.50005 0 0 0 8.1464844 18.353516 L 9.6464844 19.853516 A 0.50005 0.50005 0 0 0 10.353516 19.853516 L 11.853516 18.353516 A 0.50005 0.50005 0 0 0 12 18 L 12 17 L 20 17 L 20 16 L 12 16 L 12 14.5 A 0.50005 0.50005 0 0 0 11.5 14 L 8.5 14 z M 9 15 L 11 15 L 11 17.792969 L 10 18.792969 L 9 17.792969 L 9 15 z " style="fill:#222222; fill-opacity:1; stroke:none; stroke-width:0px;"/></g></svg> 
+                            PROPUESTA DE VALOR</a>
+                    </li>
+                </ul>
             </div>
 
+            <div class="modal-body">
+                <div class="default-tab">
+                    <div class="tab-content">
+
+                        <div class="tab-pane fade show active" id="producto" role="tabpanel">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Pregunta</th>
+                                        <th>Respuesta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Calidad y Consistencia</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">1</td>
+                                        <td>{{preguntas.producto.[0].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[0]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">2</td>
+                                        <td>{{preguntas.producto.[1].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[1]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Disponibilidad y Accesibilidad</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">3</td>
+                                        <td>{{preguntas.producto.[2].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[2]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>{{preguntas.producto.[3].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[3]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Integración en la Gama de Productos o Servicios Según Actividad Comercial</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>{{preguntas.producto.[4].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[4]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>{{preguntas.producto.[5].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[5]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Presentación del Producto o Servicio</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>{{preguntas.producto.[6].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[6]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>{{preguntas.producto.[7].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[7]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Nivel de Precio</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">9</td>
+                                        <td>{{preguntas.producto.[8].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[8]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">10</td>
+                                        <td>{{preguntas.producto.[9].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[9]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Adaptabilidad a las Necesidades del Cliente</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">11</td>
+                                        <td>{{preguntas.producto.[10].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[10]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">12</td>
+                                        <td>{{preguntas.producto.[11].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[11]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Postventa y Garantía</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">13</td>
+                                        <td>{{preguntas.producto.[12].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[12]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">14</td>
+                                        <td>{{preguntas.producto.[13].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[13]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Feedback y Mejora Continua</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">15</td>
+                                        <td>{{preguntas.producto.[14].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[14]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">16</td>
+                                        <td>{{preguntas.producto.[15].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[15]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Identificación con la Marca</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">17</td>
+                                        <td>{{preguntas.producto.[16].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[16]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">18</td>
+                                        <td>{{preguntas.producto.[17].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[17]}}</td>
+                                    </tr>
+                                    
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Innovación y Desarrollo</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">19</td>
+                                        <td>{{preguntas.producto.[18].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[18]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">20</td>
+                                        <td>{{preguntas.producto.[19].txt}}</td>
+                                        <td>{{sistema.soluciones.producto.[19]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+
+                        <div class="tab-pane fade" id="propuesta">
+                            
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>#</th>
+                                        <th>Pregunta</th>
+                                        <th>Respuesta</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Claridad</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">1</td>
+                                        <td>{{preguntas.propuesta.[0].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[0]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">2</td>
+                                        <td>{{preguntas.propuesta.[1].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[1]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Beneficio</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">3</td>
+                                        <td>{{preguntas.propuesta.[2].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[2]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">4</td>
+                                        <td>{{preguntas.propuesta.[3].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[3]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Diferenciación</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">5</td>
+                                        <td>{{preguntas.propuesta.[4].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[4]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">6</td>
+                                        <td>{{preguntas.propuesta.[5].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[5]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Prueba o Validación</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">7</td>
+                                        <td>{{preguntas.propuesta.[6].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[6]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">8</td>
+                                        <td>{{preguntas.propuesta.[7].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[7]}}</td>
+                                    </tr>
+
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Relevancia del Beneficio</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">9</td>
+                                        <td>{{preguntas.propuesta.[8].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[8]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">10</td>
+                                        <td>{{preguntas.propuesta.[9].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[9]}}</td>
+                                    </tr>
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Coherencia Visual</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">11</td>
+                                        <td>{{preguntas.propuesta.[10].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[10]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">12</td>
+                                        <td>{{preguntas.propuesta.[11].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[11]}}</td>
+                                    </tr>
+                                    
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Actualización</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">13</td>
+                                        <td>{{preguntas.propuesta.[12].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[12]}}</td>
+                                    </tr>
+                                    
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Feedback Positivo</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">14</td>
+                                        <td>{{preguntas.propuesta.[13].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[13]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">15</td>
+                                        <td>{{preguntas.propuesta.[14].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[14]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">16</td>
+                                        <td>{{preguntas.propuesta.[15].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[15]}}</td>
+                                    </tr>
+                                    
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Centrado en el Cliente</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">17</td>
+                                        <td>{{preguntas.propuesta.[16].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[16]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">18</td>
+                                        <td>{{preguntas.propuesta.[17].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[17]}}</td>
+                                    </tr>
+                                    
+
+                                    <tr>
+                                        <td></td>
+                                        <td colspan="2" class="text-black">Conexión Emocional</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">19</td>
+                                        <td>{{preguntas.propuesta.[18].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[18]}}</td>
+                                    </tr>
+                                    <tr>
+                                        <td scope="row">20</td>
+                                        <td>{{preguntas.propuesta.[19].txt}}</td>
+                                        <td>{{sistema.soluciones.propuesta.[19]}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+
+                        </div>
+
+                    </div>
+                </div>
+            </div>
             <div class="modal-footer">
-                <button type="button" class="btn color_gradient light text-white" style="border-color: #50368C;" data-dismiss="modal">Cerrar</button>
+                <button type="button" class="btn color_gradient light text-white" data-dismiss="modal">Cerrar</button>
             </div>
         </div>
     </div>

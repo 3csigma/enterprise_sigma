@@ -26,7 +26,7 @@
                 <div>
                     <figure><img src="../img/info_graphic_1.svg" alt="" class="img-fluid" width="270" height="270">
                     </figure>
-                    <h2>Evaluación empresarial sistema producto</h2>
+                    <h2>Evaluación empresarial sistema soluciones y valor</h2>
                     <p>Bienvenido al Nivel N° 2, donde podremos ayudarle a analizar y entender el comportamiento de su negocio en el
                         mercado actual.</p>
                     <a href="https://wa.me/+17868461158" target="_blank" class="btn_1 rounded yellow my-auto">
@@ -52,55 +52,70 @@
                     <div id="middle-wizard">
                         <!-- SECCIÓN 1 -->
                         <div class="step">
-                            <h2 class="section_title">SECCIÓN 1</h2>
+                            <h2 class="section_title">Producto - Servicio</h2>
 
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>El público objetivo</strong></label>
-                                    <label>¿A cuál segmento del mercado va dirigido su producto/servicio: hombres,
-                                    mujeres, pequeñas empresas, etc.? </label>
+                                    <label><strong>Calidad y Consistencia</strong></label>
+                                    <label><span>{{preguntas.producto.[0].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="publico_objetivo" id="publico_objetivo" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[1].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Beneficios</strong></label>
-                                    <label>¿Qué Beneficios aporta su producto/servicio? Y ¿Qué necesidad de este público satisface?</label>
+                                    <label><strong>Disponibilidad y Accesibilidad</strong></label>
+                                    <label><span>{{preguntas.producto.[2].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="beneficios" id="beneficios" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[3].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Tipo de producto/servicio</strong></label>
-                                    <label class="mb-3">¿Cuál es su tipo de producto/servicio específicamente? Ejemplo:</label>
-                                    <label><span><span style="text-decoration: underline black;"> Productos de consumo</span>, perecederos y no perecederos o de larga duración.</span></label>
-                                    <label><span><span style="text-decoration: underline black;">Productos tangibles</span> que se consumen rápidamente: comida preparada.</span></label>
-                                    <label><span><span style="text-decoration: underline black;">Bienes de consumo duraderos.</span> Tangibles y que se usan muchas veces: electrodomésticos, mercadería, ropa, bisuterías, etc</span></label>
-                                    <label><span><span style="text-decoration: underline black;">Servicios.</span> Intangibles</span></label>
+                                    <label><strong>Integración en la Gama de Productos o Servicios Según Actividad Comercial</strong></label>
+                                    <label><span>{{preguntas.producto.[4].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="tipo_producto" id="tipo_producto" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[5].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Nivel de precio</strong></label>
-                                    <label>Explique ¿Cómo es el precio de su producto/servicio en relación al sector de mercado en el que se encuentra?</label>
+                                    <label><strong>Presentación del Producto o Servicio</strong></label>
+                                    <label><span>{{preguntas.producto.[6].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="nivel_precio" id="nivel_precio" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
-
                                 <div class="form-group col-md-12 ">
-                                    <label>¿Cuáles son los Productos y/o Servicios que más vende?</label>
+                                    <label><span>{{preguntas.producto.[7].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="mas_vendidos" id="mas_vendidos" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
@@ -113,49 +128,102 @@
 
                         <!-- SECCIÓN 2 ============================== -->
                         <div class="step">
-                            <h2 class="section_title">SECCIÓN 2</h2>
+                            {{!-- <h2 class="section_title">SECCIÓN 2</h2> --}}
 
                             <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
 
                                 <div class="form-group col-md-12 ">
-                                    <label>¿Cuál es la razón por la que considera que estos producto/servicio que describió anteriormente se venden más?</label>
+                                    <label><strong>Nivel de Precio</strong></label>
+                                    <label><span>{{preguntas.producto.[8].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="razon_venta" id="razon_venta" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[9].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Utilización</strong></label>
-                                    <label>¿Cómo se utiliza o consume su producto/servicio? ¿En qué ocasiones? ¿Por quién? ¿En dónde?</label>
+                                    <label><strong>Adaptabilidad a las Necesidades del Cliente</strong></label>
+                                    <label><span>{{preguntas.producto.[10].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="utilizacion" id="utilizacion" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[11].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Integración en la gama de productos/servicios </strong></label>
-                                    <label>Explique ¿Qué coherencia tienen sus productos/servicios dentro de la empresa?</label>
+                                    <label><strong>Postventa y Garantía</strong></label>
+                                    <label><span>{{preguntas.producto.[12].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="integracion_gama" id="integracion_gama" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[13].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label><strong>Calidad</strong></label>
-                                    <label>¿Cómo es la calidad de su producto/servicio? Y ¿Qué tiene su producto/servicio para disponer de la calidad a que hace referencia?</label>
+                                    <label><strong>Feedback y Mejora Continua</strong></label>
+                                    <label><span>{{preguntas.producto.[14].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="calidad" id="calidad" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[15].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
 
                                 <div class="form-group col-md-12 ">
-                                    <label>¿Qué aceptación tiene su producto/servicio?</label>
+                                    <label><strong>Identificación con la Marca</strong></label>
+                                    <label><span>{{preguntas.producto.[16].txt}}</span></label>
                                     <div class="form-group mb-3 mx-auto">
-                                        <textarea name="aceptacion" id="aceptacion" class="form-control required"
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[17].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Innovación y Desarrollo</strong></label>
+                                    <label><span>{{preguntas.producto.[18].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
+										style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.producto.[19].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="producto[]" class="form-control required"
 										style="height: 115px; min-height: 110px;"></textarea>
                                     </div>
                                 </div>
@@ -165,6 +233,161 @@
                             <!-- /Fila Grupo de campos -->
                         </div>
                         <!-- /Paso 2 -->
+
+                        <!-- SECCIÓN 3 ============================== -->
+                        <div class="step">
+                            <h2 class="section_title">Propuesta de Valor</h2>
+
+                            <div class="row add_top_10 barra-scroll overflow-y-auto" style="max-height: 60vh;">
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Claridad</strong></label>
+                                    <label><span>{{preguntas.propuesta.[0].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[1].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Beneficio</strong></label>
+                                    <label><span>{{preguntas.propuesta.[2].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[3].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Diferenciación</strong></label>
+                                    <label><span>{{preguntas.propuesta.[4].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[5].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Prueba o Validación</strong></label>
+                                    <label><span>{{preguntas.propuesta.[6].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.propuesta.[7].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Relevancia del Beneficio</strong></label>
+                                    <label><span>{{preguntas.propuesta.[8].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.propuesta.[9].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12 ">
+                                    <label><strong>Coherencia Visual</strong></label>
+                                    <label><span>{{preguntas.propuesta.[10].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12 ">
+                                    <label><span>{{preguntas.propuesta.[11].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Actualización</strong></label>
+                                    <label><span>{{preguntas.propuesta.[12].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Feedback Positivo</strong></label>
+                                    <label><span>{{preguntas.propuesta.[13].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[14].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[15].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Centrado en el Cliente</strong></label>
+                                    <label><span>{{preguntas.propuesta.[16].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[17].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+                                <div class="form-group col-md-12">
+                                    <label><strong>Conexión Emocional</strong></label>
+                                    <label><span>{{preguntas.propuesta.[18].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label><span>{{preguntas.propuesta.[19].txt}}</span></label>
+                                    <div class="form-group mb-3 mx-auto">
+                                        <textarea name="propuesta[]" class="form-control required" style="height: 115px; min-height: 110px;"></textarea>
+                                    </div>
+                                </div>
+
+
+                            </div>
+
+                            <!-- /Fila Grupo de campos -->
+                        </div>
+                        <!-- /Paso 3 -->
 
                         <!-- Último Paso ============================== -->
                         <div class="submit step" id="end">

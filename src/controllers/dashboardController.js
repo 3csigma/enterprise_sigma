@@ -8,6 +8,8 @@ const fs = require('fs-extra');
 const { sendEmail, consultorAsignadoHTML, consultorAprobadoHTML, informesHTML, etapaFinalizadaHTML, consultor_AsignadoEtapa, archivosPlanEmpresarialHTML } = require("../lib/mail.config");
 const stripe = require("stripe")(process.env.CLIENT_SECRET_STRIPE);
 const { getResponseChatGPT, checkGPT3Connectivity } = require("../lib/openai");
+const preguntas1 = require('../config/preguntas_etapa1.json');
+const { log } = require("console");
 
 let aprobarConsultor = false;
 
@@ -427,9 +429,7 @@ dashboardController.editarEmpresa = async (req, res) => {
   );
   const idEmpresa = datosEmpresa.id_empresas;
   // Empresa tabla Ficha Cliente
-  const empresa = (await helpers.consultarDatos("ficha_cliente")).find(
-    (x) => x.id_empresa == idEmpresa
-  );
+  const empresa = (await helpers.consultarDatos("ficha_cliente")).find((x) => x.id_empresa == idEmpresa);
   const pago_diagnostico = {
     color: "badge-warning",
     texto: "Pendiente",
@@ -582,13 +582,7 @@ dashboardController.editarEmpresa = async (req, res) => {
 
   // CAPTURANDO CONSULTORES ASIGNADOS A LA EMPRESA
   let divConsultores = "none";
-  let consultores_asignados = await helpers.consultarDatos(
-    "consultores_asignados",
-    "ORDER BY orden ASC"
-  );
-  consultores_asignados = consultores_asignados.filter(
-    (x) => x.empresa == idEmpresa
-  );
+  let consultores_asignados = (await helpers.consultarDatos("consultores_asignados","ORDER BY orden ASC")).filter((x) => x.empresa == idEmpresa);
   if (consultores_asignados.length > 0) {
     divConsultores = "contents";
     consultores_asignados.forEach((c) => {
@@ -643,11 +637,11 @@ dashboardController.editarEmpresa = async (req, res) => {
       datos.nueva = true;
     }
 
-    if (empresa.diagnostico_fecha2 > 0) {
+    if (datosEmpresa.diagnostico_fecha2 == 1) {
       cuestionario.diagnostico2.ver = true;
     }
 
-    if (empresa.tipo_empresa == 1) {
+    if (empresa_fichaCliente.tipo_empresa == 1) {
       cuestionario.diagnostico.color = "badge-danger";
       cuestionario.diagnostico.texto = "Pendiente";
       cuestionario.diagnostico.btnEdit = true;
@@ -659,13 +653,9 @@ dashboardController.editarEmpresa = async (req, res) => {
         cuestionario.diagnostico2.btnEdit = true;
       }
 
-      const data = (await helpers.consultarDatos("dg_empresa_nueva")).filter(
-        (x) => x.id_empresa == idEmpresa
-      );
+      const data = (await helpers.consultarDatos("dg_empresa_nueva")).filter(x => x.id_empresa == idEmpresa);
       // Ordenando el Array para asegurar usar el 1ero y último
-      data.sort((a, b) => {
-        return a.id_ - b.id_;
-      });
+      data.sort((a, b) => { return a.id_ - b.id_; });
       if (data.length > 0) {
         const datos = data[0];
         cuestionario.diagnostico.fecha = datos.fecha;
@@ -2028,6 +2018,22 @@ dashboardController.cuestionario = async (req, res) => {
   if (req.user.rol != "Empresa") {
     linkCerrar = `/empresas/${codigo}#diagnostico_`;
   }
+
+  const preguntas = {
+    "producto": [...preguntas1.producto],
+    "propuesta": [...preguntas1.porpuesta_valor],
+    "rAdmin": [...preguntas1.recursos_admin],
+    "rFinancieros": [...preguntas1.recursos_financieros],
+    "rHumano": [...preguntas1.recursos_humanos],
+    "estrategica": [...preguntas1.planeacion_estrategica],
+    "operativos": [...preguntas1.procesos_operativos],
+    "integracion": [...preguntas1.integracion],
+    "modelo_negocio": [...preguntas1.modelo_negocio],
+    "asistencia": [...preguntas1.asistencia_cliente],
+    "marketing": [...preguntas1.marketing],
+    "ventas": [...preguntas1.ventas],
+  }
+
   res.render("consultor/cuestionario", {
     wizarx: true,
     user_dash: false,
@@ -2035,248 +2041,76 @@ dashboardController.cuestionario = async (req, res) => {
     codigo,
     rolUser: req.user.rol,
     linkCerrar,
+    preguntas
   });
 };
 dashboardController.enviarCuestionario = async (req, res) => {
   const { codigoEmpresa, zhActualAdm, rolUser } = req.body;
   // Capturar Fecha de guardado
   const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm });
-  let infoEmp = await helpers.consultarDatos("empresas");
-  infoEmp = infoEmp.find((x) => x.codigo == codigoEmpresa);
   // Capturar ID Empresa
-  const id_empresa = infoEmp.id_empresas;
-
-  // Productos o Servicios
-  const {
-    rubro,
-    e_ofrece,
-    producto_ofrece,
-    servicio_ofrece,
-    problema_resolver,
-    diferencia_otros,
-    nivel_precio,
-    investigacion_precios,
-    conexion_tematica,
-    perciben_coherencia,
-    calidad_producto,
-    presentacion_producto,
-    calificacion_global_producto,
-  } = req.body;
-
-  let empresa_ofrece = { e_ofrece };
-  producto_ofrece != ""
-    ? (empresa_ofrece.producto_ofrece = producto_ofrece)
-    : (empresa_ofrece.servicio_ofrece = servicio_ofrece);
-  empresa_ofrece = JSON.stringify(empresa_ofrece);
-  let productos_servicios = JSON.stringify({
-    problema_resolver,
-    diferencia_otros,
-    nivel_precio,
-    investigacion_precios,
-    conexion_tematica,
-    perciben_coherencia,
-    calidad_producto,
-    presentacion_producto,
-    calificacion_global_producto,
-  });
-
-  // Administración
-  const {
-    planeacion_estrategica,
-    analisis_foda,
-    estructura_organizativa,
-    sistema_administrativo_contable,
-    software_empresarial,
-    calificacion_administracion,
-  } = req.body;
-  let administracion = JSON.stringify({
-    planeacion_estrategica,
-    analisis_foda,
-    estructura_organizativa,
-    sistema_administrativo_contable,
-    software_empresarial,
-    calificacion_administracion,
-  });
-
-  // Talento Humano
-  const {
-    principales_funciones_personal,
-    plan_capacitacion,
-    cuadro_habilidades,
-    medicion_personal,
-    plan_remuneracion,
-    proceso_reclutamiento,
-    calificacion_personal_laboral,
-  } = req.body;
-  let talento_humano = JSON.stringify({
-    principales_funciones_personal,
-    plan_capacitacion,
-    cuadro_habilidades,
-    medicion_personal,
-    plan_remuneracion,
-    proceso_reclutamiento,
-    calificacion_personal_laboral,
-  });
+  const dataEmpresa = (await helpers.consultarDatos("empresas")).find((x) => x.codigo == codigoEmpresa);
+  const id_empresa = dataEmpresa.id_empresas;
+  // Datos individuales del Formulario
+  const { rubro, e_ofrece, producto_ofrece, servicio_ofrece } = req.body;
 
   // RENDIMIENTO EMPRESA
   let { total_ventas, total_compras, total_gastos } = req.body;
-  // Finanzas
-  const {
-    proyeccion_ventas,
-    estructura_costos,
-    cuentas_pagar_cobrar,
-    costos_fijos_variables,
-    analisis_finanzas_anual,
-    punto_equilibrio,
-    utilidad_neta,
-    empresa_rentable,
-    proyeccion_flujo_efectivo,
-    mejorar_rentabilidad,
-    calificacion_finanzas,
-  } = req.body;
-  let finanzas = JSON.stringify({
-    proyeccion_ventas,
-    estructura_costos,
-    cuentas_pagar_cobrar,
-    costos_fijos_variables,
-    analisis_finanzas_anual,
-    utilidad_neta,
-    empresa_rentable,
-    punto_equilibrio,
-    proyeccion_flujo_efectivo,
-    mejorar_rentabilidad,
-    calificacion_finanzas,
-  });
 
-  // Servicio al Cliente
-  const {
-    clientes_info_productos,
-    satisfaccion_clientes_productos,
-    necesidades_clientes_productos,
-    mecanismo_quejas_reclamos,
-    estrategias_fidelidad_clientes,
-    calificacion_servicio_alcliente,
-  } = req.body;
-  let servicio_alcliente = JSON.stringify({
-    clientes_info_productos,
-    satisfaccion_clientes_productos,
-    necesidades_clientes_productos,
-    mecanismo_quejas_reclamos,
-    estrategias_fidelidad_clientes,
-    calificacion_servicio_alcliente,
-  });
+  let empresa_ofrece = { e_ofrece };
+  producto_ofrece != "" ? (empresa_ofrece.producto_ofrece = producto_ofrece) : (empresa_ofrece.servicio_ofrece = servicio_ofrece);
+  empresa_ofrece = JSON.stringify(empresa_ofrece);
 
-  // Operaciones
-  const {
-    instalaciones_adecuadas,
-    permisos_requeridos,
-    plan_detrabajo_diario,
-    documentos_actividades,
-    manuales_operaciones,
-    calificacion_operaciones_procesos,
-  } = req.body;
-  let operaciones = JSON.stringify({
-    instalaciones_adecuadas,
-    permisos_requeridos,
-    plan_detrabajo_diario,
-    documentos_actividades,
-    manuales_operaciones,
-    calificacion_operaciones_procesos,
-  });
+  const data = {
+    producto: [],
+    propuesta: [],
+    rAdmin: [],
+    rFinancieros: [],
+    rHumano: [],
+    estrategica: [],
+    operativos: [],
+    integracion: [],
+    modelo_negocio: [],
+    asistencia: [],
+    marketing: [],
+    ventas: []
+  };
 
-  // Ambiente Laboral
-  const {
-    ambiente_positivo,
-    medicion_ambiente_laboral,
-    satisfaccion_empleados,
-    comunicacion_efectiva,
-    comunicar_buen_trabajo,
-    calificacion_ambiente,
-  } = req.body;
-  let ambiente_laboral = JSON.stringify({
-    ambiente_positivo,
-    medicion_ambiente_laboral,
-    satisfaccion_empleados,
-    comunicacion_efectiva,
-    comunicar_buen_trabajo,
-    calificacion_ambiente,
-  });
+  const calificaciones = {
+    producto: parseFloat(req.body.calificacion_producto),
+    propuesta: parseFloat(req.body.calificacion_propuesta),
+    rAdmin: parseFloat(req.body.calificacion_admin),
+    rFinancieros: parseFloat(req.body.calificacion_financieros),
+    rHumano: parseFloat(req.body.calificacion_rHumano),
+    estrategica: parseFloat(req.body.calificacion_estrategica),
+    operativos: parseFloat(req.body.calificacion_operativos),
+    integracion: parseFloat(req.body.calificacion_integracion),
+    modelo_negocio: parseFloat(req.body.calificacion_negocio),
+    asistencia: parseFloat(req.body.calificacion_asistencia),
+    marketing: parseFloat(req.body.calificacion_marketing),
+    ventas: parseFloat(req.body.calificacion_ventas)
+  };  
 
-  // Innovación
-  const {
-    aportan_ideas,
-    incrementar_ventas,
-    procesos_innovadores,
-    modelo_innovador,
-    empresa_innovadora,
-    calificacion_innovacion,
-  } = req.body;
-  let innovacion = JSON.stringify({
-    aportan_ideas,
-    incrementar_ventas,
-    procesos_innovadores,
-    modelo_innovador,
-    empresa_innovadora,
-    calificacion_innovacion,
-  });
+  console.log("calificaciones::::: ");
+  console.log(calificaciones);
 
-  // Marketing
-  const {
-    estudio_mercado,
-    segmento_mercado,
-    posicionamiento_mercado,
-    estrategias_marketing,
-    plan_marketing,
-    landing_page,
-    redes_sociales,
-    manual_identidad,
-    tiene_eslogan,
-    brochure_empresa,
-    calificacion_marketing,
-  } = req.body;
-  let marketing = JSON.stringify({
-    estudio_mercado,
-    segmento_mercado,
-    posicionamiento_mercado,
-    estrategias_marketing,
-    plan_marketing,
-    landing_page,
-    redes_sociales,
-    manual_identidad,
-    tiene_eslogan,
-    brochure_empresa,
-    calificacion_marketing,
-  });
-
-  // Ventas
-  const {
-    facilidad_ventas,
-    calificacion_ventas_meses,
-    objetivo_ventas,
-    estrategia_ventas,
-    canales_ventas,
-    calificacion_ventas,
-  } = req.body;
-  let ventas = JSON.stringify({
-    facilidad_ventas,
-    calificacion_ventas_meses,
-    objetivo_ventas,
-    estrategia_ventas,
-    canales_ventas,
-    calificacion_ventas,
-  });
-
-  // Fortalezas
-  const { f1, f2, f3, f4, f5 } = req.body;
-  let fortalezas = JSON.stringify({ f1, f2, f3, f4, f5 });
-
-  // Oportunidades de Mejora
-  const { o1, o2, o3, o4, o5 } = req.body;
-  let oportunidades_mejoras = JSON.stringify({ o1, o2, o3, o4, o5 });
-
-  // Metas a corto plazo
-  const { m1, m2, m3, m4, m5 } = req.body;
-  let metas_corto_plazo = JSON.stringify({ m1, m2, m3, m4, m5 });
+  const keys = Object.keys(data);
+  for (let i = 0; i < 10; i++) {
+    keys.forEach(key => {
+        const reqKey = `${key}${i}`;
+        data[key].push(req.body[reqKey]);
+    });
+  }
+  // Verificar el tamaño de los arrays, sea 10
+  const arraysSizeTen = keys.every(key => data[key].length === 10);
+  if (arraysSizeTen) {
+    // Agregar las calificaciones a los arrays correspondientes
+    keys.forEach(key => {
+      if (calificaciones.hasOwnProperty(key)) {
+          data[key].push(calificaciones[key]);
+      }
+    });
+  }
 
   // Creando Objetos para guardar en la base de datos
   const nuevoDiagnostico = {
@@ -2284,235 +2118,50 @@ dashboardController.enviarCuestionario = async (req, res) => {
     fecha,
     rubro,
     empresa_ofrece,
-    productos_servicios,
-    administracion,
-    talento_humano,
-    finanzas,
-    servicio_alcliente,
-    operaciones,
-    ambiente_laboral,
-    innovacion,
-    marketing,
-    ventas,
-    fortalezas,
-    oportunidades_mejoras,
-    metas_corto_plazo,
+    productos_servicios: JSON.stringify(data.producto),
+    propuesta_valor: JSON.stringify(data.propuesta),
+    recursos_administrativos: JSON.stringify(data.rAdmin),
+    recursos_financieros: JSON.stringify(data.rFinancieros),
+    recursos_humano: JSON.stringify(data.rHumano),
+    planeacion_estrategica: JSON.stringify(data.estrategica),
+    procesos_operativos: JSON.stringify(data.operativos),
+    integracion: JSON.stringify(data.integracion),
+    modelo_negocio: JSON.stringify(data.modelo_negocio),
+    asistencia: JSON.stringify(data.asistencia),
+    marketing: JSON.stringify(data.marketing),
+    ventas: JSON.stringify(data.ventas)
   };
-
-  /************************************************************************************************************
-   * CÁLCULANDO LA PERCEPCIÓN ESTADÍSTICA
-   */
-  let pe_producto = 0,
-    pe_administracion = 0,
-    pe_operaciones = 0,
-    pe_marketing = 0;
-  // PRODUCTO
-  let objPE1 = { si: 0, excelente: 0, buena: 0 };
-  let data_pe = {
-    problema_resolver,
-    diferencia_otros,
-    nivel_precio,
-    investigacion_precios,
-    conexion_tematica,
-    perciben_coherencia,
-    calidad_producto,
-    presentacion_producto,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE1.si = objPE1.si + 1;
-    }
-    if (data_pe[key] === "Excelente") {
-      objPE1.excelente = objPE1.excelente + 1;
-    }
-    if (data_pe[key] === "Buena") {
-      objPE1.buena = objPE1.buena + 1;
-    }
-  }
-  objPE1.excelente = objPE1.excelente * 2;
-
-  // SUMATORIA para PE PRODUCTO
-  for (let key in objPE1) {
-    pe_producto += objPE1[key];
-  }
-  // console.log(`\nPRODUCTO PE => ${pe_producto}`);
-
-  /**
-   * ADMINISTRACIÓN
-   */
-  let objPE2 = { temp1: 0, temp2: 0, temp3: 0, temp4: 0 };
-  data_pe = {
-    planeacion_estrategica,
-    analisis_foda,
-    estructura_organizativa,
-    sistema_administrativo_contable,
-    software_empresarial,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE2.temp1 = objPE2.temp1 + 1;
-    }
-  }
-  objPE2.temp1 = objPE2.temp1 * 2;
-  // TALENTO HUMANO
-  data_pe = {
-    principales_funciones_personal,
-    plan_capacitacion,
-    cuadro_habilidades,
-    medicion_personal,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE2.temp2 = objPE2.temp2 + 1;
-    }
-  }
-  objPE2.temp2 = objPE2.temp2 * 2;
-  // FINANZAS
-  data_pe = { plan_remuneracion, proceso_reclutamiento };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE2.temp3 = objPE2.temp3 + 1;
-    }
-  }
-
-  // SUMATORIA para PE ADMINISTRACIÓN
-  for (let key in objPE2) {
-    pe_administracion += objPE2[key];
-  }
-  pe_administracion = (pe_administracion / 3).toFixed(2);
-  // console.log(`ADMINISTRACIÓN PE => ${pe_administracion}`);
-
-  /**
-   * OPERACIONES
-   */
-  let objPE3 = { temp1: 0, temp2: 0, temp3: 0, temp4: 0 };
-  // SERVICIO AL CLIENTE
-  data_pe = {
-    clientes_info_productos,
-    satisfaccion_clientes_productos,
-    necesidades_clientes_productos,
-    mecanismo_quejas_reclamos,
-    estrategias_fidelidad_clientes,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE3.temp1 = objPE3.temp1 + 1;
-    }
-  }
-  objPE3.temp1 = objPE3.temp1 * 2;
-  // OPERACIONES
-  data_pe = {
-    instalaciones_adecuadas,
-    permisos_requeridos,
-    plan_detrabajo_diario,
-    documentos_actividades,
-    manuales_operaciones,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE3.temp2 = objPE3.temp2 + 1;
-    }
-  }
-  objPE3.temp2 = objPE3.temp2 * 2;
-  // AMBIENTE LABOLRAL
-  data_pe = {
-    ambiente_positivo,
-    medicion_ambiente_laboral,
-    satisfaccion_empleados,
-    comunicacion_efectiva,
-    comunicar_buen_trabajo,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE3.temp3 = objPE3.temp3 + 1;
-    }
-  }
-  objPE3.temp3 = objPE3.temp3 * 2;
-  // INNOVACIÓN
-  data_pe = {
-    aportan_ideas,
-    incrementar_ventas,
-    procesos_innovadores,
-    modelo_innovador,
-    empresa_innovadora,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE3.temp4 = objPE3.temp4 + 1;
-    }
-  }
-  objPE3.temp4 = objPE3.temp4 * 2;
-
-  // SUMATORIA para PE OPERACIONES
-  for (let key in objPE3) {
-    pe_operaciones += objPE3[key];
-  }
-  pe_operaciones = (pe_operaciones / 4).toFixed(2);
-  // console.log(`OPERACIONES PE => ${pe_operaciones}`);
-
-  /**
-   * MARKETING
-   */
-  let objPE4 = { temp1: 0, temp2: 0 };
-  data_pe = {
-    estudio_mercado,
-    segmento_mercado,
-    posicionamiento_mercado,
-    estrategias_marketing,
-    plan_marketing,
-    landing_page,
-    redes_sociales,
-    manual_identidad,
-    tiene_eslogan,
-    brochure_empresa,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE4.temp1 = objPE4.temp1 + 1;
-    }
-  }
-  // VENTAS
-  data_pe = {
-    facilidad_ventas,
-    calificacion_ventas_meses,
-    objetivo_ventas,
-    estrategia_ventas,
-    canales_ventas,
-  };
-  for (let key in data_pe) {
-    if (data_pe[key] === "Si") {
-      objPE4.temp2 = objPE4.temp2 + 1;
-    }
-  }
-  objPE4.temp2 = objPE4.temp2 * 2;
-
-  // SUMATORIA para PE MARKETING
-  for (let key in objPE4) {
-    pe_marketing += objPE4[key];
-  }
-  pe_marketing = (pe_marketing / 2).toFixed(2);
-  // console.log(`MARKETING PE => ${pe_marketing} \n`);
-
-  /************************************************************************************************* */
 
   // Guardando en la Base de datos
   const cuestionario = await helpers.insertarDatos("dg_empresa_establecida", nuevoDiagnostico);
   if (cuestionario.affectedRows > 0) {
+    const preguntas_producto = [...preguntas1.producto]
+    const preguntas_propuesta = [...preguntas1.porpuesta_valor]
+    const preguntas_rAdmin = [...preguntas1.recursos_admin]
+    const preguntas_rFinancieros = [...preguntas1.recursos_financieros]
+    const preguntas_rHumano = [...preguntas1.recursos_humanos]
+    const preguntas_estrategica = [...preguntas1.planeacion_estrategica]
+    const preguntas_operativos = [...preguntas1.procesos_operativos]
+    const preguntas_integracion = [...preguntas1.integracion]
+    const preguntas_modelo_negocio = [...preguntas1.modelo_negocio]
+    const preguntas_asistencia = [...preguntas1.asistencia_cliente]
+    const preguntas_marketing = [...preguntas1.marketing]
+    const preguntas_ventas = [...preguntas1.ventas]
+
     /************************************************************************************************* */
     // RENDIMIENTO DE LA EMPRESA
-    total_ventas = total_ventas.replace(/[$ ]/g, "");
-    total_ventas = total_ventas.replace(/[,]/g, ".");
-    total_compras = total_compras.replace(/[$ ]/g, "");
-    total_compras = total_compras.replace(/[,]/g, ".");
-    total_gastos = total_gastos.replace(/[$ ]/g, "");
-    total_gastos = total_gastos.replace(/[,]/g, ".");
+    const parseAndClean = (value) => {
+      const num = value.replace(/\$/g, '').replace(/ /g, '');
+      // Reemplazar coma por punto
+      return parseFloat(num.replace(',', '.'));
+    };
 
-    total_ventas = parseFloat(total_ventas);
-    total_compras = parseFloat(total_compras);
-    total_gastos = parseFloat(total_gastos);
-
-    const utilidad = total_ventas - total_compras - total_gastos; // Utilidad = Ingresos - Costos Totales
-    const rentabilidad = ((total_ventas-(total_compras + total_gastos))/total_ventas)*100;
+    total_ventas = parseAndClean(total_ventas);
+    total_compras = parseAndClean(total_compras);
+    total_gastos = parseAndClean(total_gastos);
+   
+    const rentabilidad = (((total_ventas - (total_compras + total_gastos)) / total_ventas) * 100).toFixed(2);
+    const utilidad = total_ventas - total_compras - total_gastos;
 
     const nuevoRendimiento = {
       empresa: id_empresa,
@@ -2524,281 +2173,564 @@ dashboardController.enviarCuestionario = async (req, res) => {
       fecha: new Date().toLocaleDateString("en-US"),
     };
 
-    let rendimientos = await helpers.consultarDatos("rendimiento_empresa");
-    rendimientos = rendimientos.filter((x) => x.empresa == id_empresa);
+    const rendimientos = (await helpers.consultarDatos("rendimiento_empresa")).filter((x) => x.empresa == id_empresa);
+    const calculatePercentage = (total, prevTotal) => ((total - prevTotal) / prevTotal) * 100;
+    
+    if (rendimientos.length > 0) {
+      const ventas1 = parseFloat(rendimientos[0].total_ventas);
+      const utilidad1 = parseFloat(rendimientos[0].utilidad);
 
-    if (rendimientos.length >= 1) {
-      let r = rendimientos;
-      const ventas1 = parseFloat(r[0].total_ventas);
-      const utilidad1 = parseFloat(r[0].utilidad);
-      nuevoRendimiento.porcentaje_ventas =
-        ((total_ventas - ventas1) / ventas1) * 100;
-      nuevoRendimiento.porcentaje_utilidad =
-        ((utilidad - utilidad1) / utilidad1) * 100;
-      if (rendimientos.length == 2) {
-        const ventas2 = parseFloat(r[1].total_ventas);
-        const utilidad2 = parseFloat(r[1].utilidad);
-        nuevoRendimiento.porcentaje_ventas =
-          ((total_ventas - ventas2) / ventas2) * 100;
-        nuevoRendimiento.porcentaje_utilidad =
-          ((utilidad - utilidad2) / utilidad2) * 100;
+      nuevoRendimiento.porcentaje_ventas = calculatePercentage(total_ventas, ventas1);
+      nuevoRendimiento.porcentaje_utilidad = calculatePercentage(utilidad, utilidad1);
+
+      if (rendimientos.length === 2) {
+        const ventas2 = parseFloat(rendimientos[1].total_ventas);
+        const utilidad2 = parseFloat(rendimientos[1].utilidad);
+
+        nuevoRendimiento.porcentaje_ventas = calculatePercentage(total_ventas, ventas2);
+        nuevoRendimiento.porcentaje_utilidad = calculatePercentage(utilidad, utilidad2);
       }
-      nuevoRendimiento.porcentaje_ventas =
-        nuevoRendimiento.porcentaje_ventas.toFixed(2);
-      nuevoRendimiento.porcentaje_utilidad =
-        nuevoRendimiento.porcentaje_utilidad.toFixed(2);
+
+      nuevoRendimiento.porcentaje_ventas = nuevoRendimiento.porcentaje_ventas.toFixed(2);
+      nuevoRendimiento.porcentaje_utilidad = nuevoRendimiento.porcentaje_utilidad.toFixed(2);
     }
 
     const rendimiento = await helpers.insertarDatos("rendimiento_empresa", nuevoRendimiento );
+    /************************************************************************************************************
+     * CÁLCULANDO LA PERCEPCIÓN ESTADÍSTICA
+    ************************************************************************************************************/
+    // Función para calcular el PE por áreas
+    const calcularPE = (areas, data) => {
+      const siConteo = areas.map(area => ({area, si: data[area].filter(item => item === 'Si').length}));
+      const sumatoria = siConteo.reduce((sum, { si }) => sum + si, 0);
+      const pe = (sumatoria / areas.length).toFixed(2);
+    
+      return { pe, siConteo };
+    };
+    // 
+    /**
+     * Definir las áreas para cada caso
+    */
+    const areasPE1 = ['producto', 'propuesta']; // SISTEMA DE SOLUCIONES Y VALOR
+    const areasPE2 = ['rAdmin', 'rFinancieros', 'rHumano']; // GESTION DE RECURSOS
+    const areasPE3 = ['estrategica', 'operativos', 'integracion', 'modelo_negocio']; // OPERACIONAL
+    const areasPE4 = ['asistencia', 'marketing', 'ventas']; // COMERCIALIZACIÓN
+
+    // Calcular PE para cada caso
+    const _Soluciones = calcularPE(areasPE1, data);
+    const _Gestion = calcularPE(areasPE2, data);
+    const _Operacional = calcularPE(areasPE3, data);
+    const _Comercializacion = calcularPE(areasPE4, data);
+
+    console.log(`\nSISTEMA DE SOLUCIONES Y VALOR`);
+    console.log(_Soluciones);
+    console.log(`GESTION DE RECURSOS`);
+    console.log(_Gestion);
+    console.log(`OPERACIONAL`);
+    console.log(_Operacional);
+    console.log(`COMERCIALIZACIÓN`);
+    console.log(_Comercializacion);
 
     /************************************************************************************************* */
+    // Rendimiento Operativo Empresarial (Percepción Cliente)
+    let rendimiento_operativo = parseFloat(
+      calificaciones.producto +
+      calificaciones.propuesta +
+      calificaciones.rAdmin +
+      calificaciones.rFinancieros +
+      calificaciones.rHumano +
+      calificaciones.estrategica +
+      calificaciones.operativos +
+      calificaciones.integracion +
+      calificaciones.modelo_negocio +
+      calificaciones.asistencia + 
+      calificaciones.marketing +
+      calificaciones.ventas
+    )
+
+    console.log("rendimiento_operativo:: ", rendimiento_operativo);
+
+    rendimiento_operativo = (parseFloat(rendimiento_operativo/1.2)).toFixed(2);
+
     const areasVitales = {
       id_empresa,
-      producto: calificacion_global_producto,
-      administracion: calificacion_administracion,
-      talento_humano: calificacion_personal_laboral,
-      finanzas: calificacion_finanzas,
-      servicio_cliente: calificacion_servicio_alcliente,
-      operaciones: calificacion_operaciones_procesos,
-      ambiente_laboral: calificacion_ambiente,
-      innovacion: calificacion_innovacion,
-      marketing: calificacion_marketing,
-      ventas: calificacion_ventas,
-      rendimiento_op:
-        parseInt(calificacion_global_producto) +
-        parseInt(calificacion_administracion) +
-        parseInt(calificacion_personal_laboral) +
-        parseInt(calificacion_finanzas) +
-        parseInt(calificacion_servicio_alcliente) +
-        parseInt(calificacion_operaciones_procesos) +
-        parseInt(calificacion_ambiente) +
-        parseInt(calificacion_innovacion) +
-        parseInt(calificacion_marketing) +
-        parseInt(calificacion_ventas),
+      productos_servicios: calificaciones.producto,
+      propuesta_valor: calificaciones.propuesta,
+      recursos_administrativos: calificaciones.rAdmin,
+      recursos_financieros: calificaciones.rFinancieros,
+      recursos_humano: calificaciones.rHumano,
+      planeacion_estrategica: calificaciones.estrategica,
+      procesos_operativos: calificaciones.operativos,
+      integracion: calificaciones.integracion,
+      modelo_negocio: calificaciones.modelo_negocio,
+      asistencia: calificaciones.asistencia,
+      marketing: calificaciones.marketing,
+      ventas: calificaciones.ventas,
+      rendimiento_operativo
     };
 
     const areasDimensiones = {
       id_empresa,
-      producto: parseInt(calificacion_global_producto),
-      administracion:
-        (parseInt(calificacion_administracion) +
-          parseInt(calificacion_personal_laboral) +
-          parseInt(calificacion_finanzas)) /
-        3,
-      operaciones:
-        (parseInt(calificacion_servicio_alcliente) +
-          parseInt(calificacion_operaciones_procesos) +
-          parseInt(calificacion_ambiente) +
-          parseInt(calificacion_innovacion)) /
-        4,
-      marketing:
-        (parseInt(calificacion_marketing) + parseInt(calificacion_ventas)) / 2,
+      soluciones_valor: parseFloat((calificaciones.producto + calificaciones.propuesta) / 2).toFixed(2),
+      gestion_recursos: parseFloat((calificaciones.rAdmin + calificaciones.rFinancieros + calificaciones.rHumano) / 3).toFixed(2),
+      operacional: parseFloat((calificaciones.estrategica + calificaciones.operativos + calificaciones.integracion + calificaciones.modelo_negocio) / 4),
+      comercializacion: parseFloat((calificaciones.asistencia + calificaciones.marketing + calificaciones.ventas) / 3).toFixed(2)
     };
 
     const datos_pe_areas = {
       empresa: id_empresa,
-      producto: pe_producto,
-      administracion: objPE2.temp1,
-      talento_humano: objPE2.temp2,
-      finanzas: objPE2.temp3,
-      servicio_cliente: objPE3.temp1,
-      operaciones: objPE3.temp2,
-      ambiente_laboral: objPE3.temp3,
-      innovacion: objPE3.temp4,
-      marketing: objPE4.temp1,
-      ventas: objPE4.temp2,
-    };
-    const datos_pe_dimensiones = {
-      empresa: id_empresa,
-      producto: pe_producto,
-      administracion: pe_administracion,
-      operaciones: pe_operaciones,
-      marketing: pe_marketing,
+      productos_servicios: _Soluciones.siConteo[0].si,
+      propuesta_valor: _Soluciones.siConteo[1].si,
+      recursos_administrativos: _Gestion.siConteo[0].si,
+      recursos_financieros: _Gestion.siConteo[1].si,
+      recursos_humano: _Gestion.siConteo[2].si,
+      planeacion_estrategica: _Operacional.siConteo[0].si,
+      procesos_operativos: _Operacional.siConteo[1].si,
+      integracion: _Operacional.siConteo[2].si,
+      modelo_negocio: _Operacional.siConteo[3].si,
+      asistencia: _Comercializacion.siConteo[0].si,
+      marketing: _Comercializacion.siConteo[1].si,
+      ventas: _Comercializacion.siConteo[2].si,
     };
 
-    const aVitales = await helpers.insertarDatos(
-      "indicadores_areasvitales",
-      areasVitales
-    );
-    const aDimensiones = await helpers.insertarDatos(
-      "indicadores_dimensiones",
-      areasDimensiones
-    );
-    const pe_areas = await helpers.insertarDatos(
-      "percepcion_estadistica_areas",
-      datos_pe_areas
-    );
-    const pe_dimensiones = await helpers.insertarDatos(
-      "percepcion_estadistica_dimensiones",
-      datos_pe_dimensiones
-    );
-    if (
-      aVitales.affectedRows > 0 &&
-      aDimensiones.affectedRows > 0 &&
-      rendimiento.affectedRows > 0 &&
-      pe_areas.affectedRows > 0 &&
-      pe_dimensiones.affectedRows > 0
-    ) {
+    // Rendimiento Operativo Empresarial (Percepción Estadística)
+    let sumaPE_ = 0;
+    for (const key in datos_pe_areas) {
+      if (key !== 'empresa') {
+        sumaPE_ += parseFloat(datos_pe_areas[key]);
+      }
+    }
+    sumaPE_ = parseFloat(sumaPE_/1.2)
+    datos_pe_areas.rendimiento_operativo = sumaPE_.toFixed(2);
+
+    const datos_pe_dimensiones = {
+      empresa: id_empresa,
+      soluciones_valor: _Soluciones.pe,
+      gestion_recursos: _Gestion.pe,
+      operacional: _Operacional.pe,
+      comercializacion: _Comercializacion.pe
+    };
+
+    const aVitales = await helpers.insertarDatos("indicadores_areasvitales", areasVitales);
+    const aDimensiones = await helpers.insertarDatos("indicadores_dimensiones", areasDimensiones);
+    const pe_areas = await helpers.insertarDatos("percepcion_estadistica_areas", datos_pe_areas);
+    const pe_dimensiones = await helpers.insertarDatos("percepcion_estadistica_dimensiones", datos_pe_dimensiones);
+
+    if (aVitales.affectedRows > 0 && aDimensiones.affectedRows > 0 && rendimiento.affectedRows > 0 && pe_areas.affectedRows > 0 && pe_dimensiones.affectedRows > 0) {
       console.log("\nINSERCIÓN COMPLETA DE LOS INDICADORES DE LA EMPRESA\n");
       /**
        * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS
        */
       const obj_respuestas = {
-        Producto: {
-          "¿En que nicho, rubro, sector o área está tu negocio?": rubro,
-          "¿Qué ofrece tu empresa?": empresa_ofrece,
-          "¿Sabe qué problema específico resuelve su producto/servicio a sus clientes potenciales?":
-            problema_resolver,
-          "¿Sabe en qué se diferencia su producto/servicio de otros similares en el mercado?":
-            diferencia_otros,
-          "¿Sabe cuál es el nivel del precio de su producto/servicio con otros similares en el mercado?":
-            nivel_precio,
-          "¿Ha realizado una investigación de precios para determinar si su producto/servicio es competitivo?":
-            investigacion_precios,
-          "¿Hay alguna conexión temática o conceptual entre los diferentes productos/servicios que ofrece su empresa?":
-            conexion_tematica,
-          "¿Cree que sus clientes perciben una coherencia entre los productos/servicios de su empresa?":
-            perciben_coherencia,
-          "La calidad de su producto es:": calidad_producto,
-          "La presentación de su producto es:": presentacion_producto,
-          "En una escala del 1 al 10 ¿Cómo calificaría de forma global a sus productos/servicios con respecto al mercado? Siendo uno el nivel más bajo, y diez el más alto.":
-            calificacion_global_producto,
+        'Área de Interés: PRODUCTOS O SERVICIOS' : {
+            'Calidad y Consistencia' : {
+                [preguntas_producto[0].txt]: data.producto[0],
+              },
+              'Disponibilidad y Accesibilidad' : {
+              [preguntas_producto[1].txt]: data.producto[1],
+            },
+            'Integración en la Gama de Productos o Servicios Según Actividad Comercial' : {
+              [preguntas_producto[2].txt]: data.producto[2],
+            },
+            'Presentación del Producto o Servicio' : {
+              [preguntas_producto[3].txt]: data.producto[3],
+            },
+            'Nivel de Precio' : {
+              [preguntas_producto[4].txt]: data.producto[4],
+            },
+            'Adaptabilidad a las Necesidades del Cliente' : {
+              [preguntas_producto[5].txt]: data.producto[5],
+            },
+            'Postventa y Garantía' : {
+              [preguntas_producto[6].txt]: data.producto[6],
+            },
+            'Feedback y Mejora Continua' : {
+              [preguntas_producto[7].txt]: data.producto[7],
+            },
+            'Identificación con la Marca' : {
+              [preguntas_producto[8].txt]: data.producto[8],
+            },
+            'Innovación y Desarrollo' : {
+              [preguntas_producto[9].txt]: data.producto[9],
+            },
+            'Calificación' : {
+              [preguntas_producto[10].txt]: data.producto[10],
+            }
         },
-        Administración: {
-          "¿Cuenta con una planeación estratégica para la empresa?":
-            planeacion_estrategica,
-          "¿Ha realizado un análisis FODA de su empresa?": analisis_foda,
-          "¿Tiene definida la estructura organizativa?":
-            estructura_organizativa,
-          "¿Dispone de un sistema administrativo y/o contable?":
-            sistema_administrativo_contable,
-          "¿Dispone de software empresarial que le ayude a mejorar la eficiencia y rentabilidad de su empresa?":
-            software_empresarial,
-          "Del 1 al 10 ¿Cómo calificaría la gestión de Administración de su empresa? Siendo uno el nivel más bajo y diez el más alto":
-            calificacion_administracion,
-          "¿Tiene definidas las principales funciones del personal según su puesto de trabajo?":
-            principales_funciones_personal,
-          "¿Cuenta con un plan de capacitación para sus colaboradores?":
-            plan_capacitacion,
-          "¿Tienen algún cuadro de habilidades requeridas para sus colaboradores?":
-            cuadro_habilidades,
-          "¿Realiza alguna medición de desempeño del personal?":
-            medicion_personal,
-          "¿Dispone de un plan de remuneración para sus colaboradores?":
-            plan_remuneracion,
-          "¿Dispone de algún proceso para el reclutamiento y selección?":
-            proceso_reclutamiento,
-          "En una escala del 1 al 10 ¿Cómo calificaría al personal que labora para la empresa? Siendo uno el nivel más bajo y diez el más alto.":
-            calificacion_personal_laboral,
-          "¿Dispone de una proyección de ventas?": proyeccion_ventas,
-          "¿Tienen una estructura de Costos implementada?": estructura_costos,
-          "¿Se tienen establecidas claramente las cuentas por pagar y cobrar del Negocio?":
-            cuentas_pagar_cobrar,
-          "¿Conoce cuáles son los costos fijos y variables de su empresa?":
-            costos_fijos_variables,
-          "¿Ha realizado un análisis y evaluación básica de las finanzas de los últimos 12 meses?":
-            analisis_finanzas_anual,
-          "¿Conoce cuál es su punto de equilibrio?": punto_equilibrio,
-          "¿Conoce cuál es su utilidad neta?": utilidad_neta,
-          "¿La empresa ya ha conseguido ser rentable?": empresa_rentable,
-          "¿Ha realizado alguna proyección del flujo de efectivo para el próximo año?":
-            proyeccion_flujo_efectivo,
-          "¿Cree usted que la manera en que se está administrando las finanzas en su empresa, pueda contribuir mantener o mejorar la rentabilidad en el tiempo?":
-            mejorar_rentabilidad,
-          "¿Cómo calificaría la gestión de Finanzas de la empresa? Siendo uno el nivel más bajo y diez el más alto":
-            calificacion_finanzas,
+        'Área de Interés: PROPUESTA DE VALOR' : {
+          'Claridad' : {
+            [preguntas_propuesta[0].txt]: data.propuesta[0],
+          },
+          'Beneficio' : {
+            [preguntas_propuesta[1].txt]: data.propuesta[1],
+          },
+          'Diferenciación' : {
+            [preguntas_propuesta[2].txt]: data.propuesta[2],
+          },
+          'Prueba o Validación' : {
+            [preguntas_propuesta[3].txt]: data.propuesta[3],
+          },
+          'Relevancia del Beneficio' : {
+            [preguntas_propuesta[4].txt]: data.propuesta[4],
+          },
+          'Coherencia Visual' : {
+            [preguntas_propuesta[5].txt]: data.propuesta[5],
+          },
+          'Actualización' : {
+            [preguntas_propuesta[6].txt]: data.propuesta[6],
+          },
+          'Feedback Positivo' : {
+            [preguntas_propuesta[7].txt]: data.propuesta[7],
+          },
+          'Centrado en el Cliente' : {
+            [preguntas_propuesta[8].txt]: data.propuesta[8],
+          },
+          'Conexión Emocional' : {
+            [preguntas_propuesta[9].txt]: data.propuesta[9],
+          },
+          'Calificación' : {
+            [preguntas_propuesta[10].txt]: data.propuesta[10],
+          },
         },
-        Operaciones: {
-          "¿Pueden sus clientes tener información rápida y efectiva de sus Productos?":
-            clientes_info_productos,
-          "¿Mide la Satisfacción de sus clientes con respecto a sus productos?":
-            satisfaccion_clientes_productos,
-          "¿Conoce las necesidades de potenciales clientes con respecto a sus productos?":
-            necesidades_clientes_productos,
-          "¿Dispone de algún mecanismo para quejas y reclamaciones?":
-            mecanismo_quejas_reclamos,
-          "¿Maneja estrategias para mantener la fidelidad de sus clientes?":
-            estrategias_fidelidad_clientes,
-          "En una escala del 1 al 10 ¿Cómo calificaría la gestión de Servicio al Cliente de la empresa? Siendo uno el nivel más bajo y diez el más alto.":
-            calificacion_servicio_alcliente,
-          "¿Cuenta con las instalaciones adecuadas para realizar sus operaciones?":
-            instalaciones_adecuadas,
-          "¿Cuenta con todos los permisos requeridos por su localidad para realizar sus operaciones?":
-            permisos_requeridos,
-          "¿Tiene un plan de trabajo diario, semanal o mensual para las operaciones de su empresa?":
-            plan_detrabajo_diario,
-          "¿Tiene documentadas todas las actividades que se desarrollan en la empresa?":
-            documentos_actividades,
-          "¿Cuenta con manuales de operaciones que describan los procedimientos y actividades dentro de la empresa?":
-            manuales_operaciones,
-          "¿Cómo calificaría las operaciones y procesos de su empresa en una escala del 1 al 10? Siendo uno el nivel más bajo y diez el más alto.":
-            calificacion_operaciones_procesos,
-          "¿Considera positivo el ambiente laboral dentro de su empresa?":
-            ambiente_positivo,
-          "¿Realiza alguna medición del ambiente laboral de la empresa?":
-            medicion_ambiente_laboral,
-          "¿Conoce el grado de satisfacción de sus empleados?":
-            satisfaccion_empleados,
-          "¿La comunicación dentro de su empresa es efectiva?":
-            comunicacion_efectiva,
-          "¿Le comunica a su personal que ha estado o está realizando un buen trabajo?":
-            comunicar_buen_trabajo,
-          "Del 1 al 10 ¿Cómo podría calificar el ambiente laboral de la empresa? Siendo uno el nivel más bajo y diez el más alto.":
-            calificacion_ambiente,
-          "¿Sus trabajadores aportan ideas para la mejora dentro de la empresa?":
-            aportan_ideas,
-          "¿Considera que a través de la innovación de sus productos/servicios puede incrementar sus ventas?":
-            incrementar_ventas,
-          "¿Considera que los procesos operativos relacionados con sus productos/servicios son Innovadores?":
-            procesos_innovadores,
-          "¿Calificaría su modelo de negocio como Innovador?": modelo_innovador,
-          "¿Calificaría la gestión de su empresa como Innovadora?":
-            empresa_innovadora,
-          "Del 1 al 10 ¿Cómo se calificaría la gestión de Innovación de los productos y/o servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto.":
-            calificacion_innovacion,
+        'Área de Interés: GESTION DE RECURSOS ADMINISTRATIVOS' : {
+          'Recursos Materiales (MN)' : {
+            [preguntas_rAdmin[0].txt]: data.rAdmin[0],
+          },
+          'Equipamiento Tecnológico (MN)' : {
+            [preguntas_rAdmin[1].txt]: data.rAdmin[1],
+          },
+          'Software y Herramientas (MN)' : {
+            [preguntas_rAdmin[2].txt]: data.rAdmin[2],
+          },
+          'Soluciones en la Nube' : {
+            [preguntas_rAdmin[3].txt]: data.rAdmin[3],
+          },
+          'Sistemas Administrativos y Procedimientos' : {
+            [preguntas_rAdmin[4].txt]: data.rAdmin[4],
+          },
+          'Comunicación Interna' : {
+            [preguntas_rAdmin[5].txt]: data.rAdmin[5],
+          },
+          'Estructura Organizativa' : {
+            [preguntas_rAdmin[6].txt]: data.rAdmin[6],
+          },
+          'Flujos de Trabajo' : {
+            [preguntas_rAdmin[7].txt]: data.rAdmin[7],
+          },
+          'Adaptabilidad Tecnológica' : {
+            [preguntas_rAdmin[8].txt]: data.rAdmin[8],
+          },
+          'Revisión de Sistemas' : {
+            [preguntas_rAdmin[9].txt]: data.rAdmin[9],
+          },
+          'Calificación' : {
+            [preguntas_rAdmin[10].txt]: data.rAdmin[10],
+          },
         },
-        Marketing: {
-          "¿Ha realizado estudios de mercado sobre las características y precios de sus productos/servicios?":
-            estudio_mercado,
-          "¿Conoce el segmento al que se dirigen sus productos/servicios?":
-            segmento_mercado,
-          "¿Sus productos/servicios están posicionados dentro de su mercado?":
-            posicionamiento_mercado,
-          "¿Cuenta con estrategias de Marketing para impulsar sus productos/servicios en su mercado?":
-            estrategias_marketing,
-          "¿Cuenta con un Plan de Marketing?": plan_marketing,
-          "¿Cuenta con página web para promover los productos/servicios de su empresa?":
-            landing_page,
-          "¿Utiliza redes sociales para promover los productos/servicios de su empresa?":
-            redes_sociales,
-          "¿Cuenta con un Manual de Identidad Corporativa?": manual_identidad,
-          "¿Su negocio cuenta con un eslogan que los identifique con facilidad?":
-            tiene_eslogan,
-          "¿Cuenta con un Brochure de presentación de su empresa?":
-            brochure_empresa,
-          "¿Cómo calificaría la gestión de Marketing de la empresa? Siendo uno el nivel más bajo y diez el más alto.":
-            calificacion_marketing,
-          "¿Cree que los productos/servicios de la empresa se venden con facilidad?":
-            facilidad_ventas,
-          "¿Cómo calificaría las ventas de los productos/servicios de la empresa en los últimos 6 meses?":
-            calificacion_ventas_meses,
-          "¿Su empresa tiene definido objetivos de ventas claros?":
-            objetivo_ventas,
-          "¿Cuenta con estrategias de ventas para los productos/servicios de su empresa?":
-            estrategia_ventas,
-          "¿Tiene definido sus canales de venta para comercializar sus productos/servicios?":
-            canales_ventas,
-          "¿Cómo calificaría la gestión de ventas de los productos/servicios de la empresa? Siendo uno el nivel más bajo y diez el más alto":
-            calificacion_ventas,
+        'Área de Interés: GESTION DE RECURSOS FINACIEROS' : {
+          'Planificación Financiera' : {
+            [preguntas_rFinancieros[0].txt]: data.rFinancieros[0],
+          },
+          'Presupuestos' : {
+            [preguntas_rFinancieros[1].txt]: data.rFinancieros[1],
+          },
+          'Estructura de Costos (MN)' : {
+            [preguntas_rFinancieros[2].txt]: data.rFinancieros[2],
+          },
+          'Flujo de Efectivo' : {
+            [preguntas_rFinancieros[3].txt]: data.rFinancieros[3],
+          },
+          'Fuentes de Ingreso Diversificadas (MN)' : {
+            [preguntas_rFinancieros[4].txt]: data.rFinancieros[4],
+          },
+          'Acceso a Financiamiento' : {
+            [preguntas_rFinancieros[5].txt]: data.rFinancieros[5],
+          },
+          'Cuentas por Pagar y Cobrar' : {
+            [preguntas_rFinancieros[6].txt]: data.rFinancieros[6],
+          },
+          'Rentabilidad sobre las Ventas (ROS:Return on Sales)' : {
+            [preguntas_rFinancieros[7].txt]: data.rFinancieros[7],
+          },
+          'Punto de Equilibrio' : {
+            [preguntas_rFinancieros[8].txt]: data.rFinancieros[8],
+          },
+          'Análisis Financiero' : {
+            [preguntas_rFinancieros[9].txt]: data.rFinancieros[9],
+          },
+          'Calificación' : {
+            [preguntas_rFinancieros[10].txt]: data.rFinancieros[10],
+          },
         },
-        Fortalezas: { f1, f2, f3, f4, f5 },
-        "Oportunidades de mejoras": { o1, o2, o3, o4, o5 },
-        "Metas a corto plazo": { m1, m2, m3, m4, m5 },
-      };
+        'Área de Interés: GESTION DEL RECURSO HUMANO' : {
+          'Reconocimiento del Valor Individual' : {
+            [preguntas_rHumano[0].txt]: data.rHumano[0],
+          },
+          'Desarrollo del Talento Humano' : {
+            [preguntas_rHumano[1].txt]: data.rHumano[1],
+          },
+          'Retención del Talento' : {
+            [preguntas_rHumano[2].txt]: data.rHumano[2],
+            [preguntas_rHumano[3].txt]: data.rHumano[3],
+          },
+          'Remuneración Justa y Competitiva' : {
+            [preguntas_rHumano[4].txt]: data.rHumano[4],
+            [preguntas_rHumano[5].txt]: data.rHumano[5],
+          },
+          'Principales Funciones del Personal' : {
+            [preguntas_rHumano[6].txt]: data.rHumano[6],
+          },
+          'Evaluación de Desempeño' : {
+            [preguntas_rHumano[7].txt]: data.rHumano[7],
+          },
+          'Necesidades de Contratación' : {
+            [preguntas_rHumano[8].txt]: data.rHumano[8],
+          },
+          'Proceso de Contratación' : {
+            [preguntas_rHumano[9].txt]: data.rHumano[9],
+          },
+          'Calificación' : {
+            [preguntas_rHumano[10].txt]: data.rHumano[10],
+          },
+        },
+        'Área de Interés: PLANEACION ESTRATEGICA' : {
+          'Comprensión del Mercado' : {
+            [preguntas_estrategica[0].txt]: data.estrategica[0],
+          },
+          'Claridad en la Misión y Visión' : {
+            [preguntas_estrategica[1].txt]: data.estrategica[1],
+            [preguntas_estrategica[2].txt]: data.estrategica[2],
+          },
+          'Valores claros' : {
+            [preguntas_estrategica[3].txt]: data.estrategica[3],
+          },
+          'Objetivos Definidos' : {
+            [preguntas_estrategica[4].txt]: data.estrategica[4],
+          },
+          'Análisis FODA' : {
+            [preguntas_estrategica[5].txt]: data.estrategica[5],
+            [preguntas_estrategica[6].txt]: data.estrategica[6],
+          },
+          'Participación del Equipo' : {
+            [preguntas_estrategica[7].txt]: data.estrategica[7],
+          },
+          'Evaluación de Competencia' : {
+            [preguntas_estrategica[8].txt]: data.estrategica[8],
+          },
+          'Comunicación Estratégica' : {
+            [preguntas_estrategica[9].txt]: data.estrategica[9],
+          },
+          'Calificación' : {
+            [preguntas_estrategica[10].txt]: data.estrategica[10],
+          },
+        },
+        'Área de Interés: PROCESOS OPERATIVOS' : {
+          'Análisis y Mapeo de Procesos' : {
+            [preguntas_operativos[0].txt]: data.operativos[0],
+          },
+          'Establecimiento de Objetivos Claros' : {
+            [preguntas_operativos[1].txt]: data.operativos[1],
+          },
+          'Eficiencia' : {
+            [preguntas_operativos[2].txt]: data.operativos[2],
+          },
+          'Flexibilidad' : {
+            [preguntas_operativos[3].txt]: data.operativos[3],
+          },
+          'Medición y Monitoreo' : {
+            [preguntas_operativos[4].txt]: data.operativos[4],
+          },
+          'Incorporación de Tecnología' : {
+            [preguntas_operativos[5].txt]: data.operativos[5],
+          },
+          'Revisión Regular' : {
+            [preguntas_operativos[6].txt]: data.operativos[6],
+          },
+          'Actividades Clave (MN)' : {
+            [preguntas_operativos[7].txt]: data.operativos[7],
+          },
+          'Gestión del Tiempo' : {
+            [preguntas_operativos[8].txt]: data.operativos[8],
+          },
+          'Canales de Distribución Efectivos (MN)' : {
+            [preguntas_operativos[9].txt]: data.operativos[9],
+          },
+          'Calificación' : {
+            [preguntas_operativos[10].txt]: data.operativos[10],
+          },
+        },
+        'Área de Interés: INTEGRACION Y BIENESTAR LABORAL' : {
+          'Liderazgo Comprometido' : {
+            [preguntas_integracion[0].txt]: data.integracion[0],
+          },
+          'Comunicación Abierta y Transparente' : {
+            [preguntas_propuesta[1].txt]: data.integracion[1],
+          },
+          'Flexibilidad' : {
+            [preguntas_integracion[2].txt]: data.integracion[2],
+          },
+          'Espacio de Trabajo Adecuado' : {
+            [preguntas_integracion[3].txt]: data.integracion[3],
+          },
+          'Actividades de Integración' : {
+            [preguntas_integracion[4].txt]: data.integracion[4],
+          },
+          'Salud y Bienestar' : {
+            [preguntas_integracion[5].txt]: data.integracion[5],
+          },
+          'Participación Activa' : {
+            [preguntas_integracion[6].txt]: data.integracion[6],
+          },
+          'Entorno Laboral' : {
+            [preguntas_integracion[7].txt]: data.integracion[7],
+            [preguntas_integracion[8].txt]: data.integracion[8],
+          },
+          'Balance Vida-Trabajo' : {
+            [preguntas_integracion[9].txt]: data.integracion[9],
+          },
+          'Calificación' : {
+            [preguntas_integracion[10].txt]: data.integracion[10],
+          },
+        },
+        'Área de Interés: MODELO DE NEGOCIO' : {
+          'Comprensión del Modelo Actual' : {
+            [preguntas_modelo_negocio[0].txt]: data.modelo_negocio[0],
+          },
+          'Propuesta de Valor' : {
+            [preguntas_modelo_negocio[1].txt]: data.modelo_negocio[1],
+          },
+          'Claridad y Dirección' : {
+            [preguntas_modelo_negocio[2].txt]: data.modelo_negocio[2],
+          },
+          'Competitividad en el Mercado' : {
+            [preguntas_modelo_negocio[3].txt]: data.modelo_negocio[3],
+          },
+          'Adaptabilidad y Flexibilidad' : {
+            [preguntas_modelo_negocio[4].txt]: data.modelo_negocio[4],
+          },
+          'Optimización de Recursos' : {
+            [preguntas_modelo_negocio[5].txt]: data.modelo_negocio[5],
+          },
+          'Retroalimentación de Clientes' : {
+            [preguntas_modelo_negocio[6].txt]: data.modelo_negocio[6],
+          },
+          'Evaluación Interna' : {
+            [preguntas_modelo_negocio[7].txt]: data.modelo_negocio[7],
+          },
+          'Monitoreo del Mercado' : {
+            [preguntas_modelo_negocio[8].txt]: data.modelo_negocio[8],
+          },
+          'Visión a Futuro' : {
+            [preguntas_modelo_negocio[9].txt]: data.modelo_negocio[9],
+          },
+          'Calificación' : {
+            [preguntas_modelo_negocio[10].txt]: data.modelo_negocio[10],
+          },
+        },
+        'Área de Interés: ASISTENCIA Y RELACION CON EL CLIENTE' : {
+          'Entendimiento profundo del cliente' : {
+            [preguntas_asistencia[0].txt]: data.asistencia[0],
+          },
+          'Relaciones con Clientes (MN)' : {
+            [preguntas_asistencia[1].txt]: data.asistencia[1],
+            [preguntas_asistencia[2].txt]: data.asistencia[2],
+          },
+          'Comunicación efectiva (MN)' : {
+            [preguntas_asistencia[3].txt]: data.asistencia[3],
+          },
+          'Capacitación del personal' : {
+            [preguntas_asistencia[4].txt]: data.asistencia[4],
+          },
+          'Respuesta rápida' : {
+            [preguntas_asistencia[5].txt]: data.asistencia[5],
+          },
+          'Uso de tecnología' : {
+            [preguntas_asistencia[6].txt]: data.asistencia[6],
+          },
+          'Resolución de problemas' : {
+            [preguntas_asistencia[7].txt]: data.asistencia[7],
+          },
+          'Recompensas y lealtad' : {
+            [preguntas_asistencia[8].txt]: data.asistencia[8],
+          },
+          'Seguimiento proactivo' : {
+            [preguntas_asistencia[9].txt]: data.asistencia[9],
+          },
+          'Calificación' : {
+            [preguntas_asistencia[10].txt]: data.asistencia[10],
+          },
+        },
+        'Área de Interés: MARKETING' : {
+          'Comprensión del Público Objetivo (MN)' : {
+            [preguntas_marketing[0].txt]: data.marketing[0],
+          },
+          'Presencia Digital - Sitio Web' : {
+            [preguntas_marketing[1].txt]: data.marketing[1],
+          },
+          'Redes Sociales' : {
+            [preguntas_marketing[2].txt]: data.marketing[2],
+          },
+          'Contenido de Calidad' : {
+            [preguntas_marketing[3].txt]: data.marketing[3],
+          },
+          'Publicidad Segmentada' : {
+            [preguntas_marketing[4].txt]: data.marketing[4],
+          },
+          'Medición y Análisis' : {
+            [preguntas_marketing[5].txt]: data.marketing[5],
+          },
+          'Educación y Capacitación Continua' : {
+            [preguntas_marketing[6].txt]: data.marketing[6],
+          },
+          'Asignación Adecuada de Recursos' : {
+            [preguntas_marketing[7].txt]: data.marketing[7],
+          },
+          'Plan de Marketing' : {
+            [preguntas_marketing[8].txt]: data.marketing[8],
+          },
+          'Manual de Identidad Corporativa' : {
+            [preguntas_marketing[9].txt]: data.marketing[9],
+          },
+          'Calificación' : {
+            [preguntas_marketing[10].txt]: data.marketing[10],
+          },
+        },
+        'Área de Interés: VENTAS' : {
+          'Estrategias de Ventas' : {
+            [preguntas_ventas[0].txt]: data.ventas[0],
+          },
+          'Conocimiento del Producto/Servicio' : {
+            [preguntas_ventas[1].txt]: data.ventas[1],
+          },
+          'Uso de Tecnología' : {
+            [preguntas_ventas[2].txt]: data.ventas[2],
+          },
+          'Diversificación de Canales de Ventas' : {
+            [preguntas_ventas[3].txt]: data.ventas[3],
+            [preguntas_ventas[4].txt]: data.ventas[4],
+          },
+          'Entender al Cliente' : {
+            [preguntas_ventas[5].txt]: data.ventas[5],
+          },
+          'Gestión de Precios' : {
+            [preguntas_ventas[6].txt]: data.ventas[6],
+          },
+          'Integración con Marketing' : {
+            [preguntas_ventas[7].txt]: data.ventas[7],
+          },
+          'Objetivos y Feedback' : {
+            [preguntas_ventas[8].txt]: data.ventas[8],
+            [preguntas_ventas[9].txt]: data.ventas[9],
+          },
+          'Calificación' : {
+            [preguntas_ventas[10].txt]: data.ventas[10],
+          },
+        }
+      }
 
       const prompt =
         JSON.stringify(obj_respuestas) +
-        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy prioritario que el informe no pueda superar los 3000 caracteres";
+        " Con base en las respuestas anteriores genera un informe de Valoración inicial separado por los 4 sistemas: Soluciones y Valor, Gestión de Recursos, Operacional, Comercialización. Adicionalmente, enumera las actividades a realizar por Sistema.";
       // console.log(
       //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
       // );
@@ -2810,14 +2742,9 @@ dashboardController.enviarCuestionario = async (req, res) => {
         informe: resp,
         fecha: new Date().toLocaleDateString("en-US"),
       };
-      const insertResult = await helpers.insertarDatos(
-        "informes_ia",
-        informeAI
-      );
+      const insertResult = await helpers.insertarDatos("informes_ia", informeAI);
       if (insertResult.affectedRows > 0) {
-        rolUser == "Empresa"
-          ? res.redirect("/diagnostico-de-negocio")
-          : res.redirect("/empresas/" + codigoEmpresa + "#diagnostico_");
+        rolUser == "Empresa" ? res.redirect("/diagnostico-de-negocio") : res.redirect("/empresas/" + codigoEmpresa + "#diagnostico_");
       }
     }
   }
@@ -2844,12 +2771,9 @@ dashboardController.guardarRespuestas = async (req, res) => {
   // Capturar Fecha de guardado con base a su Zona Horaria
   const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm });
   // Consultando info de la empresa
-  const infoEmp = await pool.query(
-    "SELECT * FROM empresas WHERE codigo = ? LIMIT 1",
-    [codigoEmpresa]
-  );
+  const infoEmp = (await helpers.consultarDatos('empresas')).find(x => x.codigo == codigoEmpresa)
   // Capturar ID Empresa
-  const id_empresa = infoEmp[0].id_empresas;
+  const id_empresa = infoEmp.id_empresas;
 
   // EXPERIENCIA EN EL RUBRO
   const {
@@ -3308,7 +3232,7 @@ dashboardController.guardarRespuestas = async (req, res) => {
 
       const prompt =
         JSON.stringify(obj_respuestas) +
-        " Con base en las respuestas anteriores genera un informe de diagnóstico separado por las 4 dimensiones: Producto, Administración, Operaciones, Marketing. Adicionalmente, enumera las actividades a realizar por Dimension, Es muy importante que priorices que el informe no pueda superar los 3000 caracteres";
+        " Con base en las respuestas anteriores genera un informe de Valoración inicial separado por los 4 sistemas: Soluciones y Valor, Gestión de Recursos, Operacional, Comercialización. Adicionalmente, enumera las actividades a realizar por Sistema.";
       // console.log(
       //   `\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n`
       // );

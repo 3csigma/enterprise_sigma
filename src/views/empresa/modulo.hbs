@@ -85,7 +85,7 @@
                             {{!-- VIDEO DE LA LECCIÓN --}}
                             <div class="row mt-2">
                                 <div class="col-12">
-                                    <video width="100%" height="auto" id="video_leccion-{{num}}">
+                                    <video width="100%" height="auto" class="video-leccion-poster" id="video_leccion-{{num}}">
                                         <source src="{{#if video}}{{video}}{{else}}../img/Leccion-por-defecto.mp4{{/if}}" type="video/mp4">
                                         Tu navegador no soporta el elemento video.
                                     </video>
@@ -148,6 +148,11 @@
 </div>
 <script>
     window.addEventListener('load', function() {
+        const isiPhone = /iPhone/i.test(navigator.userAgent);
+        if (isiPhone) {
+            $('.video-leccion-poster').attr('poster', '../img/poster.jpg');
+        }
+
         const materiales = document.querySelectorAll('.nombre_material');
         materiales.forEach(x => {
             console.log("material: ", x)

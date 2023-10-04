@@ -311,20 +311,18 @@
                                 <div id="div_areas1">
                                     <canvas id="chartEmpresa_areas1"></canvas>
 
-                                    {{#if rendimiento.op}}
                                     <div class="d-flex justify-content-center align-items-center mb-3 mt-4">
-                                        <span>Rendimiento Operativo de la Empresa: <strong>{{rendimiento.op}}% </strong></span>
+                                        <span>Rendimiento Operativo Empresarial (ROE):</span>
                                     </div>
-                                    {{/if}}
                                 </div>
 
                                 {{!-- GRÁFICA FECHA FIN --}}
                                 <div id="div_areas2">
                                     <canvas id="chartEmpresa_areas2"></canvas>
 
-                                    {{#if rendimiento.op}}
+                                    {{#if rendimiento.op2}}
                                     <div class="d-flex justify-content-center align-items-center mb-3 mt-4">
-                                        <span>Rendimiento Operativo de la Empresa: <strong>{{rendimiento.op2}}% </strong></span>
+                                        <span>Rendimiento Operativo Empresarial (ROE): <strong>{{rendimiento.op2}}% </strong></span>
                                     </div>
                                     {{/if}}
                                 </div>
@@ -332,11 +330,21 @@
                                 {{!-- COLORES INFORMATIVOS --}}
                                 <div class="row d-flex justify-content-center align-items-center mt-4 mb-4">
                                     <div class="pl-2">
-                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Empresa</span>
+                                        <i class="fa fa-square" style="color: #50368C"></i>
+                                        <span class="small-text">Percepción Empresa 
+                                            {{#if rendimiento.op}}
+                                            <strong>({{rendimiento.op}}%)</strong>
+                                            {{/if}}
+                                        </span>
                                     </div>
                                     {{#if rendimiento.pe1}}
                                     <div class="pl-2">
-                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Percepción Estadística</span>
+                                        <i class="fa fa-square" style="color: #FED061"></i>
+                                        <span class="small-text">Percepción Estadística
+                                            {{#if rendimiento.op_pe}}
+                                            <strong>({{rendimiento.op_pe}}%)</strong>
+                                            {{/if}}
+                                        </span>
                                     </div>
                                     {{/if}}
                                 </div>

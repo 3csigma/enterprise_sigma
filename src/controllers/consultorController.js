@@ -3,6 +3,8 @@ const pool = require('../database')
 const { sendEmail, propuestaCargadaHTML, tareaCompletadaHTML, tareaNuevaHTML, solicitarArchivoHTML } = require('../lib/mail.config')
 const { consultarDatos, insertarDatos, eliminarDatos, consultarTareasConsultores } = require('../lib/helpers')
 const { getResponseChatGPT, checkGPT3Connectivity } = require('../lib/openai');
+const preguntas2 = require('../config/preguntas_etapa2.json');
+const helpers = require('../lib/helpers');
 
 // Dashboard Administrativo
 consultorController.index = async (req, res) => {
@@ -149,63 +151,140 @@ consultorController.analisisProducto = async (req, res) => {
     if (req.user.rol != 'Empresa') {
         linkCerrar = `/empresas/${codigo}#analisis_`
     }
-    res.render('consultor/analisisProducto', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar})
+
+    const preguntas = {
+        "producto": [...preguntas2.producto],
+        "propuesta": [...preguntas2.propuesta]
+    }
+
+    res.render('consultor/analisisProducto', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar, preguntas})
 }
 consultorController.guardarAnalisisProducto = async (req, res) => {
-    const { codigoEmpresa, zhActualAdm } = req.body;
+    const { codigoEmpresa, producto, propuesta, zhActualAdm } = req.body;
     // Capturar Fecha de guardado
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
 
+    const respuestasProducto = producto;
+    const respuestasPropuesta = propuesta;
+    const preguntasProducto = [...preguntas2.producto]
+    const preguntasPropuesta = [...preguntas2.propuesta]
+
     // Verificando si existen registros Análisis de empresa en la Base de datos
-    let empresa = await consultarDatos('empresas')
-    const analisis_empresa = await consultarDatos('analisis_empresa');
-
-    empresa = empresa.find(item => item.codigo == codigoEmpresa)
-
-    let id_empresa;
+    const empresa = (await consultarDatos('empresas')).find(item => item.codigo == codigoEmpresa)
 
     if (empresa) {
-        id_empresa = empresa.id_empresas;
+        const id_empresa = empresa.id_empresas;
 
-        // Capturando datos del formulario - Analisis dimensión Producto
-        const { publico_objetivo, beneficios, tipo_producto, nivel_precio, mas_vendidos, razon_venta, utilizacion, integracion_gama, calidad, aceptacion } = req.body
-        let producto = JSON.stringify({
-            fecha, publico_objetivo, beneficios, tipo_producto, nivel_precio, mas_vendidos, razon_venta, utilizacion, integracion_gama, calidad, aceptacion
+        // Capturando datos del formulario - Evaluación Empresarial Sistema de Soluciones y Valor
+        const dataForm = JSON.stringify({
+            fecha,
+            "producto": respuestasProducto,
+            "propuesta": respuestasPropuesta
         })
-
-        // Guardando en la Base de datos
-        const tablaAnalisis = analisis_empresa.find(item => item.id_empresa == id_empresa)
-        if (tablaAnalisis) {
-            const actualizarAnalisis = { producto }
-            await pool.query('UPDATE analisis_empresa SET ? WHERE id_empresa = ?', [actualizarAnalisis, id_empresa])
-        } else {
-            // Creando Objetos para guardar en la base de datos
-            const nuevoAnalisis = { id_empresa, producto }
-            await insertarDatos('analisis_empresa', nuevoAnalisis)
-        }
 
         /**
          * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
         */
         const obj_respuestas = {
-            'El público objetivo' : {'¿A cuál segmento del mercado va dirigido su producto/servicio: hombres, mujeres, pequeñas empresas, etc.?': publico_objetivo,},
-            'Beneficios': {'¿Qué Beneficios aporta su producto/servicio? Y ¿Qué necesidad de este público satisface?': beneficios,},
-            'Tipo de producto': {'¿Cuál es su tipo de producto/servicio específicamente?': tipo_producto,},
-            'Nivel de precio': {
-                'Explique ¿Cómo es el precio de su producto/servicio en relación al sector de mercado en el que se encuentra?': nivel_precio,
-                '¿Cuáles son los Productos y/o Servicios que más vende?': mas_vendidos, 
-                '¿Cuál es la razón por la que considera que estos producto/servicio que describió anteriormente se venden más?': razon_venta,
+            'Área de enfoque: Producto - Servicio' : {
+                'Calidad y Consistencia' : {
+                    [preguntasProducto[0].txt]: respuestasProducto[0],
+                    [preguntasProducto[1].txt]: respuestasProducto[1],
+                },
+                'Disponibilidad y Accesibilidad' : {
+                    [preguntasProducto[2].txt]: respuestasProducto[2],
+                    [preguntasProducto[3].txt]: respuestasProducto[3],
+                },
+                'Integración en la Gama de Productos o Servicios Según Actividad Comercial' : {
+                    [preguntasProducto[4].txt]: respuestasProducto[4],
+                    [preguntasProducto[5].txt]: respuestasProducto[5],
+                },
+                'Presentación del Producto o Servicio' : {
+                    [preguntasProducto[6].txt]: respuestasProducto[6],
+                    [preguntasProducto[7].txt]: respuestasProducto[7],
+                },
+                'Nivel de Precio' : {
+                    [preguntasProducto[8].txt]: respuestasProducto[8],
+                    [preguntasProducto[9].txt]: respuestasProducto[9],
+                },
+                'Adaptabilidad a las Necesidades del Cliente' : {
+                    [preguntasProducto[10].txt]: respuestasProducto[10],
+                    [preguntasProducto[11].txt]: respuestasProducto[11],
+                },
+                'Postventa y Garantía' : {
+                    [preguntasProducto[12].txt]: respuestasProducto[12],
+                    [preguntasProducto[13].txt]: respuestasProducto[13],
+                },
+                'Feedback y Mejora Continua' : {
+                    [preguntasProducto[14].txt]: respuestasProducto[14],
+                    [preguntasProducto[15].txt]: respuestasProducto[15],
+                },
+                'Identificación con la Marca' : {
+                    [preguntasProducto[16].txt]: respuestasProducto[16],
+                    [preguntasProducto[17].txt]: respuestasProducto[17],
+                },
+                'Innovación y Desarrollo' : {
+                    [preguntasProducto[18].txt]: respuestasProducto[18],
+                    [preguntasProducto[19].txt]: respuestasProducto[19],
+                },
             },
-            'Utilización': { '¿Cómo se utiliza o consume su producto/servicio? ¿En qué ocasiones? ¿Por quién? ¿En dónde?': utilizacion, },
-            'Integración en la gama de productos/servicios': { 'Explique ¿Qué coherencia tienen sus producto/servicio dentro de la empresa?': integracion_gama, },
-            'Calidad': {
-                '¿Cómo es la calidad de su producto/servicio? Y ¿Qué tiene su producto/servicio para disponer de la calidad a que hace referencia?': calidad,
-                '¿Qué aceptación tiene su producto/servicio?': aceptacion
+            'Área de enfoque: Propuesta de Valor' : {
+                'Claridad' : {
+                    [preguntasPropuesta[0].txt]: respuestasPropuesta[0],
+                    [preguntasPropuesta[1].txt]: respuestasPropuesta[1],
+                },
+                'Beneficio' : {
+                    [preguntasPropuesta[2].txt]: respuestasPropuesta[2],
+                    [preguntasPropuesta[3].txt]: respuestasPropuesta[3],
+                },
+                'Diferenciación' : {
+                    [preguntasPropuesta[4].txt]: respuestasPropuesta[4],
+                    [preguntasPropuesta[5].txt]: respuestasPropuesta[5],
+                },
+                'Prueba o Validación' : {
+                    [preguntasPropuesta[6].txt]: respuestasPropuesta[6],
+                    [preguntasPropuesta[7].txt]: respuestasPropuesta[7],
+                },
+                'Relevancia del Beneficio' : {
+                    [preguntasPropuesta[8].txt]: respuestasPropuesta[8],
+                    [preguntasPropuesta[9].txt]: respuestasPropuesta[9],
+                },
+                'Coherencia Visual' : {
+                    [preguntasPropuesta[10].txt]: respuestasPropuesta[10],
+                    [preguntasPropuesta[11].txt]: respuestasPropuesta[11],
+                },
+                'Actualización' : {
+                    [preguntasPropuesta[12].txt]: respuestasPropuesta[12],
+                },
+                'Feedback Positivo' : {
+                    [preguntasPropuesta[13].txt]: respuestasPropuesta[13],
+                    [preguntasPropuesta[14].txt]: respuestasPropuesta[14],
+                    [preguntasPropuesta[15].txt]: respuestasPropuesta[15],
+                },
+                'Centrado en el Cliente' : {
+                    [preguntasPropuesta[16].txt]: respuestasPropuesta[16],
+                    [preguntasPropuesta[17].txt]: respuestasPropuesta[17],
+                },
+                'Conexión Emocional' : {
+                    [preguntasPropuesta[18].txt]: respuestasPropuesta[18],
+                    [preguntasPropuesta[19].txt]: respuestasPropuesta[19],
+                }
             }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión producto que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 3000 caracteres.")
-       // console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
+        // Guardando en la Base de datos
+        const tablaAnalisis = (await consultarDatos('analisis_empresa')).find(item => item.id_empresa == id_empresa)
+        if (tablaAnalisis) {
+            const actualizarAnalisis = { producto: dataForm }
+            await helpers.actualizarDatos('analisis_empresa', actualizarAnalisis, `WHERE id_empresa = ${id_empresa}`)
+        } else {
+            // Creando Objetos para guardar en la base de datos
+            const nuevoAnalisis = { id_empresa, producto: dataForm }
+            await insertarDatos('analisis_empresa', nuevoAnalisis)
+        }
+
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de Evaluación Empresarial, Sistema de Soluciones y Valor que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos.")
+        console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
         const informeAI = { empresa: id_empresa, tipo: 'Análisis producto', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
@@ -225,12 +304,24 @@ consultorController.analisisAdministracion = async (req, res) => {
     if (req.user.rol != 'Empresa') {
         linkCerrar = `/empresas/${codigo}#analisis_`
     }
-    res.render('consultor/analisisAdministracion', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar })
+    const preguntas = {
+        "admin": [...preguntas2.admin],
+        "rFinanciero": [...preguntas2.recurso_financiero],
+        "rHumano": [...preguntas2.recurso_humano]
+    }
+    res.render('consultor/analisisAdministracion', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar, preguntas })
 }
 consultorController.guardarAnalisisAdministracion = async (req, res) => {
-    const { codigoEmpresa, zhActualAdm } = req.body;
+    const { codigoEmpresa, admin, rFinanciero, rHumano, zhActualAdm } = req.body;
     // Capturar Fecha de guardado
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
+
+    const respuestasAdmin = admin
+    const respuestas_rFinanciero = rFinanciero
+    const respuestas_rHumano = rHumano
+    const preguntasAdmin = [...preguntas2.admin]
+    const preguntas_rFinanciero = [...preguntas2.recurso_financiero]
+    const preguntas_rHumano = [...preguntas2.recurso_humano]
 
     // Verificando si existen registros Análisis de empresa en la Base de datos
     let empresa = await consultarDatos('empresas')
@@ -241,29 +332,22 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
     if (empresa) {
         let id_empresa = empresa.id_empresas;
 
-        // Capturando datos del formulario - Analisis dimensión Producto
-        const { vision1, vision2, vision3, vision4, vision5, mision, valores, foda1, foda2, foda3, foda4, foda5, foda6, foda7, foda8, estructura_organizativa, tipo_sistema, sistema_facturacion, puesto1, funcion1, puesto2, funcion2, puesto3, funcion3, puesto4, funcion4, puesto5, funcion5, puesto6, funcion6, h_puesto1, habilidad_interp1, habilidad_tecnica1, h_puesto2, habilidad_interp2, habilidad_tecnica2, h_puesto3, habilidad_interp3, habilidad_tecnica3, h_puesto4, habilidad_interp4, habilidad_tecnica4, h_puesto5, habilidad_interp5, habilidad_tecnica5, h_puesto6, habilidad_interp6, habilidad_tecnica6, habilidad1, habilidad2, necesidad_contratacion, motivo_contratacion, proceso_contratacion1, proceso_contratacion2, evaluacion_cargo, proyeccion_ventas, costo_ventas, cuentas_pagar, cuentas_cobrar, costos_fijos_variables, estado_resultados_empresa, utilidad_neta, rentabilidad, punto_equilibrio, flujo_caja, retorno_inversion } = req.body
-
-        const vision = { vision1, vision2, vision3, vision4, vision5 };
-        const foda = { foda1, foda2, foda3, foda4, foda5, foda6, foda7, foda8 }
-        const av_talento_humano = {
-            puesto1, funcion1, puesto2, funcion2, puesto3, funcion3, puesto4, funcion4, puesto5, funcion5, puesto6, funcion6,
-            h_puesto1, habilidad_interp1, habilidad_tecnica1, h_puesto2, habilidad_interp2, habilidad_tecnica2, h_puesto3, habilidad_interp3, habilidad_tecnica3, h_puesto4, habilidad_interp4, habilidad_tecnica4, h_puesto5, habilidad_interp5, habilidad_tecnica5, h_puesto6, habilidad_interp6, habilidad_tecnica6, habilidad1, habilidad2, necesidad_contratacion, motivo_contratacion, proceso_contratacion1, proceso_contratacion2, evaluacion_cargo
-        }
-        const av_finanzas = { proyeccion_ventas, costo_ventas, cuentas_pagar, cuentas_cobrar, costos_fijos_variables, estado_resultados_empresa, utilidad_neta, rentabilidad, punto_equilibrio, flujo_caja, retorno_inversion }
-
-        let administracion = JSON.stringify({
-            fecha, vision, mision, valores, foda, estructura_organizativa, tipo_sistema, sistema_facturacion, av_talento_humano, av_finanzas
+        // Capturando datos del formulario - Evaluación Empresarial Sistema Gestion de Recursos
+        const dataForm = JSON.stringify({
+            fecha,
+            "admin": respuestasAdmin,
+            "rFinanciero": respuestas_rFinanciero,
+            "rHumano": respuestas_rHumano,
         })
 
         // Guardando en la Base de datos
         const tablaAnalisis = analisis_empresa.find(item => item.id_empresa == id_empresa)
         if (tablaAnalisis) {
-            const actualizarAnalisis = { administracion }
+            const actualizarAnalisis = { administracion: dataForm }
             await pool.query('UPDATE analisis_empresa SET ? WHERE id_empresa = ?', [actualizarAnalisis, id_empresa])
         } else {
             // Creando Objetos para guardar en la base de datos
-            const nuevoAnalisis = { id_empresa, administracion }
+            const nuevoAnalisis = { id_empresa, administracion: dataForm }
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
@@ -271,92 +355,132 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
          * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
         */
         const obj_respuestas = {
-            'Visión': {
-                '¿Qué queremos conseguir como Negocio?': vision1,
-                '¿Cómo se enfrentará el negocio a los cambios?': vision2,
-                '¿Cómo se diferenciará del resto?': vision3,
-                '¿Cómo logrará ser competitivo?': vision4,
-                'Declare su VISIÓN': vision5,
-            },
-            'Misión': {'Declare su MISIÓN': mision,},
-            '¿Cuáles son los valores que rigen a su empresa?': valores,
-            'Análisis FODA': {
-                '¿Cuáles son las oportunidades que puede identificar en su mercado para su negocio?': foda1,
-                '¿Cuáles son las amenazas que puede identificar en su mercado para su negocio?': foda2,
-                '¿Cuáles son las fortalezas de su negocio?¿Cuáles son las oportunidades que puede identificar en su mercado para su negocio?¿Cuáles son las fortalezas de su negocio?': foda3,
-                '¿Cuáles son los aspectos a mejorar que puede identificar de su negocio?': foda4,
-                '¿Qué oportunidades de las que identificó puede aprovechar en este momento con las fortalezas que tiene?': foda5,
-                '¿Qué oportunidades puede aprovechar si mejora los aspectos (debilidades) que identificó?': foda6,
-                '¿Qué amenazas puede evitar en este momento utilizando las fortalezas que tiene?': foda7,
-                '¿Qué amenazas puede evitar en este momento minimizando los aspectos a mejorar (debilidades) que identificó?': foda8,
-            },
-            'Estructura Organizativa': estructura_organizativa,
-            'Tipo de sistema administrativo': tipo_sistema,
-            '¿Describa el tipo de sistema que está utilizando para la facturación de su empresa?': sistema_facturacion,
-            ' Área vital de Talento Humano': {
-                'Principales funciones del personal': { puesto1,
-                funcion1,
-                puesto2, 
-                funcion2,
-                puesto3,
-                funcion3,
-                puesto4,
-                funcion4,
-                puesto5,
-                funcion5,
-                puesto6,
-                funcion6, },
-                '¿Qué habilidades se requieren para los distintos puestos?': { 
-                    'puesto': h_puesto1,
-                    'Habilidades interpersonales': habilidad_interp1,
-                    'Habilidades técnicas': habilidad_tecnica1,
-                    'puesto': h_puesto2,
-                    'Habilidades interpersonales': habilidad_interp2,
-                    'Habilidades técnicas': habilidad_tecnica2,
-                    'puesto': h_puesto3,
-                    'Habilidades interpersonales': habilidad_interp3,
-                    'Habilidades técnicas': habilidad_tecnica3,
-                    'puesto': h_puesto4,
-                    'Habilidades interpersonales': habilidad_interp4,
-                    'Habilidades técnicas': habilidad_tecnica4,
-                    'puesto': h_puesto5,
-                    'Habilidades interpersonales': habilidad_interp5,
-                    'Habilidades técnicas': habilidad_tecnica5,
-                    'puesto': h_puesto6,
-                    'Habilidades interpersonales': habilidad_interp6,
-                    'Habilidades técnicas': habilidad_tecnica6, },
-                '¿Qué habilidades interpersonales considera que deberían desarrollar sus colaboradores?': habilidad1,
-                '¿Qué habilidades técnicas considera que deberían desarrollar sus colaboradores?': habilidad2,
-                'Necesidades de contratación': {
-                    '¿Qué personal considera que requiere en este momento para su empresa?': necesidad_contratacion,
-                    '¿Cuál es el motivo de contratación?': motivo_contratacion,
+            'Área de enfoque: Gestión de Recursos Administrativos' : {
+                'Recursos Materiales (MN)' : {
+                    [preguntasAdmin[0].txt]: respuestasAdmin[0],
+                    [preguntasAdmin[1].txt]: respuestasAdmin[1],
                 },
-                'Proceso de contratación': {
-                    '¿Cuál es el criterio que utiliza para contratar al personal?': proceso_contratacion1,
-                    '¿Cuál sería la información más importante que debería obtener de un futuro trabajador para ser contratado?': proceso_contratacion2,
+                'Equipamiento Tecnológico – Hardware (MN)' : {
+                    [preguntasAdmin[2].txt]: respuestasAdmin[2],
+                    [preguntasAdmin[3].txt]: respuestasAdmin[3],
+                    [preguntasAdmin[4].txt]: respuestasAdmin[4],
                 },
-                '¿Cómo mide actualmente el desempeño de los trabajadores en su puesto de trabajo?': evaluacion_cargo,
+                'Software y Herramientas (MN)' : {
+                    [preguntasAdmin[5].txt]: respuestasAdmin[5],
+                    [preguntasAdmin[6].txt]: respuestasAdmin[6],
+                },
+                'Soluciones en la Nube' : {
+                    [preguntasAdmin[7].txt]: respuestasAdmin[7],
+                    [preguntasAdmin[8].txt]: respuestasAdmin[8],
+                },
+                'Sistemas Administrativos - Procedimientos' : {
+                    [preguntasAdmin[9].txt]: respuestasAdmin[9],
+                    [preguntasAdmin[10].txt]: respuestasAdmin[10],
+                },
+                'Comunicación interna' : {
+                    [preguntasAdmin[11].txt]: respuestasAdmin[11],
+                    [preguntasAdmin[12].txt]: respuestasAdmin[12],
+                },
+                'Estructura Organizativa' : {
+                    [preguntasAdmin[13].txt]: respuestasAdmin[13],
+                    [preguntasAdmin[14].txt]: respuestasAdmin[14],
+                    [preguntasAdmin[15].txt]: respuestasAdmin[15],
+                },
+                'Flujos de Trabajo' : {
+                    [preguntasAdmin[16].txt]: respuestasAdmin[16],
+                    [preguntasAdmin[17].txt]: respuestasAdmin[17],
+                },
+                'Flujos de Trabajo' : {
+                    [preguntasAdmin[18].txt]: respuestasAdmin[18],
+                    [preguntasAdmin[19].txt]: respuestasAdmin[19],
+                },
+                'Revisión de Sistemas' : {
+                    [preguntasAdmin[20].txt]: respuestasAdmin[20],
+                    [preguntasAdmin[21].txt]: respuestasAdmin[21],
+                },
             },
-            'Área vital Finanzas': {
-                '¿Cuál sería su proyección de ventas para los próximos meses?': proyeccion_ventas,
-                '¿Cómo es la estructura de costos de sus productos?': costo_ventas,
-                'Las cuentas por pagar y cobrar de la empresa': {
-                    '¿A cuánto equivalen las cuentas por pagar de la empresa?': cuentas_pagar,
-                    '¿A cuánto equivalen las cuentas por cobrar de la empresa?': cuentas_cobrar,
+            'Área de enfoque: Gestión de Recursos Financieros' : {
+                'Planificación Financiera' : {
+                    [preguntas_rFinanciero[0].txt]: respuestas_rFinanciero[0],
+                    [preguntas_rFinanciero[1].txt]: respuestas_rFinanciero[1],
                 },
-                '¿Cuáles son los costos fijos y variables de la empresa?': costos_fijos_variables,
-                '¿Qué información muestra el Estado de Resultados de la empresa?': estado_resultados_empresa,
-                '¿Cuál es la utilidad neta de la empresa?': utilidad_neta,
-                '¿Cuál es la rentabilidad de la empresa?': rentabilidad,
-                'Punto de equilibrio': {
-                    '¿Cuál es el punto de equilibrio de la empresa?': punto_equilibrio,
-                    '¿Cómo ha sido el Flujo de Caja de la empresa en los últimos 6 meses?': flujo_caja,
+                'Presupuestos' : {
+                    [preguntas_rFinanciero[2].txt]: respuestas_rFinanciero[2],
+                    [preguntas_rFinanciero[3].txt]: respuestas_rFinanciero[3],
                 },
-                '¿Cuál es el retorno de inversión de la empresa?': retorno_inversion
+                'Estructura de Costos (MN)' : {
+                    [preguntas_rFinanciero[4].txt]: respuestas_rFinanciero[4],
+                    [preguntas_rFinanciero[5].txt]: respuestas_rFinanciero[5],
+                },
+                'Flujo de Efectivo' : {
+                    [preguntas_rFinanciero[6].txt]: respuestas_rFinanciero[6],
+                    [preguntas_rFinanciero[7].txt]: respuestas_rFinanciero[7],
+                },
+                'Fuentes de Ingreso (MN)' : {
+                    [preguntas_rFinanciero[8].txt]: respuestas_rFinanciero[8],
+                    [preguntas_rFinanciero[9].txt]: respuestas_rFinanciero[9],
+                },
+                'Acceso a Financiamiento' : {
+                    [preguntas_rFinanciero[10].txt]: respuestas_rFinanciero[10],
+                    [preguntas_rFinanciero[11].txt]: respuestas_rFinanciero[11],
+                },
+                'Cuentas por Pagar y Cobrar' : {
+                    [preguntas_rFinanciero[12].txt]: respuestas_rFinanciero[12],
+                    [preguntas_rFinanciero[13].txt]: respuestas_rFinanciero[13],
+                },
+                'Rentabilidad sobre las Ventas (ROS: Return on Sales)' : {
+                    [preguntas_rFinanciero[14].txt]: respuestas_rFinanciero[14],
+                    [preguntas_rFinanciero[15].txt]: respuestas_rFinanciero[15],
+                    [preguntas_rFinanciero[16].txt]: respuestas_rFinanciero[16],
+                },
+                'Punto de Equilibrio' : {
+                    [preguntas_rFinanciero[17].txt]: respuestas_rFinanciero[17],
+                    [preguntas_rFinanciero[18].txt]: respuestas_rFinanciero[18],
+                },
+                'Análisis Financiero:' : {
+                    [preguntas_rFinanciero[19].txt]: respuestas_rFinanciero[19],
+                    [preguntas_rFinanciero[20].txt]: respuestas_rFinanciero[20],
+                }
             },
+            'Área de enfoque: Gestión de Recurso Humano' : {
+                'Reconocimiento del Valor Individual' : {
+                    [preguntas_rHumano[0].txt]: respuestas_rHumano[0],
+                    [preguntas_rHumano[1].txt]: respuestas_rHumano[1],
+                },
+                'Desarrollo del Talento Humano' : {
+                    [preguntas_rHumano[2].txt]: respuestas_rHumano[2],
+                    [preguntas_rHumano[3].txt]: respuestas_rHumano[3],
+                },
+                'Retención del Talento:' : {
+                    [preguntas_rHumano[4].txt]: respuestas_rHumano[4],
+                    [preguntas_rHumano[5].txt]: respuestas_rHumano[5],
+                },
+                'Remuneración Justa y Competitiva' : {
+                    [preguntas_rHumano[6].txt]: respuestas_rHumano[6],
+                    [preguntas_rHumano[7].txt]: respuestas_rHumano[7],
+                    [preguntas_rHumano[8].txt]: respuestas_rHumano[8],
+                    [preguntas_rHumano[9].txt]: respuestas_rHumano[9],
+                },
+                'Principales Funciones del Personal' : {
+                    [preguntas_rHumano[10].txt]: respuestas_rHumano[10],
+                    [preguntas_rHumano[11].txt]: respuestas_rHumano[11],
+                },
+                'Evaluación de Desempeño' : {
+                    [preguntas_rHumano[12].txt]: respuestas_rHumano[12],
+                    [preguntas_rHumano[13].txt]: respuestas_rHumano[13],
+                },
+                'Evaluación de Desempeño' : {
+                    [preguntas_rHumano[14].txt]: respuestas_rHumano[14],
+                    [preguntas_rHumano[15].txt]: respuestas_rHumano[15],
+                },
+                'Proceso de Contratación' : {
+                    [preguntas_rHumano[16].txt]: respuestas_rHumano[16],
+                    [preguntas_rHumano[17].txt]: respuestas_rHumano[17],
+                }
+            }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión administración que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que tengas como prioridad que el informe no debe superar los 3000 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de Evaluación Empresarial, Sistema de Gestión de Recursos que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos.")
         //console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
@@ -376,12 +500,27 @@ consultorController.analisisOperacion = async (req, res) => {
     if (req.user.rol != 'Empresa') {
         linkCerrar = `/empresas/${codigo}#analisis_`
     }
-    res.render('consultor/analisisOperacion', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar })
+    const preguntas = {
+        "estrategica": [...preguntas2.planeacion_estrategica],
+        "operativos": [...preguntas2.procesos_operativos],
+        "integracion": [...preguntas2.integracion],
+        "modelo_negocio": [...preguntas2.modelo_negocio],
+    }
+    res.render('consultor/analisisOperacion', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar, preguntas })
 }
 consultorController.guardarAnalisisOperacion = async (req, res) => {
-    const { codigoEmpresa, zhActualAdm } = req.body;
+    const { codigoEmpresa, estrategica, operativos, integracion, modelo_negocio, zhActualAdm } = req.body;
     // Capturar Fecha de guardado
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
+
+    const respuestas_estrategica = estrategica
+    const respuestas_operativos = operativos
+    const respuestas_integracion = integracion
+    const respuestas_modeloNegocio = modelo_negocio
+    const preguntas_estrategica = [...preguntas2.planeacion_estrategica]
+    const preguntas_operativos = [...preguntas2.procesos_operativos]
+    const preguntas_integracion = [...preguntas2.integracion]
+    const preguntas_modeloNegocio = [...preguntas2.modelo_negocio]
 
     // Verificando si existen registros Análisis de empresa en la Base de datos
     let empresa = await consultarDatos('empresas')
@@ -391,25 +530,23 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
     if (empresa) {
         let id_empresa = empresa.id_empresas;
 
-        // Capturando datos del formulario - Analisis dimensión Producto
-        const { info_productos, satisfaccion, encuesta_clientes, informacion_deClientes, utilidad_libro_quejas, beneficio_libro_quejas, estrategia__libro_quejas, fidelizacion_clientes, instalaciones_op, areas_op, influencia_op, permisos1, permisos2, plan_trabajo1, plan_trabajo2, plan_trabajo3, procesos_estandarizados1, procesos_estandarizados2, ambiente_laboral, comunicacion, reconocimiento1, reconocimiento2, innovacion_individual1, innovacion_individual2, innovacion_productos, innovacion_procesos, innovacion_modelo, innovacion_gestion } = req.body
-
-        const av_operaciones = { instalaciones_op, areas_op, influencia_op, permisos1, permisos2, plan_trabajo1, plan_trabajo2, plan_trabajo3, procesos_estandarizados1, procesos_estandarizados2 }
-        const av_ambiente_laboral = { ambiente_laboral, comunicacion, reconocimiento1, reconocimiento2 }
-        const av_innovacion = { innovacion_individual1, innovacion_individual2, innovacion_productos, innovacion_procesos, innovacion_modelo, innovacion_gestion };
-
-        const operacion = JSON.stringify({
-            fecha, info_productos, satisfaccion, encuesta_clientes, informacion_deClientes, utilidad_libro_quejas, beneficio_libro_quejas, estrategia__libro_quejas, fidelizacion_clientes, av_operaciones, av_ambiente_laboral, av_innovacion
+        // Capturando datos del formulario - Evaluación Empresarial Sistema Operacional
+        const dataForm = JSON.stringify({
+            fecha,
+            "estrategica": respuestas_estrategica,
+            "operativos": respuestas_operativos,
+            "integracion": respuestas_integracion,
+            "modelo_negocio": respuestas_modeloNegocio,
         })
 
         // Guardando en la Base de datos
         const tablaAnalisis = analisis_empresa.find(item => item.id_empresa == id_empresa)
         if (tablaAnalisis) {
-            const actualizarAnalisis = { operacion }
+            const actualizarAnalisis = { operacion: dataForm }
             await pool.query('UPDATE analisis_empresa SET ? WHERE id_empresa = ?', [actualizarAnalisis, id_empresa])
         } else {
             // Creando Objetos para guardar en la base de datos
-            const nuevoAnalisis = { id_empresa, operacion }
+            const nuevoAnalisis = { id_empresa, operacion: dataForm }
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
@@ -417,61 +554,153 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
          * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
         */
         const obj_respuestas = {
-            'Servicio al Cliente': {
-                '¿Cómo hace actualmente para facilitarle a sus clientes información rápida y efectiva de sus Productos y/o Servicios?': info_productos,
-                'Encuesta de satisfacción': {
-                    '¿Cómo mide actualmente la satisfacción de sus clientes con respecto a sus Productos y/o Servicios?': satisfaccion,
-                    '¿Qué le preguntaría a sus clientes con respecto a sus Productos y/ o Servicios?': encuesta_clientes,
+            'Área de enfoque: Planeación Estratégica' : {
+                'Comprensión del Mercado' : {
+                    [preguntas_estrategica[0].txt]: respuestas_estrategica[0],
+                    [preguntas_estrategica[1].txt]: respuestas_estrategica[1],
                 },
-                'Encuestas para supera las expectativas': {'¿Qué información le interesaría conocer de sus clientes?': informacion_deClientes,},
-                'Libro de quejas y reclamaciones': {
-                    '¿Qué utilidad le ve a un Libro de quejas y reclamaciones?': utilidad_libro_quejas,
-                    '¿En qué se puede beneficiar la empresa de un Libro de quejas y reclamaciones?': beneficio_libro_quejas,
-                    '¿Qué estrategia puede utilizar para activar su usabilidad?': estrategia__libro_quejas,
+                'Claridad en la Misión y Visión' : {
+                    [preguntas_estrategica[2].txt]: respuestas_estrategica[2],
+                    [preguntas_estrategica[3].txt]: respuestas_estrategica[3],
+                    [preguntas_estrategica[4].txt]: respuestas_estrategica[4],
                 },
-                'Fidelización de clientes': {'¿Qué es lo que hace en la actualidad para fidelizar a sus clientes?': fidelizacion_clientes,},
+                'Valores claros' : {
+                    [preguntas_estrategica[5].txt]: respuestas_estrategica[5],
+                },
+                'Objetivos Definidos' : {
+                    [preguntas_estrategica[6].txt]: respuestas_estrategica[6],
+                },
+                'Análisis FODA' : {
+                    [preguntas_estrategica[7].txt]: respuestas_estrategica[7],
+                    [preguntas_estrategica[8].txt]: respuestas_estrategica[8],
+                },
+                'Participación del Equipo' : {
+                    [preguntas_estrategica[9].txt]: respuestas_estrategica[9],
+                    [preguntas_estrategica[10].txt]: respuestas_estrategica[10],
+                },
+                'Evaluación de la Competencia' : {
+                    [preguntas_estrategica[11].txt]: respuestas_estrategica[11],
+                    [preguntas_estrategica[12].txt]: respuestas_estrategica[12],
+                },
+                'Comunicación Estratégica' : {
+                    [preguntas_estrategica[13].txt]: respuestas_estrategica[13],
+                    [preguntas_estrategica[14].txt]: respuestas_estrategica[14],
+                }
             },
-            'Área vital de Operaciones': {
-                'Instalaciones adecuadas': {
-                    '¿Qué tan adecuadas están las instalaciones donde opera el negocio?': instalaciones_op,
-                    '¿Cómo están distribuidas las áreas del negocio?': areas_op,
-                    '¿Qué influencia tienen las instalaciones en general hacia el éxito del negocio?': influencia_op,
+            'Área de enfoque: Procesos Operativos' : {
+                'Análisis y Mapeo de Procesos' : {
+                    [preguntas_operativos[0].txt]: respuestas_operativos[0],
+                    [preguntas_operativos[1].txt]: respuestas_operativos[1],
+                    [preguntas_operativos[2].txt]: respuestas_operativos[2],
                 },
-                'Permisos de operaciones': {
-                    '¿Cuáles son los permisos necesarios que requiere para la correcta operación del negocio?': permisos1,
-                    '¿Qué tipo de permisos requiere actualmente o podría necesitar?': permisos2,
+                'Establecimiento de Objetivos Claros' : {
+                    [preguntas_operativos[3].txt]: respuestas_operativos[3],
+                    [preguntas_operativos[4].txt]: respuestas_operativos[4],
                 },
-                'Plan de Trabajo': {
-                    '¿Cómo está elaborado el plan de trabajo de cada trabajador dentro de la empresa?': plan_trabajo1,
-                    '¿Cuál es la información más relevante que debe contener el plan de trabajo?': plan_trabajo2,
-                    '¿Qué podría ayudar a que el plan de trabajo se cumpla?': plan_trabajo3,
+                'Eficiencia' : {
+                    [preguntas_operativos[5].txt]: respuestas_operativos[5],
                 },
-                'La estandarización de tareas y procesos': {
-                    '¿Qué tareas y procesos tiene actualmente estandarizados?': procesos_estandarizados1,
-                    '¿Cuáles tareas y procesos le gustaría estandarizar?': procesos_estandarizados2,
+                'Flexibilidad' : {
+                    [preguntas_operativos[6].txt]: respuestas_operativos[6],
+                    [preguntas_operativos[7].txt]: respuestas_operativos[7],
                 },
+                'Incorporación de Tecnología' : {
+                    [preguntas_operativos[8].txt]: respuestas_operativos[8],
+                    [preguntas_operativos[9].txt]: respuestas_operativos[9],
+                },
+                'Revisión Regular' : {
+                    [preguntas_operativos[10].txt]: respuestas_operativos[10],
+                    [preguntas_operativos[11].txt]: respuestas_operativos[11],
+                },
+                'Actividades Clave (MN)' : {
+                    [preguntas_operativos[12].txt]: respuestas_operativos[12],
+                },
+                'Gestión del Tiemp' : {
+                    [preguntas_operativos[13].txt]: respuestas_operativos[13],
+                    [preguntas_operativos[14].txt]: respuestas_operativos[14],
+                },
+                'Canales de Distribución (MN)' : {
+                    [preguntas_operativos[15].txt]: respuestas_operativos[15],
+                    [preguntas_operativos[16].txt]: respuestas_operativos[16],
+                    [preguntas_operativos[17].txt]: respuestas_operativos[17],
+                },
+                'Alianzas Estratégicas (MN)' : {
+                    [preguntas_operativos[18].txt]: respuestas_operativos[18],
+                    [preguntas_operativos[19].txt]: respuestas_operativos[19],
+                }
             },
-            'Área vital Ambiente laboral': {
-                'Ambiente Laboral': {'¿Qué hace actualmente para contribuir a generar un buen ambiente de trabajo dentro de la empresa?': ambiente_laboral,},
-                'Comunicación empresarial': {'¿De qué manera se llevan a cabo las comunicaciones dentro de la empresa?': comunicacion,},
-                'Reconocimiento laboral': {
-                    '¿De qué manera le reconoce a sus colaboradores que están haciendo un buen trabajo?': reconocimiento1,
-                    '¿Cómo puede brindar reconocimiento a sus colaboradores cuando están haciendo un buen trabajo?': reconocimiento2,
+            'Área de enfoque: Integración y Bienestar Laboral' : {
+                'Liderazgo Comprometido' : {
+                    [preguntas_integracion[0].txt]: respuestas_integracion[0],
                 },
-            },
-            'Área vital de Innovación': {
-                'Innovación Individual': {
-                    '¿Qué importancia le ve a la posibilidad de que sus trabajadores aportan ideas para la mejora dentro de la empresa?': innovacion_individual1,
-                    '¿Qué tipo de ideas le gustaría recibir por parte de sus trabajadores?': innovacion_individual2,
+                'Comunicación Abierta y Transparente' : {
+                    [preguntas_integracion[1].txt]: respuestas_integracion[1],
                 },
-                'Innovación basada en el producto/servicio': {'¿Qué mejora en sus productos y/o servicios pueden incrementar tus ventas?': innovacion_productos,},
-                'Innovación en los procesos de un producto y servicios': { '¿Qué cambios podrían mejorar los procesos operativos para desarrollarsus Productos y/o Servicios?': innovacion_procesos, },
-                'Innovación en el modelo de negocio': { '¿Qué considera que podría innovar en su modelo de negocio?': innovacion_modelo,},
-                'Innovación en la gestión': {'¿Qué podría mejorar dentro de los sistemas de gestión que tiene actualmente?': innovacion_gestion}
+                'Flexibilidad' : {
+                    [preguntas_integracion[2].txt]: respuestas_integracion[2],
+                    [preguntas_integracion[3].txt]: respuestas_integracion[3],
+                },
+                'Espacio de Trabajo Adecuado' : {
+                    [preguntas_integracion[4].txt]: respuestas_integracion[4],
+                    [preguntas_integracion[5].txt]: respuestas_integracion[5],
+                },
+                'Actividades de Integración' : {
+                    [preguntas_integracion[6].txt]: respuestas_integracion[6],
+                    [preguntas_integracion[7].txt]: respuestas_integracion[7],
+                    [preguntas_integracion[8].txt]: respuestas_integracion[8],
+                    [preguntas_integracion[9].txt]: respuestas_integracion[9],
+                },
+                'Participación activa' : {
+                    [preguntas_integracion[10].txt]: respuestas_integracion[10],
+                    [preguntas_integracion[11].txt]: respuestas_integracion[11],
+                },
+                'Entorno Laboral' : {
+                    [preguntas_integracion[12].txt]: respuestas_integracion[12],
+                    [preguntas_integracion[13].txt]: respuestas_integracion[13],
+                },
+                'Balance Vida-Trabajo' : {
+                    [preguntas_integracion[14].txt]: respuestas_integracion[14],
+                }
             },
+            'Área de enfoque: Modelo de Negocio' : {
+                'Comprensión del Modelo Actual' : {
+                    [preguntas_modeloNegocio[0].txt]: respuestas_modeloNegocio[0],
+                },
+                'Propuesta de Valor' : {
+                    [preguntas_modeloNegocio[1].txt]: respuestas_modeloNegocio[1],
+                    [preguntas_modeloNegocio[2].txt]: respuestas_modeloNegocio[2],
+                },
+                'Claridad y Dirección' : {
+                    [preguntas_modeloNegocio[3].txt]: respuestas_modeloNegocio[3],
+                },
+                'Competitividad en el Mercado' : {
+                    [preguntas_modeloNegocio[4].txt]: respuestas_modeloNegocio[4],
+                },
+                'Adaptabilidad y Flexibilidad' : {
+                    [preguntas_modeloNegocio[5].txt]: respuestas_modeloNegocio[5],
+                },
+                'Optimización de Recursos' : {
+                    [preguntas_modeloNegocio[6].txt]: respuestas_modeloNegocio[6],
+                    [preguntas_modeloNegocio[7].txt]: respuestas_modeloNegocio[7],
+                },
+                'Retroalimentación de Clientes' : {
+                    [preguntas_modeloNegocio[8].txt]: respuestas_modeloNegocio[8],
+                },
+                'Evaluación Interna' : {
+                    [preguntas_modeloNegocio[9].txt]: respuestas_modeloNegocio[9],
+                    [preguntas_modeloNegocio[10].txt]: respuestas_modeloNegocio[10],
+                },
+                'Monitoreo del Mercado:' : {
+                    [preguntas_modeloNegocio[11].txt]: respuestas_modeloNegocio[11],
+                    
+                },
+                'Visión a Futuro' : {
+                    [preguntas_modeloNegocio[12].txt]: respuestas_modeloNegocio[12],
+                }
+            }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión operación que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 3000 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de Evaluación Empresarial, Sistema Operacional que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos.")
         //console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');
@@ -492,12 +721,24 @@ consultorController.analisisMarketing = async (req, res) => {
     if (req.user.rol != 'Empresa') {
         linkCerrar = `/empresas/${codigo}#analisis_`
     }
-    res.render('consultor/analisisMarketing', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar })
+    const preguntas = {
+        "asistencia": [...preguntas2.asistencia_cliente],
+        "marketing": [...preguntas2.marketing],
+        "ventas": [...preguntas2.ventas],
+    }
+    res.render('consultor/analisisMarketing', { wizarx: true, user_dash: false, adminDash: false, codigo, linkCerrar, preguntas })
 }
 consultorController.guardarAnalisisMarketing = async (req, res) => {
-    const { codigoEmpresa, zhActualAdm } = req.body;
+    const { codigoEmpresa, asistencia, marketing, ventas, zhActualAdm } = req.body;
     // Capturar Fecha de guardado
     const fecha = new Date().toLocaleString("en-US", { timeZone: zhActualAdm })
+
+    const respuestas_asistencia = asistencia
+    const respuestas_markeging = marketing
+    const respuestas_ventas = ventas
+    const preguntas_asistencia = [...preguntas2.asistencia_cliente]
+    const preguntas_marketing = [...preguntas2.marketing]
+    const preguntas_ventas = [...preguntas2.ventas]
 
     // Verificando si existen registros Análisis de empresa en la Base de datos
     let empresa = await consultarDatos('empresas')
@@ -508,25 +749,22 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
     if (empresa) {
         let id_empresa = empresa.id_empresas;
 
-        // Capturando datos del formulario - Analisis dimensión Producto
-        const { objetivo_principal, cliente, posicionamiento, beneficios, mensaje, oferta1, oferta2, seguimiento, presupuesto, atraccion, fidelizacion, sitioWeb1, sitioWeb2, sitioWeb3, sitioWeb4, sitioWeb5, sitioWeb6, sitioWeb7, identidadC1, identidadC2, identidadC3, identidadC4, identidadC5, identidadC6, identidadC7, eslogan, estrategia1, estrategia2, estrategia3, estrategia4, estrategia5, estrategia6 } = req.body
-
-        const sitioWeb = { s1: sitioWeb1, s2: sitioWeb2, s3: sitioWeb3, s4: sitioWeb4, s5: sitioWeb5, s6: sitioWeb6, s7: sitioWeb7 }
-        const identidadC = { ic1: identidadC1, ic2: identidadC2, ic3: identidadC3, ic4: identidadC4, ic5: identidadC5, ic6: identidadC6, ic7: identidadC7 }
-        const estrategias = { e1: estrategia1, e2: estrategia2, e3: estrategia3, e4: estrategia4, e5: estrategia5, e6: estrategia6 }
-
-        const marketing = JSON.stringify({
-            fecha, objetivo_principal, cliente, posicionamiento, beneficios, mensaje, oferta1, oferta2, seguimiento, presupuesto, atraccion, fidelizacion, sitioWeb, identidadC, eslogan, estrategias
+        // Capturando datos del formulario - Evaluación Empresarial Sistema de Comercialización
+        const dataForm = JSON.stringify({
+            fecha,
+            "asistencia": respuestas_asistencia,
+            "marketing": respuestas_markeging,
+            "ventas": respuestas_ventas
         })
 
         // Guardando en la Base de datos
         const tablaAnalisis = analisis_empresa.find(item => item.id_empresa == id_empresa)
         if (tablaAnalisis) {
-            const actualizarAnalisis = { marketing }
+            const actualizarAnalisis = { marketing: dataForm }
             await pool.query('UPDATE analisis_empresa SET ? WHERE id_empresa = ?', [actualizarAnalisis, id_empresa])
         } else {
             // Creando Objetos para guardar en la base de datos
-            const nuevoAnalisis = { id_empresa, marketing }
+            const nuevoAnalisis = { id_empresa, marketing: dataForm }
             await insertarDatos('analisis_empresa', nuevoAnalisis)
         }
 
@@ -534,53 +772,142 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
          * GENERANDO Y GUARDANDO INFORME DEL CHAT GPT EN LA BASE DE DATOS 
         */
         const obj_respuestas = {
-            'Plan de Marketing': {
-                'Tu objetivo principal y métrica': { '¿Cuál es el objetivo principal que quisieras conseguir con una estrategia de marketing? y ¿Cómo lo vas a medir?': objetivo_principal,},
-                'Tu cliente': {'¿Quién es el cliente al que te diriges?': cliente,},
-                'Posicionamiento': {'¿Cuál será tu factor de diferenciación frente a la competencia?': posicionamiento,},
-                'Beneficios': { '¿Qué beneficios le aporta tu propuesta a quien adquiere tu producto?': beneficios,},
-                'Mensaje': {'¿Cuál es el mensaje con el que vas a captar la atención de tus clientes?': mensaje,},
-                'Oferta': {
-                    '¿Cuál es la oferta de productos que tienes?': oferta1,
-                    '¿Cuál es tu producto de entrada? si tienes un producto Premium.': oferta2,
+            'Área de enfoque: Asistencia y Relación con el Cliente' : {
+                'Entendimiento profundo del cliente' : {
+                    [preguntas_asistencia[0].txt]: respuestas_asistencia[0],
+                    [preguntas_asistencia[1].txt]: respuestas_asistencia[1],
                 },
-                'Sitio Web y Redes sociales': {
-                    'Seguimiento de etapas del cliente': {'¿Cuáles pueden ser los problemas a resolver más importantes en cada fase del proceso de compra del cliente?': seguimiento,},
-                    'Presupuesto': {'¿Cuál podría ser tu presupuesto máximo?': presupuesto,},
-                    'Atracción': {'¿Qué acciones de atracción a clientes puedes realizar?': atraccion,},
-                    'Fidelización': {'¿Qué acciones puedes proponer para para conseguir fidelizar a los clientes, y que vuelvan a comprar y que recomienden los productos?': fidelizacion,},
-                    '¿Quieres trabajar sobre lo que está, o buscas algo totalmente nuevo?': sitioWeb1,
-                    '¿Cómo quieres que se vea tu página Web? da ejemplo': sitioWeb2,
-                    '¿Te gusta el diseño/funcionalidad de alguna página Web? Ejemplos': sitioWeb3,
-                    '¿Qué incluirías de ese diseño en la tuya/qué no incluirías?': sitioWeb4,
-                    '¿Cuál podría ser tu presupuesto máximo?': sitioWeb5,
-                    '¿Cuál es el estado de tu marca en el mundo digital de las redes sociales?': sitioWeb6,
-                    '¿Cuáles son tus redes sociales?': sitioWeb7,
+                'Relaciones con Clientes (MN)' : {
+                    [preguntas_asistencia[2].txt]: respuestas_asistencia[2],
+                    [preguntas_asistencia[3].txt]: respuestas_asistencia[3],
+                    [preguntas_asistencia[4].txt]: respuestas_asistencia[4],
                 },
-                'Manual de Identidad Corporativa': {
-                    '¿Quisieras cambiar algo sobre lo que ya tienes?': identidadC1,
-                    '¿Hay algún elemento que quieras que aparezca en el logo?': identidadC2,
-                    'En tu opinión, ¿qué define un logotipo bien diseñado?': identidadC3,
-                    '¿Cuál es tu preferencia, en referencia a los iconos, tipografía, colores etc?': identidadC4,
-                    '¿Qué palabras o iconos se deben incluir en el logo?': identidadC5,
-                    '¿Qué logos te gustan y por qué?': identidadC6,
-                    '¿Qué logos no te gustan y por qué?': identidadC7,
+                'Comunicación efectiva (MN)' : {
+                    [preguntas_asistencia[5].txt]: respuestas_asistencia[5],
+                    [preguntas_asistencia[6].txt]: respuestas_asistencia[6],
                 },
-                'Presentación de su empresa': {'¿Cuál es el eslogan que podría definir a tu empresa?': eslogan,},
+                'Capacitación del personal' : {
+                    [preguntas_asistencia[7].txt]: respuestas_asistencia[7],
+                },
+                'Respuesta rápida' : {
+                    [preguntas_asistencia[8].txt]: respuestas_asistencia[8],
+                    [preguntas_asistencia[9].txt]: respuestas_asistencia[9],
+                },
+                'Uso de tecnología' : {
+                    [preguntas_asistencia[10].txt]: respuestas_asistencia[10],
+                },
+                'Resolución de problemas' : {
+                    [preguntas_asistencia[11].txt]: respuestas_asistencia[11],
+                    [preguntas_asistencia[12].txt]: respuestas_asistencia[12],
+                },
+                'Recompensas y lealtad' : {
+                    [preguntas_asistencia[13].txt]: respuestas_asistencia[13],
+                    [preguntas_asistencia[14].txt]: respuestas_asistencia[14],
+                },
+                'Seguimiento proactivo' : {
+                    [preguntas_asistencia[15].txt]: respuestas_asistencia[15],
+                },
+                'Integridad y transparencia' : {
+                    [preguntas_asistencia[16].txt]: respuestas_asistencia[16],
+                    [preguntas_asistencia[17].txt]: respuestas_asistencia[17],
+                }
             },
-            'Área vital de Ventas': {
-                'Estrategias de ventas': {
-                    '¿Como haces para proyectar las ventas que esperas conseguir?': estrategia1,
-                    '¿Qué haces para vender tus productos?': estrategia2,
-                    '¿Cuáles son los canales que utilizas para vender?': estrategia3,
-                    '¿Cómo organizas tus canales de ventas?': estrategia4,
-                    '¿Cómo es tu plan de ventas actual?': estrategia5,
-                    '¿Cómo le haces seguimiento al proceso de venta?': estrategia6
+            'Área de enfoque: Marketing' : {
+                'Comprensión del Público Objetivo (MN)' : {
+                    [preguntas_marketing[0].txt]: respuestas_markeging[0],
+                    [preguntas_marketing[1].txt]: respuestas_markeging[1],
+                    [preguntas_marketing[2].txt]: respuestas_markeging[2],
+                },
+                'Conocimiento del Cliente Objetivo (MN)' : {
+                    [preguntas_marketing[3].txt]: respuestas_markeging[3],
+                    [preguntas_marketing[4].txt]: respuestas_markeging[4],
+                },
+                'Propuesta de Valor (MN)' : {
+                    [preguntas_marketing[5].txt]: respuestas_markeging[5],
+                    [preguntas_marketing[6].txt]: respuestas_markeging[6],
+                    [preguntas_marketing[7].txt]: respuestas_markeging[7],
+                },
+                'Presencia Digital - Sitio Web' : {
+                    [preguntas_marketing[8].txt]: respuestas_markeging[8],
+                    [preguntas_marketing[9].txt]: respuestas_markeging[9],
+                    [preguntas_marketing[10].txt]: respuestas_markeging[10],
+                },
+                'Redes Sociales' : {
+                    [preguntas_marketing[11].txt]: respuestas_markeging[11],
+                    [preguntas_marketing[12].txt]: respuestas_markeging[12],
+                    [preguntas_marketing[13].txt]: respuestas_markeging[13],
+                },
+                'Contenido de Calidad' : {
+                    [preguntas_marketing[14].txt]: respuestas_markeging[14],
+                    [preguntas_marketing[15].txt]: respuestas_markeging[15],
+                },
+                'SEO' : {
+                    [preguntas_marketing[16].txt]: respuestas_markeging[16],
+                    [preguntas_marketing[17].txt]: respuestas_markeging[17],
+                },
+                'Publicidad Segmentada' : {
+                    [preguntas_marketing[18].txt]: respuestas_markeging[18],
+                    [preguntas_marketing[19].txt]: respuestas_markeging[19],
+                },
+                'Educación y Capacitación Continua' : {
+                    [preguntas_marketing[20].txt]: respuestas_markeging[20],
+                },
+                'Asignación Adecuada de Recursos' : {
+                    [preguntas_marketing[21].txt]: respuestas_markeging[21],
+                },
+                'Plan de Marketing' : {
+                    [preguntas_marketing[22].txt]: respuestas_markeging[22],
+                    [preguntas_marketing[23].txt]: respuestas_markeging[23],
+                },
+                'Manual de Identidad Corporativa' : {
+                    [preguntas_marketing[24].txt]: respuestas_markeging[24],
+                },
+            },
+            'Área de enfoque: Ventas' : {
+                'Estrategias de Ventas' : {
+                    [preguntas_ventas[0].txt]: respuestas_ventas[0],
+                    [preguntas_ventas[1].txt]: respuestas_ventas[1],
+                },
+                'Conocimiento del Producto/Servicio' : {
+                    [preguntas_ventas[2].txt]: respuestas_ventas[2],
+                    [preguntas_ventas[3].txt]: respuestas_ventas[3],
+                },
+                'Uso de Tecnología' : {
+                    [preguntas_ventas[4].txt]: respuestas_ventas[4],
+                },
+                'Diversificación de Canales de Ventas' : {
+                    [preguntas_ventas[5].txt]: respuestas_ventas[5],
+                    [preguntas_ventas[6].txt]: respuestas_ventas[6],
+                },
+                'Entender al Cliente' : {
+                    [preguntas_ventas[7].txt]: respuestas_ventas[7],
+                },
+                'Gestión de Precios' : {
+                    [preguntas_ventas[8].txt]: respuestas_ventas[8],
+                },
+                'Integración con Marketing' : {
+                    [preguntas_ventas[9].txt]: respuestas_ventas[9],
+                    [preguntas_ventas[10].txt]: respuestas_ventas[10],
+                },
+                'Relaciones a Largo Plazo' : {
+                    [preguntas_ventas[11].txt]: respuestas_ventas[11],
+                    [preguntas_ventas[12].txt]: respuestas_ventas[12],
+                },
+                'Objetivos y Feedback' : {
+                    [preguntas_ventas[13].txt]: respuestas_ventas[13],
+                    [preguntas_ventas[14].txt]: respuestas_ventas[14],
+                },
+                'Red de Contactos (Networking)' : {
+                    [preguntas_ventas[15].txt]: respuestas_ventas[15],
+                    [preguntas_ventas[16].txt]: respuestas_ventas[16],
+                },
+                'Cultura de Ventas Positiva' : {
+                    [preguntas_ventas[18].txt]: respuestas_ventas[18],
                 }
             }
         }
 
-        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de análisis de negocio dimensión marketing que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos. Es muy importante que priorices que el informe no debe superar los 3000 caracteres.")
+        const prompt = (JSON.stringify(obj_respuestas)+" Con base las respuestas anteriores dame un informe de Evaluación Empresarial, Sistema de Comercialización que incluya las oportunidades de mejora, sugerencias, y actividades a realizar, separado por títulos.")
        // console.log(`\n\n\n *:*:*:*:*:*:*:*:*:*:*:*:* \n\n PROMPT ENVIADO AL CHAT GPT *:*:*:*:*:*:*:*:*:* \n\n ${prompt} \n\n\n`);
         let resultAI = await getResponseChatGPT(prompt)
         const resp = resultAI.content.replaceAll('\n', '<br>');

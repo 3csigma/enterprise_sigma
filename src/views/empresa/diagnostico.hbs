@@ -159,64 +159,25 @@
   document.addEventListener("DOMContentLoaded", () => {
   {{#unless tutoriales.etapa}}
   // POPUP CON TUTORIAL
-          Swal.fire({
-                title: '<strong>Bienvenido a Valoración Situacional</strong>',
-               // icon: 'info',
-                html: '<video controls style="width: 91%;">' + 
-                    '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_valoracionSituacional.mp4" type="video/mp4">' +
-                    '  Your browser does not support the video tag.' +
-                    '</video>',
-                showCloseButton: true,
-                showCancelButton: false,
-                focusConfirm: false,
-                confirmButtonColor: '#812082',
-                confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
-                confirmButtonAriaLabel: 'Thumbs up, great!',
-                cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
-                cancelButtonAriaLabel: 'Thumbs down',
-                customClass: {
-                    popup: 'custom-modal-class',
-                }
-            });
+  Swal.fire({
+    title: '<strong>Bienvenido a Valoración Situacional</strong>',
+    html: '<video controls style="width: 91%;">' + 
+        '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_valoracionSituacional.mp4" type="video/mp4">' +
+        '  Your browser does not support the video tag.' +
+        '</video>',
+    showCloseButton: true,
+    showCancelButton: false,
+    focusConfirm: false,
+    confirmButtonColor: '#812082',
+    confirmButtonText: '<i class="fa fa-thumbs-up"></i> Ok!',
+    confirmButtonAriaLabel: 'Thumbs up, great!',
+    cancelButtonText: '<i class="fa fa-thumbs-down"></i>',
+    cancelButtonAriaLabel: 'Thumbs down',
+    customClass: {
+        popup: 'custom-modal-class',
+    }
+  });
   {{/unless}}
-    
-  // POPUPS PARA HACER UPGRADE
-  {{#if etapaCompleta.upgrade1}}
-    Swal.fire({
-        title: '<strong>Valoración Inicial finalizada</strong>',
-          icon: 'info',
-          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
-          <div class="d-flex justify-content-center align-items-center mt-2">
-            <a type="button" href="https://3csigma.com/programa-entrepreneur/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Entrepreneur</a>
-          </div>`,
-        showConfirmButton: false,
-        showCloseButton: false,
-        showCancelButton: true,
-        focusCancel: true,
-        cancelButtonText: 'Cerrar',
-    })
-    $('.swal2-popup').width('50em');
-  {{/if}}
-
-  {{#if etapaCompleta.upgrade2}}
-    Swal.fire({
-        title: '<strong>Diagnóstico finalizado</strong>',
-          icon: 'info',
-          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
-          <div class="d-flex justify-content-center align-items-center mt-2">
-            <a type="button" href="https://3csigma.com/programa-business/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Business</a>
-            <a type="button" href="https://3csigma.com/programa-enterprise/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Enterprise</a>
-          </div>`,
-        showConfirmButton: false,
-        showCloseButton: false,
-        showCancelButton: true,
-        focusCancel: true,
-        cancelButtonText: 'Cerrar',
-    })
-
-    $('.swal2-popup').width('50em');
-  {{/if}}
-
   });
 
   

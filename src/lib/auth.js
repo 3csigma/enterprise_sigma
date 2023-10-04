@@ -13,14 +13,29 @@ module.exports = {
             if (req.user.rol == 'Empresa') {
                 const emp1 = rutasObj.rutasEmpresa.find(x => x == url.toLowerCase())
                 const emp2 = rutasObj.rutasConsultor.find(x => x == url.toLowerCase())
-                if (emp1 || emp2) return next(); else return console.log("La empresa no tiene acceso a esta ruta o no se encuentra en el Array rutasEmpresa.. (Rutas en minúsculas)");
+                if (emp1 || emp2) { 
+                    return next();
+                } else {
+                    console.log("La empresa no tiene acceso a esta ruta o no se encuentra en el Array rutasEmpresa.. (Rutas en minúsculas)");
+                    return res.redirect('/404')
+                }
             } else if (req.user.rol == 'Admin') {
                 const adm = rutasObj.rutasAdmin.find(x => x == url.toLowerCase())
                 const adm2 = rutasObj.rutasConsultor.find(x => x == url.toLowerCase())
-                if (adm || adm2) return next(); else console.log("El Admin no tiene acceso a esta ruta o no se encuentra en el Array rutasAdmin.. (Rutas en minúsculas)");
+                if (adm || adm2) { 
+                    return next(); 
+                } else {
+                    console.log("El Admin no tiene acceso a esta ruta o no se encuentra en el Array rutasAdmin.. (Rutas en minúsculas)");
+                    return res.redirect('/404')
+                }
             } else if (req.user.rol == "Consultor") {
                 const ok = rutasObj.rutasConsultor.find(x => x == url.toLowerCase())
-                if (ok) return next(); else console.log("El Consultor no tiene acceso a esta ruta o no se encuentra en el Array rutasConsultor.. (Rutas en minúsculas)");
+                if (ok) {
+                    return next();
+                } else {
+                    console.log("El Consultor no tiene acceso a esta ruta o no se encuentra en el Array rutasConsultor.. (Rutas en minúsculas)");
+                    return res.redirect('/404')
+                }
             } else {
                 res.redirect('/404')
             }
