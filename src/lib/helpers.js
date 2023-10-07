@@ -915,25 +915,25 @@ helpers.notificacion_etapaFinalizada = async (tipo, nombreEmpresa, email) => {
     // CARGAR DE INFORMES - ETAPA EVALUACIÓN EMPRESARIAL POR SISTEMAS
     if (tipo == "soluciones") {
         const tipoInforme = "Sistema de Soluciones y Valor"
-        asunto = "Se ha generado un nuevo informe de ";
+        asunto = "Se ha generado un nuevo informe en la etapa Evaluación Empresarial";
         const link = "analisis-de-negocio";
         template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
     if (tipo == "gestión") {
         const tipoInforme = "Sistema de Gestión de Recursos"
-        asunto = "Se ha generado un nuevo informe de ";
+        asunto = "Se ha generado un nuevo informe en la etapa Evaluación Empresarial";
         const link = "analisis-de-negocio";
         template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
     if (tipo == "operacional") {
         const tipoInforme = "Sistema Operacional"
-        asunto = "Se ha generado un nuevo informe de ";
+        asunto = "Se ha generado un nuevo informe en la etapa Evaluación Empresarial";
         const link = "analisis-de-negocio";
         template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
     if (tipo == "comercialización") {
         const tipoInforme = "Sistema de Comercialización"
-        asunto = "Se ha generado un nuevo informe de ";
+        asunto = "Se ha generado un nuevo informe en la etapa Evaluación Empresarial";
         const link = "analisis-de-negocio";
         template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
