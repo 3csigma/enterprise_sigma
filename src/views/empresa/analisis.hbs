@@ -5,14 +5,14 @@
         <div class="card avtivity-card"
           style="background: transparent !important;border: none !important; box-shadow: none !important">
           <div class="card-body">
-            <h2 style="color: #000; font-weight: bold;">Analicemos tu empresa en 4 sistemas</h2>
-            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios que servirán para elevar el desarrollo corporativo de tu empresa, con esto se podrán identificar las falencias y pasos a seguir para crear las tareas que permitirán corregir los problemas e impulsar tu empresa a llegar al próximo nivel, se analizará tu empresa través de los sistemas:
+            <h2 style="color: #000; font-weight: bold;">Evaluemos tu empresa en 4 sistemas</h2>
+            <p style="text-align: justify;margin-top: 2em;color: #000">A continuación te presentamos los cuestionarios que servirán para elevar el desarrollo corporativo de tu empresa, con esto se podrán identificar las oportunidades de mejora y pasos a seguir para crear las tareas que permitirán corregir los problemas e impulsar tu empresa a llegar al próximo nivel, se analizará tu empresa través de los sistemas:
             </p>
             <p style="color: #000; font-weight: bold;">
-              <i class="fa-solid fa-box"></i> Producto</li></br>
-              <i class="fa-solid fa-user-tie"></i> Gestión</br>
-              <i class="fa-solid fa-gear"></i> Corporativo</br>
-              <i class="fa-solid fa-bullhorn"></i> Marketing</br>
+              <i class="fa-solid fa-box"></i> Soluciones y Valor</li></br>
+              <i class="fa-solid fa-user-tie"></i> Gestión de Recursos</br>
+              <i class="fa-solid fa-gear"></i> Operacional</br>
+              <i class="fa-solid fa-bullhorn"></i> Comercialización</br>
             </p>
           </div>
         </div>
@@ -76,7 +76,7 @@
                   {{!-- SISTEMA GESTIÓN DE RECURSOS (ADMINISTRACIÓN) --}}
                   <tr>
                     <td>{{#if cuestionario.administracion.fecha}}{{cuestionario.administracion.fecha}}{{else}}N/A{{/if}}</td>
-                    <td>Cuestionario sistema de gestión</td>
+                    <td>Cuestionario sistema de gestión de recursos</td>
                     <td>
                       <span class="badge light {{cuestionario.administracion.color}}">{{cuestionario.administracion.texto}}</span>
                     </td>
@@ -230,9 +230,9 @@
 
     {{#if etapaCompleta.upgrade2}}
     Swal.fire({
-        title: '<strong>Diagnóstico finalizado</strong>',
+        title: '<strong>Valoración inicial finalizada</strong>',
           icon: 'info',
-          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes de diagnóstico, seguirán disponibles aunque no lo hagas.
+          html: `Si deseas seguir a la siguiente etapa de la mentoría realiza upgrade de tu programa. Tus recursos y reportes, seguirán disponibles aunque no lo hagas.
           <div class="d-flex justify-content-center align-items-center mt-2">
             <a type="button" href="https://3csigma.com/programa-business/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Business</a>
             <a type="button" href="https://3csigma.com/programa-enterprise/" target="_blank" class="swal2-confirm swal2-styled color_gradient text-white">Programa Enterprise</a>

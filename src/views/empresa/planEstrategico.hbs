@@ -55,10 +55,10 @@
                         <p style="text-align: justify;margin-top: 2em;color: #000">A continuación puedes crear un
                             listado de tareas que te servirán para mejorar tu empresa, a través de las sistemas:</p>
                         <p style="color: #000; font-weight: bold;">
-                            <i class="fa-solid fa-box"></i> Producto ({{dimObj.d1}} tareas)</li></br>
-                            <i class="fa-solid fa-user-tie"></i> Gestión ({{dimObj.d2}} tareas)</br>
-                            <i class="fa-solid fa-gear"></i> Corporativo ({{dimObj.d3}} tareas)</br>
-                            <i class="fa-solid fa-bullhorn"></i> Marketing ({{dimObj.d4}} tareas)</br>
+                            <i class="fa-solid fa-box"></i> Solución y Valor ({{dimObj.d1}} tareas)</li></br>
+                            <i class="fa-solid fa-user-tie"></i> Gestión de Recursos ({{dimObj.d2}} tareas)</br>
+                            <i class="fa-solid fa-gear"></i> Operacional ({{dimObj.d3}} tareas)</br>
+                            <i class="fa-solid fa-bullhorn"></i> Comercialización ({{dimObj.d4}} tareas)</br>
                         </p>
                     </div>
                 </div>
@@ -71,7 +71,7 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Rendimiento de la Empresa</h4>
+                                <h4 class="card-title">Rendimiento Empresarial</h4>
                             </div>
                             <div class="card-body">
                                 {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
@@ -82,10 +82,10 @@
                                         <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Ventas</span>
                                     </div>
                                     <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Compras</span>
+                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Costos Fijos</span>
                                     </div>
                                     <div class="col-sm-4">
-                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Gastos</span>
+                                        <i class="fa fa-square" style="color: #812082"></i> <span class="small-text">Costos Variables</span>
                                     </div>
                                     <br>
                                     <div class="card-body" style="margin-left: -50px;">
@@ -203,13 +203,13 @@
                                     placeholder="Escriba un título..">
                             </div>
                             <div class="form-group col-md-6">
-                                <label for="dimension">Dimensión *</label><br>
+                                <label for="dimension">Sistema *</label><br>
                                 <select id="dimension" class="mr-sm-2 default-select text-center w-100" tabindex="-98" required>
                                     <option value="">Escoja un sistema...</option>
-                                    <option value="Producto">Producto</option>
-                                    <option value="Administración">Gestión</option>
-                                    <option value="Operaciones">Corporativo</option>
-                                    <option value="Marketing">Marketing</option>
+                                    <option value="Soluciones y Valor">Soluciones y Valor</option>
+                                    <option value="Gestión de Recursos">Gestión de Recursos</option>
+                                    <option value="Operacional">Operacional</option>
+                                    <option value="Comercialización">Comercialización</option>
                                 </select>
                             </div>
                 
@@ -600,7 +600,7 @@
             {{#if tutoriales.etapa }}
                 //POPUP CON TUTORIAL
                 Swal.fire({
-                    title: '<strong>Bienvenido a Planificación Estratégica</strong>',
+                    title: '<strong>Bienvenido a Planificación y Diseño de Soluciones</strong>',
                     // icon: 'info',
                     html: '<video controls style="width: 91%;">' + 
                         '  <source src="https://3csigma.com/app_public_files/videos_tutoriales/tutorial_planificacionEstrategica.mp4" type="video/mp4">' +

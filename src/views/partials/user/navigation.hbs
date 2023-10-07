@@ -50,9 +50,9 @@
           <div class="header-left">
             <div class="dashboard_bar">
               {{#if itemDashboard}}Dashboard{{/if}}
-              {{#if itemDiagnostico}}Valoración situacional{{/if}}
+              {{#if itemDiagnostico}}Valoración inicial{{/if}}
               {{#if itemAnalisis}}Evaluación empresarial{{/if}}
-              {{#if itemEstrategico}}Planificación estratégica{{/if}}
+              {{#if itemEstrategico}}Planificación y Diseño de Soluciones{{/if}}
               {{#if itemRecursos}}Material{{/if}}
               {{#if itemModulo}}Módulos{{/if}}
               {{#if empresa.foto}}Perfil{{/if}}
@@ -154,10 +154,10 @@
 
           {{#if etapaCompleta.e1}}
             <i class="fa-solid fa-check" style="color:#6EBB0B"></i>
-            <span class="nav-text" style="color: #6EBB0B">Valoración situacional</span>
+            <span class="nav-text" style="color: #6EBB0B">Valoración inicial</span>
             {{else}}
             <i class="fa-solid fa-gauge-high"></i>
-            <span class="nav-text">Valoración situacional</span>
+            <span class="nav-text">Valoración inicial</span>
           {{/if}}
           </a>
         </li>
@@ -193,10 +193,10 @@
 
             {{#if etapaCompleta.e4}}
             <i class="fa-solid fa-check" style="color:#6EBB0B"></i>
-            <span class="nav-text" style="color: #6EBB0B">Planificación estratégica</span>
+            <span class="nav-text" style="color: #6EBB0B">Planificación y D.S.</span>
             {{else}}
             <i class="fa-solid fa-lightbulb"></i>
-            <span class="nav-text">Planificación estratégica</span>
+            <span class="nav-text">Planificación y D.S.</span>
             {{/if}}
           </a>
         </li>

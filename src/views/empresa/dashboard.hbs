@@ -63,7 +63,7 @@
                                         </svg>
                                     </span>
                                     <div class="media-body">
-                                        <p class="fs-14 mb-2">Valoración situacional</p>
+                                        <p class="fs-14 mb-2">Valoración inicial</p>
                                         <span class="title text-black font-w600">{{porcentajeEtapa1}}%</span>
                                     </div>
                                 </div>
@@ -126,7 +126,7 @@
 
                                     </span>
                                     <div class="media-body">
-                                        <p class="fs-14 mb-2">Planificación estratégica</p>
+                                        <p class="fs-14 mb-2">Planificación y Diseño de Soluciones</p>
                                         <span class="title text-black font-w600">{{porcentajeEtapa4}}%</span>
                                     </div>
                                 </div>
@@ -187,7 +187,7 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Rendimiento de la Empresa</h4>
+                                <h4 class="card-title">Rendimiento Empresarial</h4>
                             </div>
                             <div class="card-body">
                                 {{!-- VALIDANDO SI LA EMPRESA ES NUEVA O ESTABLECIDA --}}
@@ -238,7 +238,7 @@
                     <div class="col-xl-12">
                         <div class="card">
                             <div class="card-header">
-                                <h4 class="card-title">Tareas recientes de Planificación Estratégica</h4>
+                                <h4 class="card-title">Tareas recientes de Planificación y Diseño de Soluciones</h4>
                             </div>
                             <div class="card-body">
                                 <div class="table-responsive">
@@ -354,11 +354,9 @@
                                 {{!-- NAVEGACIÓN POR FECHAS --}}
                                 <nav class="d-flex justify-content-center items-align-center mt-4">
                                     <ul class="pagination">
-                                        {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
                                         <li class="page-item fecha1 active"><a class="page-link" data-target="1" onclick="changePageChart(this)">{{etapa1.fecha1}}</a>
                                         </li>
                                         <li class="page-item fecha2"><a class="page-link" data-target="2" onclick="changePageChart(this)">{{etapa1.fecha2}}</a></li>
-                                        {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
                                     </ul>
                                 </nav>
                                 {{/if}}

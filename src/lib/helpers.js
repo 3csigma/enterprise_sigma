@@ -837,10 +837,10 @@ helpers.eliminarDatos = async (tabla, extra) => {
 // FUNCIÓN MULTIPLE (PLAN ESTRATÉGICO)
 helpers.tareasGenerales = async (empresa, fechaActual) => {
     const tareas = await helpers.consultarTareas(empresa, fechaActual)
-    let d1 = tareas.todas.filter(i => i.dimension == 'Producto');
-    let d2 = tareas.todas.filter(i => i.dimension == 'Administración');
-    let d3 = tareas.todas.filter(i => i.dimension == 'Operaciones');
-    let d4 = tareas.todas.filter(i => i.dimension == 'Marketing');
+    let d1 = tareas.todas.filter(i => i.dimension == 'Soluciones y Valor');
+    let d2 = tareas.todas.filter(i => i.dimension == 'Gestión de Recursos');
+    let d3 = tareas.todas.filter(i => i.dimension == 'Operacional');
+    let d4 = tareas.todas.filter(i => i.dimension == 'Comercialización');
 
     const estado1 = d1.filter(x => x.estado == 'Completada'); 
     const estado2 = d2.filter(x => x.estado == 'Completada'); 
@@ -856,6 +856,92 @@ helpers.tareasGenerales = async (empresa, fechaActual) => {
     ]
 
     return { tareas, d1, d2, d3, d4, listo };
+}
+
+/******************************************************************** */
+// FUNCIÓNES PARA LOS CUESTIONARIOS
+helpers.obtenerRespuestasCuestionario = async (destino, datos) => {
+    destino.rubro = datos.rubro;
+    destino.ofrece = Object.values(JSON.parse(datos.empresa_ofrece)).join('. ');
+    const respuestasKeys = [
+        "productos_servicios",
+        "propuesta_valor",
+        "recursos_administrativos",
+        "recursos_financieros",
+        "recursos_humano",
+        "planeacion_estrategica",
+        "procesos_operativos",
+        "integracion",
+        "modelo_negocio",
+        "asistencia",
+        "marketing",
+        "ventas"
+    ];
+
+    console.log("Datos:: ", datos);
+
+    respuestasKeys.forEach((key) => {
+        destino[key] = JSON.parse(datos[key])
+    });
+
+    return destino;
+}
+
+// ENVIAR NOTIFICACIÓN POR CORREO PARA CUÁNDO SE FINALIZAN LAS ETAPAS
+helpers.notificacion_etapaFinalizada = async (tipo, nombreEmpresa) => {
+    let asunto = "";
+    let template = ""
+    const texto = "Has finalizado la etapa exitosamente";
+    // ETAPAS FINALIZADAS
+    if (tipo == "valoración") {
+        asunto = "Valoración Inicial Finalizada";
+        const etapa = "Valoración Inicial";
+        const link = "diagnostico-de-negocio";
+        template = etapaFinalizadaHTML(nombreEmpresa, etapa, texto, link);
+    }
+    if (tipo == "evaluación") {
+        asunto = "Evaluación Empresarial Finalizada";
+        const etapa = "Evaluación Empresarial";
+        const link = "analisis-de-negocio";
+        template = etapaFinalizadaHTML(nombreEmpresa, etapa, texto, link);
+    }
+    if (tipo == "planificación") {
+        asunto = "Planificación Y Diseño De Soluciones Finalizada";
+        const etapa = "Planificación Y Diseño De Soluciones";
+        const link = "plan-estrategico";
+        template = etapaFinalizadaHTML(nombreEmpresa, etapa, texto, link);
+    }
+
+    // CARGAR DE INFORMES - ETAPA EVALUACIÓN EMPRESARIAL POR SISTEMAS
+    if (tipo == "soluciones") {
+        const tipoInforme = "Sistema de Soluciones y Valor"
+        asunto = "Se ha generado un nuevo informe de ";
+        template = informesHTML(nombreEmpresa, tipoInforme);
+    }
+    if (tipo == "gestión") {
+        const tipoInforme = "Sistema de Gestión de Recursos"
+        asunto = "Se ha generado un nuevo informe de ";
+        template = informesHTML(nombreEmpresa, tipoInforme);
+    }
+    if (tipo == "operacional") {
+        const tipoInforme = "Sistema Operacional"
+        asunto = "Se ha generado un nuevo informe de ";
+        template = informesHTML(nombreEmpresa, tipoInforme);
+    }
+    if (tipo == "comercialización") {
+        const tipoInforme = "Sistema de Comercialización"
+        asunto = "Se ha generado un nuevo informe de ";
+        template = informesHTML(nombreEmpresa, tipoInforme);
+    }
+
+    // Enviar Email
+    const resultEmail = await sendEmail(email, asunto, template);
+
+    if (resultEmail == false) {
+        console.log("\n<<<<< Ocurrio un error inesperado al enviar el email de ETAPA FINALIZADA >>>> \n");
+    } else {
+        console.log("\n<<<<< Se ha notificado la subida de un informe al email ETAPA FINALIZADA >>>>>\n");
+    }
 }
 
 module.exports = helpers;

@@ -106,9 +106,9 @@
                                             <label>Etapa <span class="text-red" id="txtNulo2" style="display: none;">*Obligatorio*</span></label>
                                             <select id="etapaConsultor" class="selectpicker" onchange="validar_nivelEtapa()">
                                                 <option value="0" selected>Selecciona una opción</option>
-                                                <option value="Diagnóstico">Valoración Situacional</option>
+                                                <option value="Diagnóstico">Valoración Inicial</option>
                                                 <option value="Análisis">Evaluación Empresarial</option>
-                                                <option value="Plan_Estratégico">Planificación Estratégica</option>
+                                                <option value="Plan_Estratégico">Planificación y D.S.</option>
                                             </select>
                                         </div>
 
@@ -348,7 +348,7 @@
                                         <div class="col-sm-12">
                                             <div class="form-group" style="text-align: left !important">
                                                 <label
-                                                    style="font-size:22px;color:#000;font-weight:600;margin-bottom: 20px;">Rendimiento de la Empresa</label>
+                                                    style="font-size:22px;color:#000;font-weight:600;margin-bottom: 20px;">Rendimiento Empresarial</label>
                                             </div>
                                         </div>
                                         {{#if jsonRendimiento}}
@@ -406,11 +406,11 @@
                         box-shadow: 0px 12px 23px 0px #ededed">
                     <div class="custom-tab-1">
                         <ul class="nav nav-tabs">
-                            <li class="nav-item"><a href="#empresa" data-toggle="tab" class="nav-link active show">Empresa</a></li>
+                            <li class="nav-item"><a href="#empresa" data-toggle="tab" class="nav-link active show">Perfil Empresa</a></li>
                             {{#if botonesEtapas.uno}}
-                            <li class="nav-item"><a href="#diagnostico" data-toggle="tab" style="{{tab_tareaAsignada}}" class="nav-link" id="item-diagnostico">Valoración Situacional</a></li>
+                            <li class="nav-item"><a href="#diagnostico" data-toggle="tab" style="{{tab_tareaAsignada}}" class="nav-link" id="item-diagnostico">Valoración Inicial</a></li>
                             {{else}}
-                            <li class="nav-item"><a href="#diagnostico" data-toggle="tab" class="nav-link" id="item-diagnostico">Valoración Situacional</a></li>
+                            <li class="nav-item"><a href="#diagnostico" data-toggle="tab" class="nav-link" id="item-diagnostico">Valoración Inicial</a></li>
                             {{/if}}
                             {{#if botonesEtapas.dos}}
                             <li class="nav-item"><a href="#analisis" data-toggle="tab" style="{{tab_tareaAsignada}}" class="nav-link" id="item-analisis">Evaluación Empresarial</a></li>
@@ -418,9 +418,9 @@
                             <li class="nav-item"><a href="#analisis" data-toggle="tab" class="nav-link" id="item-analisis">Evaluación Empresarial</a></li>
                             {{/if}}
                             {{#if botonesEtapas.plan2}}
-                            <li class="nav-item"><a href="#plan-estrategico" data-toggle="tab" style="{{tab_tareaAsignada}}" class="nav-link" id="item-estrategico">Planificación Estratégica</a></li>
+                            <li class="nav-item"><a href="#plan-estrategico" data-toggle="tab" style="{{tab_tareaAsignada}}" class="nav-link" id="item-estrategico">Planificación y Diseño de Soluciones</a></li>
                             {{else}}
-                            <li class="nav-item"><a href="#plan-estrategico" data-toggle="tab" class="nav-link" id="item-estrategico">Planificación Estratégica</a></li>
+                            <li class="nav-item"><a href="#plan-estrategico" data-toggle="tab" class="nav-link" id="item-estrategico">Planificación y Diseño de Soluciones</a></li>
                             {{/if}}
                         </ul>
                     </div>
@@ -690,7 +690,7 @@
 
                                                     {{#if rendimiento.op}}
                                                     <div class="d-flex justify-content-center align-items-center mb-3 mt-4">
-                                                        <span>Rendimiento Operativo Empresarial (ROE): <strong>{{rendimiento.op}}% </strong></span>
+                                                        <span>Rendimiento Operativo Empresarial (ROE): </strong></span>
                                                     </div>
                                                     {{/if}}
                                                 </div>
@@ -709,11 +709,21 @@
                                                 {{!-- COLORES INFORMATIVOS --}}
                                                 <div class="row d-flex justify-content-center align-items-center mt-4 mb-4">
                                                     <div class="pl-2">
-                                                        <i class="fa fa-square" style="color: #50368C"></i> <span class="small-text">Percepción Empresa</span>
+                                                        <i class="fa fa-square" style="color: #50368C"></i>
+                                                        <span class="small-text">Percepción Empresa 
+                                                            {{#if rendimiento.op}}
+                                                            <strong>({{rendimiento.op}}%)</strong>
+                                                            {{/if}}
+                                                        </span>
                                                     </div>
                                                     {{#if rendimiento.pe1}}
                                                     <div class="pl-2">
-                                                        <i class="fa fa-square" style="color: #FED061"></i> <span class="small-text">Percepción Estadística</span>
+                                                        <i class="fa fa-square" style="color: #FED061"></i>
+                                                        <span class="small-text">Percepción Estadística
+                                                            {{#if rendimiento.op_pe}}
+                                                            <strong>({{rendimiento.op_pe}}%)</strong>
+                                                            {{/if}}
+                                                        </span>
                                                     </div>
                                                     {{/if}}
                                                 </div>
@@ -723,11 +733,9 @@
                                                 {{!-- NAVEGACIÓN POR FECHAS --}}
                                                 <nav class="d-flex justify-content-center items-align-center mt-4">
                                                     <ul class="pagination">
-                                                        {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
                                                         <li class="page-item fecha1 active"><a class="page-link" data-target="1" onclick="changePageChart(this)">{{etapa1.fecha1}}</a>
                                                         </li>
                                                         <li class="page-item fecha2"><a class="page-link" data-target="2" onclick="changePageChart(this)">{{etapa1.fecha2}}</a></li>
-                                                        {{!-- <li class="page-item page-indicator"><a class="page-link" href="javascript:void()">*</a></li> --}}
                                                     </ul>
                                                 </nav>
                                                 {{/if}}
@@ -1139,17 +1147,17 @@
                                                     </thead>
                                                     <tbody>
                                                         <tr>
-                                                            <td>{{#if dimProducto}}{{dimProducto.fecha}}{{else}}N/A{{/if}}</td>
-                                                            <td>Cuestionario sistema de producto</td>
+                                                            <td>{{#if sistema.soluciones}}{{sistema.soluciones.fecha}}{{else}}N/A{{/if}}</td>
+                                                            <td>Cuestionario sistema soluciones y valor</td>
                                                             <td>
-                                                                {{#if dimProducto}}
+                                                                {{#if sistema.soluciones}}
                                                                 <span class="badge light badge-success">Completo</span>
                                                                 {{else}}
                                                                 <span class="badge light badge-warning">Pendiente</span>
                                                                 {{/if}}
                                                             </td>
                                                             <td>
-                                                                {{#if dimProducto}}
+                                                                {{#if sistema.soluciones}}
                                                                 <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                                                                     data-target="#modalDimProducto">
                                                                     <i class="fa fa-search"></i></a>
@@ -1171,17 +1179,17 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td>{{#if dimAdmin}}{{dimAdmin.fecha}}{{else}}N/A{{/if}}</td>
-                                                            <td>Cuestionario sistema de gestión</td>
+                                                            <td>{{#if sistema.gestion}}{{sistema.gestion.fecha}}{{else}}N/A{{/if}}</td>
+                                                            <td>Cuestionario sistema de gestión de recursos</td>
                                                             <td>
-                                                                {{#if dimAdmin}}
+                                                                {{#if sistema.gestion}}
                                                                 <span class="badge light badge-success">Completo</span>
                                                                 {{else}}
                                                                 <span class="badge light badge-warning">Pendiente</span>
                                                                 {{/if}}
                                                             </td>
                                                             <td>
-                                                                {{#if dimAdmin}}
+                                                                {{#if sistema.gestion.fecha}}
                                                                 <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                                                                     data-target="#modalDimAdministracion" style="border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
@@ -1203,17 +1211,17 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td>{{#if dimOperacion}}{{dimOperacion.fecha}}{{else}}N/A{{/if}}</td>
-                                                            <td>Cuestionario sistema corporativo</td>
+                                                            <td>{{#if sistema.operacional}}{{sistema.operacional.fecha}}{{else}}N/A{{/if}}</td>
+                                                            <td>Cuestionario sistema operacional</td>
                                                             <td>
-                                                                {{#if dimOperacion}}
+                                                                {{#if sistema.operacional}}
                                                                 <span class="badge light badge-success">Completo</span>
                                                                 {{else}}
                                                                 <span class="badge light badge-warning">Pendiente</span>
                                                                 {{/if}}
                                                             </td>
                                                             <td>
-                                                                {{#if dimOperacion}}
+                                                                {{#if sistema.operacional}}
                                                                 <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                                                                     data-target="#modalDimOperaciones" style="color: white; border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
@@ -1235,17 +1243,17 @@
                                                             </td>
                                                         </tr>
                                                         <tr>
-                                                            <td>{{#if dimMarketing}}{{dimMarketing.fecha}}{{else}}N/A{{/if}}</td>
-                                                            <td>Cuestionario sistema de marketing</td>
+                                                            <td>{{#if sistema.comercializacion}}{{sistema.comercializacion.fecha}}{{else}}N/A{{/if}}</td>
+                                                            <td>Cuestionario sistema comercialización</td>
                                                             <td>
-                                                                {{#if dimMarketing}}
+                                                                {{#if sistema.comercializacion}}
                                                                 <span class="badge light badge-success">Completo</span>
                                                                 {{else}}
                                                                 <span class="badge light badge-warning">Pendiente</span>
                                                                 {{/if}}
                                                             </td>
                                                             <td>
-                                                                {{#if dimMarketing}}
+                                                                {{#if sistema.comercializacion}}
                                                                 <a class="btn color_tertiary shadow btn-xs sharp text-white" data-toggle="modal"
                                                                     data-target="#modalDimMarketing" style="border-color: #FED061">
                                                                     <i class="fa fa-search"></i></a>
@@ -1537,11 +1545,11 @@
                                             <div class="form-group col-md-6">
                                                 <label for="dimension">Sistema *</label><br>
                                                 <select id="dimension" class="mr-sm-2 default-select text-center" tabindex="-98" required>
-                                                    <option value="">Escoja una..</option>
-                                                    <option value="Producto">Producto</option>
-                                                    <option value="Administración">Gestión</option>
-                                                    <option value="Operaciones">Corporativo</option>
-                                                    <option value="Marketing">Marketing</option>
+                                                    <option value="">Escoja un sistema..</option>
+                                                    <option value="Soluciones y Valor">Soluciones y Valor</option>
+                                                    <option value="Gestión de Recursos">Gestión de Recursos</option>
+                                                    <option value="Operacional">Operacional</option>
+                                                    <option value="Comercialización">Comercialización</option>
                                                 </select>
                                             </div>
                             
@@ -1569,25 +1577,25 @@
                                 {{#if jsonDim}}
                                 <div class="card">
                                     <div class="card-header">
-                                        <h4 class="card-title" style="margin:0 auto">Desarrollo de actividades del plan estratégico</h4>
+                                        <h4 class="card-title" style="margin:0 auto">Desarrollo de actividades</h4>
                                     </div>
                                     <div class="col-xl-12">
                                         <input type="hidden" id="jsonDimCompletada" value="{{jsonDim}}">
                                         <div class="row">
                                             <div class="col-3 text-black" id="div-Producto">
-                                                <h4 class="my-4 mx-auto text-center text-black">Producto</h4>
+                                                <h4 class="my-4 mx-auto text-center text-black">Soluciones y Valor</h4>
                                                 <div id="chart-dimProducto" class="d-flex justify-content-center"></div>
                                             </div>
                                             <div class="col-3" id="div-Administracion">
-                                                <h4 class="my-4 mx-auto text-center text-black">Administración</h4>
+                                                <h4 class="my-4 mx-auto text-center text-black">Gestión de Recursos</h4>
                                                 <div id="chart-dimAdministracion" class="d-flex justify-content-center"></div>
                                             </div>
                                             <div class="col-3" id="div-Operaciones">
-                                                <h4 class="my-4 mx-auto text-center text-black">Operaciones</h4>
+                                                <h4 class="my-4 mx-auto text-center text-black">Operacional</h4>
                                                 <div id="chart-dimOperaciones" class="d-flex justify-content-center"></div>
                                             </div>
                                             <div class="col-3" id="div-Marketing">
-                                                <h4 class="my-4 mx-auto text-center text-black">Marketing</h4>
+                                                <h4 class="my-4 mx-auto text-center text-black">Comercialización</h4>
                                                 <div id="chart-dimMarketing" class="d-flex justify-content-center"></div>
                                             </div>
                                         </div>
@@ -1780,16 +1788,16 @@
         {{> modals/nuevosProyectos}}
         {{/if}}
 
-        {{#if dimProducto}}
+        {{#if sistema.soluciones}}
         {{> modals/dimensionProducto}}
         {{/if}}
-        {{#if dimAdmin}}
+        {{#if sistema.gestion}}
         {{> modals/dimensionAdministracion}}
         {{/if}}
-        {{#if dimOperacion}}
+        {{#if sistema.operacional}}
         {{> modals/dimensionOperaciones}}
         {{/if}}
-        {{#if dimMarketing}}
+        {{#if sistema.comercializacion}}
         {{> modals/dimensionMarketing}}
         {{/if}}
 

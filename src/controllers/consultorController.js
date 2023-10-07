@@ -290,6 +290,8 @@ consultorController.guardarAnalisisProducto = async (req, res) => {
         const informeAI = { empresa: id_empresa, tipo: 'Análisis producto', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
+            // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
+            await helpers.notificacion_nuevoInforme('soluciones', empresa.nombre_empresa)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
@@ -324,10 +326,8 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
     const preguntas_rHumano = [...preguntas2.recurso_humano]
 
     // Verificando si existen registros Análisis de empresa en la Base de datos
-    let empresa = await consultarDatos('empresas')
+    let empresa = (await consultarDatos('empresas')).find(item => item.codigo == codigoEmpresa)
     const analisis_empresa = await consultarDatos('analisis_empresa');
-
-    empresa = empresa.find(item => item.codigo == codigoEmpresa)
 
     if (empresa) {
         let id_empresa = empresa.id_empresas;
@@ -487,6 +487,8 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
         const informeAI = { empresa: id_empresa, tipo: 'Análisis administración', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
+            // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
+            await helpers.notificacion_nuevoInforme('gestión', empresa.nombre_empresa)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
@@ -523,9 +525,8 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
     const preguntas_modeloNegocio = [...preguntas2.modelo_negocio]
 
     // Verificando si existen registros Análisis de empresa en la Base de datos
-    let empresa = await consultarDatos('empresas')
+    let empresa = (await consultarDatos('empresas')).find(item => item.codigo == codigoEmpresa)
     const analisis_empresa = await consultarDatos('analisis_empresa');
-    empresa = empresa.find(item => item.codigo == codigoEmpresa)
 
     if (empresa) {
         let id_empresa = empresa.id_empresas;
@@ -707,6 +708,8 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
         const informeAI = { empresa: id_empresa, tipo: 'Análisis operación', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
+            // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
+            await helpers.notificacion_nuevoInforme('operacional', empresa.nombre_empresa)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
@@ -741,10 +744,8 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
     const preguntas_ventas = [...preguntas2.ventas]
 
     // Verificando si existen registros Análisis de empresa en la Base de datos
-    let empresa = await consultarDatos('empresas')
+    let empresa = (await consultarDatos('empresas')).find(item => item.codigo == codigoEmpresa)
     const analisis_empresa = await consultarDatos('analisis_empresa');
-
-    empresa = empresa.find(item => item.codigo == codigoEmpresa)
 
     if (empresa) {
         let id_empresa = empresa.id_empresas;
@@ -913,6 +914,8 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
         const informeAI = { empresa: id_empresa, tipo: 'Análisis marketing', informe: resp, fecha: new Date().toLocaleDateString("en-US") }
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
+            // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
+            await helpers.notificacion_nuevoInforme('comercialización', empresa.nombre_empresa)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
