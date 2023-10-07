@@ -531,16 +531,6 @@ empresaController.acuerdoCheck = async (req, res) => {
 empresaController.diagnostico = async (req, res) => {
   // ID Empresa Global => id_empresa
   // Consultor Asignado => consulAsignado
-
-  /** Consultando si el usuario ya firmó el acuerdo de confidencialidad */
-  let acuerdo = await helpers.consultarDatos("acuerdo_confidencial");
-  acuerdo = acuerdo.find((x) => x.id_empresa == id_empresa);
-  if (acuerdo) {
-    if (acuerdo.estadoAcuerdo == 2) {
-      modalAcuerdo = false;
-    }
-  }
-
   const cuestionario = {
     fichaCliente: {},
     diagnostico: { respuestas: {} },
@@ -743,6 +733,7 @@ empresaController.diagnostico = async (req, res) => {
         cuestionario.establecido = true;
         req.session.etapaCompleta.verAnalisis = true;
         btnBorrar_establecida = true;
+        req.session.etapaCompleta.e1 = true;
 
         if (req.user.programa == 1) {
           req.session.etapaCompleta.gratis = true;
@@ -990,7 +981,6 @@ empresaController.analisis = async (req, res) => {
     cuestionario.marketing.btnDisabled = true;
   }
 
-  // let sistemas_ = { s1:false, s2:false, s3:false, s4:false }
   const analisis_empresa = (await helpers.consultarDatos("analisis_empresa")).find(x => x.id_empresa == id_empresa);
   if (analisis_empresa) {
     // SISTEMA SOLUCIONES Y VALOR (PRODUCTO)
@@ -1001,7 +991,6 @@ empresaController.analisis = async (req, res) => {
       cuestionario.producto.texto = "Completado";
       cuestionario.producto.btnEdit = false;
       sistema.soluciones = a;
-      // sistemas_.s1 = true;
     }
     // SISTEMA GESTIÓN DE RECURSOS (ADMINISTRACIÓN)
     if (analisis_empresa.administracion) {
@@ -1011,7 +1000,6 @@ empresaController.analisis = async (req, res) => {
       cuestionario.administracion.texto = "Completado";
       cuestionario.administracion.btnEdit = false;
       sistema.gestion = a;
-      // sistemas_.s2 = true;
     }
     // SISTEMA OPERACIONAL (OPERACIÓN)
     if (analisis_empresa.operacion) {
@@ -1021,7 +1009,6 @@ empresaController.analisis = async (req, res) => {
       cuestionario.operacion.texto = "Completado";
       cuestionario.operacion.btnEdit = false;
       sistema.operacional = a;
-      // sistemas_.s3 = true;
     }
     // SISTEMA COMERCIALIZACIÓN (MARKETING)
     if (analisis_empresa.marketing) {
@@ -1031,17 +1018,26 @@ empresaController.analisis = async (req, res) => {
       cuestionario.marketing.texto = "Completado";
       cuestionario.marketing.btnEdit = false;
       sistema.comercializacion = a;
-      // sistemas_.s4 = true;
     }
-  }
+    
+    // Verificar si todas los sistemas están completados (true)
+    const sistemasConDatos = Object.values(sistema).every(obj => Object.keys(obj).length > 0);
+    console.log("\nsistemasCompletados:: ", sistemasConDatos);
+    console.log("\n");
+  
+    if (sistemasConDatos) {
+      req.session.etapaCompleta.e2 = true;
+      req.session.etapaCompleta.verEstrategico = true;
+      console.log("empresa.evaluacion_finalizada:: ", empresa.evaluacion_finalizada)
+      if (empresa.evaluacion_finalizada == 0) {
+        // ENVIAR NOTIFICACIÓN AL EMAIL ETAPA FINALIZADA
+        await helpers.notificacion_etapaFinalizada('evaluación', empresa.nombre_empresa, empresa.email)
+        const datos = { evaluacion_finalizada: 1 }
+        await helpers.actualizarDatos('empresas', datos, `WHERE id_empresas = ${empresa.id_empresas}`)
+      }
 
-  // Verificar si todas los sistemas están completados (true)
-  const sistemasCompletados = Object.values(sistema).every(prop => prop);
-  if (sistemasCompletados) {
-    etapaCompleta.e2 = true;
-    etapaCompleta.verEstrategico = true;
-    // ENVIAR NOTIFICACIÓN AL EMAIL ETAPA FINALIZADA
-    await helpers.notificacion_nuevoInforme('evaluación', empresa.nombre_empresa)
+    }
+
   }
 
   /************************************************************************************* */
@@ -1097,8 +1093,6 @@ empresaController.analisis = async (req, res) => {
     "marketing": [...preguntas2.marketing],
     "ventas": [...preguntas2.ventas],
   }
-
-  req.session.etapaCompleta = etapaCompleta;
 
   res.render("empresa/analisis", {
     user_dash: true,

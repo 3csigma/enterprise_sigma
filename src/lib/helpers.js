@@ -7,7 +7,7 @@ const iv = crypto.randomBytes(16);
 const multer = require('multer');
 const path = require('path');
 
-const { sendEmail, proximoPagoPendienteHTML, tareasRetrasadasHTML } = require('../lib/mail.config')
+const { sendEmail, proximoPagoPendienteHTML, tareasRetrasadasHTML, informesHTML, etapaFinalizadaHTML } = require('../lib/mail.config')
 const helpers = {}
 
 // Encriptar clave
@@ -887,11 +887,11 @@ helpers.obtenerRespuestasCuestionario = async (destino, datos) => {
     return destino;
 }
 
-// ENVIAR NOTIFICACIÓN POR CORREO PARA CUÁNDO SE FINALIZAN LAS ETAPAS
-helpers.notificacion_etapaFinalizada = async (tipo, nombreEmpresa) => {
+// ENVIAR NOTIFICACIÓN POR CORREO PARA CUÁNDO SE FINALIZAN LAS ETAPAS o NUEVOS INFORMES DE EVALUACIÓN
+helpers.notificacion_etapaFinalizada = async (tipo, nombreEmpresa, email) => {
     let asunto = "";
     let template = ""
-    const texto = "Has finalizado la etapa exitosamente";
+    const texto = "Se ha generado el informe general para esta etapa, ingresa a tu cuenta para revisarlo.";
     // ETAPAS FINALIZADAS
     if (tipo == "valoración") {
         asunto = "Valoración Inicial Finalizada";
@@ -916,31 +916,35 @@ helpers.notificacion_etapaFinalizada = async (tipo, nombreEmpresa) => {
     if (tipo == "soluciones") {
         const tipoInforme = "Sistema de Soluciones y Valor"
         asunto = "Se ha generado un nuevo informe de ";
-        template = informesHTML(nombreEmpresa, tipoInforme);
+        const link = "analisis-de-negocio";
+        template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
     if (tipo == "gestión") {
         const tipoInforme = "Sistema de Gestión de Recursos"
         asunto = "Se ha generado un nuevo informe de ";
-        template = informesHTML(nombreEmpresa, tipoInforme);
+        const link = "analisis-de-negocio";
+        template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
     if (tipo == "operacional") {
         const tipoInforme = "Sistema Operacional"
         asunto = "Se ha generado un nuevo informe de ";
-        template = informesHTML(nombreEmpresa, tipoInforme);
+        const link = "analisis-de-negocio";
+        template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
     if (tipo == "comercialización") {
         const tipoInforme = "Sistema de Comercialización"
         asunto = "Se ha generado un nuevo informe de ";
-        template = informesHTML(nombreEmpresa, tipoInforme);
+        const link = "analisis-de-negocio";
+        template = informesHTML(nombreEmpresa, tipoInforme, link);
     }
 
     // Enviar Email
     const resultEmail = await sendEmail(email, asunto, template);
 
     if (resultEmail == false) {
-        console.log("\n<<<<< Ocurrio un error inesperado al enviar el email de ETAPA FINALIZADA >>>> \n");
+        console.log("\n<<<<< Ocurrio un error inesperado al enviar el email la generación de un nuevo informe o ETAPA FINALIZADA >>>> \n");
     } else {
-        console.log("\n<<<<< Se ha notificado la subida de un informe al email ETAPA FINALIZADA >>>>>\n");
+        console.log("\n<<<<< Se ha notificado al email la generación de un nuevo informe o ETAPA FINALIZADA >>>>>\n");
     }
 }
 

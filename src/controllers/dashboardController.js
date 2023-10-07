@@ -2350,7 +2350,7 @@ dashboardController.enviarCuestionario = async (req, res) => {
       const insertResult = await helpers.insertarDatos("informes_ia", informeAI);
       if (insertResult.affectedRows > 0) {
         // ENVIAR NOTIFICACIÓN AL EMAIL
-        await helpers.notificacion_informeGenerado('valoración', dataEmpresa.nombre_empresa)
+        await helpers.notificacion_etapaFinalizada('valoración', dataEmpresa.nombre_empresa, dataEmpresa.email)
         rolUser == "Empresa" ? res.redirect("/diagnostico-de-negocio") : res.redirect("/empresas/" + codigoEmpresa + "#diagnostico_");
       }
     }

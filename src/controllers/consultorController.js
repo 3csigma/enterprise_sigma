@@ -291,7 +291,7 @@ consultorController.guardarAnalisisProducto = async (req, res) => {
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
             // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
-            await helpers.notificacion_nuevoInforme('soluciones', empresa.nombre_empresa)
+            await helpers.notificacion_etapaFinalizada('soluciones', empresa.nombre_empresa, empresa.email)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
@@ -488,7 +488,7 @@ consultorController.guardarAnalisisAdministracion = async (req, res) => {
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
             // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
-            await helpers.notificacion_nuevoInforme('gestión', empresa.nombre_empresa)
+            await helpers.notificacion_etapaFinalizada('gestión', empresa.nombre_empresa, empresa.email)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
@@ -709,7 +709,7 @@ consultorController.guardarAnalisisOperacion = async (req, res) => {
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
             // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
-            await helpers.notificacion_nuevoInforme('operacional', empresa.nombre_empresa)
+            await helpers.notificacion_etapaFinalizada('operacional', empresa.nombre_empresa, empresa.email)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }
@@ -915,7 +915,7 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
         const insertResult = await insertarDatos('informes_ia', informeAI)
         if (insertResult.affectedRows > 0) {
             // ENVIAR NOTIFICACIÓN AL EMAIL INFORME GENERADO
-            await helpers.notificacion_nuevoInforme('comercialización', empresa.nombre_empresa)
+            await helpers.notificacion_etapaFinalizada('comercialización', empresa.nombre_empresa, empresa.email)
             req.user.rol == 'Empresa' ? res.redirect('/analisis-de-negocio')
             : res.redirect('/empresas/' + codigoEmpresa + '#analisis_')
         }

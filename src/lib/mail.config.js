@@ -1930,7 +1930,7 @@ const informesHTML = (empresa, nombreInforme, link) => {
 <table border="0" cellpadding="10" cellspacing="0" class="heading_block" role="presentation" style="mso-table-lspace: 0pt; mso-table-rspace: 0pt;" width="100%">
 <tr>
 <td>
-<h1 style="margin: 0; color: #8a3c90; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 27px; font-weight: 700; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">Se te ha generado un nuevo informe de ${nombreInforme}</span></h1>
+<h1 style="margin: 0; color: #8a3c90; direction: ltr; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 27px; font-weight: 700; letter-spacing: normal; line-height: 120%; text-align: center; margin-top: 0; margin-bottom: 0;"><span class="tinyMce-placeholder">Se ha generado un nuevo informe de ${nombreInforme}</span></h1>
 </td>
 </tr>
 </table>
