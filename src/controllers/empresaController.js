@@ -429,7 +429,7 @@ empresaController.index = async (req, res) => {
 empresaController.perfilUsuarios = async (req, res) => {
   const { rol, codigo } = req.user;
 
-  let empresa = await pool.query("SELECT e.*, u.foto, u.rol, u.programa FROM empresas e JOIN users u ON e.codigo = u.codigo WHERE e.codigo = ?",[codigo] );
+  let empresa = await pool.query("SELECT e.*, u.foto, u.rol, u.programa, u.suscription_id FROM empresas e JOIN users u ON e.codigo = u.codigo WHERE e.codigo = ?",[codigo] );
   empresa = empresa[0];
   let consultor = await pool.query("SELECT c.*, u.foto, u.rol FROM consultores c JOIN users u ON c.codigo = u.codigo WHERE c.codigo = ?", [codigo]);
   consultor = consultor[0];
@@ -446,7 +446,7 @@ empresaController.perfilUsuarios = async (req, res) => {
     }
   }
 
-  let user_dash = false, adminDash = false, consultorDash = false, tutoriales = {};
+  let user_dash = false, adminDash = false, consultorDash = false, tutoriales = {}, suscription_id = false;;
   if (rol == "Empresa") {
     user_dash = true;
     empresa.foto ? (empresa.foto = empresa.foto) : (empresa.foto = "../img/profile_default/user.jpg");
@@ -458,6 +458,10 @@ empresaController.perfilUsuarios = async (req, res) => {
       else if (empresa.programa == 5) {empresa.programa = "Accelerate";}
       else if (empresa.programa == 6) {empresa.programa = "Por Compra";}
       else if (empresa.programa == 7) {empresa.programa = "NAR";}
+
+      if (empresa.suscription_id != null) {
+        suscription_id = true;
+      }
     }
 
     let registros = await helpers.consultarDatos("registro_tutoriales");
@@ -499,7 +503,8 @@ empresaController.perfilUsuarios = async (req, res) => {
     etapa1,
     modalAcuerdo,
     consulAsignado: req.session.consulAsignado,
-    etapaCompleta: req.session.etapaCompleta, tutoriales
+    etapaCompleta: req.session.etapaCompleta, tutoriales,
+    suscription_id
   });
 };
 
