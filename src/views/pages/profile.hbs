@@ -59,8 +59,7 @@
             <div class="profile-tab">
               <div class="custom-tab-1">
                 <ul class="nav nav-tabs">
-                  <li class="nav-item"><a href="#about-me"  data-toggle="tab" class="nav-link active show text-primary">Configura tu cuenta</a>
-                  </li>
+                  <li class="nav-item"><a href="#about-me"  data-toggle="tab" class="nav-link active show text-primary">Configura tu cuenta</a></li>
                 </ul>
                 <div class="tab-content">
                   <div id="about-me" class="tab-pane fade active show">
@@ -119,7 +118,15 @@
                           {{/if}}
                           </div>
                           <br>
-                          {{!-- <button type="submit" class="btn btn-primary" style="background: #812082; border: none;" >Guardar</button> --}}
+
+                          {{#if suscription_id}}
+                          <div class="my-2">
+                            <a href="https://pcheckout.3csigma.com/p/login/fZe9Bv2vAb21dkk144" target="_blank" class="btn btn-save color_gradient text-white">
+                              <span class="text-btn">Portal de Pagos Cliente</span>
+                            </a>
+                          </div>
+                          {{/if}}
+
                         <button class="btn color_gradient btn-save text-white">
                           <i class="loading-icon fa fa-spinner fa-spin mostrar"></i>
                           <span class="text-btn">Guardar</span>
