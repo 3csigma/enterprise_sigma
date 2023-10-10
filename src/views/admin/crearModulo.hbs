@@ -2,6 +2,9 @@
     .MsoListParagraphCxSpFirst, .MsoListParagraphCxSpMiddle, .MsoListParagraphCxSpLast {
         text-indent: 22pt !important;
     }
+    #preloader{
+        display: none;
+    }
 </style>
 <!--**********************************
         Content body start
@@ -13,6 +16,13 @@
             <div class="col-xl-12 col-xxl-12">
                 <div class="card">
                     <div class="card-body">
+                        <div id="preloader">
+                            <div class="sk-three-bounce">
+                                <div class="sk-child sk-bounce1"></div>
+                                <div class="sk-child sk-bounce2"></div>
+                                <div class="sk-child sk-bounce3"></div>
+                            </div>
+                        </div>
                         <div id="modulos3c" class="form-wizard order-create sw sw-theme-default sw-justified">
 
                             {{!-- tabs --}}
@@ -283,7 +293,6 @@
 </div>
 
 <script>
-
     // Obtener elementos del DOM
     const lessonsContainer = document.getElementById('contenedor-lecciones');
     let lessonCounter = 1, lecciones_temp = [];
@@ -475,16 +484,19 @@
                     formData.append(`duracion_${i}`, leccion.duracion);
                     formData.append(`material_${i}`, leccion.material);
                 }
-
                 if (isOk) {
                     fetch('/guardar-modulo', {
                         method: 'POST',
                         body: formData,
                         headers: { 'enctype': 'multipart/form-data' }
-                    })
-                        .then(response => {
-                            if (response) location.href = '/ver-modulos'
-                            else Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
+                    }).then(response => {
+                            $("#preloader").css("display", "block");
+                            if (response) { 
+                                $("#preloader").css("display", "none");
+                                location.href = '/ver-modulos'
+                            }else {
+                                Swal.fire('Error!', 'Error al guardar el módulo, intenta más tarde.', 'error')
+                            }
                         })
                         .catch(error => {
                             console.log("Error ==> ", error)
