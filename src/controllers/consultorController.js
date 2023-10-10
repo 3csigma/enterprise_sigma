@@ -808,8 +808,7 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
                     [preguntas_asistencia[15].txt]: respuestas_asistencia[15],
                 },
                 'Integridad y transparencia' : {
-                    [preguntas_asistencia[16].txt]: respuestas_asistencia[16],
-                    [preguntas_asistencia[17].txt]: respuestas_asistencia[17],
+                    [preguntas_asistencia[16].txt]: respuestas_asistencia[16]
                 }
             },
             'Área de enfoque: Marketing' : {
@@ -902,7 +901,7 @@ consultorController.guardarAnalisisMarketing = async (req, res) => {
                     [preguntas_ventas[16].txt]: respuestas_ventas[16],
                 },
                 'Cultura de Ventas Positiva' : {
-                    [preguntas_ventas[18].txt]: respuestas_ventas[18],
+                    [preguntas_ventas[17].txt]: respuestas_ventas[17],
                 }
             }
         }
