@@ -13,8 +13,10 @@
             <div class="col-xl-12 col-xxl-12">
                 <div class="card">
                     <div class="card-body">
+                        {{#if modulo.EnUso}}
+                        <span class="d-flex justify-content-center alignt-items-center text-red"><strong>Este módulo ya fue finalizado por una o más empresas, no lo dejes en borrador de forma permanente.</strong></span>
+                        {{/if}}
                         <div id="modulos3c" class="form-wizard order-create sw sw-theme-default sw-justified">
-
                             {{!-- tabs --}}
                             <ul class="nav nav-wizard">
                                 <li><a class="nav-link inactive active" href="#infoModulo">

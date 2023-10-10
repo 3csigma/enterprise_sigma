@@ -3377,26 +3377,40 @@ function getProgramaName(num) {
 
 dashboardController.verModulos = async (req, res) => {
     const modulos = await helpers.consultarDatos('modulos');
+    const allLecciones = await helpers.consultarDatos('lecciones');
+    const empresas = await helpers.consultarDatos('empresas');
     
-    modulos.forEach(async (m) => {
+    modulos.forEach(m => {
       m.codigo = helpers.encriptarTxt((m.id).toString())
       m.estado = m.estado === 1 ? 'Publicado' : 'Borrador';
       m.color = m.estado === 'Publicado' ? 'text-success' : 'text-danger';
       
-      const lecciones = await pool.query('SELECT COUNT(id_modulo) As numLecciones FROM lecciones WHERE id_modulo = ?', [m.id]);
+      const lecciones = allLecciones.filter(x => x.id_modulo == m.id)
       if (lecciones.length > 0) {
-          m.numLecciones = lecciones[0].numLecciones;
+          m.numLecciones = lecciones.length
       } else {
           m.numLecciones = 0;
       }
 
-    m.programa = JSON.parse(m.programa); // Convertir el campo "programa" de nuevo a un arreglo
-    m.programa = m.programa.map(Number); // Convertir los elementos del array a números
+      // Capturando las lecciones completadas para las Empresas
+      empresas.forEach(e => {
+        const mapa = new Map(JSON.parse(e.lecciones_completadas))
+        if (mapa.size > 0) {
+          mapa.forEach((valor, clave) => {
+            if (clave == m.id) {
+              m.EnUso = true;
+            }
+          });
+        }
+      });
 
-    // Crear una nueva propiedad en el objeto "m" que contenga el nombre del programa
-    m.programas = m.programa.map(getProgramaName).join(', ');
+      m.programa = JSON.parse(m.programa); // Convertir el campo "programa" de nuevo a un arreglo
+      m.programa = m.programa.map(Number); // Convertir los elementos del array a números
 
-  });
+      // Crear una nueva propiedad en el objeto "m" que contenga el nombre del programa
+      m.programas = m.programa.map(getProgramaName).join(', ');
+
+    });
 
   res.render("admin/verModulos", {
     adminDash: true,
@@ -3564,6 +3578,7 @@ dashboardController.editarModulo = async (req, res) => {
     if (!id) {
         res.redirect('/ver-modulos');
     } else {
+      const empresas = await helpers.consultarDatos('empresas');
       const categorias = (await pool.query("SELECT DISTINCT categoria FROM modulos")).map(x => x.categoria);
       const modulo = (await helpers.consultarDatos("modulos")).find(x => x.id == id)
       const lecciones = (await helpers.consultarDatos("lecciones")).filter(l => l.id_modulo == modulo.id)
@@ -3577,13 +3592,11 @@ dashboardController.editarModulo = async (req, res) => {
         }
       })
 
-      // modulo.lecciones = lecciones.slice(1);
       const leccionesOrden = lecciones.slice()
       modulo.lecciones = leccionesOrden.sort((a, b) => a.orden - b.orden)
       
       if (lecciones.length > 0) {
         modulo.numLecciones = lecciones.length;
-        //modulo.leccion0 = lecciones[0];
         modulo.lastId = lecciones[lecciones.length - 1].id + 1;
       }
 
@@ -3598,8 +3611,18 @@ dashboardController.editarModulo = async (req, res) => {
         }
       }
 
-      console.log("Info modulo: ");
-      console.log(modulo);
+      // Capturando las lecciones completadas para las Empresas
+      empresas.forEach(e => {
+        const mapa = new Map(JSON.parse(e.lecciones_completadas))
+        if (mapa.size > 0) {
+          mapa.forEach((valor, clave) => {
+            if (clave == modulo.id) {
+              modulo.EnUso = true;
+            }
+          });
+        }
+      });
+
       res.render("admin/modulo", {
           adminDash: true, itemActivo: 5, modulo,
           formModulos:true, programas, 
