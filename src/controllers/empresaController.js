@@ -2292,7 +2292,7 @@ empresaController.actualizarRecurso = async (req, res) => {
     recurso_armado: JSON.stringify(recursos),
   };
 
-  if (req.body.programa.includes("6")) {
+  if (req.body.programa && req.body.programa.includes("6")) {
     console.log("Generando id_categoría Random");
     const codigo = nombre_grupo + '6';
     data.idCurso = (helpers.encriptarTxt((codigo).toString())).slice(0, 7)
