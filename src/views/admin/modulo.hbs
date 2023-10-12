@@ -192,7 +192,7 @@
                                                                     <div class="col-lg-8 mb-2">
                                                                         <div class="form-group">
                                                                             <label class="text-label">Nombre de la lección*</label>
-                                                                            <input type="text" id="leccion_{{id}}" class="form-control" style="border: 1px solid #DBDBDB;" value="{{nombre}}" onblur="actualizarLeccion(this, {{id}})">
+                                                                            <input type="text" id="leccion_{{id}}" class="form-control" style="border: 1px solid #DBDBDB;" value="{{nombre}}" onblur="actualizarLeccion(this, 0, {{id}})">
                                                                         </div>
                                                                     </div>
                                                                 </div>
@@ -244,7 +244,7 @@
                                                                             <textarea name="name" class="summernote" id="summernote_{{id}}" rows="10">{{descripcion}}</textarea>
                                                                         </div>
                                                                         <br>
-                                                                        <button onclick="actualizarLeccion(document.getElementById('summernote_{{id}}'), {{id}})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
+                                                                        <button onclick="actualizarLeccion(document.getElementById('summernote_{{id}}'), 0, {{id}})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
                                                                     </div>
                                                                 </div>
                                                                 <br>
@@ -349,7 +349,7 @@
 
     // Obtener elementos del DOM
     const lessonsContainer = document.getElementById("contenedor-lecciones");
-    let lessonCounter = document.getElementById("lastId").value,
+    let lessonCounter = document.getElementById("lastId").value, idLeccion_Actual = 0;
     lecciones_temp = [], idModulo = document.getElementById("idModulo").value;
 
     document.addEventListener("DOMContentLoaded", async function () {
@@ -401,7 +401,7 @@
         });
 
         // Función para crear el HTML de una nueva lección
-        const createLessonHTML = () => {
+        const createLessonHTML = (idDB) => {
             const lessonHTML = `
                 <div class="accordion__item" data-lesson-id="${lessonCounter}">
                     <div class="accordion__header" data-toggle="collapse" data-target="#bordered_collapse_${lessonCounter}"
@@ -417,9 +417,8 @@
                                 <div class="col-lg-8 mb-2">
                                     <div class="form-group">
                                         <label class="text-label">Nombre de la lección*</label>
-                                        <input type="hidden" id="id_DB-leccion_${lessonCounter}" value="">
                                         <input type="text" id="leccion_${lessonCounter}" class="form-control"
-                                            style="border: 1px solid #DBDBDB;" value="Lección por defecto ${lessonCounter}" onblur="actualizarLeccion(this, ${lessonCounter})">
+                                            style="border: 1px solid #DBDBDB;" value="Lección por defecto ${lessonCounter}" onblur="actualizarLeccion(this, ${idDB}, ${lessonCounter})">
                                     </div>
                                 </div>
                             </div>
@@ -460,7 +459,7 @@
                                         <textarea name="name" class="summernote" id="summernote_${lessonCounter}" rows="10"></textarea>
                                     </div>
                                     <br>
-                                    <button onclick="actualizarLeccion(document.getElementById('summernote_${lessonCounter}'), ${lessonCounter})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
+                                    <button onclick="actualizarLeccion(document.getElementById('summernote_${lessonCounter}'), ${idDB}, ${lessonCounter})" class="btn btn-primary" style="display: block; border-radius: 7px;padding: 0.375rem 0.75rem; font-size: 0.813rem !important;" type="button">Guardar descripción</button>
                                 </div>
                             </div>
                             <!-- --- -->
@@ -497,9 +496,10 @@
             return lessonHTML;
         };
 
-        const handleAddLesson = () => {
-            agregarLeccionDB(lessonCounter, $('#idModulo').val());
-            const lessonHTML = createLessonHTML();
+        const handleAddLesson = async () => {
+            const idDB = await agregarLeccionDB(lessonCounter, $('#idModulo').val());
+            console.log("handleAddLesson - idDB => ", idDB)
+            const lessonHTML = createLessonHTML(idDB);
             lessonsContainer.insertAdjacentHTML("beforeend", lessonHTML);
 
             // Encuentra el elemento de texto Summernote utilizando el ID generado dinámicamente
@@ -515,7 +515,6 @@
                 focus: false,
             });
             lessonCounter++;
-            //actualizar_posicionLecciones();
         };
 
         const updateAccordionHeaderText = (lessonIndex, text) => {
@@ -885,17 +884,20 @@
         }
     }
 
-    function actualizarLeccion(elemento, id) {
+    function actualizarLeccion(elemento, idDB, id) {
         console.log("elemento: ", elemento)
         const data = { id, id_modulo: parseInt(idModulo) }
-        /*
-        const idDB = 'xxxxxx';
-        // Capturando id de la lección creada en DB
-        if ($('#id_DB-leccion_'+id).val()) {
-            data.id = $('#id_DB-leccion_'+id).val();
+        
+        // Capturando id de la lecció n creada en DB
+        console.log("idLeccion_Actual: ", idDB)
+        if (idDB != 0) {
+            console.log("Modificando Data.Id => ", idDB)
+            data.id = idDB
         }
-        console.log("idDB: ", idDB)
-        */
+
+        // Prueba Actual:
+        // En el ID se está enviando es el orden de la nueva lección
+        // Data id: {id:23, id_modulo:4, nombre: "prueba"} => Datos Reales = {id:27, id_modulo:4}
 
         if (elemento.id.includes('leccion_')) {
             //console.log(`Se actualizó el input con ID ${elemento.id}, nuevo valor: ${elemento.value}, lección_id => ${id}`);
@@ -925,15 +927,19 @@
     }
 
     async function agregarLeccionDB(i, id_modulo) {
-        console.log("agregarLeccionDB - Contador Actual =>", i)
+        let idDB = 0;
+        console.log("agregarLeccionDB")
+        console.log("Contador Actual (Orden Actual de la Lección) => ", i)
         await fetch('/agregar-leccion', {
             method: 'POST',
             body: JSON.stringify({i, id_modulo}),
             headers: {'Content-Type': 'application/json'}
         }).then(response => response.json())
-              .then(id_DB => {
+            .then(id_DB => {
                 console.log("Se agregó correctamente una nueva lección al módulo de id: ", id_modulo);
-                $('#id_DB-leccion_'+lessonCounter).val(id_DB)
+                console.log("PROBANDO RESULTADOS");
+                console.log("ID DATABASE: ", id_DB);
+                idLeccion_Actual = id_DB;
                 lecciones_temp.push({
                     id: id_DB,
                     orden: parseInt(i),
@@ -946,9 +952,10 @@
                 })
                 console.log("lecciones_temp::: ")
                 console.log(lecciones_temp)
-                //actualizar_posicionLecciones()
+                idDB = id_DB;
             })
             .catch(error => { console.error('Error al recibir la respuesta:', error) });
+        return idDB;
     }
 
     function eliminarLeccionDB(id) {
