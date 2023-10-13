@@ -315,10 +315,10 @@
 								<div class="form-group col-md-12">
 									<label>¿En qué etapa se encuentra tu empresa?</label>
 									<div class="form-group mb-3 radio_input" {{#if datos.editEtapa}} title="No es posible editar este campo ahora"{{/if}}>
-										<label class="container_radio mr-3">En Proyecto (aun sin ejecutar)
+										{{!-- <label class="container_radio mr-3">En Proyecto (aun sin ejecutar)
 											<input type="radio" name="etapa_empresa" value="En proyecto" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa1}}>
 											<span class="checkmark"></span>
-										</label>
+										</label> --}}
 										<label class="container_radio mr-3" {{#if datos.editEtapa}} title="No es posible editar este campo ahora"{{/if}}>Operativo
 											<input type="radio" name="etapa_empresa" value="Operativo" {{#if datos.editEtapa}} disabled {{/if}} class="required"{{datos.etapa2}}>
 											<span class="checkmark"></span>
@@ -450,84 +450,27 @@
 <a href="/diagnostico-de-negocio" class="close">
 
 
-	{{!-- SCRIPT MASCARAS PARA INPUT --}}
-	<script src="https://unpkg.com/imask"></script>
+{{!-- SCRIPT MASCARAS PARA INPUT --}}
+<script src="https://unpkg.com/imask"></script>
 
 <script>
-		//Capturando Campo Nombres para el paso Final
-		const nom1 = document.getElementById("nombres");
-		const nameFinal = document.getElementById("nameStepFinal");
-		nameFinal.innerHTML = nom1.value;
-		nom1.onchange = function () {
-			nameFinal.innerHTML = nom1.value
-		}
+	//Capturando Campo Nombres para el paso Final
+	const nom1 = document.getElementById("nombres");
+	const nameFinal = document.getElementById("nameStepFinal");
+	nameFinal.innerHTML = nom1.value;
+	nom1.onchange = function () {
+		nameFinal.innerHTML = nom1.value
+	}
 
-		// Asignando fecha de modificación al campo oculto
-		const tzLocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
-		console.log(tzLocal);
-		document.getElementById("fecha_zh").value = tzLocal;
+	// Asignando fecha de modificación al campo oculto
+	const tzLocal = Intl.DateTimeFormat().resolvedOptions().timeZone;
+	console.log(tzLocal);
+	document.getElementById("fecha_zh").value = tzLocal;
 
-		document.addEventListener("DOMContentLoaded", function () {
-			// Formato de número USA (+1)
-			IMask(document.getElementById('tel_Ficha'), {
-				mask: '(000) 000-0000'
-			});
-
-			// Separación para cifras en millares
-			IMask(document.getElementById('promedio_ingreso_anual'), {
-				mask: '$num',
-				blocks: {
-					num: {
-						// nested masks are available!
-						mask: Number,
-						thousandsSeparator: ' '
-					}
-				}
-			});
-
-			// Asignando Fecha de la base de datos
-			const txtFecha = $('#txtFecha_');
-			const fna = document.getElementById("fecha_nacimiento");
-			const DATE_FORMAT_US = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
-			fna.dateAdapter = {
-				parse(value = "", createDate) {
-					const matches = value.match(DATE_FORMAT_US)
-
-					if (matches) { return createDate(matches[3], matches[1], matches[2]) }
-				},
-				format(date) { return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` },
-			}
-
-			fna.localization = {
-				placeholder: "Fecha de Nacimiento",
-				selectedDateMessage: "La fecha seleccionada es",
-				prevMonthLabel: "Mes anterior",
-				nextMonthLabel: "Mes siguiente",
-				monthSelectLabel: "Mes",
-				yearSelectLabel: "Año",
-				closeLabel: "Cerrar ventana",
-				calendarHeading: "Selecciona una fecha",
-				dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
-				//dayNamesShort: ["DO", "LU", "MA", "MI", "JU", "VI", "SA"],
-				monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
-				monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
-				locale: "en-US",
-				inputEnabled: false,
-			}
-
-			fna.addEventListener('keydown', function(event) {
-				event.preventDefault();
-				if (fna.value == '') {
-					fna.value = '';
-					txtFecha.show();
-					setTimeout(function() {
-						txtFecha.hide();
-					}, 4000);
-				}
-			});
-
-			const fechaDB = document.getElementById("fechaDB").value;
-			//if (fechaDB) fna.value = fechaDB;
+	document.addEventListener("DOMContentLoaded", function () {
+		// Formato de número USA (+1)
+		IMask(document.getElementById('tel_Ficha'), {
+			mask: '(000) 000-0000'
 		});
 
 		// Separación para cifras en millares
@@ -542,25 +485,79 @@
 			}
 		});
 
-		// Formateando campo para porcentaje
-		document.querySelector('#porcentaje_accionario').addEventListener('input', function (e) {
-			let int = e.target.value.slice(0, e.target.value.length - 1);
+		// Asignando Fecha de la base de datos
+		const txtFecha = $('#txtFecha_');
+		const fna = document.getElementById("fecha_nacimiento");
+		const DATE_FORMAT_US = /^(\d{1,2})\/(\d{1,2})\/(\d{4})$/
+		fna.dateAdapter = {
+			parse(value = "", createDate) {
+				const matches = value.match(DATE_FORMAT_US)
 
-			if (int.includes('%')) {
-				e.target.value = int + '%';
-			} else if (int == 100 && !int.includes('.')) {
-				e.target.value = int + '%';
-			} else if (int.length >= 3 && int.length <= 4 && !int.includes('.')) {
-				e.target.value = int.slice(0, 2) + '.' + int.slice(2, 3) + '%';
-				e.target.setSelectionRange(4, 4);
-			} else if (int.length >= 5 & int.length <= 6) {
-				let whole = int.slice(0, 2);
-				let fraction = int.slice(3, 5);
-				e.target.value = whole + '.' + fraction + '%';
-			} else {
-				e.target.value = int + '%';
-				e.target.setSelectionRange(e.target.value.length - 1, e.target.value.length - 1);
+				if (matches) { return createDate(matches[3], matches[1], matches[2]) }
+			},
+			format(date) { return `${date.getMonth() + 1}/${date.getDate()}/${date.getFullYear()}` },
+		}
+
+		fna.localization = {
+			placeholder: "Fecha de Nacimiento",
+			selectedDateMessage: "La fecha seleccionada es",
+			prevMonthLabel: "Mes anterior",
+			nextMonthLabel: "Mes siguiente",
+			monthSelectLabel: "Mes",
+			yearSelectLabel: "Año",
+			closeLabel: "Cerrar ventana",
+			calendarHeading: "Selecciona una fecha",
+			dayNames: ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"],
+			monthNames: ["Enero", "Febrero", "Marzo", "Abril", "Mayo", "Junio", "Julio", "Agosto", "Septiembre", "Octubre", "Noviembre", "Diciembre"],
+			monthNamesShort: ["Ene", "Feb", "Mar", "Abr", "May", "Jun", "Jul", "Ago", "Sep", "Oct", "Nov", "Dic"],
+			locale: "en-US",
+			inputEnabled: false,
+		}
+
+		fna.addEventListener('keydown', function(event) {
+			event.preventDefault();
+			if (fna.value == '') {
+				fna.value = '';
+				txtFecha.show();
+				setTimeout(function() {
+					txtFecha.hide();
+				}, 4000);
 			}
 		});
 
-	</script>
+		const fechaDB = document.getElementById("fechaDB").value;
+	});
+
+	// Separación para cifras en millares
+	IMask(document.getElementById('promedio_ingreso_anual'), {
+		mask: '$num',
+		blocks: {
+			num: {
+				// nested masks are available!
+				mask: Number,
+				thousandsSeparator: ' '
+			}
+		}
+	});
+
+	// Formateando campo para porcentaje
+	document.querySelector('#porcentaje_accionario').addEventListener('input', function (e) {
+		let int = e.target.value.slice(0, e.target.value.length - 1);
+
+		if (int.includes('%')) {
+			e.target.value = int + '%';
+		} else if (int == 100 && !int.includes('.')) {
+			e.target.value = int + '%';
+		} else if (int.length >= 3 && int.length <= 4 && !int.includes('.')) {
+			e.target.value = int.slice(0, 2) + '.' + int.slice(2, 3) + '%';
+			e.target.setSelectionRange(4, 4);
+		} else if (int.length >= 5 & int.length <= 6) {
+			let whole = int.slice(0, 2);
+			let fraction = int.slice(3, 5);
+			e.target.value = whole + '.' + fraction + '%';
+		} else {
+			e.target.value = int + '%';
+			e.target.setSelectionRange(e.target.value.length - 1, e.target.value.length - 1);
+		}
+	});
+</script>
