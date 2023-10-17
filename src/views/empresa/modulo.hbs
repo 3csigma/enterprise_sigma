@@ -46,14 +46,13 @@
                         </div>
                     </div>
                     <hr style="border: 1px solid #000000">
-
                     <div class="card-body pb-0">
                        <div class="row">
                             <div class="col">
                                 <div class="btn-group mb-1">
                                     <button class="btn btn-primary btn-lg text-black" type="button" data-toggle="dropdown" aria-expanded="false"
-                                    style="border-radius: 31.5px; border: 1px solid #DBDBDB; background: #FFF; width: 310px; position: relative;
-                                        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.11);">
+                                    style="border-radius: 31.5px; border: 1px solid #DBDBDB; background: #FFF; width: 362px; position: relative;
+                                        box-shadow: 0px 0px 10px 0px rgba(0, 0, 0, 0.11);font-size: 16px !important; padding: 30px;">
                                         <span id="leccion-actual" class="two-line-text" style="font-weight: bold;">1. {{modulo.lecciones.[0].nombre}} </span>
                                         <svg xmlns="http://www.w3.org/2000/svg" width="10" height="8" viewBox="0 0 10 8" fill="none"
                                         style="position: absolute;right: 25px;top: 50%;transform: translateY(-50%);">
@@ -63,7 +62,7 @@
                                     <div class="dropdown-menu" x-placement="bottom-start" 
                                     style="position: absolute; will-change: transform; top: 0px; left: 0px; transform: translate3d(0px, 61px, 0px);">
                                         {{#each modulo.lecciones}}
-                                        <a class="dropdown-item item-lecciones two-line-text" href="#">
+                                        <a class="dropdown-item item-lecciones two-line-text item_dev" href="#">
                                             <div class="d-flex justify-content-center align-items-center">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="17" height="16" viewBox="0 0 17 16" fill="none">
                                                     <path class="estrella-{{num}}" d="M8.5 0L10.4084 5.87336L16.584 5.87336L11.5878 9.50329L13.4962 15.3766L8.5 11.7467L3.50383 15.3766L5.41219 9.50329L0.416019 5.87336L6.59163 5.87336L8.5 0Z" fill="{{estado}}"/>
